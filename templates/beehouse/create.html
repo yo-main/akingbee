@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{data[5]}}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid" id="menu_nb" name="1">
+        <div class="row">
+            <div class="col-2">
+                {% include "bees_menu.html" %}
+            </div>
+            <div class="col-10">
+                <p><h5 id="form-title">{{data[37]}}</h5></p>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="beehouse_name">{{data[22]}}</label>
+                        <input id="beehouse_name" name="beehouse_name" class="form-control" required/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="beehouse_birthday">{{data[31]}}</label>
+                        <input id="beehouse_birthday" name="beehouse_birthday" class="form-control" type="text" name="date"/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">   
+                    <div class="col-4">
+                        <label for="beehouse_status">{{data[28]}}</label>
+                        <select id="beehouse_status" name="beehouse_status" class="custom-select d-block w-100" required="">
+                            {% for arg in status_beehouse %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_status_beehouse" area_hidden="true"></button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="beehouse_apiary">{{data[43]}}</label>
+                        <select id="beehouse_apiary" name="beehouse_apiary" class="custom-select d-block w-100" required="">
+                            <option value=''>{{data[26]}}</option>
+                            {% for arg in apiaries %}
+                                <option value={{arg[0]}}>{{arg[1]}} - {{arg[2]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" onclick="redirect_create_apiary();"></button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="beehouse_owner">{{data[40]}}</label>
+                        <select id="beehouse_owner" name="beehouse_owner" class="custom-select d-block w-100" required="">
+                            <option value=''>{{data[26]}}</option>
+                            {% for arg in owners %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_owner" area_hidden="true"></button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="beehouse_health">{{data[42]}}</label>
+                        <select id="beehouse_health" name="beehouse_health" class="custom-select d-block w-100" required="">
+                            <option value=''>{{data[26]}}</option>
+                            {% for arg in health %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_health" area_hidden="true"></button> 
+                    </div>
+                </div>
+                <br/><br/>
+                <div class="row">
+                    <div class="col-4">
+                        <button id="submit_beehouse" class="btn btn-primary" onclick="createNewBeehouse();">{{data[14]}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to create a bew owner -->
+    <div class="modal fade" id="create_owner" tabindex="-1" role="dialog" aria-labelledby="title_create_owner" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_create_owner">{{data[44]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="owner_name" class="col-form-label">{{data[40]}}</label>
+                        <input type="text" class="form-control" id="owner_name" name="owner_name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_owner();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to create a new health status -->
+    <div class="modal fade" id="create_health" tabindex="-1" role="dialog" aria-labelledby="title_create_health" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_create_health">{{data[45]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="health_name_fr" class="col-form-label">Français</label>
+                        <input type="text" class="form-control" id="health_name_fr" name="health_name_fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="health_name_en" class="col-form-label">English</label>
+                        <input type="text" class="form-control" id="health_name_en" name="health_name_en">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_health();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to create a bew owner -->
+    <div class="modal fade" id="create_status_beehouse" tabindex="-1" role="dialog" aria-labelledby="title_create_status_beehouse" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_create_status_beehouse">{{data[53]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="status_beehouse_name_fr" class="col-form-label">Français</label>
+                        <input type="text" class="form-control" id="status_beehouse_name_fr" name="status_beehouse_name_fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="status_beehouse_name_en" class="col-form-label">English</label>
+                        <input type="text" class="form-control" id="status_beehouse_name_en" name="status_beehouse_name_en">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_status_beehouse();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,371 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{data[5]}}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid" id="menu_nb" name="0">
+        <div class="row">
+            <div class="col-2">
+                {% include "bees_menu.html" %}
+            </div>
+            <div class="col-10">
+                <br/><br/>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-1 text-right">
+                            <button type="button" class="btn btn-light left-arrow" area_hidden="true" onclick="arrowAction(-1)"></button>
+                        </div>
+                        <div class="col-3">
+                            <h2 class="text-center">{{bh[0][1]}}</h2>
+                        </div>
+                        <div class="col-1 text-left">
+                            <button type="button" class="btn btn-light right-arrow" area_hidden="true" onclick="arrowAction(1)"></button>
+                        </div>
+                        <div class="col-4">
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-auto">
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <!-- apiary -->
+                                        <th>{{data[43]}}</th>
+                                        <td>{{bh[0][2]}} - {{bh[0][3]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <!-- beekeeper -->
+                                        <th>{{data[40]}}</th>
+                                        <td>{{bh[0][6]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <!-- status -->
+                                        <th>{{data[28]}}</th>
+                                        <td>{{bh[0][4]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <!-- health -->
+                                        <th>{{data[42]}}</th>
+                                        <td>{{bh[0][5]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col flex-end">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-link btn-smenu" onclick="modal_beehouse_edit(this);">{{data[49]}}</button>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" name="{{bh[0][1]}}" class="btn btn-link btn-smenu" onclick="modal_comment(this);">{{data[73]}}</button>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" name="{{bh[0][1]}}" class="btn btn-link btn-smenu" onclick="modal_action(this);">{{data[54]}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                </div>
+
+                {% if ac|length > 0 %}
+                    {% for n in range(ac|length) %}
+                        <div class="row justify-center">
+                            <div class="col-11 alert alert-warning">
+                                <div class="row">
+                                    <div class="col-auto">
+                                        <span>
+                                            {{data[65]}} : {{ac[n][4]}}
+                                            {% if ac[n][2] %}
+                                                {{data[66]}} {{ac[n][2]}}
+                                            {% endif %}&nbsp&nbsp-&nbsp&nbsp
+                                            {% if ac[n][3] %}
+                                                {{data[67]}}: {{ac[n][3]}}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn btn-link btn-alert" title="{{ac[n][4]}}" name="{{ac[n][0]}}" onclick="modal_solve_action(this);">{{data[68]}}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if cm|length > 0 %}
+                    <div class="row">
+                        <div class="col-2">
+                            <label>{{data[63]}}</label>
+                            <select class="custom-select" id="source_filter" onchange="filter_table_beehouse_details();">
+                                <option value=''>{{data[72]}}</option>
+                                {% for arg in tf %}
+                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label>{{data[43]}}</label>
+                            <select class="custom-select" id="apiary_filter" onchange="filter_table_beehouse_details();">
+                                <option value=''>{{data[51]}}</option>
+                                {% for arg in af %}
+                                    <option value="{{arg[1]}} - {{arg[2]}}">{{arg[1]}} - {{arg[2]}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label>{{data[42]}}</label>
+                            <select class="custom-select" id="health_filter" onchange="filter_table_beehouse_details();">
+                                <option value=''>{{data[51]}}</option>
+                                {% for arg in hf %}
+                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <table class="table table-hover" id="comment_table">
+                            <thead>
+                            <!-- DATE TYPE APIARY HEALTH COMMENT -->
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">{{data[59]}}</th>
+                                    <th scope="col">{{data[63]}}</th>
+                                    <th scope="col">{{data[43]}}</th>
+                                    <th scope="col">{{data[42]}}</th>
+                                    <th scope="col">{{data[50]}}</th>
+                                    <th scope="col"></th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <body>
+                                {% for n in range(cm|length) %}
+                                    <tr>
+                                        <th scope="row">{{cm|length - n}}</th>
+                                        <td class="date_cm">{{cm[n][1]}}</td>
+                                        <td class="type_cm">{{cm[n][2]}}</td>
+                                        <td class="apiary_cm">{{cm[n][5]}} - {{cm[n][6]}}</td>
+                                        <td class="health_cm">{{cm[n][7]}}</td>
+                                        <td class="comm_cm">{{cm[n][3]}}</td>
+                                        <td><button type="button" class="btn btn-link" name="bh_{{cm[n][0]}}" onclick="modal_edit_comment(this);">{{data[70]}}</button></td>
+                                        <td><button type="button" class="btn btn-link" name="bh_{{cm[n][0]}}" onclick="del_comment(this);">{{data[64]}}</button></td>
+                                    </tr>
+                                {% endfor %}
+                            </body>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal to mark an action as done -->
+    <div class="modal fade" id="solve_action" tabindex="-1" role="dialog" aria-labelledby="title_solve_action" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_solve_action">{{data[69]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="action_name_done" class="col-form-label">{{data[48]}}</label>
+                        <input type="text" class="form-control" id="action_name_done" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_date_done" class="col-form-label">{{data[59]}}</label>
+                        <input id="action_date_done" class="form-control" type="text" name="date"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_comment_done" class="col-form-label">{{data[56]}}</label>
+                        <textarea aria-label="With textarea" class="form-control" id="action_comment_done"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_solve_action_modal();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to edit a comment -->
+    <div class="modal fade" id="edit_comment_bh" tabindex="-1" role="dialog" aria-labelledby="title_edit_comment_bh" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_edit_comment_bh">{{data[50]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="comment_date_edit" class="col-form-label">{{data[55]}}</label>
+                        <input id="comment_date_edit" class="form-control" type="text" name="date"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment_health_edit" class="col-form-label">{{data[42]}}</label>
+                        <select class="custom-select d-block w-100" id="comment_health_edit">
+                            <option value=''>{{data[26]}}</option>
+                            {% for arg in hf %}
+                                <option title={{arg[0]}} value={{arg[1]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment_comment_edit" class="col-form-label">{{data[56]}}</label>
+                        <textarea aria-label="With textarea" class="form-control" id="comment_comment_edit"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_edit_comment_modal();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to edit a beehouse -->
+    <div class="modal fade" id="edit_beehouse" tabindex="-1" role="dialog" aria-labelledby="title_edit_beehouse" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_edit_beehouse">{{data[49]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="beehouse_name_modal" class="col-form-label" id="beehouse_id">{{data[52]}}</label>
+                        <input type="text" class="form-control" id="beehouse_name_modal">
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_name_modal" class="col-form-label">{{data[43]}}</label>
+                        <select id="apiary_name_modal" class="custom-select d-block w-100" required="">
+                            {% for arg in af %}
+                                <option value={{arg[0]}}>{{arg[1]}} - {{arg[2]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="owner_name_modal" class="col-form-label">{{data[40]}}</label>
+                        <select id="owner_name_modal" class="custom-select d-block w-100" required="">
+                            {% for arg in of %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status_name_modal" class="col-form-label">{{data[28]}}</label>
+                        <select class="custom-select d-block w-100" id="status_name_modal">
+                            {% for arg in sf %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_beehouse_modal();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to leave a comment -->
+    <div class="modal fade" id="submit_comment" tabindex="-1" role="dialog" aria-labelledby="title_submit_comment" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_submit_comment">{{data[50]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="comment_name" class="col-form-label">{{data[52]}}</label>
+                        <input type="text" class="form-control" id="comment_name" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment_date" class="col-form-label">{{data[55]}}</label>
+                        <input id="comment_date" class="form-control" type="text" name="date"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment_health" class="col-form-label">{{data[42]}}</label>
+                        <select class="custom-select d-block w-100" id="comment_health">
+                            <option value=''>{{data[26]}}</option>
+                            {% for arg in hf %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment_comment" class="col-form-label">{{data[56]}}</label>
+                        <textarea aria-label="With textarea" class="form-control" id="comment_comment"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_comment_modal();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to planify an action -->
+    <div class="modal fade" id="submit_action" tabindex="-1" role="dialog" aria-labelledby="title_submit_action" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_submit_action">{{data[60]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="action_name" class="col-form-label">{{data[52]}}</label>
+                        <input type="text" class="form-control" id="action_name" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_type" class="col-form-label">{{data[48]}}</label>
+                        <select class="custom-select d-block w-100" id="action_type">
+                        <option value=''>{{data[26]}}</option>
+                            {% for arg in ab %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_date" class="col-form-label">{{data[59]}}</label>
+                        <input id="action_date" class="form-control" type="text" name="date"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_deadline" class="col-form-label">{{data[61]}}</label>
+                        <input id="action_deadline" class="form-control" type="text" name="date"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="action_comment" class="col-form-label">{{data[56]}}</label>
+                        <textarea aria-label="With textarea" class="form-control" id="action_comment"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_action_modal();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

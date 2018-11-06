@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{data[6]}}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid" id="menu_nb" name="3">
+        <div class="row">
+            <div class="col-2">
+                {% include "bees_menu.html" %}
+            </div>
+            <div class="col-10">
+				<br/><br/>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-auto">
+							<label>{{data[23]}}</label>
+                            <select class="custom-select" id="location_filter" onchange="filter_table_apiary();">
+                                <option value=''>{{data[72]}}</option>
+                                {% for arg in al %}
+                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                {% endfor %}
+                            </select>
+						</div>
+						<div class="col-auto">
+							<label>{{data[28]}}</label>
+                            <select class="custom-select" id="status_filter" onchange="filter_table_apiary();">
+                                <option value=''>{{data[51]}}</option>
+                                {% for arg in ap %}
+                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                {% endfor %}
+                            </select>
+						</div>
+						<div class="col-auto">
+							<label>{{data[27]}}</label>
+                            <select class="custom-select" id="honey_filter" onchange="filter_table_apiary();">
+                                <option value=''>{{data[51]}}</option>
+                                {% for arg in ah %}
+                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                {% endfor %}
+                            </select>
+						</div>
+					</div>
+					<br/><br/>
+					<div class="row">
+						<table class="table table-hower" id="apiary_table">
+							<!-- name, location, birthday, status, honey -->
+							<thead>
+								<tr>
+									<th scope="col">#</th>
+									<th scope="col">{{data[22]}}</th>
+									<th scope="col">{{data[23]}}</th>
+									<th scope="col">{{data[28]}}</th>
+									<th scope="col">{{data[27]}}</th>
+									<th scope="col"></th>
+									<th scope="col"></th>
+								</tr>
+							</thead>
+							<body>
+								{% for n in range(apia|length) %}
+									<tr>
+										<th scope="row">{{n+1}}</th>
+										<td class="name_td">{{apia[n][1]}}</td>
+										<td class="location_td">{{apia[n][2]}}</td>
+										<td class="status_td">{{apia[n][3]}}</td>
+										<td class="honey_td">{{apia[n][4]}}</td>
+										<td><button type="button" class="btn btn-link" name="apia_{{apia[n][0]}}" onclick="modal_apiary_edit(this);">{{data[93]}}</button></td>
+										<td><button type="button" class="btn btn-link" name="apia_{{apia[n][0]}}" onclick="delete_apiary(this);">{{data[64]}}</button></td>
+									</tr>
+								{% endfor %}
+							</body>
+						</table>
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+
+	<!-- Modal to edit a beehouse -->
+    <div class="modal fade" id="edit_apiary" tabindex="-1" role="dialog" aria-labelledby="title_edit_apiary" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_edit_apiary">{{data[93]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="apiary_name_modal" class="col-form-label" id="apiary_id">{{data[22]}}</label>
+                        <input type="text" class="form-control" id="apiary_name_modal">
+                    </div>
+					<div class="form-group">
+                        <label for="apiary_location_modal" class="col-form-label">{{data[23]}}</label>
+                        <input type="text" class="form-control" id="apiary_location_modal">
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_status_modal" class="col-form-label">{{data[28]}}</label>
+                        <select id="apiary_status_modal" class="custom-select d-block w-100" required="">
+                            {% for arg in ap %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_honey_modal" class="col-form-label">{{data[27]}}</label>
+                        <select id="apiary_honey_modal" class="custom-select d-block w-100" required="">
+                            {% for arg in ah %}
+                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_apiary_modal();">{{data[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

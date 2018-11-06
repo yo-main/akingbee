@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+    <br/><br/><br/><br/>
+    {% if lang == 'fr' %}
+        <p class="here text-left">
+            Bienvenue sur akingbee.com !<br/><br/>
+            Je suis très heureux de vous accueillir chez moi ! Mais je tiens à vous dire que ce site est toujours en CONSTRUCTION :)
+        </p>
+        <p class="here text-left">
+            Pour le moment je vous laisse visiter, le site vous permettra de gérer vos ruches de façon basiques mais de nouvelles fonctionnalités devraient voir le jour très bientôt.<br/>
+            Grace à ce site, vous pouvez créer vos ruchers et y assigner des ruches.<br/>
+            Vous pouvez renseigner l'état de chacune de vos ruches, suivre leur développement et leur assigner des actions.
+        </p>
+        <p class="here text-left">
+            Mode d'emplois:<br/>
+            - Visitez la partie 'paramètre' et renvoyez les données par défaut. Supprimer, modifier, ajouter, vous êtes libre de faire ce que vous voulez.<br/>
+            - Une fois la partie set up finit, vous allez devoir aller créer un rucher. Vous ne pourrez pas créer de ruche sans rucher un disponible.<br/>
+            - Et enfin vous pouvez passer à la création de vos ruches. Une fois créer vous pourrez y laisser des commentaires ou y planifier des actions.
+        </p>
+        <p class="here text-left">
+            Pour toutes questions, vous savez comment me contacter.
+        </p>
+    {% endif %}
+    {% if lang == 'en' %}
+        <p class="here text-left">
+            Welcome on akingbee.com !<br/><br/>
+            As I am extremely happy to welcome you on my website, I wish to emphatize on the fact that it is still under CONSTRUCTION and that a lot of things are missing for now.
+        </p>
+        <p class="here text-left">
+            But still, feel free to visit. This website will allow you to manage your beehouses (at least the basics) however new functionnalities should arrive soon.<br/>
+            You will be able to follow your different beehouses, see their history and planify future actions !
+        </p>
+        <p class="here text-left">
+            First steps:<br/>
+            - Please visit the set up menu and be sure to review all the categories before using the website. You can add, remove or amend any data set.<br/>
+            - Once done with the set up part, go create your first apiary. You cannot create a beehouse without an apiary !<br/>
+            - And finally, go create your first beehouses ! Once done, feel free to input any comment or action.
+        </p>
+        <p class="here text-left">
+            For any question, please feel free to contact kingbee.root `at` gmail.com.
+        </p>
+    {% endif %}
+{% endblock %}
+
