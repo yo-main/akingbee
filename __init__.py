@@ -1,6 +1,6 @@
 #!/var/www/akingbee.com/akb/env3.7
 # -*- coding: utf-8 -*-
-#just to say hello
+
 import flask
 import helpers
 import sqlite3
