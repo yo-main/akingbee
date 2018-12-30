@@ -26,14 +26,11 @@ config.init()
 
 
 
-AKB_PATH = '/akingbee'
-
-
 @app.route("/", methods=['GET', 'POST'])
 @helpers.login_required
 def home():
     lang = flask.session['language']
-    return flask.render_template("index.html", lang=lang, data=helpers.tradDb(flask.session['language']))
+    return flask.render_template("index_akb.html", lang=lang, data=helpers.tradDb(flask.session['language']))
 
 
 @app.route("/login", methods=['GET', 'POST'])
