@@ -10,6 +10,8 @@ import os
 import datetime
 import config
 
+from helpers import akb_url
+
 #os.chdir("/var/www/akingbee.com/akb")
 
 app = flask.Flask(__name__)
@@ -23,6 +25,11 @@ app.secret_key = """iuhAqshdad123_&é"_JIHfduh3i123d!!:"""
 flask_session.Session(app)
 
 config.init()
+
+
+
+AKB_PATH = '/akingbee'
+
 
 @app.route("/", methods=['GET', 'POST'])
 @helpers.login_required
@@ -83,7 +90,7 @@ def logout():
     flask.session.pop('userId', None)
     flask.session.pop('username', None)
 
-    return flask.redirect("/")
+    return flask.redirect("/akingbee/")
 
 
 @app.route("/language", methods=['POST'])
@@ -187,7 +194,7 @@ def registerCheck():
 @app.route("/reset_password", methods=['GET', 'POST'])
 def reset_pwd():
     if flask.session.get('userId') is not None:
-        return flask.redirect("/")
+        return flask.redirect("/akingbee/")
 
     elif flask.request.method == 'GET':
         lang = flask.session['language']
@@ -215,7 +222,7 @@ def apiary():
     lang = flask.session['language']
     
     if lang not in ('fr', 'en'):
-        return flask.redirect("/")
+        return flask.redirect("/akingbee/")
 
     data = helpers.SQL(f"SELECT apiary.id, apiary.name, apiary.location, status_apiary.{lang}, honey_type.{lang}\
                          FROM apiary\
@@ -238,7 +245,7 @@ def apiary_create():
         lang = flask.session['language']
        
         if lang not in ('fr', 'en'):
-            return flask.redirect("/")
+            return flask.redirect("/akingbee/")
 
         honey_type = helpers.SQL(f"SELECT id, {lang} FROM honey_type WHERE user=?", (flask.session['userId'],))
         status_apiary = helpers.SQL(f"SELECT id, {lang} FROM status_apiary WHERE user=?", (flask.session['userId'],))
@@ -256,7 +263,7 @@ def apiary_create():
         flag = helpers.SQL("INSERT INTO apiary(name, location, birthday, status, honey_type, user) VALUES(?,?,?,?,?,?)",
                             (name, location, birthday, status, honey_type, flask.session['userId']))
         
-        return flask.redirect("/apiary/index")
+        return flask.redirect("/akingbee/apiary/index")
 
 
 @app.route("/apiary/create/new_honey_type", methods=['POST'])
@@ -297,7 +304,7 @@ def beehouse():
     lang = flask.session['language']
     
     if lang not in ('fr', 'en'):
-        return flask.redirect("/")
+        return flask.redirect("/akingbee/")
 
     bh_data = helpers.SQL(f"SELECT beehouse.id, beehouse.name, apiary.name, apiary.location, status_beehouse.{lang}, health.{lang}, owner.name\
                             FROM beehouse\

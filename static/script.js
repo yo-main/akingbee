@@ -107,7 +107,7 @@ function createSuccess(msg, title){
 
 
 function forgot_password(){
-    let myUrl = window.location.protocol + "//" + window.location.host + "/reset_password";
+    let myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/akingbee/reset_password";
     window.location = myUrl;
 }
 
@@ -138,7 +138,7 @@ function changeLanguage(){
     //update the language upon edit on the language select box
     let data = {language: $("#userLanguage").val()};
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/language";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/language";
     $.ajax({
         type: "POST",
         url: my_url,
@@ -206,7 +206,7 @@ function validateLogin(){
         password: $("#password").val()
     };
     
-    let my_url = window.location.protocol + "//" + window.location.host + "/login";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/login";
     
     $.ajax({
         type: "POST",
@@ -278,7 +278,7 @@ function createNewBeehouse(){
         health: $("#beehouse_health").val()
     };
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/create";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/create";
 
     $.ajax({
         type: "POST",
@@ -304,7 +304,7 @@ function new_honey_type(){
     };
 
     let language = $("html").attr("lang");
-    let my_url = window.location.protocol + "//" + window.location.host + "/apiary/create/new_honey_type";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/create/new_honey_type";
 
     if ((data.name_fr == "") && (data.name_en == "")){
         if (language == "fr"){
@@ -342,7 +342,7 @@ function new_apiary_status(){
 
     let language = $("html").attr("lang");
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/apiary/create/new_apiary_status";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/create/new_apiary_status";
 
     if ((data.name_fr == "") && (data.name_en == "")){
         if (language == "fr"){
@@ -376,7 +376,7 @@ function new_owner(){
     let data = {owner: $("#owner_name").val()};
     let language = $("html").attr("lang");
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/create/new_owner";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/create/new_owner";
 
     if (data.owner == ""){
         if (language == "fr"){
@@ -414,7 +414,7 @@ function new_health(){
     };
 
     let language = $('html').attr("lang");
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/create/new_health";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/create/new_health";
 
     if ((data.name_fr == "") && (data.name_en == "")){
         if (language == "fr"){
@@ -450,7 +450,7 @@ function new_status_beehouse(){
         name_en: $('#status_beehouse_name_en').val()
     };
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/create/new_beehouse_status";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/create/new_beehouse_status";
 
     if ((data.name_fr == "") && (data.name_en == "")){
         if (language == "fr"){
@@ -481,7 +481,7 @@ function new_status_beehouse(){
 
 
 function redirect_create_apiary(){
-    let my_url = window.location.protocol + "//" + window.location.host + "/apiary/create";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/create";
     let language = $("html").attr("lang");
     let check;
 
@@ -602,12 +602,12 @@ function modal_beehouse_edit(button){
 
     if (pName == "/beehouse/index"){
         ruche_id = button.name.substring(3);
-        my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/get_beehouse_info";
+        my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/get_beehouse_info";
     }
     else if (pName == "/beehouse"){
         let params = (new URL(document.location)).searchParams;
         ruche_id = params.get("bh");
-        my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/get_beehouse_info";
+        my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/get_beehouse_info";
     }
 
     $.ajax({
@@ -645,7 +645,7 @@ function submit_beehouse_modal(){
 
     let bh_id = $("#beehouse_id").attr("name");
     let to_change = new Object();
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/submit_beehouse_info";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/submit_beehouse_info";
     let language = $("html").attr("lang");
 
     to_change.bh_id = bh_id;
@@ -718,7 +718,7 @@ function submit_comment_modal(){
         bh_id: $("#comment_name").attr("name")
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/submit_comment_modal";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/submit_comment_modal";
     
     if ((data.comment == "") || (data.health == "")){
         if (language == "fr"){
@@ -782,7 +782,7 @@ function submit_action_modal(){
         action_type: $("#action_type").val()
     };
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/submit_action_modal";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/submit_action_modal";
 
     if ((data.action_type == "") || (data.date == "")){
         if (language == "fr"){
@@ -814,7 +814,7 @@ function submit_action_modal(){
 
 function select_beehouse(button){
     bh_id = button.name.substring(3);
-    myUrl = window.location.protocol + "//" + window.location.host + "/beehouse?bh=" + bh_id;
+    myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse?bh=" + bh_id;
     window.location = myUrl;
 }
 
@@ -822,7 +822,7 @@ function select_beehouse(button){
 function arrowAction(way){
     let params = (new URL(document.location)).searchParams;
     let bh_id = params.get("bh");
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/select";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/select";
 
     $.ajax({
         type: "POST",
@@ -854,7 +854,7 @@ function submit_solve_action_modal(){
         date: $("#action_date_done").val()
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/submit_solve_action_modal";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/submit_solve_action_modal";
     let language = $("html").attr("lang");
 
     $.ajax({
@@ -899,7 +899,7 @@ function submit_edit_comment_modal(){
         health: $("#comment_health_edit").find("option:selected").attr('title'),
         date: $("#comment_date_edit").val()
     }
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/submit_edit_comment_modal";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/submit_edit_comment_modal";
 
     $.ajax({
         type: "POST",
@@ -922,7 +922,7 @@ function submit_edit_comment_modal(){
 function del_comment(button){
     let language = $("html").attr("lang");
     let confirm;
-    let my_url = window.location.protocol + "//" + window.location.host + "/beehouse/index/delete_comment";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/beehouse/index/delete_comment";
 
     if (language == "fr"){
         confirm = window.confirm("Etes-vous sur de vouloir supprimer ce commentaire ?");
@@ -980,7 +980,7 @@ function submit_modal_data_edit(){
         data.en = "";
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/setup/update";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/setup/update";
 
     if ((data.fr == "") && (data.en == "")){
         if (language == "fr"){
@@ -1018,7 +1018,7 @@ function delete_data(button){
         source: window.location.pathname
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/setup/delete";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/setup/delete";
 
     if (language == "fr"){
         confirm = window.confirm("Etes-vous sur de vouloir supprimer cette entrée ?");
@@ -1065,7 +1065,7 @@ function submit_modal_data_submit(){
         data.en = "";
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/setup/submit";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/setup/submit";
 
     if ((data.fr == "") && (data.en == "")){
         if (language == "fr"){
@@ -1141,7 +1141,7 @@ function filter_table_apiary(){
 
 function modal_apiary_edit(button){
     let apiary_id = button.name.substring(5);
-    let my_url = window.location.protocol + "//" + window.location.host + "/apiary/index/get_apiary_info";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/index/get_apiary_info";
 
     $.ajax({
         type: "POST",
@@ -1178,7 +1178,7 @@ function submit_apiary_modal(){
 
     let ap_id = $("#apiary_id").attr("name");
     let to_change = new Object();
-    let my_url = window.location.protocol + "//" + window.location.host + "/apiary/index/submit_apiary_info";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/index/submit_apiary_info";
     let language = $("html").attr("lang");
 
     to_change.ap_id = ap_id;
@@ -1222,7 +1222,7 @@ function submit_apiary_modal(){
 function delete_apiary(button){
     let apiary_id = button.name.substring(5);
     let confirm;
-    let my_url = window.location.protocol + "//" + window.location.host + "/apiary/delete";
+    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/delete";
 
     if (language == "fr"){
         confirm = window.confirm("Supprimer ce rucher ?");
