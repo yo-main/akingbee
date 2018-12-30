@@ -1,4 +1,3 @@
-#!/var/www/akingbee.com/akb/env3.7
 # -*- coding: utf-8 -*-
 
 import flask
@@ -18,6 +17,8 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure session to use filesystem
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = 'var/www/html/akingbee/flask_session'
+
 app.secret_key = """iuhAqshdad123_&é"_JIHfduh3i123d!!:"""
 flask_session.Session(app)
 
