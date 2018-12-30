@@ -10,8 +10,6 @@ import os
 import datetime
 import config
 
-from helpers import akb_url
-
 #os.chdir("/var/www/akingbee.com/akb")
 
 app = flask.Flask(__name__)
