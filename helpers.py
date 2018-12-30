@@ -15,7 +15,7 @@ def login_required(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         if flask.session.get('userId') is None:
-            return flask.redirect("/login")
+            return flask.redirect("/akingbee/login")
         return f(*args, **kwargs)
     return decorated_function
 
