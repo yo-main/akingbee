@@ -4,7 +4,7 @@ import flask
 import sqlite3
 import datetime
 import sys
-import config
+import akingbee.config
 
 def login_required(f):
     """

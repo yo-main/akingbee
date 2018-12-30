@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import flask
-import helpers
+import akingbee.helpers
 import sqlite3
 import flask_session
 import tempfile
 import werkzeug.security
 import os
 import datetime
-import config
+import akingbee.config
 
 #os.chdir("/var/www/akingbee.com/akb")
 
