@@ -6,6 +6,12 @@ import datetime
 import sys
 import akingbee.config
 
+DATABASE = "/var/www/html/akingbee/database.db"
+
+def redirect(url):
+    return flask.redirect(f'/akingbee{url}')
+
+
 def login_required(f):
     """
     Decorate routes to require login.
@@ -15,13 +21,13 @@ def login_required(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         if flask.session.get('userId') is None:
-            return flask.redirect("/akingbee/login")
+            return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
 
 
 def tradDb(language, ind=None):
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     if language == 'fr':
@@ -46,7 +52,7 @@ def tradDb(language, ind=None):
 
 
 def SQL(request, values =None):
-    db = sqlite3.connect("database.db")
+    db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     
     try:
