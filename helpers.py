@@ -4,7 +4,7 @@ import flask
 import sqlite3
 import datetime
 import sys
-import akingbee.config
+import config
 
 DATABASE = "/var/www/html/akingbee/database.db"
 
