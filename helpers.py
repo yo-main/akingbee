@@ -6,7 +6,10 @@ import datetime
 import sys
 import akingbee.config
 
-DATABASE = '/var/www/html/akingbee/database.db'
+DATABASE = "/var/www/html/akingbee/database.db"
+
+def redirect(url):
+    return flask.redirect(f'/akingbee{url}')
 
 def login_required(f):
     """
@@ -17,7 +20,7 @@ def login_required(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         if flask.session.get('userId') is None:
-            return flask.redirect("/akingbee/login")
+            return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
 
