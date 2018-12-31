@@ -6,6 +6,8 @@ import datetime
 import sys
 import config
 
+DATABASE = '/var/www/html/akingbee/database.db'
+
 def login_required(f):
     """
     Decorate routes to require login.
@@ -21,7 +23,7 @@ def login_required(f):
 
 
 def tradDb(language, ind=None):
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     if language == 'fr':
@@ -46,7 +48,7 @@ def tradDb(language, ind=None):
 
 
 def SQL(request, values =None):
-    db = sqlite3.connect("database.db")
+    db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     
     try:
