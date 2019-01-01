@@ -11,7 +11,6 @@ import datetime
 import config
 
 from helpers import redirect
-#os.chdir("/var/www/akingbee.com/akb")
 
 app = flask.Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True

@@ -15,6 +15,7 @@ const toastrOptions = {
     "hideMethod": "fadeOut"
 }
 
+var root_path = "/akingbee"
 
 $(document).ready(function() {
     let sidebar_menu = document.getElementById("sidebar-menu")
@@ -191,7 +192,7 @@ function validateRegisterForm(){
             showMsg(answer);
 
             if (result == "success"){
-                location = "/";
+                location = root_path + "/";
             }
         }
     });
@@ -217,7 +218,7 @@ function validateLogin(){
             showMsg(answer);
 
             if (result == "success"){
-                location = "/";
+                location = root_path + "/";
             }
         }
     });
@@ -259,7 +260,7 @@ function validateResetForm(){
             showMsg(answer);
 
             if (result == "success"){
-                location = "/";
+                location = root_path + "/";
             }
         }
     });
@@ -290,7 +291,7 @@ function createNewBeehouse(){
             showMsg(answer);
 
             if (result == "success"){
-                window.location = "/beehouse/index";
+                window.location = root_path + "/beehouse/index";
             }                    
         }
     });
