@@ -108,7 +108,7 @@ function createSuccess(msg, title){
 
 
 function forgot_password(){
-    let myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/akingbee/reset_password";
+    let myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/reset_password";
     window.location = myUrl;
 }
 
