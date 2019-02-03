@@ -30,7 +30,7 @@ config.init()
 @helpers.login_required
 def home():
     lang = flask.session['language']
-    return flask.render_template("index_akb.html", lang=lang, data=helpers.tradDb(flask.session['language']))
+    return flask.render_template("akingbee/index_akb.html", lang=lang, data=helpers.tradDb(flask.session['language']))
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -47,7 +47,7 @@ def login():
     lang = flask.session['language']
 
     if flask.request.method == 'GET':
-        return flask.render_template("login.html", lang=lang, data=helpers.tradDb(lang))
+        return flask.render_template("akingbee/login.html", lang=lang, data=helpers.tradDb(lang))
     
     elif flask.request.method == 'POST':
         username = flask.request.form.get('username')
@@ -101,7 +101,7 @@ def updateLanguage():
 @app.route("/register", methods=['GET'])
 def register():
     lang = flask.session['language']
-    return flask.render_template("register.html", lang=lang, data=helpers.tradDb(lang))
+    return flask.render_template("akingbee/register.html", lang=lang, data=helpers.tradDb(lang))
 
 
 @app.route("/registercheck", methods=['POST'])
@@ -193,7 +193,7 @@ def reset_pwd():
 
     elif flask.request.method == 'GET':
         lang = flask.session['language']
-        return flask.render_template("reset_pwd.html", lang=lang, data=helpers.tradDb(lang))
+        return flask.render_template("akingbee/reset_pwd.html", lang=lang, data=helpers.tradDb(lang))
 
     elif flask.request.method == 'POST':
         pwd = flask.request.form.get('pwd')
@@ -230,7 +230,7 @@ def apiary():
     honeyList = helpers.SQL(f"SELECT id, {lang} FROM honey_type WHERE user=?", (flask.session['userId'],))
     locationList = helpers.SQL("SELECT DISTINCT id, location FROM apiary WHERE user=?", (flask.session['userId'],))
 
-    return flask.render_template("apiary/index.html", lang=lang, data=helpers.tradDb(lang), apia=data, al=locationList, ap=statusList, ah=honeyList)
+    return flask.render_template("akingbee/apiary/index.html", lang=lang, data=helpers.tradDb(lang), apia=data, al=locationList, ap=statusList, ah=honeyList)
 
 
 @app.route("/apiary/create", methods=['GET', 'POST'])
@@ -245,7 +245,7 @@ def apiary_create():
         honey_type = helpers.SQL(f"SELECT id, {lang} FROM honey_type WHERE user=?", (flask.session['userId'],))
         status_apiary = helpers.SQL(f"SELECT id, {lang} FROM status_apiary WHERE user=?", (flask.session['userId'],))
 
-        return flask.render_template("apiary/create.html", lang=lang, data=helpers.tradDb(lang), honey_type=honey_type, status_apiary=status_apiary)
+        return flask.render_template("akingbee/apiary/create.html", lang=lang, data=helpers.tradDb(lang), honey_type=honey_type, status_apiary=status_apiary)
 
     elif flask.request.method == 'POST':
 
@@ -325,7 +325,7 @@ def beehouse():
     owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?",
                                  (flask.session['userId'],))
 
-    return flask.render_template("beehouse/index.html", lang=lang, data=helpers.tradDb(lang),
+    return flask.render_template("akingbee/beehouse/index.html", lang=lang, data=helpers.tradDb(lang),
                                  bh=bh_data, af=apiary_filter, hf=health_filter, of=owner_filter, sf=status_beehouse, ab=actions_beehouse)
 
 
@@ -344,7 +344,7 @@ def beehouse_create():
         health = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?", (flask.session['userId'],))
         status_beehouse = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['userId'],))
         
-        return flask.render_template("beehouse/create.html", lang=lang, data=helpers.tradDb(lang), owners=owners, 
+        return flask.render_template("akingbee/beehouse/create.html", lang=lang, data=helpers.tradDb(lang), owners=owners, 
                                      apiaries=apiaries, health=health, status_beehouse=status_beehouse)
 
     elif flask.request.method == 'POST':
@@ -543,7 +543,7 @@ def beehouse_profil():
     apiary_filter = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['userId'],))
     owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['userId'],))
 
-    return flask.render_template("beehouse/beehouse_details.html", lang=lang, data=helpers.tradDb(lang), bh=bh_data, cm=cm_data, ac=ac_data, 
+    return flask.render_template("akingbee/beehouse/beehouse_details.html", lang=lang, data=helpers.tradDb(lang), bh=bh_data, cm=cm_data, ac=ac_data, 
                                   tf=type_filter, af=apiary_filter, hf=health_filter, of=owner_filter, sf=bh_status_filter, ab=actions_beehouse)
 
 
@@ -635,7 +635,7 @@ def del_comment():
 def setupPage():
     if flask.request.method == 'GET':
         lang = flask.session['language']
-        return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), t=0, col="")
+        return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), t=0, col="")
 
 
 @app.route("/setup/update", methods = ['POST'])
@@ -733,7 +733,7 @@ def setupStatusBh():
             title = "Beehouse status"
             desc = "The different status that can be given to a beehouse"
             
-        return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+        return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
 
 
 @app.route("/setup/beehouse/owner", methods=['GET'])
@@ -754,7 +754,7 @@ def setupOwner():
         title = "Beekeper"
         desc = "The beekeper of a beehouse (in case you manage beehouse on behalf of other people ?)"
 
-    return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=col, m=menu, t=title, i=id_title, d=desc)
+    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=col, m=menu, t=title, i=id_title, d=desc)
 
 
 @app.route("/setup/beehouse/health", methods=['GET'])
@@ -773,7 +773,7 @@ def setupHealth():
         title = "Health status"
         desc = "Different health status that you wish to affect to a beehouse"
 
-    return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
 
 
 @app.route("/setup/beehouse/honey", methods=['GET'])
@@ -792,7 +792,7 @@ def setupHoneyKind():
         title = "Honey type"
         desc = "The different kind of honey that you are harvesting"
 
-    return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
 
 
 @app.route("/setup/beehouse/actions", methods=['GET'])
@@ -811,7 +811,7 @@ def setupBh_actions():
         title = "Beehouse actions"
         desc = "The différent actions that you may have to do on a beehouse"
 
-    return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
 
 
 @app.route("/setup/apiary/status", methods=['GET'])
@@ -830,7 +830,7 @@ def setupStatusAp():
         title = "Apiary status"
         desc = "The different status that you may have to give to an apiary"
 
-    return flask.render_template("setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
 
 
 @app.route("/apiary/index/get_apiary_info", methods=['POST'])
