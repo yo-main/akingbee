@@ -1,0 +1,7 @@
+flask_session/
+__pycache__
+.vscode/
+var/
+database.db
+.ropeproject
+environment.py

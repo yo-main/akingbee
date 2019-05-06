@@ -1,15 +1,28 @@
-
-import functools
-import flask
+import sys
 import sqlite3
 import datetime
-import sys
-import config
+import functools
 
-DATABASE = "/var/www/html/akingbee/database.db"
+import flask
+
+from app import app
+from src.constants import config
+from src.constants import trad_codes as trads
+from src.constants import alert_codes as alerts
+from src.services.error import Error
+
 
 def redirect(url):
-    return flask.redirect(f'/akingbee{url}')
+    url = config.URL_ROOT + url
+    return flask.redirect(url)
+
+
+def route(url, **kwargs):
+    def my_function(func):
+        return app.route(url, **kwargs)(func)
+    url = config.URL_ROOT + url
+    return my_function
+
 
 def login_required(f):
     """
@@ -25,35 +38,23 @@ def login_required(f):
     return decorated_function
 
 
-def tradDb(language, ind=None):
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
+def traductions(index=None):
+    language = flask.session['language']
 
-    if language == 'fr':
-        if ind == None:
-            cursor.execute("SELECT id, fr FROM trad")
-        else:
-            cursor.execute("SELECT id, fr FROM trad WHERE id=?", ind)
-    elif language == 'en':
-        if ind == None:
-            cursor.execute("SELECT id, en FROM trad")
-        else:
-            cursor.execute("SELECT id, en FROM trad WHERE id=?", ind)
-    
-    data = cursor.fetchall()
+    if index is None:
+        out = {key: item[language] for key, item in trads.traductions.items()}
+    elif index in trads.traductions:
+        out = {index: trads.traductions[index][language]}
+    else:
+        raise Error(alerts.TRANSLATION_ID_DOES_NOT_EXISTS)
 
-    toReturn = {}
-    for arg in data:
-        toReturn[arg[0]] = arg[1]
-
-    conn.close()
-    return toReturn
+    return out
 
 
 def SQL(request, values =None):
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    
+
     try:
         if values:
             data = cursor.execute(request, values)
@@ -75,7 +76,7 @@ def SQL(request, values =None):
 
 def convertToDate(arg):
     language = flask.session['language']
-    
+
     if arg == "":
         return ""
 

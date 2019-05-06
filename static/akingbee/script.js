@@ -21,7 +21,7 @@ $(document).ready(function() {
     let sidebar_menu = document.getElementById("sidebar-menu")
     let pathname = window.location.pathname;
 	
-	// Highlight as blue the current menu where a user is in
+    // Highlight as blue the current menu where a user is in
     if (pathname != "/setup"){
         if (sidebar_menu){
             let btns = sidebar_menu.getElementsByClassName("nav-link sub"); // we get an array of our menu
@@ -30,7 +30,7 @@ $(document).ready(function() {
         }
     }
    
-	// we filter the table displaying the different beehouses
+    // Filter some tables if needed
     if (pathname == "/beehouse/index"){
         filter_table_beehouse();
     }
@@ -40,7 +40,6 @@ $(document).ready(function() {
 
     // LANGUAGE 
     language = $("html").attr("lang");
-
     if (language == "fr"){
         document.getElementById("userLanguage").selectedIndex = 0;
     }
@@ -48,15 +47,15 @@ $(document).ready(function() {
         document.getElementById("userLanguage").selectedIndex = 1;
     }
 
-	// Display the success pop up if needed
-	let msg = window.sessionStorage.getItem("msgSuccessBody");
-	let title = window.sessionStorage.getItem("msgSuccessTitle");
+    // Display the success pop up if needed
+    let msg = window.sessionStorage.getItem("msgSuccessBody");
+    let title = window.sessionStorage.getItem("msgSuccessTitle");
 
-	if (msg){
-		createSuccess(msg, title);
-		window.sessionStorage.removeItem("msgSuccessBody");
-		window.sessionStorage.removeItem("msgSuccessTitle");
-	}
+    if (msg){
+            createSuccess(msg, title);
+            window.sessionStorage.removeItem("msgSuccessBody");
+            window.sessionStorage.removeItem("msgSuccessTitle");
+    }
 
     // DATE PICKER MODULE
     if (language == "fr"){
