@@ -124,7 +124,7 @@ class Factory:
         """ will convert to isoformat or convert to datetime from isoformat"""
         if isinstance(date, datetime.date):
             return date.isoformat(timespec='seconds')
-        return datetime.datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
+        return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
 
 
     def update(self, table, values):
