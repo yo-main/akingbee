@@ -15,11 +15,12 @@ from app import app
 from src.constants import config
 from src.constants import alert_codes as alerts
 from src.data_access import objects
-from src.services.error import Error, Success
+from src.services.alerts import Error, Success
 from src.helpers.helpers import traductions
 from src.helpers.helpers import redirect
 from src.helpers.helpers import login_required
 from src.helpers.helpers import route
+from src.helpers.helpers import convertToDate
 
 
 from src.data_access.factory import Factory
@@ -42,7 +43,7 @@ def get_user_from_username(username):
     result = factory.get_from_filters(objects.User, {'username': username})
     if not result or len(result) > 1:
         raise Error(alerts.USER_NOT_FOUND_ERROR)
-    return result[0][0]
+    return result[0]
 
 
 def get_all(class_, recursive=False):
@@ -72,7 +73,7 @@ def login():
 
     user = get_user_from_username(username)
 
-    if not (password and check_password_hash(user.hash, password)):
+    if not (password and check_password_hash(user.pwd, password)):
         raise Error(alerts.INCORRECT_PASSWORD_ERROR)
 
     # All good ! We can log in the user
@@ -96,6 +97,8 @@ def logout():
 def updateLanguage():
     """Change the user language"""
     newLanguage = flask.request.form.get('language')
+    if newLanguage not in config.LANGUAGES:
+        newLanguage = config.ENGLISH
     flask.session['language'] = newLanguage
     return Success()
 
@@ -107,6 +110,10 @@ def register():
 
 @route("/registercheck", methods=['POST'])
 def registerCheck():
+    """
+    Will check that we can correctly register a new user
+    """
+
     data = {
         'username': flask.request.form.get('username'),
         'email': flask.request.form.get('email'),
@@ -118,13 +125,14 @@ def registerCheck():
     if factory.count(objects.User, {'email': data['email']}):
         raise Error(alerts.EMAIL_ALREADY_EXISTS_ERROR)
 
+    facto = Factory(autocommit=False)
+
     # Creation of the user
     user = objects.User(data)
-
     user.pwd = generate_password_hash(data['pwd'],
                                       method='pbkdf2:sha256',
                                       salt_length=8)
-    user.save()
+    user.save(facto)
 
     # Creation of all the different data linked to the user
     default_objects = (
@@ -133,13 +141,15 @@ def registerCheck():
         (objects.StatusApiary, config.DEFAULT_STATUS_APIARY),
         (objects.BeehouseAction, config.DEFAULT_ACTION_BEEHOUSE),
         (objects.HoneyType, config.DEFAULT_HONEY_KIND),
-        (objects.Owner, tuple({'name': user.username}))
+        (objects.Owner, ({'name': user.username},))
     )
 
     for class_, datas in default_objects:
-        for data in datas:
-            data['user'] = user.id
-            class_(data).save()
+        for d in datas:
+            d['user'] = user.id
+            class_(d).save(facto)
+
+    facto.commit()
 
     return Success(alerts.REGISTER_SUCCESS)
 
@@ -161,6 +171,7 @@ def reset_pwd():
 
         user = get_user_from_username(username)
         user.pwd = hashed_pwd
+
         user.save()
 
         return Success(alerts.PASSWORD_RESET_SUCCESS)
@@ -185,26 +196,25 @@ def apiary():
 @login_required
 def apiary_create():
     if flask.request.method == 'GET':
-        lang = flask.session['language']
+        honey_type = factory.get_all(objects.HoneyType)
+        status_apiary = factory.get_all(objects.StatusApiary)
 
-        if lang not in ('fr', 'en'):
-            return redirect("/")
-
-        honey_type = helpers.SQL(f"SELECT id, {lang} FROM honey_type WHERE user=?", (flask.session['userId'],))
-        status_apiary = helpers.SQL(f"SELECT id, {lang} FROM status_apiary WHERE user=?", (flask.session['userId'],))
-
-        return flask.render_template("akingbee/apiary/create.html", lang=lang, data=helpers.tradDb(lang), honey_type=honey_type, status_apiary=status_apiary)
+        return render("akingbee/apiary/create.html",
+                      honey_type=honey_type,
+                      status_apiary=status_apiary)
 
     elif flask.request.method == 'POST':
+        with flask.request.form as form:
+            data = {
+                'name': form.get('apiary_name'),
+                'location': form.get('apiary_location'),
+                'honey_type': form.get('apiary_honey_type'),
+                'status': form.get('apiary_status'),
+                'birthday': convertToDate(form.get('apiary_birthday')),
+            }
 
-        name = flask.request.form.get('apiary_name')
-        location = flask.request.form.get('apiary_location')
-        honey_type = flask.request.form.get('apiary_honey_type')
-        status = flask.request.form.get('apiary_status')
-        birthday = helpers.convertToDate(flask.request.form.get('apiary_birthday'))
-
-        flag = helpers.SQL("INSERT INTO apiary(name, location, birthday, status, honey_type, user) VALUES(?,?,?,?,?,?)",
-                            (name, location, birthday, status, honey_type, flask.session['userId']))
+        apiary = objects.Apiary(data)
+        apiary.save()
 
         return redirect("/apiary/index")
 
@@ -217,7 +227,7 @@ def apiary_create_honey():
     name_en = flask.request.form.get('name_en')
 
     flag = helpers.SQL("INSERT INTO honey_type(fr, en, user) VALUES(?,?,?)",
-                       (name_fr, name_en, flask.session['userId']))
+                       (name_fr, name_en, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -233,7 +243,7 @@ def apiary_status_create():
     name_en = flask.request.form.get('name_en')
 
     flag = helpers.SQL("INSERT INTO status_apiary(fr, en, user) VALUES(?,?,?)",
-                       (name_fr, name_en, flask.session['userId']))
+                       (name_fr, name_en, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -256,22 +266,22 @@ def beehouse():
                             JOIN apiary ON beehouse.apiary = apiary.id\
                             JOIN status_beehouse ON beehouse.status = status_beehouse.id\
                             WHERE beehouse.user=?",
-                            (flask.session['userId'],))
+                            (flask.session['user_id'],))
 
     health_filter = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?",
-                                 (flask.session['userId'],))
+                                 (flask.session['user_id'],))
 
     status_beehouse = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?",
-                             (flask.session['userId'],))
+                             (flask.session['user_id'],))
 
     actions_beehouse = helpers.SQL(f"SELECT id, {lang} FROM beehouse_actions WHERE user=?",
-                             (flask.session['userId'],))
+                             (flask.session['user_id'],))
 
     apiary_filter = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?",
-                             (flask.session['userId'],))
+                             (flask.session['user_id'],))
 
     owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?",
-                                 (flask.session['userId'],))
+                                 (flask.session['user_id'],))
 
     return flask.render_template("akingbee/beehouse/index.html", lang=lang, data=helpers.tradDb(lang),
                                  bh=bh_data, af=apiary_filter, hf=health_filter, of=owner_filter, sf=status_beehouse, ab=actions_beehouse)
@@ -283,14 +293,14 @@ def beehouse_create():
     if flask.request.method == 'GET':
 
         lang = flask.session['language']
-        owners = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['userId'],))
-        apiaries = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['userId'],))
+        owners = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['user_id'],))
+        apiaries = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['user_id'],))
 
         if lang not in ('fr', 'en'):
             return redirect("/")
 
-        health = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?", (flask.session['userId'],))
-        status_beehouse = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['userId'],))
+        health = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?", (flask.session['user_id'],))
+        status_beehouse = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['user_id'],))
 
         return flask.render_template("akingbee/beehouse/create.html", lang=lang, data=helpers.tradDb(lang), owners=owners,
                                      apiaries=apiaries, health=health, status_beehouse=status_beehouse)
@@ -304,7 +314,7 @@ def beehouse_create():
         health = flask.request.form.get('health')
 
         flag = helpers.SQL("INSERT INTO beehouse(name, birthday, apiary, status, health, owner, user) VALUES(?,?,?,?,?,?,?)",
-                           (name, birthday, apiary, status, health, owner, flask.session['userId']))
+                           (name, birthday, apiary, status, health, owner, flask.session['user_id']))
 
         if flag == False:
             raise Error(SQL_PROCESSING_ERROR)
@@ -319,7 +329,7 @@ def beehouse_create_owner():
     owner = flask.request.form.get('owner')
 
     flag = helpers.SQL("INSERT INTO owner(name, user) VALUES(?,?)",
-                       (owner, flask.session['userId']))
+                       (owner, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -335,7 +345,7 @@ def beehouse_create_health():
     name_en = flask.request.form.get('name_en')
 
     flag = helpers.SQL("INSERT INTO health(fr, en, user) VALUES(?,?,?)",
-                       (name_fr, name_en, flask.session['userId']))
+                       (name_fr, name_en, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -351,7 +361,7 @@ def beehouse_create_status():
     name_en = flask.request.form.get('name_en')
 
     flag = helpers.SQL("INSERT INTO status_beehouse(fr, en, user) VALUES(?,?,?)",
-                (name_fr, name_en, flask.session['userId']))
+                (name_fr, name_en, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -367,7 +377,7 @@ def beehouse_details():
     data = helpers.SQL("SELECT name, apiary, status, health, owner\
                         FROM beehouse\
                         WHERE id=? AND user=?",
-                        (bh_id, flask.session['userId']))
+                        (bh_id, flask.session['user_id']))
 
     return flask.jsonify(data)
 
@@ -380,7 +390,7 @@ def submit_beehouse_details():
     beehouse = flask.request.form.get('beehouse')
     owner = flask.request.form.get('owner')
     status = flask.request.form.get('status')
-    user_id = flask.session['userId']
+    user_id = flask.session['user_id']
 
     flags = []
 
@@ -411,13 +421,13 @@ def submit_comment_modal():
     health = flask.request.form.get('health')
     cType = '1'
 
-    apiaryId = helpers.SQL("SELECT apiary FROM beehouse WHERE id=? AND user=?", (bh_id, flask.session['userId']))
+    apiaryId = helpers.SQL("SELECT apiary FROM beehouse WHERE id=? AND user=?", (bh_id, flask.session['user_id']))
 
     if apiaryId is False:
         raise Error(SQL_PROCESSING_ERROR)
 
     flag = helpers.SQL("INSERT INTO comments(date, comment, beehouse, apiary, health, type, user) VALUES(?,?,?,?,?,?,?)",
-                (date, comment, bh_id, apiaryId[0][0], health, cType, flask.session['userId']))
+                (date, comment, bh_id, apiaryId[0][0], health, cType, flask.session['user_id']))
 
     if flag is False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -438,7 +448,7 @@ def submit_action_modal():
     action_status = 1 # 1 is pending
 
     flag = helpers.SQL("INSERT INTO actions(beehouse, date, deadline, type, comment, status, user) VALUES(?,?,?,?,?,?,?)",
-                       (bh_id, date, deadline, action_type, comment, action_status, flask.session['userId']))
+                       (bh_id, date, deadline, action_type, comment, action_status, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -462,7 +472,7 @@ def beehouse_profil():
                           JOIN apiary ON beehouse.apiary = apiary.id\
                           JOIN status_beehouse ON beehouse.status = status_beehouse.id\
                           WHERE beehouse.user=? AND beehouse.id=?",
-                          (flask.session['userId'], bh_id))
+                          (flask.session['user_id'], bh_id))
 
     cm_data = helpers.SQL(f"SELECT comments.id, strftime('%d/%m/%Y', comments.date), comments_type.{lang}, comments.comment, beehouse.name, apiary.name, apiary.location, coalesce(health.{lang}, '')\
                           FROM comments\
@@ -472,24 +482,24 @@ def beehouse_profil():
                           JOIN comments_type ON comments.type = comments_type.id\
                           WHERE comments.user=? AND comments.beehouse=?\
                           ORDER BY comments.date DESC",
-                          (flask.session['userId'], bh_id))
+                          (flask.session['user_id'], bh_id))
 
     ac_data = helpers.SQL(f"SELECT actions.id, strftime('%d/%m/%Y', actions.date), strftime('%d/%m/%Y', actions.deadline), actions.comment, beehouse_actions.{lang}\
                           FROM actions\
                           JOIN beehouse_actions ON actions.type = beehouse_actions.id\
                           WHERE actions.user=? AND actions.beehouse=? AND actions.status=?\
                           ORDER BY actions.date ASC",
-                          (flask.session['userId'], bh_id, 1))
+                          (flask.session['user_id'], bh_id, 1))
 
     health_filter = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?",
-                                (flask.session['userId'],))
+                                (flask.session['user_id'],))
 
     type_filter = helpers.SQL(f"SELECT id, {lang} FROM comments_type")
-    bh_status_filter = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['userId'],))
-    actions_beehouse = helpers.SQL(f"SELECT id, {lang} FROM beehouse_actions WHERE user=?", (flask.session['userId'],))
+    bh_status_filter = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['user_id'],))
+    actions_beehouse = helpers.SQL(f"SELECT id, {lang} FROM beehouse_actions WHERE user=?", (flask.session['user_id'],))
 
-    apiary_filter = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['userId'],))
-    owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['userId'],))
+    apiary_filter = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['user_id'],))
+    owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['user_id'],))
 
     return flask.render_template("akingbee/beehouse/beehouse_details.html", lang=lang, data=helpers.tradDb(lang), bh=bh_data, cm=cm_data, ac=ac_data,
                                   tf=type_filter, af=apiary_filter, hf=health_filter, of=owner_filter, sf=bh_status_filter, ab=actions_beehouse)
@@ -501,7 +511,7 @@ def select_beehouse():
     bh_id = int(flask.request.form.get('bh_id'))
     way = int(flask.request.form.get('way'))
 
-    data = helpers.SQL("SELECT id FROM beehouse WHERE user=?", (flask.session['userId'],))
+    data = helpers.SQL("SELECT id FROM beehouse WHERE user=?", (flask.session['user_id'],))
     bhs = [n[0] for n in data]
     index = bhs.index(bh_id)
     newId = 0
@@ -532,12 +542,12 @@ def solve_action():
     bh_id, ap_id = bh_data[0]
 
     flag = helpers.SQL("INSERT INTO comments(date, comment, beehouse, apiary, action, type, user) VALUES(?,?,?,?,?,?,?)",
-                       (action_date, comment, bh_id, ap_id, action_id, 3, flask.session['userId']))
+                       (action_date, comment, bh_id, ap_id, action_id, 3, flask.session['user_id']))
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
 
     flag = helpers.SQL("UPDATE actions SET date_done=?, status=? WHERE id=? AND user=?",
-                       (action_date, 2, action_id, flask.session['userId']))
+                       (action_date, 2, action_id, flask.session['user_id']))
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
 
@@ -553,11 +563,11 @@ def edit_comment():
     date = helpers.convertToDate(flask.request.form.get('date'))
 
     flag = helpers.SQL("UPDATE comments SET comment=?, health=?, date=? WHERE id=? AND user=?",
-                       (comment, health, date, cm_id, flask.session['userId']))
+                       (comment, health, date, cm_id, flask.session['user_id']))
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
 
-    bh_id = helpers.SQL("SELECT beehouse FROM comments WHERE id=? AND user=?", (cm_id, flask.session['userId']))
+    bh_id = helpers.SQL("SELECT beehouse FROM comments WHERE id=? AND user=?", (cm_id, flask.session['user_id']))
     helpers.updateHealth(bh_id[0][0])
 
     return Success(MODIFICATION_SUCCESS)
@@ -572,7 +582,7 @@ def del_comment():
     if type_com == 3:
         helpers.SQL("UPDATE actions SET status=?, date_done=? WHERE id=?", (1, None, ac_id))
 
-    helpers.SQL("DELETE FROM comments WHERE id=? AND user=?", (cm_id, flask.session['userId']))
+    helpers.SQL("DELETE FROM comments WHERE id=? AND user=?", (cm_id, flask.session['user_id']))
     helpers.updateHealth(bh_id)
 
     return Success(DELETION_SUCCESS)
@@ -595,17 +605,17 @@ def submit_data():
     source = flask.request.form.get('source')
 
     if source == "/setup/beehouse/status":
-        flag = helpers.SQL("UPDATE status_beehouse SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['userId']))
+        flag = helpers.SQL("UPDATE status_beehouse SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/owner":
-        flag = helpers.SQL("UPDATE owner SET name=? WHERE id=? AND user=?", (fr, dataId, flask.session['userId']))
+        flag = helpers.SQL("UPDATE owner SET name=? WHERE id=? AND user=?", (fr, dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/health":
-        flag = helpers.SQL("UPDATE health SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['userId']))
+        flag = helpers.SQL("UPDATE health SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/honey":
-        flag = helpers.SQL("UPDATE honey_type SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['userId']))
+        flag = helpers.SQL("UPDATE honey_type SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/actions":
-        flag = helpers.SQL("UPDATE beehouse_actions SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['userId']))
+        flag = helpers.SQL("UPDATE beehouse_actions SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
     elif source == "/setup/apiary/status":
-        flag = helpers.SQL("UPDATE status_apiary SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['userId']))
+        flag = helpers.SQL("UPDATE status_apiary SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -620,17 +630,17 @@ def delete_data():
     source = flask.request.form.get('source')
 
     if source == "/setup/beehouse/status":
-        flag = helpers.SQL("DELETE FROM status_beehouse WHERE id=? AND user=?", (dataId, flask.session['userId']))
+        flag = helpers.SQL("DELETE FROM status_beehouse WHERE id=? AND user=?", (dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/owner":
-        flag = helpers.SQL("DELETE FROM owner WHERE id=? AND user=?", (dataId, flask.session['userId']))
+        flag = helpers.SQL("DELETE FROM owner WHERE id=? AND user=?", (dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/health":
-        flag = helpers.SQL("DELETE FROM health WHERE id=? AND user=?", (dataId, flask.session['userId']))
+        flag = helpers.SQL("DELETE FROM health WHERE id=? AND user=?", (dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/honey":
-        flag = helpers.SQL("DELETE FROM honey_type WHERE id=? AND user=?", (dataId, flask.session['userId']))
+        flag = helpers.SQL("DELETE FROM honey_type WHERE id=? AND user=?", (dataId, flask.session['user_id']))
     elif source == "/setup/beehouse/actions":
-        flag = helpers.SQL("DELETE FROM beehouse_actions WHERE id=? AND user=?", (dataId, flask.session['userId']))
+        flag = helpers.SQL("DELETE FROM beehouse_actions WHERE id=? AND user=?", (dataId, flask.session['user_id']))
     elif source == "/setup/apiary/status":
-        flag = helpers.SQL("DELETE FROM status_apiary WHERE id=? AND user=?", (dataId, flask.session['userId']))
+        flag = helpers.SQL("DELETE FROM status_apiary WHERE id=? AND user=?", (dataId, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -646,17 +656,17 @@ def submit_new_data():
     source = flask.request.form.get('source')
 
     if source == "/setup/beehouse/status":
-        flag = helpers.SQL("INSERT INTO status_beehouse(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['userId']))
+        flag = helpers.SQL("INSERT INTO status_beehouse(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
     elif source == "/setup/beehouse/owner":
-        flag = helpers.SQL("INSERT INTO owner(name, user) VALUES(?,?)", (fr, flask.session['userId']))
+        flag = helpers.SQL("INSERT INTO owner(name, user) VALUES(?,?)", (fr, flask.session['user_id']))
     elif source == "/setup/beehouse/health":
-        flag = helpers.SQL("INSERT INTO health(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['userId']))
+        flag = helpers.SQL("INSERT INTO health(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
     elif source == "/setup/beehouse/honey":
-        flag = helpers.SQL("INSERT INTO honey_type(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['userId']))
+        flag = helpers.SQL("INSERT INTO honey_type(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
     elif source == "/setup/beehouse/actions":
-        flag = helpers.SQL("INSERT INTO beehouse_actions(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['userId']))
+        flag = helpers.SQL("INSERT INTO beehouse_actions(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
     elif source == "/setup/apiary/status":
-        flag = helpers.SQL("INSERT INTO status_apiary(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['userId']))
+        flag = helpers.SQL("INSERT INTO status_apiary(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
 
     if flag == False:
         raise Error(SQL_PROCESSING_ERROR)
@@ -672,7 +682,7 @@ def setupStatusBh():
         menu = 0
         id_title = 'status_beehouse'
 
-        tData = helpers.SQL("SELECT id, fr, en FROM status_beehouse WHERE user=?", (flask.session['userId'],))
+        tData = helpers.SQL("SELECT id, fr, en FROM status_beehouse WHERE user=?", (flask.session['user_id'],))
 
         if lang == 'fr':
             title = "Status des ruches"
@@ -691,7 +701,8 @@ def setupOwner():
     menu = 1
     id_title = 'owner'
 
-    tData = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['userId'],))
+    tData = helpers.SQL("SELECT id, name FROM owner WHERE user=?",
+                        (flask.session['user_ibeehouse_create_healthd'],))
 
     if lang == 'fr':
         col = ("Nom",)
@@ -712,7 +723,8 @@ def setupHealth():
     menu = 2
     id_title = 'health'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM health WHERE user=?", (flask.session['userId'],))
+    tData = helpers.SQL("SELECT id, fr, en FROM health WHERE user=?",
+                        (flask.session['user_id'],))
 
     if lang == 'fr':
         title = "Status de santé"
@@ -731,7 +743,8 @@ def setupHoneyKind():
     menu = 3
     id_title = 'honey_type'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM honey_type WHERE user=?", (flask.session['userId'],))
+    tData = helpers.SQL("SELECT id, fr, en FROM honey_type WHERE user=?",
+                        (flask.session['user_id'],))
 
     if lang == 'fr':
         title = "Type de miel"
@@ -750,7 +763,8 @@ def setupBh_actions():
     menu = 4
     id_title = 'beehouse_actions'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM beehouse_actions WHERE user=?", (flask.session['userId'],))
+    tData = helpers.SQL("SELECT id, fr, en FROM beehouse_actions WHERE user=?",
+                        (flask.session['user_id'],))
 
     if lang == 'fr':
         title = "Actions relatives aux ruches"
@@ -769,7 +783,8 @@ def setupStatusAp():
     menu = 5
     id_title = 'status_apiary'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM status_apiary WHERE user=?", (flask.session['userId'],))
+    tData = helpers.SQL("SELECT id, fr, en FROM status_apiary WHERE user=?",
+                        (flask.session['user_id'],))
 
     if lang == 'fr':
         title = "Status des ruchers"
@@ -789,7 +804,7 @@ def apiary_details():
     data = helpers.SQL("SELECT name, location, status, honey_type\
                         FROM apiary\
                         WHERE id=? AND user=?",
-                        (ap_id, flask.session['userId']))
+                        (ap_id, flask.session['user_id']))
 
     return flask.jsonify(data)
 
@@ -804,7 +819,7 @@ def submit_apiary_details():
     status = flask.request.form.get('status')
     honey = flask.request.form.get('honey')
 
-    user_id = flask.session['userId']
+    user_id = flask.session['user_id']
 
     flags = []
 
@@ -830,7 +845,8 @@ def submit_apiary_details():
 @login_required
 def del_apiary():
     ap_id = flask.request.form.get('ap_id')
-    check = helpers.SQL("DELETE FROM apiary WHERE id=? AND user=?", (ap_id, flask.session['userId']))
+    check = helpers.SQL("DELETE FROM apiary WHERE id=? AND user=?", (ap_id,
+                                                                     flask.session['user_id']))
 
     if check == False:
         raise Error(SQL_PROCESSING_ERROR)

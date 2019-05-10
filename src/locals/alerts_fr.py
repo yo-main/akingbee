@@ -12,6 +12,9 @@ errors = {
     INCORRECT_PASSWORD_ERROR: "Le mot de passe fournit est incorrect",
     USER_ALREADY_EXISTS_ERROR: "Cet utilisateur existe déjà",
     EMAIL_ALREADY_EXISTS_ERROR:" Cet email est déjà utilisé",
+    TRANSLATION_ID_DOES_NOT_EXISTS: "Une traduction n'existe pas",
+    USERS_MIXED_UP_ERROR: "Une erreur interne (qui ne devrait pas se produire) " /
+                      "s'est produit",
 }
 
 

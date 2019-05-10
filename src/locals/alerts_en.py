@@ -11,7 +11,9 @@ errors = {
     USER_NOT_FOUND_ERROR: "This user does not exist",
     INCORRECT_PASSWORD_ERROR: "The provided password is incorrect",
     USER_ALREADY_EXISTS_ERROR: "This user already exists",
-    EMAIL_ALREADY_EXISTS_ERROR:" This emails is already used",
+    EMAIL_ALREADY_EXISTS_ERROR: "This emails is already used",
+    TRANSLATION_ID_DOES_NOT_EXISTS: "A translation does not exist.",
+    USERS_MIXED_UP_ERROR: "An internal error (which shouldn't happened) happened"
 }
 
 

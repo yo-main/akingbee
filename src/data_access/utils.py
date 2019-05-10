@@ -1,6 +1,9 @@
 import re
+import flask
 from copy import copy
 
+from src.constants import alert_codes as alert
+from src.services.alerts import Error
 from src.data_access.factory import Factory
 from src.data_access.base_object import BaseObject
 
@@ -18,18 +21,29 @@ class SQLObject(BaseObject):
         if recursive:
             self._get_foreign_objects()
 
-    def save(self):
+    def save(self, factory=None):
+        if factory is None:
+            factory = Factory()
+
         if self.id:
+            if ('user' in self.columns
+                and self.user != flask.session['user_id']):
+                raise Error(alert.USERS_MIXED_UP_ERROR)
+
             new_values = self.get_diff()
             for table, values in new_values.items():
                 if values:
-                    Factory().update(table, values)
+                    factory.update(table, values)
         else:
+            if 'user' in self.columns:
+                self.user = flask.session['user_id']
+
             items = {key: getattr(self, key)
                      for key in self.columns
                      if getattr(self, key) is not None}
-            res = Factory().create(self.table, items)
-            self.id = res[0]
+
+            self.id = factory.create(self.table, items)
+
 
     def get_diff(self):
         if self.id:
@@ -55,10 +69,12 @@ class SQLObject(BaseObject):
 
         return to_modify
 
+
     def _init_with_values(self, data):
         assert all(key in self.columns for key in data)
         for key, item in data.items():
             setattr(self, key, item)
+
 
     def _create_missing_attr(self):
         for key in self.columns:

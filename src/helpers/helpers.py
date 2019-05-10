@@ -9,7 +9,7 @@ from app import app
 from src.constants import config
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
-from src.services.error import Error
+from src.services.alerts import Error
 
 
 def redirect(url):
@@ -20,6 +20,10 @@ def redirect(url):
 def route(url, **kwargs):
     def my_function(func):
         return app.route(url, **kwargs)(func)
+
+    if flask.session['language'] not in config.LANGUAGES:
+        return redirect('/')
+
     url = config.URL_ROOT + url
     return my_function
 
@@ -32,7 +36,7 @@ def login_required(f):
     """
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        if flask.session.get('userId') is None:
+        if flask.session.get('user_id') is None:
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function

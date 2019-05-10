@@ -1,3 +1,5 @@
+#! -*- coding: utf-8 -*-
+
 from yaml import load, Loader
 
 
@@ -49,7 +51,7 @@ DEFAULT_STATUS_APIARY = (
 )
 
 DEFAULT_ACTION_BEEHOUSE = (
-    {FRENCH: "Bruler les abeillles", ENGLISH: "Burn the bees"},
+    {FRENCH: "Bruler les abeilles", ENGLISH: "Burn the bees"},
     {FRENCH: "Arroser la ruche", ENGLISH: "Water the beehouse"},
     {FRENCH: "Trouver une nouvelle ruche", ENGLISH: "Find a new beehouse"},
     {FRENCH: "Trouver une nouvelle reine", ENGLISH: "Find a new bee queen"},

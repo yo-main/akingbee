@@ -8,13 +8,25 @@ database = DATABASE[ENVIRONMENT['platform']]
 
 
 class MySQL:
-    def __enter__(self):
+
+    def __init__(self):
+        self._create()
+
+    def _create(self):
         self.conn = mysql.connector.connect(**database)
+        return self.conn
+
+    def cursor(self):
         return self.conn.cursor(buffered=True)
 
-    def __exit__(self, type_, value, error):
+    def commit(self):
         self.conn.commit()
+
+    def close(self):
         self.conn.close()
+
+    def rollback(self):
+        self.conn.rollback()
 
 
 class SQLite:

@@ -17,47 +17,58 @@ const toastrOptions = {
 
 var root_path = "/akingbee"
 
-$(document).ready(function() {
+
+function menu_highlight() {
     let sidebar_menu = document.getElementById("sidebar-menu")
     let pathname = window.location.pathname;
 	
     // Highlight as blue the current menu where a user is in
     if (pathname != "/setup"){
         if (sidebar_menu){
-            let btns = sidebar_menu.getElementsByClassName("nav-link sub"); // we get an array of our menu
-            menuNb = $("#menu_nb").attr("name"); // in menu_nb is stored the id of the menu to highlight
-            btns[menuNb].className += " active"; // active colorizes the text in blue
+            // we get an array of our menu
+            let btns = sidebar_menu.getElementsByClassName("nav-link sub");
+            // in menu_nb is stored the id of the menu to highlight
+            menuNb = $("#menu_nb").attr("name");
+            // active colorizes the text in blue
+            btns[menuNb].className += " active"; 
         }
     }
-   
-    // Filter some tables if needed
+}
+
+function menu_filter() {
+    let pathname = window.location.pathname;
+
     if (pathname == "/beehouse/index"){
         filter_table_beehouse();
     }
     else if (pathname == "/apiary/index"){
         filter_table_apiary();
     }
+}
 
-    // LANGUAGE 
-    language = $("html").attr("lang");
+function display_alerts() {
+    let title = window.sessionStorage.getItem("msgSuccessTitle");
+    let msg = window.sessionStorage.getItem("msgSuccessBody");
+
+    if (msg){
+            createSuccess(msg, title);
+            window.sessionStorage.removeItem("msgSuccessTitle");
+            window.sessionStorage.removeItem("msgSuccessBody");
+    }
+}
+
+function set_active_language() {
+    let language = $("html").attr("lang");
     if (language == "fr"){
         document.getElementById("userLanguage").selectedIndex = 0;
     }
     else{
         document.getElementById("userLanguage").selectedIndex = 1;
     }
+}
 
-    // Display the success pop up if needed
-    let msg = window.sessionStorage.getItem("msgSuccessBody");
-    let title = window.sessionStorage.getItem("msgSuccessTitle");
-
-    if (msg){
-            createSuccess(msg, title);
-            window.sessionStorage.removeItem("msgSuccessBody");
-            window.sessionStorage.removeItem("msgSuccessTitle");
-    }
-
-    // DATE PICKER MODULE
+function set_date_picker() {
+    let language = $("html").attr("lang");
     if (language == "fr"){
         $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
         $('[name="date"]').attr("placeholder", "jj/mm/aaaa");
@@ -71,12 +82,21 @@ $(document).ready(function() {
     
     $("#apiary_birthday").val(new Date().toDateInputValue());
     $("#beehouse_birthday").val(new Date().toDateInputValue());
+}
 
+
+$(document).ready(function() {
+    set_active_language();
+    menu_highlight();
+    menu_filter();
+    display_alerts();
+    set_date_picker();
 });
 
 
 Date.prototype.toDateInputValue = (function() {
-	// format the date to the input box from html (DD/MM/YYYY or MM/DD/YYYY depending on the user language)
+    // format the date to the input box from html
+    // (DD/MM/YYYY or MM/DD/YYYY depending on the user language)
     let local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
 
@@ -84,10 +104,14 @@ Date.prototype.toDateInputValue = (function() {
     let dateString;
     
     if (language == "fr"){
-        dateString = ("0" + local.getUTCDate()).slice(-2) + "/" + ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" + local.getFullYear();
+        dateString = ("0" + local.getUTCDate()).slice(-2) + "/" +
+                     ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" +
+                     local.getFullYear();
     }
     else {
-        dateString = ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" + ("0" + local.getUTCDate()).slice(-2) + "/" + local.getFullYear();
+        dateString = ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" +
+                     ("0" + local.getUTCDate()).slice(-2) + "/" +
+                     local.getFullYear();
     }
     
     return dateString;
@@ -96,34 +120,27 @@ Date.prototype.toDateInputValue = (function() {
 
 function createError(msg, title){
     toastr.options = toastrOptions;
-	toastr["error"](msg, title);
+    toastr["error"](msg, title);
 }
 
 
 function createSuccess(msg, title){
     toastr.options = toastrOptions;
-	toastr["success"](msg, title);
+    toastr["success"](msg, title);
 }
 
 
-function forgot_password(){
-    let myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/reset_password";
-    window.location = myUrl;
-}
-
-
-function showMsg(data){
-
-    let msg = data.responseJSON.msg;
-	let code = data.responseJSON.code;
-    let result = data.responseJSON.result;
+function showMsg(response, answer_status){
     let language = $('html').attr("lang");
+    let msg = response.message[language];
+    let code = response.code;
+    let result = data.responseJSON.result;
 
-    if (result == "success"){
-        window.sessionStorage.setItem("msgSuccessBody", msg.body[language]);
+    if (answer_status == "success"){
         window.sessionStorage.setItem("msgSuccessTitle", msg.title[language]);
+        window.sessionStorage.setItem("msgSuccessBody", msg.body[language]);
     }
-    else if (result == "error"){
+    else if (answer_status == "error"){
         if (language == "fr"){
             createError(msg.fr, "Erreur #" + code);
         }
@@ -147,6 +164,12 @@ function changeLanguage(){
             window.location.reload();
         }
     });
+}
+
+
+function forgot_password(){
+    let myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/reset_password";
+    window.location = myUrl;
 }
 
 

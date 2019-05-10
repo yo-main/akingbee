@@ -25,7 +25,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
-                {% if session.userId %}
+                {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/akingbee/beehouse/index">{{data[74]}}</a></li>
                         <li class="nav-item"><a class="nav-link" href="/akingbee/setup">{{data[7]}}</a></li>
@@ -61,8 +61,9 @@
         <script type='text/javascript' src="/static/akingbee/popper.js"></script>
         <script type='text/javascript' src="/static/akingbee/bootstrap.js"></script>
         <script type='text/javascript' src="/static/akingbee/jquery-ui.js"></script>
-        <script type='text/javascript' src="/static/akingbee/script.js"></script>
-		<script type='text/javascript' src="/static/akingbee/toastr.js"></script>        
+        <script type='text/javascript' src="/static/akingbee/toastr.js"></script>
+
+        {% block scripts %}{% endblock %}
     </body>
 
 </html>
