@@ -1,6 +1,5 @@
 #! /home/romain/var/env/py3.6/bin/python3.6
 # -*- coding: utf-8 -*-
-
 import flask
 import flask_session
 import sqlite3
@@ -20,7 +19,8 @@ from src.helpers.helpers import traductions
 from src.helpers.helpers import redirect
 from src.helpers.helpers import login_required
 from src.helpers.helpers import route
-from src.helpers.helpers import convertToDate
+from src.helpers.helpers import convert_to_date
+from src.helpers import helpers
 
 
 from src.data_access.factory import Factory
@@ -35,7 +35,7 @@ def render(url, **kwargs):
 
     return flask.render_template(url,
                                  lang=flask.session['language'],
-                                 data=traductions(),
+                                 trads=traductions(),
                                  **kwargs)
 
 
@@ -99,8 +99,8 @@ def updateLanguage():
     newLanguage = flask.request.form.get('language')
     if newLanguage not in config.LANGUAGES:
         newLanguage = config.ENGLISH
-    flask.session['language'] = newLanguage
-    return Success()
+        flask.session['language'] = newLanguage
+        return Success()
 
 
 @route("/register", methods=['GET'])
@@ -210,7 +210,7 @@ def apiary_create():
                 'location': form.get('apiary_location'),
                 'honey_type': form.get('apiary_honey_type'),
                 'status': form.get('apiary_status'),
-                'birthday': convertToDate(form.get('apiary_birthday')),
+                'birthday': convert_to_date(form.get('apiary_birthday')),
             }
 
         apiary = objects.Apiary(data)
@@ -222,69 +222,49 @@ def apiary_create():
 @route("/apiary/create/new_honey_type", methods=['POST'])
 @login_required
 def apiary_create_honey():
+    data = {
+        'fr': flask.request.form.get('name_fr'),
+        'en': flask.request.form.get('name_en'),
+    }
 
-    name_fr = flask.request.form.get('name_fr')
-    name_en = flask.request.form.get('name_en')
+    honey = objects.HoneyType(data)
+    honey.save()
 
-    flag = helpers.SQL("INSERT INTO honey_type(fr, en, user) VALUES(?,?,?)",
-                       (name_fr, name_en, flask.session['user_id']))
-
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(NEW_PARAMETER_SUCCESS)
+    return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
 @route("/apiary/create/new_apiary_status", methods=['POST'])
 @login_required
 def apiary_status_create():
+    data = {
+        'fr': flask.request.form.get('name_fr'),
+        'en': flask.request.form.get('name_en'),
+    }
 
-    name_fr = flask.request.form.get('name_fr')
-    name_en = flask.request.form.get('name_en')
+    status_apiary = objects.StatusApiary(data)
+    status_apiary.save()
 
-    flag = helpers.SQL("INSERT INTO status_apiary(fr, en, user) VALUES(?,?,?)",
-                       (name_fr, name_en, flask.session['user_id']))
-
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(NEW_PARAMETER_SUCCESS)
+    return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
 @route("/beehouse/index", methods=['GET'])
 @login_required
 def beehouse():
-    lang = flask.session['language']
+    beehouses = factory.get_all(objects.Beehouse, recursive=True)
 
-    if lang not in ('fr', 'en'):
-        return redirect("/")
+    healths = factory.get_all(objects.Health)
+    beehouse_statuses = factory.get_all(objects.StatusBeehouse)
+    beehouse_actions = factory.get_all(objects.BeehouseAction)
+    apiaries = factory.get_all(objects.Apiary)
+    owners = factory.get_all(objects.Owner)
 
-    bh_data = helpers.SQL(f"SELECT beehouse.id, beehouse.name, apiary.name, apiary.location, status_beehouse.{lang}, health.{lang}, owner.name\
-                            FROM beehouse\
-                            JOIN health ON beehouse.health = health.id\
-                            JOIN owner ON beehouse.owner = owner.id\
-                            JOIN apiary ON beehouse.apiary = apiary.id\
-                            JOIN status_beehouse ON beehouse.status = status_beehouse.id\
-                            WHERE beehouse.user=?",
-                            (flask.session['user_id'],))
-
-    health_filter = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?",
-                                 (flask.session['user_id'],))
-
-    status_beehouse = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?",
-                             (flask.session['user_id'],))
-
-    actions_beehouse = helpers.SQL(f"SELECT id, {lang} FROM beehouse_actions WHERE user=?",
-                             (flask.session['user_id'],))
-
-    apiary_filter = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?",
-                             (flask.session['user_id'],))
-
-    owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?",
-                                 (flask.session['user_id'],))
-
-    return flask.render_template("akingbee/beehouse/index.html", lang=lang, data=helpers.tradDb(lang),
-                                 bh=bh_data, af=apiary_filter, hf=health_filter, of=owner_filter, sf=status_beehouse, ab=actions_beehouse)
+    return render("akingbee/beehouse/index.html",
+                  beehouses=beehouses,
+                  apiaries=apiaries,
+                  healths=healths,
+                  owners=owners,
+                  beehouse_statuses=beehouse_statuses,
+                  beehouse_actions=beehouse_actions)
 
 
 @route("/beehouse/create", methods=['GET', 'POST'])
@@ -292,217 +272,163 @@ def beehouse():
 def beehouse_create():
     if flask.request.method == 'GET':
 
-        lang = flask.session['language']
-        owners = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['user_id'],))
-        apiaries = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['user_id'],))
+        owners = factory.get_all(objects.Owner)
+        apiaries = factory.get_all(objects.Apiary)
+        healths = factory.get_all(objects.Health)
+        beehouse_statuses = factory.get_all(objects.StatusBeehouse)
 
-        if lang not in ('fr', 'en'):
-            return redirect("/")
-
-        health = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?", (flask.session['user_id'],))
-        status_beehouse = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['user_id'],))
-
-        return flask.render_template("akingbee/beehouse/create.html", lang=lang, data=helpers.tradDb(lang), owners=owners,
-                                     apiaries=apiaries, health=health, status_beehouse=status_beehouse)
+        return render("akingbee/beehouse/create.html",
+                      owners=owners,
+                      apiaries=apiaries,
+                      healths=healths,
+                      beehouse_statuses=beehouse_statuses)
 
     elif flask.request.method == 'POST':
-        name = flask.request.form.get('name')
-        birthday = helpers.convertToDate(flask.request.form.get('date'))
-        status = flask.request.form.get('status')
-        apiary = flask.request.form.get('apiary')
-        owner = flask.request.form.get('owner')
-        health = flask.request.form.get('health')
+        data = {
+            'name': flask.request.form.get('name'),
+            'birthday': convert_to_date(flask.request.form.get('date')),
+            'status': flask.request.form.get('status'),
+            'apiary': flask.request.form.get('apiary'),
+            'owner': flask.request.form.get('owner'),
+            'health': flask.request.form.get('health'),
+        }
 
-        flag = helpers.SQL("INSERT INTO beehouse(name, birthday, apiary, status, health, owner, user) VALUES(?,?,?,?,?,?,?)",
-                           (name, birthday, apiary, status, health, owner, flask.session['user_id']))
+        beehouse = objects.Beehouse(data)
+        beehouse.save()
 
-        if flag == False:
-            raise Error(SQL_PROCESSING_ERROR)
-
-        return Success(NEW_BEEHOUSE_SUCCESS)
+        return Success(alerts.NEW_BEEHOUSE_SUCCESS)
 
 
 @route("/beehouse/create/new_owner", methods=['POST'])
 @login_required
 def beehouse_create_owner():
+    data = {
+        'owner': flask.request.form.get('owner')
+    }
+    owner = objects.Owner(data)
+    owner.save()
 
-    owner = flask.request.form.get('owner')
-
-    flag = helpers.SQL("INSERT INTO owner(name, user) VALUES(?,?)",
-                       (owner, flask.session['user_id']))
-
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(NEW_BEEKEEPER_SUCCESS)
+    return Success(alerts.NEW_BEEKEEPER_SUCCESS)
 
 
 @route("/beehouse/create/new_health", methods=['POST'])
 @login_required
 def beehouse_create_health():
+    data = {
+        'fr': flask.request.form.get('name_fr'),
+        'en': flask.request.form.get('name_en'),
+    }
+    health = objects.Health(data)
+    health.save()
 
-    name_fr = flask.request.form.get('name_fr')
-    name_en = flask.request.form.get('name_en')
-
-    flag = helpers.SQL("INSERT INTO health(fr, en, user) VALUES(?,?,?)",
-                       (name_fr, name_en, flask.session['user_id']))
-
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(NEW_PARAMETER_SUCCESS)
+    return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
 @route("/beehouse/create/new_beehouse_status", methods=['POST'])
 @login_required
 def beehouse_create_status():
+    data = {
+        'fr': flask.request.form.get('name_fr'),
+        'en': flask.request.form.get('name_en'),
+    }
+    beehouse_status = objects.StatusBeehouse(data)
+    beehouse_status.save()
 
-    name_fr = flask.request.form.get('name_fr')
-    name_en = flask.request.form.get('name_en')
-
-    flag = helpers.SQL("INSERT INTO status_beehouse(fr, en, user) VALUES(?,?,?)",
-                (name_fr, name_en, flask.session['user_id']))
-
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(NEW_PARAMETER_SUCCESS)
+    return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
 @route("/beehouse/index/get_beehouse_info", methods=['POST'])
 @login_required
 def beehouse_details():
     bh_id = flask.request.form.get('bh_id')
-
-    data = helpers.SQL("SELECT name, apiary, status, health, owner\
-                        FROM beehouse\
-                        WHERE id=? AND user=?",
-                        (bh_id, flask.session['user_id']))
-
-    return flask.jsonify(data)
+    beehouse = factory.get_from_id(bh_id, objects.Beehouse)
+    return flask.jsonify(beehouse)
 
 
 @route("/beehouse/index/submit_beehouse_info", methods=['POST'])
 @login_required
 def submit_beehouse_details():
-    bh_id = flask.request.form.get('bh_id')
-    apiary = flask.request.form.get('apiary')
-    beehouse = flask.request.form.get('beehouse')
-    owner = flask.request.form.get('owner')
-    status = flask.request.form.get('status')
-    user_id = flask.session['user_id']
+    beehouse = factory.get_from_id(flask.request.form.get('bh_id'),
+                                   objects.Beehouse)
+    beehouse.apiary = flask.request.form.get('apiary')
+    beehouse.name = flask.request.form.get('beehouse')
+    beehouse.owner = flask.request.form.get('owner')
+    beehouse.status = flask.request.form.get('status')
+    beehouse.save()
 
-    flags = []
-
-    if apiary != None:
-        flags.append(helpers.SQL("UPDATE beehouse SET apiary=? WHERE id=? AND user=?", (apiary, bh_id, user_id)))
-
-    if beehouse != None:
-        flags.append(helpers.SQL("UPDATE beehouse SET name=? WHERE id=? AND user=?", (beehouse, bh_id, user_id)))
-
-    if owner != None:
-        flags.append(helpers.SQL("UPDATE beehouse SET owner=? WHERE id=? AND user=?", (owner, bh_id, user_id)))
-
-    if status != None:
-        flags.append(helpers.SQL("UPDATE beehouse SET status=? WHERE id=? AND user=?", (status, bh_id, user_id)))
-
-    if False in flags:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(MODIFICATION_SUCCESS)
+    return Success(alerts.MODIFICATION_SUCCESS)
 
 
 @route("/beehouse/index/submit_comment_modal", methods=['POST'])
 @login_required
 def submit_comment_modal():
-    bh_id = flask.request.form.get('bh_id')
-    date = helpers.convertToDate(flask.request.form.get('date'))
-    comment = flask.request.form.get('comment')
-    health = flask.request.form.get('health')
-    cType = '1'
+    beehouse = factory.get_from_id(flask.request.form.get('bh_id'),
+                                   objects.Apiary)
 
-    apiaryId = helpers.SQL("SELECT apiary FROM beehouse WHERE id=? AND user=?", (bh_id, flask.session['user_id']))
 
-    if apiaryId is False:
-        raise Error(SQL_PROCESSING_ERROR)
+    comment_data = {
+        'apiary': beehouse.apiary.id,
+        'date': convert_to_date(flask.request.form.get('date')),
+        'comment': flask.request.form.get('comment'),
+        'health': flask.request.form.get('health'),
+        'type': config.STATUS_PENDING,
+    }
+    comment = objects.Comments(comment_data)
+    comment.save()
 
-    flag = helpers.SQL("INSERT INTO comments(date, comment, beehouse, apiary, health, type, user) VALUES(?,?,?,?,?,?,?)",
-                (date, comment, bh_id, apiaryId[0][0], health, cType, flask.session['user_id']))
+    helpers.update_health(beehouse)
 
-    if flag is False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    helpers.updateHealth(bh_id)
-
-    return Success(MODIFICATION_SUCCESS)
+    return Success(alerts.MODIFICATION_SUCCESS)
 
 
 @route("/beehouse/index/submit_action_modal", methods=['POST'])
 @login_required
 def submit_action_modal():
-    bh_id = flask.request.form.get('bh_id')
-    date = helpers.convertToDate(flask.request.form.get('date'))
-    comment = flask.request.form.get('comment')
-    action_type = flask.request.form.get('action_type')
-    deadline = helpers.convertToDate(flask.request.form.get('deadline'))
-    action_status = 1 # 1 is pending
+    data = {
+        'beehouse': flask.request.form.get('bh_id'),
+        'date': convert_to_date(flask.request.form.get('date')),
+        'comment': flask.request.form.get('comment'),
+        'type': flask.request.form.get('action_type'),
+        'deadline': convert_to_date(flask.request.form.get('deadline')),
+        'status': config.STATUS_PENDING
+    }
+    action = objects.Actions(data)
+    action.save()
 
-    flag = helpers.SQL("INSERT INTO actions(beehouse, date, deadline, type, comment, status, user) VALUES(?,?,?,?,?,?,?)",
-                       (bh_id, date, deadline, action_type, comment, action_status, flask.session['user_id']))
-
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(ACTION_PLANIFIED_SUCCESS)
+    return Success(alerts.ACTION_PLANIFICATION_SUCCESS)
 
 
 @route("/beehouse", methods=['GET'])
 @login_required
 def beehouse_profil():
-    lang = flask.session['language']
     bh_id = flask.request.args.get('bh')
+    beehouse = factory.get_from_id(bh_id, objects.Beehouse, recursive=True)
 
-    if lang not in ('fr', 'en'):
-        return redirect("/")
+    comments = factory.get_from_filters(objects.Comments,
+                                        {'beehouse': bh_id},
+                                        recursive=True)
 
-    bh_data = helpers.SQL(f"SELECT beehouse.id, beehouse.name, apiary.name, apiary.location, status_beehouse.{lang}, health.{lang}, owner.name\
-                          FROM beehouse\
-                          JOIN health ON beehouse.health = health.id\
-                          JOIN owner ON beehouse.owner = owner.id\
-                          JOIN apiary ON beehouse.apiary = apiary.id\
-                          JOIN status_beehouse ON beehouse.status = status_beehouse.id\
-                          WHERE beehouse.user=? AND beehouse.id=?",
-                          (flask.session['user_id'], bh_id))
+    action_filters = {'beehouse': bh_id, 'status': config.STATUS_PENDING}
+    actions = factory.get_from_filters(objects.Actions,
+                                       action_filters,
+                                       recursive=True)
+    healths = factory.get_all(objects.Health)
+    comment_types = factory.get_all(objects.CommentsType)
+    beehouse_statuses = factory.get_all(objects.StatusBeehouse)
+    beehouse_actions = factory.get_all(objects.BeehouseAction)
+    apiaries = factory.get_all(objects.Apiary)
+    owners = factory.get_all(objects.Owner)
 
-    cm_data = helpers.SQL(f"SELECT comments.id, strftime('%d/%m/%Y', comments.date), comments_type.{lang}, comments.comment, beehouse.name, apiary.name, apiary.location, coalesce(health.{lang}, '')\
-                          FROM comments\
-                          JOIN beehouse ON comments.beehouse = beehouse.id\
-                          LEFT JOIN health ON comments.health = health.id\
-                          JOIN apiary ON comments.apiary = apiary.id\
-                          JOIN comments_type ON comments.type = comments_type.id\
-                          WHERE comments.user=? AND comments.beehouse=?\
-                          ORDER BY comments.date DESC",
-                          (flask.session['user_id'], bh_id))
-
-    ac_data = helpers.SQL(f"SELECT actions.id, strftime('%d/%m/%Y', actions.date), strftime('%d/%m/%Y', actions.deadline), actions.comment, beehouse_actions.{lang}\
-                          FROM actions\
-                          JOIN beehouse_actions ON actions.type = beehouse_actions.id\
-                          WHERE actions.user=? AND actions.beehouse=? AND actions.status=?\
-                          ORDER BY actions.date ASC",
-                          (flask.session['user_id'], bh_id, 1))
-
-    health_filter = helpers.SQL(f"SELECT id, {lang} FROM health WHERE user=?",
-                                (flask.session['user_id'],))
-
-    type_filter = helpers.SQL(f"SELECT id, {lang} FROM comments_type")
-    bh_status_filter = helpers.SQL(f"SELECT id, {lang} FROM status_beehouse WHERE user=?", (flask.session['user_id'],))
-    actions_beehouse = helpers.SQL(f"SELECT id, {lang} FROM beehouse_actions WHERE user=?", (flask.session['user_id'],))
-
-    apiary_filter = helpers.SQL("SELECT id, name, location FROM apiary WHERE user=?", (flask.session['user_id'],))
-    owner_filter = helpers.SQL("SELECT id, name FROM owner WHERE user=?", (flask.session['user_id'],))
-
-    return flask.render_template("akingbee/beehouse/beehouse_details.html", lang=lang, data=helpers.tradDb(lang), bh=bh_data, cm=cm_data, ac=ac_data,
-                                  tf=type_filter, af=apiary_filter, hf=health_filter, of=owner_filter, sf=bh_status_filter, ab=actions_beehouse)
+    return render("akingbee/beehouse/beehouse_details.html",
+                  beehouse=beehouse,
+                  comments=comments,
+                  actions=actions,
+                  comment_types=comment_types,
+                  apiaries=apiaries,
+                  healths=healths,
+                  owners=owners,
+                  beehouse_statuses=beehouse_statuses,
+                  beehouse_actions=beehouse_actions)
 
 
 @route("/beehouse/select", methods=['POST'])
@@ -511,89 +437,87 @@ def select_beehouse():
     bh_id = int(flask.request.form.get('bh_id'))
     way = int(flask.request.form.get('way'))
 
-    data = helpers.SQL("SELECT id FROM beehouse WHERE user=?", (flask.session['user_id'],))
-    bhs = [n[0] for n in data]
-    index = bhs.index(bh_id)
-    newId = 0
+    beehouses = factory.get_all(objects.Beehouse)
+    index = beehouses.index(bh_id)
 
-    if way == -1 and index == 0:
-        newId = -1
-    elif way == 1 and index == (len(bhs) - 1):
-        newId = 0
+    if way == -1 and index <= 0:
+        new_id = beehouses[-1].id
+    elif way == 1 and index >= (len(beehouses) - 1):
+        new_id = beehouses[0].id
     else:
-        newId = index + way
+        new_id = beehouses[index + way].id
 
-    return flask.jsonify(f"/beehouse?bh={bhs[newId]}")
+    return flask.jsonify(f"/beehouse?bh={new_id}")
 
 
 @route("/beehouse/index/submit_solve_action_modal", methods=['POST'])
 @login_required
 def solve_action():
-    comment = flask.request.form.get('comment')
-    action_id = flask.request.form.get('ac_id')
-    action_date = helpers.convertToDate(flask.request.form.get('date'))
 
-    bh_data = helpers.SQL("SELECT beehouse.id, beehouse.apiary\
-                           FROM actions\
-                           JOIN beehouse ON actions.beehouse = beehouse.id\
-                           WHERE actions.id=?",
-                           (action_id,))
+    action = factory.get_from_id(flask.request.form.get('ac_id'),
+                                 objects.Actions)
 
-    bh_id, ap_id = bh_data[0]
+    data = {
+        'comment': flask.request.form.get('comment'),
+        'date': convert_to_date(flask.request.form.get('date')),
+        'action': action.id,
+        'beehouse': action.beehouse,
+        'apiary': action.apiary,
+        'type': config.COMMENT_TYPE_ACTION,
+    }
 
-    flag = helpers.SQL("INSERT INTO comments(date, comment, beehouse, apiary, action, type, user) VALUES(?,?,?,?,?,?,?)",
-                       (action_date, comment, bh_id, ap_id, action_id, 3, flask.session['user_id']))
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    comment = objects.Comments(data)
+    comment.save()
 
-    flag = helpers.SQL("UPDATE actions SET date_done=?, status=? WHERE id=? AND user=?",
-                       (action_date, 2, action_id, flask.session['user_id']))
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    action.date_done = data['date']
+    action.status = config.STATUS_DONE
+    action.save()
 
-    return Success(ACTION_SOLVED_SUCCESS)
+    return Success(alerts.ACTION_SOLVED_SUCCESS)
 
 
 @route("/beehouse/index/submit_edit_comment_modal", methods=['POST'])
 @login_required
 def edit_comment():
-    comment = flask.request.form.get('comment')
-    cm_id = flask.request.form.get('cm_id')
-    health = flask.request.form.get('health')
-    date = helpers.convertToDate(flask.request.form.get('date'))
+    comment = factory.get_from_id(flask.request.form.get('cm_id'),
+                                  objects.Comments)
 
-    flag = helpers.SQL("UPDATE comments SET comment=?, health=?, date=? WHERE id=? AND user=?",
-                       (comment, health, date, cm_id, flask.session['user_id']))
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    comment.comment = flask.request.form.get('comment')
+    comment.health = flask.request.form.get('health')
+    comment.date = convert_to_date(flask.request.form.get('date'))
+    comment.save()
 
-    bh_id = helpers.SQL("SELECT beehouse FROM comments WHERE id=? AND user=?", (cm_id, flask.session['user_id']))
-    helpers.updateHealth(bh_id[0][0])
+    beehouse = factory.get_from_id(comment.beehouse, objects.Beehouse)
+    helpers.update_health(beehouse)
 
-    return Success(MODIFICATION_SUCCESS)
+    return Success(alerts.MODIFICATION_SUCCESS)
 
 
 @route("/beehouse/index/delete_comment", methods=['POST'])
 @login_required
 def del_comment():
-    cm_id = flask.request.form.get('cm_id')
-    bh_id, ac_id, type_com = helpers.SQL("SELECT beehouse, action, type FROM comments WHERE id=?", (cm_id,))[0]
+    comment = factory.get_from_id(flask.request.form.get('cm_id'),
+                                  objects.Comments)
 
-    if type_com == 3:
-        helpers.SQL("UPDATE actions SET status=?, date_done=? WHERE id=?", (1, None, ac_id))
+    if comment.type == config.COMMENT_TYPE_ACTION:
+        action = factory.get_from_id(comment.action, objects.Actions)
+        action.status = config.STATUS_PENDING
+        action.date_done = None
+        action.save()
 
-    helpers.SQL("DELETE FROM comments WHERE id=? AND user=?", (cm_id, flask.session['user_id']))
-    helpers.updateHealth(bh_id)
+    comment.save()
 
-    return Success(DELETION_SUCCESS)
+    beehouse = factory.get_from_id(comment.beehouse, objects.Beehouse)
+    helpers.update_health(beehouse)
+
+    return Success(alerts.DELETION_SUCCESS)
 
 
 @route("/setup", methods=['GET'])
 @login_required
 def setupPage():
     if flask.request.method == 'GET':
-        lang = flask.session['language']
-        return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), t=0, col="")
+        return render("akingbee/setup/setup.html", t=0, col="")
 
 
 @route("/setup/update", methods = ['POST'])

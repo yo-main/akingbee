@@ -21,13 +21,18 @@ class SQLObject(BaseObject):
         if recursive:
             self._get_foreign_objects()
 
+    def delete(self):
+        factory = Factory()
+        return factory.delete(self.table, self.id)
+
+
     def save(self, factory=None):
         if factory is None:
             factory = Factory()
 
         if self.id:
-            if ('user' in self.columns
-                and self.user != flask.session['user_id']):
+            if ('user' in self.columns and
+                self.user != flask.session['user_id']):
                 raise Error(alert.USERS_MIXED_UP_ERROR)
 
             new_values = self.get_diff()

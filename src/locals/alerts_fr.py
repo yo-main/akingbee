@@ -11,10 +11,9 @@ errors = {
     USER_NOT_FOUND_ERROR: "Cet utilisateur n'existe pas",
     INCORRECT_PASSWORD_ERROR: "Le mot de passe fournit est incorrect",
     USER_ALREADY_EXISTS_ERROR: "Cet utilisateur existe déjà",
-    EMAIL_ALREADY_EXISTS_ERROR:" Cet email est déjà utilisé",
-    TRANSLATION_ID_DOES_NOT_EXISTS: "Une traduction n'existe pas",
-    USERS_MIXED_UP_ERROR: "Une erreur interne (qui ne devrait pas se produire) " /
-                      "s'est produit",
+    EMAIL_ALREADY_EXISTS_ERROR: "Cet email est déjà utilisé",
+    TRANSLATION_ID_DOES_NOT_EXISTS: default,
+    USERS_MIXED_UP_ERROR: default,
 }
 
 
@@ -26,7 +25,7 @@ successes = {
     NEW_PARAMETER_SUCCESS: ("", "Nouveau paramètre ajouté avec succés"),
     NEW_BEEHOUSE_SUCCESS: ("", "Ruche créée avec succés !"),
     NEW_BEEKEEPER_SUCCESS: ("", "Apiculteur créé avec succés !"),
-    MODIFICATION_SUCESS: ("", "Modification faites avec succés !"),
+    MODIFICATION_SUCCESS: ("", "Modification faites avec succés !"),
     ACTION_PLANIFICATION_SUCCESS: ("", "Action planifiée avec succés !"),
     ACTION_SOLVED_SUCCESS: ("", "Action résolue avec succés !"),
     DELETION_SUCCESS: ("", "Suppression faites avec succés !"),

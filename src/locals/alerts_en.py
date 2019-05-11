@@ -11,9 +11,9 @@ errors = {
     USER_NOT_FOUND_ERROR: "This user does not exist",
     INCORRECT_PASSWORD_ERROR: "The provided password is incorrect",
     USER_ALREADY_EXISTS_ERROR: "This user already exists",
-    EMAIL_ALREADY_EXISTS_ERROR: "This emails is already used",
-    TRANSLATION_ID_DOES_NOT_EXISTS: "A translation does not exist.",
-    USERS_MIXED_UP_ERROR: "An internal error (which shouldn't happened) happened"
+    EMAIL_ALREADY_EXISTS_ERROR: "This email is already used",
+    TRANSLATION_ID_DOES_NOT_EXISTS: default,
+    USERS_MIXED_UP_ERROR: default,
 }
 
 
@@ -25,7 +25,7 @@ successes = {
     NEW_PARAMETER_SUCCESS: ("", "New parameter successfully added !"),
     NEW_BEEHOUSE_SUCCESS: ("", "Beehouse successfully created !"),
     NEW_BEEKEEPER_SUCCESS: ("", "Beekeeper successfully created !"),
-    MODIFICATION_SUCESS: ("", "Modification successfully done !"),
+    MODIFICATION_SUCCESS: ("", "Modification successfully done !"),
     ACTION_PLANIFICATION_SUCCESS: ("", "Action planified with success !"),
     ACTION_SOLVED_SUCCESS: ("", "Action résolue avec succés !"),
     DELETION_SUCCESS: ("", "Suppression faites avec succés !"),

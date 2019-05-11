@@ -25,9 +25,9 @@ class Factory:
 
 
     def get_all(self, class_, recursive=False):
-        raw_data = self._search(class_, None)
+        raw_data = self._search(class_, {})
         out = self._build_class(class_, raw_data, recursive)
-        return out[0]
+        return out
 
 
     def get_from_id(self, id, class_, recursive=False):
@@ -42,13 +42,15 @@ class Factory:
         return out[0]
 
 
+
     def get_from_filters(self, class_, filters, recursive=False):
         if not filters:
-            return None
+            return []
 
         raw_data = self._search(class_, filters)
         if not raw_data:
-            return None
+            return []
+
         out = self._build_class(class_, raw_data, recursive)
         return out
 
@@ -102,12 +104,13 @@ class Factory:
         raw_data = self._execute(query, params)
 
         if not raw_data:
-            return None
+            return []
         return raw_data
 
 
     def _build_class(self, class_, raw_data, recursive):
         out = []
+
         for raw in raw_data:
             data = {}
             for key, item in zip(class_.columns, raw):
@@ -116,6 +119,7 @@ class Factory:
                         item = self._convert_date(item)
                 data[key] = item
             out.append(class_(data, recursive))
+
         return out
 
 
@@ -136,12 +140,30 @@ class Factory:
         if not values:
             return False
 
+        if 'date_modification' not in values:
+            values['date_modification'] = datetime.datetime.now()
+
         columns, params = self._build_sql_params(values, bounded=True)
 
         query = "UPDATE {} SET ".format(table)
         query += ', '.join(columns)
         query += " WHERE id=%s;"
         params.append(id_)
+
+        self._execute(query, params)
+
+        if self.autocommit:
+            self.commit()
+
+        return True
+
+
+    def delete(self, table, id_):
+        if not id_:
+            return False
+
+        query = "DELETE FROM {} WHERE id=%s;".format(table)
+        params = [id_]
 
         self._execute(query, params)
 

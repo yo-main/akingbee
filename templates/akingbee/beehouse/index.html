@@ -1,7 +1,7 @@
 {% extends "akingbee/layout.html" %}
 
 {% block title %}
-    {{data[5]}}
+    {{trads[5]}}
 {% endblock %}
 
 {% block main %}
@@ -15,38 +15,38 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-auto">
-                            <label>{{data[43]}}</label>
+                            <label>{{trads[43]}}</label>
                             <select class="custom-select" id="apiary_filter" onchange="filter_table_beehouse();">
-                                <option value=''>{{data[51]}}</option>
-                                {% for arg in af %}
-                                    <option value="{{arg[1]}} - {{arg[2]}}">{{arg[1]}} - {{arg[2]}}</option>
+                                <option value=''>{{trads[51]}}</option>
+                                {% for apiary in apiaries %}
+                                <option value="{{apiary.name}} - {{apiary.location}}">{{apiary.name}} - {{apiary.location}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-auto">
-                            <label>{{data[42]}}</label>
+                            <label>{{trads[42]}}</label>
                             <select class="custom-select" id="health_filter" onchange="filter_table_beehouse();">
-                                <option value=''>{{data[51]}}</option>
-                                {% for arg in hf %}
-                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                <option value=''>{{trads[51]}}</option>
+                                {% for health in healths %}
+                                    <option value="{{health[lang]}}">{{health[lang]}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-auto">
-                            <label>{{data[40]}}</label>
+                            <label>{{trads[40]}}</label>
                             <select class="custom-select" id="owner_filter" onchange="filter_table_beehouse();">
-                                <option value=''>{{data[51]}}</option>
-                                {% for arg in of %}
-                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                <option value=''>{{trads[51]}}</option>
+                                {% for owner in owners %}
+                                    <option value="{{owner.name}}">{{owner.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-auto">
-                            <label>{{data[28]}}</label>
+                            <label>{{trads[28]}}</label>
                             <select class="custom-select" id="status_filter" onchange="filter_table_beehouse();">
-                                <option value=''>{{data[51]}}</option>
-                                {% for arg in sf %}
-                                    <option value="{{arg[1]}}">{{arg[1]}}</option>
+                                <option value=''>{{trads[51]}}</option>
+                                {% for status in beehouse_statuses %}
+                                    <option value="{{status[lang]}}">{{status[lang]}}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -57,28 +57,28 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">{{data[22]}}</th>
-                                    <th scope="col">{{data[43]}}</th>
-                                    <th scope="col">{{data[42]}}</th>
-                                    <th scope="col">{{data[40]}}</th>
-                                    <th scope="col">{{data[28]}}</th>
+                                    <th scope="col">{{trads[22]}}</th>
+                                    <th scope="col">{{trads[43]}}</th>
+                                    <th scope="col">{{trads[42]}}</th>
+                                    <th scope="col">{{trads[40]}}</th>
+                                    <th scope="col">{{trads[28]}}</th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
                             <body>
-                                {% for n in range(bh|length) %}
+                                {% for i in range(beehouses|length) %}
                                     <tr>
-                                        <th scope="row">{{n+1}}</th>
-                                        <td class="name_td"><button type="button" class="btn btn-link black" name="bh_{{bh[n][0]}}" onclick="select_beehouse(this);">{{bh[n][1]}}</button></td>
-                                        <td class="apiary_td">{{bh[n][2]}} - {{bh[n][3]}}</td>
-                                        <td class="health_td">{{bh[n][5]}}</td>
-                                        <td class="owner_td">{{bh[n][6]}}</td>
-                                        <td class="status_td">{{bh[n][4]}}</td>
-                                        <td><button type="button" class="btn btn-link" name="bh_{{bh[n][0]}}" onclick="modal_beehouse_edit(this);">{{data[49]}}</button></td>
-                                        <td><button type="button" class="btn btn-link" name="bh_{{bh[n][0]}}" onclick="modal_comment(this);">{{data[50]}}</button></td>
-                                        <td><button type="button" class="btn btn-link" name="bh_{{bh[n][0]}}" onclick="modal_action(this);">{{data[54]}}</button></td>
+                                        <th scope="row">{{i+1}}</th>
+                                        <td class="name_td"><button type="button" class="btn btn-link black" name="bh_{{beehouses[i].id}}" onclick="select_beehouse(this);">{{beehouses[i].name}}</button></td>
+                                        <td class="apiary_td">{{beehouses[i].apiary.name}} - {{beehouses[i].apiary.location}}</td>
+                                        <td class="health_td">{{beehouses[i].health[lang]}}</td>
+                                        <td class="owner_td">{{beehouses[i].owner.name}}</td>
+                                        <td class="status_td">{{beehouses[i].status[lang]}}</td>
+                                        <td><button type="button" class="btn btn-link" name="bh_{{beehouses[i].id}}" onclick="modal_beehouse_edit(this);">{{trads[49]}}</button></td>
+                                        <td><button type="button" class="btn btn-link" name="bh_{{beehouses[i].id}}" onclick="modal_comment(this);">{{trads[50]}}</button></td>
+                                        <td><button type="button" class="btn btn-link" name="bh_{{beehouses[i].id}}" onclick="modal_action(this);">{{trads[54]}}</button></td>
                                     </tr>
                                 {% endfor %}
                             </body>
@@ -94,44 +94,44 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_edit_beehouse">{{data[49]}}</h5>
+                    <h5 class="modal-title" id="title_edit_beehouse">{{trads[49]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="beehouse_name_modal" class="col-form-label" id="beehouse_id">{{data[52]}}</label>
+                        <label for="beehouse_name_modal" class="col-form-label" id="beehouse_id">{{trads[52]}}</label>
                         <input type="text" class="form-control" id="beehouse_name_modal">
                     </div>
                     <div class="form-group">
-                        <label for="apiary_name_modal" class="col-form-label">{{data[43]}}</label>
+                        <label for="apiary_name_modal" class="col-form-label">{{trads[43]}}</label>
                         <select id="apiary_name_modal" class="custom-select d-block w-100" required="">
-                            {% for arg in af %}
-                                <option value={{arg[0]}}>{{arg[1]}} - {{arg[2]}}</option>
+                            {% for apiary in apiaries %}
+                                <option value={{apiary.id}}>{{apiary.name}} - {{apiary.location}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="owner_name_modal" class="col-form-label">{{data[40]}}</label>
+                        <label for="owner_name_modal" class="col-form-label">{{trads[40]}}</label>
                         <select id="owner_name_modal" class="custom-select d-block w-100" required="">
-                            {% for arg in of %}
-                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% for owner in owners %}
+                                <option value={{owner.id}}>{{owner.name}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="status_name_modal" class="col-form-label">{{data[28]}}</label>
+                        <label for="status_name_modal" class="col-form-label">{{trads[28]}}</label>
                         <select class="custom-select d-block w-100" id="status_name_modal">
-                            {% for arg in sf %}
-                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            {% for status in beehouse_statuses %}
+                                <option value={{status.id}}>{{status[lang]}}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_beehouse_modal();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_beehouse_modal();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
@@ -142,37 +142,37 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_submit_comment">{{data[50]}}</h5>
+                    <h5 class="modal-title" id="title_submit_comment">{{trads[50]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="comment_name" class="col-form-label">{{data[52]}}</label>
+                        <label for="comment_name" class="col-form-label">{{trads[52]}}</label>
                         <input type="text" class="form-control" id="comment_name" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="comment_date" class="col-form-label">{{data[55]}}</label>
+                        <label for="comment_date" class="col-form-label">{{trads[55]}}</label>
                         <input id="comment_date" class="form-control" type="text" name="date"/>
                     </div>
                     <div class="form-group">
-                        <label for="comment_health" class="col-form-label">{{data[42]}}</label>
+                        <label for="comment_health" class="col-form-label">{{trads[42]}}</label>
                         <select class="custom-select d-block w-100" id="comment_health">
-                            <option value=''>{{data[26]}}</option>
-                            {% for arg in hf %}
-                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                            <option value=''>{{trads[26]}}</option>
+                            {% for health in healths %}
+                                <option value={{health.id}}>{{health[lang]}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="comment_comment" class="col-form-label">{{data[56]}}</label>
+                        <label for="comment_comment" class="col-form-label">{{trads[56]}}</label>
                         <textarea aria-label="With textarea" class="form-control" id="comment_comment"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_comment_modal();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_comment_modal();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
@@ -183,43 +183,48 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_submit_action">{{data[60]}}</h5>
+                    <h5 class="modal-title" id="title_submit_action">{{trads[60]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="action_name" class="col-form-label">{{data[52]}}</label>
+                        <label for="action_name" class="col-form-label">{{trads[52]}}</label>
                         <input type="text" class="form-control" id="action_name" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="action_type" class="col-form-label">{{data[48]}}</label>
+                        <label for="action_type" class="col-form-label">{{trads[48]}}</label>
                         <select class="custom-select d-block w-100" id="action_type">
-                        <option value=''>{{data[26]}}</option>
-                            {% for arg in ab %}
-                                <option value={{arg[0]}}>{{arg[1]}}</option>
+                        <option value=''>{{trads[26]}}</option>
+                            {% for action in beehouse_actions %}
+                                <option value={{action.id}}>{{action[lang]}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="action_date" class="col-form-label">{{data[59]}}</label>
+                        <label for="action_date" class="col-form-label">{{trads[59]}}</label>
                         <input id="action_date" class="form-control" type="text" name="date"/>
                     </div>
                     <div class="form-group">
-                        <label for="action_deadline" class="col-form-label">{{data[61]}}</label>
+                        <label for="action_deadline" class="col-form-label">{{trads[61]}}</label>
                         <input id="action_deadline" class="form-control" type="text" name="date"/>
                     </div>
                     <div class="form-group">
-                        <label for="action_comment" class="col-form-label">{{data[56]}}</label>
+                        <label for="action_comment" class="col-form-label">{{trads[56]}}</label>
                         <textarea aria-label="With textarea" class="form-control" id="action_comment"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_action_modal();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_action_modal();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+        <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/register.js"></script>
 {% endblock %}

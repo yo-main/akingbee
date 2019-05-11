@@ -1,7 +1,7 @@
 {% extends "akingbee/layout.html" %}
 
 {% block title %}
-    {{data[6]}}
+    {{trads[6]}}
 {% endblock %}
 
 {% block main %}
@@ -11,34 +11,34 @@
                 {% include "akingbee/bees_menu.html" %}
             </div>
             <div class="col-10">
-                <p><h5 id="form-title">{{data[21]}}</h5></p>
+                <p><h5 id="form-title">{{trads[21]}}</h5></p>
                 <form class="form-group" action="/apiary/create" method="post">
                     <div class="row">
                         <div class="col-4">
-                            <label for="apiary_name">{{data[22]}}</label>
+                            <label for="apiary_name">{{trads[22]}}</label>
                             <input name="apiary_name" class="form-control" required/>
                         </div>
                     </div>
                     <br/>
                     <div class="row">
                         <div class="col-4">
-                            <label for="apiary_location">{{data[23]}}</label>
+                            <label for="apiary_location">{{trads[23]}}</label>
                             <input name="apiary_location" class="form-control" required/>
                         </div>
                     </div>
                     <br/>
                     <div class="row">
                         <div class="col-4">
-                            <label for="apiary_birthday">{{data[31]}}</label>
+                            <label for="apiary_birthday">{{trads[31]}}</label>
                             <input id="apiary_birthday" name="apiary_birthday" class="form-control" type="text" name="date"/>
                         </div>
                     </div>
                     <br/>
                     <div class="row">
                         <div class="col-4">
-                            <label for="apiary_honey_type">{{data[27]}}</label>
+                            <label for="apiary_honey_type">{{trads[27]}}</label>
                             <select name="apiary_honey_type" class="custom-select d-block w-100" required="">
-                                <option value="">{{data[26]}}</option>
+                                <option value="">{{trads[26]}}</option>
                                 {% for arg in honey_type %}
                                     <option value={{arg[0]}}>{{arg[1]}}</option>
                                 {% endfor %}
@@ -51,7 +51,7 @@
                     <br/>
                     <div class="row">
                         <div class="col-4">
-                            <label for="apiary_status">{{data[28]}}</label>
+                            <label for="apiary_status">{{trads[28]}}</label>
                             <select name="apiary_status" class="custom-select d-block w-100" required="">
                                 {% for arg in status_apiary %}
                                     <option value={{arg[0]}}>{{arg[1]}}</option>
@@ -65,7 +65,7 @@
                     <br/><br/>
                     <div class="row">
                         <div class="col-4">
-                            <button id="submit_apiary" class="btn btn-primary" type="submit">{{data[14]}}</button>
+                            <button id="submit_apiary" class="btn btn-primary" type="submit">{{trads[14]}}</button>
                         </div>
                     </div>
                 </form>
@@ -78,7 +78,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_honey_type">{{data[32]}}</h5>
+                    <h5 class="modal-title" id="title_honey_type">{{trads[32]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -94,8 +94,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_honey_type();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_honey_type();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_status_apiary">{{data[53]}}</h5>
+                    <h5 class="modal-title" id="title_status_apiary">{{trads[53]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -122,8 +122,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_apiary_status();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_apiary_status();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>

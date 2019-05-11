@@ -1,7 +1,7 @@
 {% extends "akingbee/layout.html" %}
 
 {% block title %}
-    {{data[7]}}
+    {{trads[7]}}
 {% endblock %}
 
 {% block main %}
@@ -15,16 +15,16 @@
                 {% if t == 0 %}
                     <div class="row">
                         <div class="col-4"></div>
-                        <div class="col-4 justify-center"><p><h4>{{data[87]}}</h4></p></div>
+                        <div class="col-4 justify-center"><p><h4>{{trads[87]}}</h4></p></div>
                         <div class="col-4"></div>
                     </div>
                     <br/><br/>
-                    {% if lang== 'fr' %}
+                    {% if lang == 'fr' %}
                         <p class="text-center">
                             Ici vous pouvez modifier les différentes données liés à votre compte. Choisissez le type de données que vous voulez modifier via le menu à gauche.
                         </p>
                     {% endif %}
-                    {% if lang== 'en' %}
+                    {% if lang == 'en' %}
                         <p class="text-center">
                             Here you can modify all the different data linked to your account. You can select the data you wish to modify from the left side menu.
                         </p>
@@ -42,7 +42,7 @@
                     <br/><br/>
                     <div class="row">
                         <div class="col-4 justify-center">
-                            <button type="button" class="btn btn-secondary" onclick="modal_data_submit(this);">{{data[89]}}</button>
+                            <button type="button" class="btn btn-secondary" onclick="modal_data_submit(this);">{{trads[89]}}</button>
                         </div>
                         <div class="col-4 justify-center">
                             {% if tData|length > 0 %}
@@ -65,8 +65,8 @@
                                                 {% if col|length == 2 %}
                                                     <td class="data_en_td">{{tData[n][2]}}</td>
                                                 {% endif %}
-                                                <td><button type="button" class="btn btn-link" name="dt_{{tData[n][0]}}" onclick="modal_data_edit(this);">{{data[85]}}</button></td>
-                                                <td><button type="button" class="btn btn-link" name="dt_{{tData[n][0]}}" onclick="delete_data(this);">{{data[64]}}</button></td>
+                                                <td><button type="button" class="btn btn-link" name="dt_{{tData[n][0]}}" onclick="modal_data_edit(this);">{{trads[85]}}</button></td>
+                                                <td><button type="button" class="btn btn-link" name="dt_{{tData[n][0]}}" onclick="delete_data(this);">{{trads[64]}}</button></td>
                                             </tr>
                                         {% endfor %}
                                     </body>
@@ -85,7 +85,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_edit_data">{{data[90]}}</h5>
+                    <h5 class="modal-title" id="title_edit_data">{{trads[90]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -103,8 +103,8 @@
                     {% endif %}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_modal_data_edit();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_modal_data_edit();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
@@ -115,7 +115,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="title_submit_data">{{data[90]}}</h5>
+                        <h5 class="modal-title" id="title_submit_data">{{trads[90]}}</h5>
                         <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
@@ -133,8 +133,8 @@
                         {% endif %}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                        <button type="button" class="btn btn-primary" onclick="submit_modal_data_submit();">{{data[14]}}</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                        <button type="button" class="btn btn-primary" onclick="submit_modal_data_submit();">{{trads[14]}}</button>
                     </div>
                 </div>
             </div>

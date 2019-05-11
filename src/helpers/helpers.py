@@ -10,6 +10,8 @@ from src.constants import config
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
+from src.data_access.factory import Factory
+from src.data_access import objects
 
 
 def redirect(url):
@@ -20,9 +22,6 @@ def redirect(url):
 def route(url, **kwargs):
     def my_function(func):
         return app.route(url, **kwargs)(func)
-
-    if flask.session['language'] not in config.LANGUAGES:
-        return redirect('/')
 
     url = config.URL_ROOT + url
     return my_function
@@ -78,7 +77,7 @@ def SQL(request, values =None):
     return toReturn
 
 
-def convertToDate(arg):
+def convert_to_date(arg):
     language = flask.session['language']
 
     if arg == "":
@@ -100,22 +99,23 @@ def convertToDate(arg):
     return myDate.isoformat()
 
 
-def updateHealth(bh_id):
+def update_health(beehouse):
+    comments = Factory().get_from_filters(objects.Comments,
+                                          {'beehouse': beehouse.id})
+    most_recent_comment = max(comments, key=lambda comment: comment.date)
 
-    maxHealth = SQL("SELECT MAX(date), health FROM comments WHERE beehouse=?", (bh_id,))
-    bhHealth = SQL("SELECT health FROM beehouse WHERE id=?", (bh_id,))
+    beehouse.health = most_recent_comment.health
+    beehouse.save()
 
-    if maxHealth[0][1] != None and bhHealth[0][0] != maxHealth[0][1]:
-        SQL("UPDATE beehouse SET health=? WHERE id=?", (maxHealth[0][1], bh_id))
 
-def getError(arg):
+def get_error(arg):
     toReturn = {'result': 'error',
                 'code': arg,
                 'msg': config.errorMsg[arg]}
 
     return toReturn
 
-def getSuccess(arg):
+def get_success(arg):
     toReturn = {'result': 'success',
                 'code': arg,
                 'msg': config.successMsg[arg]}

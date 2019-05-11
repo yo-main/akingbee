@@ -12,7 +12,7 @@
         <link href="/static/akingbee/bootstrap.css" rel="stylesheet"/>
         <link href="/static/akingbee/jquery-ui.css" rel="stylesheet"/>
         <link href="/static/akingbee/style.css" rel="stylesheet"/>
-		<link href="/static/akingbee/toastr.css" rel="stylesheet"/>
+        <link href="/static/akingbee/toastr.css" rel="stylesheet"/>
 
         <title>aKingBee - {% block title %}{% endblock %}</title>
 
@@ -27,12 +27,12 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/akingbee/beehouse/index">{{data[74]}}</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/akingbee/setup">{{data[7]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/akingbee/beehouse/index">{{trads[74]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/akingbee/setup">{{trads[7]}}</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
-                        <small class="navbar-text -sm" style="margin:3px; margin-right:10px;">{{data[19]}} {{session.username}}</small>
-                        <li class="nav-item"><a class="nav-link" href="/akingbee/logout">{{data[10]}}</a></li>
+                        <small class="navbar-text -sm" style="margin:3px; margin-right:10px;">{{trads[19]}} {{session.username}}</small>
+                        <li class="nav-item"><a class="nav-link" href="/akingbee/logout">{{trads[10]}}</a></li>
                         <select class="languageDropList" id="userLanguage" onchange="changeLanguage()">
                             <option value="fr">Français</option>
                             <option value="en">English</option>
@@ -40,8 +40,8 @@
                     </ul>
                 {% else %}
                     <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/akingbee/register">{{data[8]}}</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/akingbee/login">{{data[11]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/akingbee/register">{{trads[8]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/akingbee/login">{{trads[11]}}</a></li>
                         <select class="languageDropList" id="userLanguage" onchange="changeLanguage()">
                             <option value="fr">Français</option>
                             <option value="en">English</option>
@@ -63,6 +63,7 @@
         <script type='text/javascript' src="/static/akingbee/jquery-ui.js"></script>
         <script type='text/javascript' src="/static/akingbee/toastr.js"></script>
 
+        <script type='text/javascript' src="/static/akingbee/config.js"></script>
         {% block scripts %}{% endblock %}
     </body>
 
