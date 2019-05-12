@@ -31,8 +31,8 @@ class SQLObject(BaseObject):
             factory = Factory()
 
         if self.id:
-            if ('user' in self.columns and
-                self.user != flask.session['user_id']):
+            if ('user' in self.columns
+                and self.user != flask.session['user_id']):
                 raise Error(alert.USERS_MIXED_UP_ERROR)
 
             new_values = self.get_diff()

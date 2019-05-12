@@ -14,6 +14,7 @@ errors = {
     EMAIL_ALREADY_EXISTS_ERROR: "This email is already used",
     TRANSLATION_ID_DOES_NOT_EXISTS: default,
     USERS_MIXED_UP_ERROR: default,
+    INTERNAL_ERROR: default,
 }
 
 

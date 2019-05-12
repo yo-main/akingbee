@@ -505,7 +505,7 @@ def del_comment():
         action.date_done = None
         action.save()
 
-    comment.save()
+    comment.delete()
 
     beehouse = factory.get_from_id(comment.beehouse, objects.Beehouse)
     helpers.update_health(beehouse)
@@ -525,51 +525,64 @@ def setupPage():
 def submit_data():
     fr = flask.request.form.get('fr')
     en = flask.request.form.get('en')
-    dataId = flask.request.form.get('dataId')
+    data_id = flask.request.form.get('dataId')
     source = flask.request.form.get('source')
 
     if source == "/setup/beehouse/status":
-        flag = helpers.SQL("UPDATE status_beehouse SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.StatusBeehouse)
+        obj.fr = fr
+        obj.en = en
     elif source == "/setup/beehouse/owner":
-        flag = helpers.SQL("UPDATE owner SET name=? WHERE id=? AND user=?", (fr, dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.Owner)
+        obj.name = fr
     elif source == "/setup/beehouse/health":
-        flag = helpers.SQL("UPDATE health SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.Health)
+        obj.fr = fr
+        obj.en = en
     elif source == "/setup/beehouse/honey":
-        flag = helpers.SQL("UPDATE honey_type SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.HoneyType)
+        obj.fr = fr
+        obj.en = en
     elif source == "/setup/beehouse/actions":
-        flag = helpers.SQL("UPDATE beehouse_actions SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.BeehouseAction)
+        obj.fr = fr
+        obj.en = en
     elif source == "/setup/apiary/status":
-        flag = helpers.SQL("UPDATE status_apiary SET fr=?, en=? WHERE id=? AND user=?", (fr, en, dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.StatusApiary)
+        obj.fr = fr
+        obj.en = en
+    else:
+        raise Error(alerts.INTERNAL_ERROR)
 
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    obj.save()
 
-    return Success(MODIFICATION_SUCCESS)
+    return Success(alerts.MODIFICATION_SUCCESS)
 
 
 @route("/setup/delete", methods=['POST'])
 @login_required
 def delete_data():
-    dataId = flask.request.form.get('dataId')
+    data_id = flask.request.form.get('dataId')
     source = flask.request.form.get('source')
 
     if source == "/setup/beehouse/status":
-        flag = helpers.SQL("DELETE FROM status_beehouse WHERE id=? AND user=?", (dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.StatusBeehouse)
     elif source == "/setup/beehouse/owner":
-        flag = helpers.SQL("DELETE FROM owner WHERE id=? AND user=?", (dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.Owner)
     elif source == "/setup/beehouse/health":
-        flag = helpers.SQL("DELETE FROM health WHERE id=? AND user=?", (dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.Health)
     elif source == "/setup/beehouse/honey":
-        flag = helpers.SQL("DELETE FROM honey_type WHERE id=? AND user=?", (dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.HoneyType)
     elif source == "/setup/beehouse/actions":
-        flag = helpers.SQL("DELETE FROM beehouse_actions WHERE id=? AND user=?", (dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.BeehouseAction)
     elif source == "/setup/apiary/status":
-        flag = helpers.SQL("DELETE FROM status_apiary WHERE id=? AND user=?", (dataId, flask.session['user_id']))
+        obj = factory.get_from_id(data_id, objects.StatusApiary)
+    else:
+        raise Error(alerts.INTERNAL_ERROR)
 
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    obj.delete()
 
-    return Success(DELETION_SUCCESS)
+    return Success(alerts.DELETION_SUCCESS)
 
 
 @route("/setup/submit", methods = ['POST'])
