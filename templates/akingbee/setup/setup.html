@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container-fluid" id="menu_nb" name="{{m}}">
+    <div class="container-fluid" id="menu_nb" name="{{menu}}">
         <div class="row">
             <div class="col-2">
                 {% include "akingbee/setup_menu.html" %}
             </div>
             <div class="col-10">
                 <br/><br/>
-                {% if t == 0 %}
+                {% if title == 0 %}
                     <div class="row">
                         <div class="col-4"></div>
                         <div class="col-4 justify-center"><p><h4>{{trads[87]}}</h4></p></div>
@@ -30,7 +30,7 @@
                         </p>
                     {% endif %}
                 {% endif %}
-                {% if t != 0 %}
+                {% if title != 0 %}
                     <div class="row">
                         <div class="col-4"></div>
                         <div class="col-4 justify-center"><h4>{{t}}</h4></div>
@@ -45,12 +45,12 @@
                             <button type="button" class="btn btn-secondary" onclick="modal_data_submit(this);">{{trads[89]}}</button>
                         </div>
                         <div class="col-4 justify-center">
-                            {% if tData|length > 0 %}
+                            {% if object_data|length > 0 %}
                                 <table class="table table-striped table-bordered" id="data_table">
                                     <thead class="thead-dark">
                                         <tr>
                                             <th scope="col">#</th>
-                                            {% for colName in col %}
+                                            {% for colName in columns %}
                                             <th scope="col">{{colName}}</th>
                                             {% endfor %}
                                             <th scope="col"></th>
@@ -58,15 +58,15 @@
                                         </tr>
                                     </thead>
                                     <body>
-                                        {% for n in range(tData|length) %}
+                                        {% for n in range(object_data|length) %}
                                             <tr>
                                                 <th scope="row">{{n+1}}</th>
-                                                <td class="data_fr_td">{{tData[n][1]}}</td>
-                                                {% if col|length == 2 %}
-                                                    <td class="data_en_td">{{tData[n][2]}}</td>
+                                                <td class="data_fr_td">{{object_data[n].fr}}</td>
+                                                {% if columns|length == 2 %}
+                                                    <td class="data_en_td">{{object_data[n].en}}</td>
                                                 {% endif %}
-                                                <td><button type="button" class="btn btn-link" name="dt_{{tData[n][0]}}" onclick="modal_data_edit(this);">{{trads[85]}}</button></td>
-                                                <td><button type="button" class="btn btn-link" name="dt_{{tData[n][0]}}" onclick="delete_data(this);">{{trads[64]}}</button></td>
+                                                <td><button type="button" class="btn btn-link" name="dt_{{object_data[n].id}}" onclick="modal_data_edit(this);">{{trads[85]}}</button></td>
+                                                <td><button type="button" class="btn btn-link" name="dt_{{object_data[n].id}}" onclick="delete_data(this);">{{trads[64]}}</button></td>
                                             </tr>
                                         {% endfor %}
                                     </body>
@@ -95,7 +95,7 @@
                         <label for="data_name_fr_modal" class="col-form-label" id="data_fr_id">{{col[0]}}</label>
                         <input type="text" class="form-control" id="data_name_fr_modal">
                     </div>
-                    {% if col|length == 2 %}
+                    {% if columns|length == 2 %}
                         <div class="form-group">
                             <label for="data_name_en_modal" class="col-form-label" id="data_en_id">{{col[1]}}</label>
                             <input type="text" class="form-control" id="data_name_en_modal">
@@ -122,12 +122,12 @@
                     </div>
                     <div class="modal-body"> 
                         <div class="form-group">
-                            <label for="submit_name_fr_modal" class="col-form-label" id="submit_fr_id">{{col[0]}}</label>
+                            <label for="submit_name_fr_modal" class="col-form-label" id="submit_fr_id">{{columns[0]}}</label>
                             <input type="text" class="form-control" id="submit_name_fr_modal">
                         </div>
-                        {% if col|length == 2 %}
+                        {% if columns|length == 2 %}
                             <div class="form-group">
-                                <label for="submit_name_en_modal" class="col-form-label" id="submit_en_id">{{col[1]}}</label>
+                                <label for="submit_name_en_modal" class="col-form-label" id="submit_en_id">{{columns[1]}}</label>
                                 <input type="text" class="form-control" id="submit_name_en_modal">
                             </div>
                         {% endif %}

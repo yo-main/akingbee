@@ -585,7 +585,7 @@ def delete_data():
     return Success(alerts.DELETION_SUCCESS)
 
 
-@route("/setup/submit", methods = ['POST'])
+@route("/setup/submit", methods=['POST'])
 @login_required
 def submit_new_data():
     fr = flask.request.form.get('fr')
@@ -593,42 +593,50 @@ def submit_new_data():
     source = flask.request.form.get('source')
 
     if source == "/setup/beehouse/status":
-        flag = helpers.SQL("INSERT INTO status_beehouse(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
+        obj = objects.StatusBeehouse({'fr': fr, 'en': en})
     elif source == "/setup/beehouse/owner":
-        flag = helpers.SQL("INSERT INTO owner(name, user) VALUES(?,?)", (fr, flask.session['user_id']))
+        obj = objects.Owner({'name': fr})
     elif source == "/setup/beehouse/health":
-        flag = helpers.SQL("INSERT INTO health(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
+        obj = objects.Health({'fr': fr, 'en': en})
     elif source == "/setup/beehouse/honey":
-        flag = helpers.SQL("INSERT INTO honey_type(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
+        obj = objects.HoneyType({'fr': fr, 'en': en})
     elif source == "/setup/beehouse/actions":
-        flag = helpers.SQL("INSERT INTO beehouse_actions(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
+        obj = objects.BeehouseAction({'fr': fr, 'en': en})
     elif source == "/setup/apiary/status":
-        flag = helpers.SQL("INSERT INTO status_apiary(fr, en, user) VALUES(?,?,?)", (fr, en, flask.session['user_id']))
+        obj = objects.StatusApiary({'fr': fr, 'en': en})
+    else:
+        raise Error(alerts.INTERNAL_ERROR)
 
-    if flag == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    obj.save()
 
-    return Success(NEW_PARAMETER_SUCCESS)
+    return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@route("/setup/beehouse/status", methods=['GET', 'POST'])
+@route("/setup/beehouse/status", methods=['GET'])
 @login_required
 def setupStatusBh():
-    if flask.request.method == 'GET':
-        lang = flask.session['language']
-        menu = 0
-        id_title = 'status_beehouse'
+    lang = flask.session['language']
+    menu = 0
+    id_title = 'status_beehouse'
 
-        tData = helpers.SQL("SELECT id, fr, en FROM status_beehouse WHERE user=?", (flask.session['user_id'],))
+    beehouse_statuses = factory.get_all(objects.StatusBeehouse)
 
-        if lang == 'fr':
-            title = "Status des ruches"
-            desc = "Les différents status qui peut être affecté à une ruche"
-        else:
-            title = "Beehouse status"
-            desc = "The different status that can be given to a beehouse"
+    if lang == config.FRENCH:
+        title = "Status des ruches"
+        description = ("Les différents status qui peuvent "
+                       "être affectés à une ruche")
+    else:
+        title = "Beehouse status"
+        description = ("The different status that can "
+                       "be given to a beehouse")
 
-        return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return render("akingbee/setup/setup.html",
+                  object_data=beehouse_statuses,
+                  columns=(config.FRENCH, config.ENGLISH),
+                  menu=menu,
+                  title=title,
+                  id_title=id_title,
+                  description=description)
 
 
 @route("/setup/beehouse/owner", methods=['GET'])
@@ -638,19 +646,26 @@ def setupOwner():
     menu = 1
     id_title = 'owner'
 
-    tData = helpers.SQL("SELECT id, name FROM owner WHERE user=?",
-                        (flask.session['user_ibeehouse_create_healthd'],))
+    owners = factory.get_all(objects.Owner)
 
-    if lang == 'fr':
-        col = ("Nom",)
+    if lang == config.FRENCH:
+        columns = ("Nom",)
         title = "Apiculteur"
-        desc = "L'apiculteur d'une ruche (juste au cas où vous gérez les ruches d'une autre personne)"
+        description = ("L'apiculteur d'une ruche (juste au cas "
+                       "où vous gérez les ruches d'une autre personne)")
     else:
-        col = ("Name",)
+        columns = ("Name",)
         title = "Beekeper"
-        desc = "The beekeper of a beehouse (in case you manage beehouse on behalf of other people ?)"
+        description = ("The beekeper of a beehouse (in case "
+                       "you manage beehouse on behalf of other people ?)")
 
-    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=col, m=menu, t=title, i=id_title, d=desc)
+    return render("akingbee/setup/setup.html",
+                  object_data=owners,
+                  columns=columns,
+                  menu=menu,
+                  title=title,
+                  id_title=id_title,
+                  description=description)
 
 
 @route("/setup/beehouse/health", methods=['GET'])
@@ -660,17 +675,24 @@ def setupHealth():
     menu = 2
     id_title = 'health'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM health WHERE user=?",
-                        (flask.session['user_id'],))
+    healths = factory.get_all(objects.Health)
 
-    if lang == 'fr':
+    if lang == config.FRENCH:
         title = "Status de santé"
-        desc = "Les différents status de santés que vous souhaitez affecter à une ruche"
+        description = ("Les différents status de santés "
+                       "que vous souhaitez affecter à une ruche")
     else:
         title = "Health status"
-        desc = "Different health status that you wish to affect to a beehouse"
+        description = ("Different health status that "
+                       "you wish to affect to a beehouse")
 
-    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return render("akingbee/setup/setup.html",
+                  object_data=healths,
+                  columns=('fr', 'en'),
+                  menu=menu,
+                  title=title,
+                  id_title=id_title,
+                  description=description)
 
 
 @route("/setup/beehouse/honey", methods=['GET'])
@@ -680,17 +702,24 @@ def setupHoneyKind():
     menu = 3
     id_title = 'honey_type'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM honey_type WHERE user=?",
-                        (flask.session['user_id'],))
+    honey_types = factory.get_all(objects.HoneyType)
 
-    if lang == 'fr':
+    if lang == config.FRENCH:
         title = "Type de miel"
-        desc = "Les différents types de miel que vous pouvez être amené à récolter"
+        description = ("Les différents types de miel que "
+                       "vous pouvez être amené à récolter")
     else:
         title = "Honey type"
-        desc = "The different kind of honey that you are harvesting"
+        description = ("The different kind of honey "
+                       "that you are harvesting")
 
-    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return render("akingbee/setup/setup.html",
+                  object_data=honey_types,
+                  columns=('fr', 'en'),
+                  menu=menu,
+                  title=title,
+                  id_title=id_title,
+                  description=description)
 
 
 @route("/setup/beehouse/actions", methods=['GET'])
@@ -700,17 +729,25 @@ def setupBh_actions():
     menu = 4
     id_title = 'beehouse_actions'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM beehouse_actions WHERE user=?",
-                        (flask.session['user_id'],))
+    beehouse_actions = factory.get_all(objects.BeehouseAction)
 
-    if lang == 'fr':
+    if lang == config.FRENCH:
         title = "Actions relatives aux ruches"
-        desc = "Les différentes actions que vous pouvez être amené à faire sur une ruche"
+        description = ("Les différentes actions que vous "
+                       "pouvez être amené à faire sur une ruche")
     else:
         title = "Beehouse actions"
-        desc = "The différent actions that you may have to do on a beehouse"
+        description = ("The différent actions that "
+                       "you may have to do on a beehouse")
 
-    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return render("akingbee/setup/setup.html",
+                  object_data=beehouse_actions,
+                  columns=('fr', 'en'),
+                  menu=menu,
+                  title=title,
+                  id_title=id_title,
+                  descrition=description)
+
 
 
 @route("/setup/apiary/status", methods=['GET'])
@@ -720,17 +757,24 @@ def setupStatusAp():
     menu = 5
     id_title = 'status_apiary'
 
-    tData = helpers.SQL("SELECT id, fr, en FROM status_apiary WHERE user=?",
-                        (flask.session['user_id'],))
+    apiary_statuses = factory.get_all(objects.StatusApiary)
 
-    if lang == 'fr':
+    if lang == config.FRENCH:
         title = "Status des ruchers"
-        desc = "Les différents status que vous pouvez donner à un rucher"
+        description = ("Les différents status que vous "
+                       "pouvez donner à un rucher")
     else:
         title = "Apiary status"
-        desc = "The different status that you may have to give to an apiary"
+        description = ("The different status that "
+                       "you may have to give to an apiary")
 
-    return flask.render_template("akingbee/setup/setup.html", lang=lang, data=helpers.tradDb(lang), tData=tData, col=('fr', 'en'), m=menu, t=title, i=id_title, d=desc)
+    return render("akingbee/setup/setup.html",
+                  object_data=apiary_statuses,
+                  columns=('fr', 'en'),
+                  menu=menu,
+                  title=title,
+                  id_title=id_title,
+                  description=description)
 
 
 @route("/apiary/index/get_apiary_info", methods=['POST'])
@@ -738,10 +782,11 @@ def setupStatusAp():
 def apiary_details():
     ap_id = flask.request.form.get('ap_id')
 
-    data = helpers.SQL("SELECT name, location, status, honey_type\
-                        FROM apiary\
-                        WHERE id=? AND user=?",
-                        (ap_id, flask.session['user_id']))
+    apiary = factory.get_from_id(ap_id, objects.Apiary)
+    # data = helpers.SQL("SELECT name, location, status, honey_type\
+    #                     FROM apiary\
+    #                     WHERE id=? AND user=?",
+    #                     (ap_id, flask.session['user_id']))
 
     return flask.jsonify(data)
 
@@ -751,44 +796,27 @@ def apiary_details():
 def submit_apiary_details():
     ap_id = flask.request.form.get('ap_id')
 
-    name = flask.request.form.get('name')
-    location = flask.request.form.get('location')
-    status = flask.request.form.get('status')
-    honey = flask.request.form.get('honey')
+    apiary = factory.get_from_id(ap_id, objects.Apiary)
 
-    user_id = flask.session['user_id']
+    apiary.name = flask.request.form.get('name')
+    apiary.location = flask.request.form.get('location')
+    apiary.status = flask.request.form.get('status')
+    apiary.honey_type = flask.request.form.get('honey')
 
-    flags = []
+    apiary.save()
 
-    if name != None:
-        flags.append(helpers.SQL("UPDATE apiary SET name=? WHERE id=? AND user=?", (name, ap_id, user_id)))
-
-    if location != None:
-        flags.append(helpers.SQL("UPDATE apiary SET location=? WHERE id=? AND user=?", (location, ap_id, user_id)))
-
-    if status != None:
-        flags.append(helpers.SQL("UPDATE apiary SET status=? WHERE id=? AND user=?", (status, ap_id, user_id)))
-
-    if honey != None:
-        flags.append(helpers.SQL("UPDATE apiary SET honey=? WHERE id=? AND user=?", (honey, ap_id, user_id)))
-
-    if False in flags:
-        raise Error(SQL_PROCESSING_ERROR)
-
-    return Success(MODIFICATION_SUCCESS)
+    return Success(alerts.MODIFICATION_SUCCESS)
 
 
 @route("/apiary/delete", methods=['POST'])
 @login_required
 def del_apiary():
     ap_id = flask.request.form.get('ap_id')
-    check = helpers.SQL("DELETE FROM apiary WHERE id=? AND user=?", (ap_id,
-                                                                     flask.session['user_id']))
 
-    if check == False:
-        raise Error(SQL_PROCESSING_ERROR)
+    apiary = factory.get_from_id(ap_id, objects.Apiary)
+    apiary.delete()
 
-    return Success(DELETION_SUCCESS)
+    return Success(alerts.DELETION_SUCCESS)
 
 
 if __name__ == "__main__":
