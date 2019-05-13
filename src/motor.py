@@ -517,7 +517,7 @@ def del_comment():
 @login_required
 def setupPage():
     if flask.request.method == 'GET':
-        return render("akingbee/setup/setup.html", t=0, col="")
+        return render("akingbee/setup/setup.html", title=0, columns="")
 
 
 @route("/setup/update", methods = ['POST'])
@@ -788,7 +788,7 @@ def apiary_details():
     #                     WHERE id=? AND user=?",
     #                     (ap_id, flask.session['user_id']))
 
-    return flask.jsonify(data)
+    return flask.jsonify(apiary)
 
 
 @route("/apiary/index/submit_apiary_info", methods=['POST'])

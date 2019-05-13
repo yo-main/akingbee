@@ -66,20 +66,22 @@
                                 </tr>
                             </thead>
                             <body>
-                                {% for n, apiary in enumerate(apiaries) %}
+                                {% for n in range(apiaries|length) %}
                                 <tr>
                                     <th scope="row">{{n+1}}</th>
-                                    <td class="name_td">{{apiary.name}}</td>
-                                    <td class="location_td">{{apiary.location}}</td>
+                                    <td class="name_td">{{apiaries[n].name}}</td>
+                                    <td class="location_td">{{apiaries[n].location}}</td>
                                     {% if lang == 'fr' %}
-                                        <td class="status_td">{{apiary.status.fr}}</td>
-                                        <td class="honey_td">{{apiary.honey_types.fr}}</td>
+                                        <td class="status_td">{{apiaries[n].status.fr}}</td>
+                                        <td class="honey_td">{{apiaries[n].honey_types.fr}}</td>
                                     {% elif lang == 'en' %}
-                                        <td class="status_td">{{apiary.status.en}}</td>
-                                        <td class="honey_td">{{apiary.honey_types.en}}</td>
+                                        <td class="status_td">{{apiaries[n].status.en}}</td>
+                                        <td class="honey_td">{{apiaries[n].honey_types.en}}</td>
                                     {% endif %}
-                                    <td><button type="button" class="btn btn-link" name="apia_{{apiary.id}}" onclick="modal_apiary_edit(this);">{{trads[93]}}</button></td>
-                                    <td><button type="button" class="btn btn-link" name="apia_{{apiary.id}}" onclick="delete_apiary(this);">{{trads[64]}}</button></td>
+                                    <td><button type="button" class="btn
+                                            btn-link" name="apia_{{apiaries[n].id}}" onclick="modal_apiary_edit(this);">{{trads[93]}}</button></td>
+                                    <td><button type="button" class="btn
+                                            btn-link" name="apia_{{apiaries[n].id}}" onclick="delete_apiary(this);">{{trads[64]}}</button></td>
                                 </tr>
                                 {% endfor %}
                             </body>

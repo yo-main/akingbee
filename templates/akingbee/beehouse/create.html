@@ -1,7 +1,7 @@
 {% extends "akingbee/layout.html" %}
 
 {% block title %}
-    {{data[5]}}
+    {{trads[5]}}
 {% endblock %}
 
 {% block main %}
@@ -11,24 +11,24 @@
                 {% include "akingbee/bees_menu.html" %}
             </div>
             <div class="col-10">
-                <p><h5 id="form-title">{{data[37]}}</h5></p>
+                <p><h5 id="form-title">{{trads[37]}}</h5></p>
                 <div class="row">
                     <div class="col-4">
-                        <label for="beehouse_name">{{data[22]}}</label>
+                        <label for="beehouse_name">{{trads[22]}}</label>
                         <input id="beehouse_name" name="beehouse_name" class="form-control" required/>
                     </div>
                 </div>
                 <br/>
                 <div class="row">
                     <div class="col-4">
-                        <label for="beehouse_birthday">{{data[31]}}</label>
+                        <label for="beehouse_birthday">{{trads[31]}}</label>
                         <input id="beehouse_birthday" name="beehouse_birthday" class="form-control" type="text" name="date"/>
                     </div>
                 </div>
                 <br/>
                 <div class="row">   
                     <div class="col-4">
-                        <label for="beehouse_status">{{data[28]}}</label>
+                        <label for="beehouse_status">{{trads[28]}}</label>
                         <select id="beehouse_status" name="beehouse_status" class="custom-select d-block w-100" required="">
                             {% for arg in status_beehouse %}
                                 <option value={{arg[0]}}>{{arg[1]}}</option>
@@ -36,15 +36,15 @@
                         </select>
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_status_beehouse" area_hidden="true"></button>
+                        <button type="button" class="btn btn-light create_new_type_button" trads-toggle="modal" trads-target="#create_status_beehouse" area_hidden="true"></button>
                     </div>
                 </div>
                 <br/>
                 <div class="row">
                     <div class="col-4">
-                        <label for="beehouse_apiary">{{data[43]}}</label>
+                        <label for="beehouse_apiary">{{trads[43]}}</label>
                         <select id="beehouse_apiary" name="beehouse_apiary" class="custom-select d-block w-100" required="">
-                            <option value=''>{{data[26]}}</option>
+                            <option value=''>{{trads[26]}}</option>
                             {% for arg in apiaries %}
                                 <option value={{arg[0]}}>{{arg[1]}} - {{arg[2]}}</option>
                             {% endfor %}
@@ -57,9 +57,9 @@
                 <br/>
                 <div class="row">
                     <div class="col-4">
-                        <label for="beehouse_owner">{{data[40]}}</label>
+                        <label for="beehouse_owner">{{trads[40]}}</label>
                         <select id="beehouse_owner" name="beehouse_owner" class="custom-select d-block w-100" required="">
-                            <option value=''>{{data[26]}}</option>
+                            <option value=''>{{trads[26]}}</option>
                             {% for arg in owners %}
                                 <option value={{arg[0]}}>{{arg[1]}}</option>
                             {% endfor %}
@@ -72,9 +72,9 @@
                 <br/>
                 <div class="row">
                     <div class="col-4">
-                        <label for="beehouse_health">{{data[42]}}</label>
+                        <label for="beehouse_health">{{trads[42]}}</label>
                         <select id="beehouse_health" name="beehouse_health" class="custom-select d-block w-100" required="">
-                            <option value=''>{{data[26]}}</option>
+                            <option value=''>{{trads[26]}}</option>
                             {% for arg in health %}
                                 <option value={{arg[0]}}>{{arg[1]}}</option>
                             {% endfor %}
@@ -87,7 +87,7 @@
                 <br/><br/>
                 <div class="row">
                     <div class="col-4">
-                        <button id="submit_beehouse" class="btn btn-primary" onclick="createNewBeehouse();">{{data[14]}}</button>
+                        <button id="submit_beehouse" class="btn btn-primary" onclick="createNewBeehouse();">{{trads[14]}}</button>
                     </div>
                 </div>
             </div>
@@ -99,20 +99,20 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_create_owner">{{data[44]}}</h5>
+                    <h5 class="modal-title" id="title_create_owner">{{trads[44]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="owner_name" class="col-form-label">{{data[40]}}</label>
+                        <label for="owner_name" class="col-form-label">{{trads[40]}}</label>
                         <input type="text" class="form-control" id="owner_name" name="owner_name">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_owner();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_owner();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
@@ -123,7 +123,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_create_health">{{data[45]}}</h5>
+                    <h5 class="modal-title" id="title_create_health">{{trads[45]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -139,8 +139,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_health();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_health();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_create_status_beehouse">{{data[53]}}</h5>
+                    <h5 class="modal-title" id="title_create_status_beehouse">{{trads[53]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -167,8 +167,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{data[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_status_beehouse();">{{data[14]}}</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_status_beehouse();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>
