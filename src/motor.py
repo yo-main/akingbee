@@ -97,10 +97,12 @@ def logout():
 def updateLanguage():
     """Change the user language"""
     newLanguage = flask.request.form.get('language')
+
     if newLanguage not in config.LANGUAGES:
         newLanguage = config.ENGLISH
-        flask.session['language'] = newLanguage
-        return Success()
+
+    flask.session['language'] = newLanguage
+    return Success()
 
 
 @route("/register", methods=['GET'])
@@ -520,7 +522,7 @@ def setupPage():
         return render("akingbee/setup/setup.html", title=0, columns="")
 
 
-@route("/setup/update", methods = ['POST'])
+@route("/setup/update", methods=['POST'])
 @login_required
 def submit_data():
     fr = flask.request.form.get('fr')
@@ -528,26 +530,26 @@ def submit_data():
     data_id = flask.request.form.get('dataId')
     source = flask.request.form.get('source')
 
-    if source == "/setup/beehouse/status":
+    if "/setup/beehouse/status" in source:
         obj = factory.get_from_id(data_id, objects.StatusBeehouse)
         obj.fr = fr
         obj.en = en
-    elif source == "/setup/beehouse/owner":
+    elif "/setup/beehouse/owner" in source:
         obj = factory.get_from_id(data_id, objects.Owner)
         obj.name = fr
-    elif source == "/setup/beehouse/health":
+    elif "/setup/beehouse/health" in source:
         obj = factory.get_from_id(data_id, objects.Health)
         obj.fr = fr
         obj.en = en
-    elif source == "/setup/beehouse/honey":
+    elif "/setup/beehouse/honey" in source:
         obj = factory.get_from_id(data_id, objects.HoneyType)
         obj.fr = fr
         obj.en = en
-    elif source == "/setup/beehouse/actions":
+    elif "/setup/beehouse/actions" in source:
         obj = factory.get_from_id(data_id, objects.BeehouseAction)
         obj.fr = fr
         obj.en = en
-    elif source == "/setup/apiary/status":
+    elif "/setup/apiary/status" in source:
         obj = factory.get_from_id(data_id, objects.StatusApiary)
         obj.fr = fr
         obj.en = en
@@ -565,17 +567,17 @@ def delete_data():
     data_id = flask.request.form.get('dataId')
     source = flask.request.form.get('source')
 
-    if source == "/setup/beehouse/status":
+    if "/setup/beehouse/status" in source:
         obj = factory.get_from_id(data_id, objects.StatusBeehouse)
-    elif source == "/setup/beehouse/owner":
+    elif "/setup/beehouse/owner" in source:
         obj = factory.get_from_id(data_id, objects.Owner)
-    elif source == "/setup/beehouse/health":
+    elif "/setup/beehouse/health" in source:
         obj = factory.get_from_id(data_id, objects.Health)
-    elif source == "/setup/beehouse/honey":
+    elif "/setup/beehouse/honey" in source:
         obj = factory.get_from_id(data_id, objects.HoneyType)
-    elif source == "/setup/beehouse/actions":
+    elif "/setup/beehouse/actions" in source:
         obj = factory.get_from_id(data_id, objects.BeehouseAction)
-    elif source == "/setup/apiary/status":
+    elif "/setup/apiary/status" in source:
         obj = factory.get_from_id(data_id, objects.StatusApiary)
     else:
         raise Error(alerts.INTERNAL_ERROR)
@@ -592,17 +594,17 @@ def submit_new_data():
     en = flask.request.form.get('en')
     source = flask.request.form.get('source')
 
-    if source == "/setup/beehouse/status":
+    if "/setup/beehouse/status" in source:
         obj = objects.StatusBeehouse({'fr': fr, 'en': en})
-    elif source == "/setup/beehouse/owner":
+    elif "/setup/beehouse/owner" in source:
         obj = objects.Owner({'name': fr})
-    elif source == "/setup/beehouse/health":
+    elif "/setup/beehouse/health" in source:
         obj = objects.Health({'fr': fr, 'en': en})
-    elif source == "/setup/beehouse/honey":
+    elif "/setup/beehouse/honey" in source:
         obj = objects.HoneyType({'fr': fr, 'en': en})
-    elif source == "/setup/beehouse/actions":
+    elif "/setup/beehouse/actions" in source:
         obj = objects.BeehouseAction({'fr': fr, 'en': en})
-    elif source == "/setup/apiary/status":
+    elif "/setup/apiary/status" in source:
         obj = objects.StatusApiary({'fr': fr, 'en': en})
     else:
         raise Error(alerts.INTERNAL_ERROR)
@@ -618,7 +620,6 @@ def setupStatusBh():
     lang = flask.session['language']
     menu = 0
     id_title = 'status_beehouse'
-
     beehouse_statuses = factory.get_all(objects.StatusBeehouse)
 
     if lang == config.FRENCH:

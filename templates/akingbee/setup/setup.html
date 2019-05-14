@@ -61,7 +61,11 @@
                                         {% for n in range(object_data|length) %}
                                             <tr>
                                                 <th scope="row">{{n+1}}</th>
+                                                {% if id_title == 'owner' %}
+                                                <td class="data_fr_td">{{object_data[n].name}}</td>
+                                                {% else %}
                                                 <td class="data_fr_td">{{object_data[n].fr}}</td>
+                                                {% endif %}
                                                 {% if columns|length == 2 %}
                                                     <td class="data_en_td">{{object_data[n].en}}</td>
                                                 {% endif %}
@@ -140,4 +144,9 @@
             </div>
         </div>
     
+{% endblock %}
+
+{% block scripts %}
+        <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/setup/beehouse.js"></script>
 {% endblock %}
