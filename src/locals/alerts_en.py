@@ -26,8 +26,10 @@ successes = {
     NEW_PARAMETER_SUCCESS: ("", "New parameter successfully added !"),
     NEW_BEEHOUSE_SUCCESS: ("", "Beehouse successfully created !"),
     NEW_BEEKEEPER_SUCCESS: ("", "Beekeeper successfully created !"),
+    NEW_APIARY_SUCCESS: ("", "Apiary successfully created !"),
     MODIFICATION_SUCCESS: ("", "Modification successfully done !"),
     ACTION_PLANIFICATION_SUCCESS: ("", "Action planified with success !"),
-    ACTION_SOLVED_SUCCESS: ("", "Action résolue avec succés !"),
-    DELETION_SUCCESS: ("", "Suppression faites avec succés !"),
+    ACTION_SOLVED_SUCCESS: ("", "Action successfully solved !"),
+    DELETION_SUCCESS: ("", "Deletion successfully done !"),
+    NEW_COMMENT_SUCCESS: ("", "Commentary successfully registered !"),
 }

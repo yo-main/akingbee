@@ -73,10 +73,10 @@
                                     <td class="location_td">{{apiaries[n].location}}</td>
                                     {% if lang == 'fr' %}
                                         <td class="status_td">{{apiaries[n].status.fr}}</td>
-                                        <td class="honey_td">{{apiaries[n].honey_types.fr}}</td>
+                                        <td class="honey_td">{{apiaries[n].honey_type.fr}}</td>
                                     {% elif lang == 'en' %}
                                         <td class="status_td">{{apiaries[n].status.en}}</td>
-                                        <td class="honey_td">{{apiaries[n].honey_types.en}}</td>
+                                        <td class="honey_td">{{apiaries[n].honey_type.en}}</td>
                                     {% endif %}
                                     <td><button type="button" class="btn
                                             btn-link" name="apia_{{apiaries[n].id}}" onclick="modal_apiary_edit(this);">{{trads[93]}}</button></td>
@@ -143,4 +143,10 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+
+{% block scripts %}
+        <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/apiary/index.js"></script>
 {% endblock %}

@@ -163,6 +163,7 @@ class Apiary(SQLObject):
         'id': int,
         'name': str,
         'birthday': datetime.datetime,
+        'location': str,
         'status': int,
         'honey_type': int,
         'user': int,

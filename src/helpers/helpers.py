@@ -94,18 +94,18 @@ def convert_to_date(arg):
         month = args[0]
         year = args[2]
 
-    myDate = datetime.date(year, month, day)
+    myDate = datetime.datetime(year, month, day)
 
-    return myDate.isoformat()
+    return myDate
 
 
 def update_health(beehouse):
     comments = Factory().get_from_filters(objects.Comments,
                                           {'beehouse': beehouse.id})
-    most_recent_comment = max(comments, key=lambda comment: comment.date)
-
-    beehouse.health = most_recent_comment.health
-    beehouse.save()
+    if comments:
+        most_recent_comment = max(comments, key=lambda comment: comment.date)
+        beehouse.health = most_recent_comment.health
+        beehouse.save()
 
 
 def get_error(arg):

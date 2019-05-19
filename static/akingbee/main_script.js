@@ -35,17 +35,6 @@ function menu_highlight() {
     }
 }
 
-function menu_filter() {
-    let pathname = window.location.pathname;
-
-    if (pathname == "/beehouse/index"){
-        filter_table_beehouse();
-    }
-    else if (pathname == "/apiary/index"){
-        filter_table_apiary();
-    }
-}
-
 function display_alerts() {
     let msg = window.sessionStorage.getItem("msgSuccessBody");
     let title = window.sessionStorage.getItem("msgSuccessTitle");
@@ -72,6 +61,15 @@ function createSuccess(msg, title){
 
 function showError(response){
     let answer = response.responseJSON;
+    if (answer == null){
+        answer = [];
+        answer['fr'] = [];
+        answer['en'] = [];
+        answer['fr']['message'] = "Une erreur interne s'est produite. Désolé :(";
+        answer['en']['message'] = "An internal error happened. Sorry :(";
+        answer.code = "999";
+    };
+
     let language = $('html').attr("lang");
     let content = answer[language];
     let code = answer.code;
@@ -158,7 +156,6 @@ Date.prototype.toDateInputValue = (function() {
 $(document).ready(function() {
     set_active_language();
     menu_highlight();
-    menu_filter();
     display_alerts();
     set_date_picker();
 });

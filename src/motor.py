@@ -198,27 +198,28 @@ def apiary():
 @login_required
 def apiary_create():
     if flask.request.method == 'GET':
-        honey_type = factory.get_all(objects.HoneyType)
-        status_apiary = factory.get_all(objects.StatusApiary)
+        honey_types = factory.get_all(objects.HoneyType)
+        apiary_statuses = factory.get_all(objects.StatusApiary)
 
         return render("akingbee/apiary/create.html",
-                      honey_type=honey_type,
-                      status_apiary=status_apiary)
+                      honey_types=honey_types,
+                      apiary_statuses=apiary_statuses)
 
     elif flask.request.method == 'POST':
-        with flask.request.form as form:
-            data = {
-                'name': form.get('apiary_name'),
-                'location': form.get('apiary_location'),
-                'honey_type': form.get('apiary_honey_type'),
-                'status': form.get('apiary_status'),
-                'birthday': convert_to_date(form.get('apiary_birthday')),
-            }
+        data = {
+            'name': flask.request.form.get('name'),
+            'location': flask.request.form.get('location'),
+            'honey_type': flask.request.form.get('honey_type'),
+            'status': flask.request.form.get('status'),
+            'birthday': convert_to_date(flask.request.form.get('birthday')),
+        }
+
+        print(data)
 
         apiary = objects.Apiary(data)
         apiary.save()
 
-        return redirect("/apiary/index")
+        return Success(alerts.NEW_APIARY_SUCCESS)
 
 
 @route("/apiary/create/new_honey_type", methods=['POST'])
@@ -305,7 +306,7 @@ def beehouse_create():
 @login_required
 def beehouse_create_owner():
     data = {
-        'owner': flask.request.form.get('owner')
+        'name': flask.request.form.get('owner')
     }
     owner = objects.Owner(data)
     owner.save()
@@ -344,7 +345,7 @@ def beehouse_create_status():
 def beehouse_details():
     bh_id = flask.request.form.get('bh_id')
     beehouse = factory.get_from_id(bh_id, objects.Beehouse)
-    return flask.jsonify(beehouse)
+    return flask.jsonify(beehouse.serialize())
 
 
 @route("/beehouse/index/submit_beehouse_info", methods=['POST'])
@@ -365,11 +366,11 @@ def submit_beehouse_details():
 @login_required
 def submit_comment_modal():
     beehouse = factory.get_from_id(flask.request.form.get('bh_id'),
-                                   objects.Apiary)
+                                   objects.Beehouse)
 
 
     comment_data = {
-        'apiary': beehouse.apiary.id,
+        'apiary': beehouse.apiary,
         'date': convert_to_date(flask.request.form.get('date')),
         'comment': flask.request.form.get('comment'),
         'health': flask.request.form.get('health'),
@@ -782,14 +783,8 @@ def setupStatusAp():
 @login_required
 def apiary_details():
     ap_id = flask.request.form.get('ap_id')
-
     apiary = factory.get_from_id(ap_id, objects.Apiary)
-    # data = helpers.SQL("SELECT name, location, status, honey_type\
-    #                     FROM apiary\
-    #                     WHERE id=? AND user=?",
-    #                     (ap_id, flask.session['user_id']))
-
-    return flask.jsonify(apiary)
+    return flask.jsonify(apiary.serialize())
 
 
 @route("/apiary/index/submit_apiary_info", methods=['POST'])

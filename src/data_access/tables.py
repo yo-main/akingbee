@@ -53,6 +53,19 @@ class Table:
         )
         cursor.execute(
             """
+            INSERT INTO
+                comments_type(id, en, fr, date_creation, date_modification)
+            VALUES
+                (1, "User", "Utilisateur", "2019-01-01 00:00:00", "2019-01-01
+            00:00:00"),
+                (2, "System", "Système", "2019-01-01 00:00:00", "2019-01-01
+            00:00:00"),
+                (3, "Action", "Action", "2019-01-01 00:00:00", "2019-01-01
+            00:00:00");
+            """
+        )
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS
             health(
                 id INT AUTO_INCREMENT,

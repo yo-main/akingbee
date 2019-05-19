@@ -26,8 +26,10 @@ successes = {
     NEW_PARAMETER_SUCCESS: ("", "Nouveau paramètre ajouté avec succés"),
     NEW_BEEHOUSE_SUCCESS: ("", "Ruche créée avec succés !"),
     NEW_BEEKEEPER_SUCCESS: ("", "Apiculteur créé avec succés !"),
+    NEW_APIARY_SUCCESS: ("", "RUcher créé avec succés !"),
     MODIFICATION_SUCCESS: ("", "Modification faites avec succés !"),
     ACTION_PLANIFICATION_SUCCESS: ("", "Action planifiée avec succés !"),
     ACTION_SOLVED_SUCCESS: ("", "Action résolue avec succés !"),
     DELETION_SUCCESS: ("", "Suppression faites avec succés !"),
+    NEW_COMMENT_SUCCESS: ("", "Nouveau commentaire enregistré !"),
 }

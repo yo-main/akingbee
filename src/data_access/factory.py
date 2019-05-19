@@ -96,10 +96,15 @@ class Factory:
             filters['user'] = flask.session['user_id']
 
         columns, params = self._build_sql_params(filters, bounded=True)
-        query = "SELECT {} FROM {} WHERE ".format(','.join(class_.columns),
-                                                  class_.table)
-        query += " AND ".join(columns)
+        query = "SELECT {} FROM {} ".format(','.join(class_.columns),
+                                            class_.table)
+
+        if columns:
+            query += "WHERE "
+            query += " AND ".join(columns)
+
         query += ";"
+
 
         raw_data = self._execute(query, params)
 

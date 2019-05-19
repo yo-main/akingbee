@@ -145,6 +145,15 @@ class SQLObject(BaseObject):
                                    value=value)
         return out
 
+    def serialize(self):
+        out = self.__dict__
+        for key, item in out.items():
+            if isinstance(item, BaseObject):
+                out[key] = item.serialize()
+        return out
+
+
+
 
 
 class DataValidator:
@@ -159,10 +168,13 @@ class DataValidator:
             raise TypeError("The provided argument is not correct: {}"
                             .format(arg))
 
-    def validate(self, other):
+    def validate(self, arg):
         if not self.regex:
-            return isinstance(other, self.validator)
-        return bool(self.validator.match(other))
+            if self.validator == int:
+                if isinstance(arg, str) and arg.isdigit():
+                    arg = int(arg)
+            return isinstance(arg, self.validator)
+        return bool(self.validator.match(arg))
 
 
 
