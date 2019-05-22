@@ -5,5 +5,6 @@ var/
 database.db
 .ropeproject
 environment.py
-profile.log
+*.log
+*.yaml
 *.pyc
