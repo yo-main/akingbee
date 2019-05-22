@@ -5,7 +5,7 @@ function new_honey_type(){
     };
 
     let language = $("html").attr("lang");
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/create/new_honey_type";
+    let my_url = get_full_url("/apiary/create/new_honey_type");
 
     if ((data.name_fr == "") && (data.name_en == "")){
         if (language == "fr"){
@@ -41,7 +41,7 @@ function new_apiary_status(){
 
     let language = $("html").attr("lang");
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/create/new_apiary_status";
+    let my_url = get_full_url("/apiary/create/new_apiary_status");
 
     if ((data.name_fr == "") && (data.name_en == "")){
         if (language == "fr"){
@@ -78,7 +78,7 @@ function createNewApiary(){
         honey_type: $("#apiary_honey_type").val(),
     };
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/create";
+    let my_url = get_full_url("/apiary/create");
 
     $.ajax({
         type: "POST",

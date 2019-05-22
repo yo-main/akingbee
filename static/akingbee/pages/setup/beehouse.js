@@ -30,7 +30,7 @@ function delete_data(button){
         source: window.location.pathname
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/setup/delete";
+    let my_url = get_full_url("/akingbee/setup/delete");
 
     if (language == "fr"){
         confirm = window.confirm("Supprimer cette entrée ?");
@@ -69,7 +69,7 @@ function submit_modal_data_submit(){
         data.en = "";
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/setup/submit";
+    let my_url = get_full_url("/akingbee/setup/submit");
 
     if ((data.fr == "") && (data.en == "")){
         if (language == "fr"){
@@ -110,7 +110,7 @@ function submit_modal_data_edit(){
         data.en = "";
     }
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/setup/update";
+    let my_url = get_full_url("/setup/update");
 
     if ((data.fr == "") && (data.en == "")){
         if (language == "fr"){

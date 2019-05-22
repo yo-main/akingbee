@@ -36,6 +36,7 @@ def render(url, **kwargs):
     return flask.render_template(url,
                                  lang=flask.session['language'],
                                  trads=traductions(),
+                                 url_root=config.URL_ROOT,
                                  **kwargs)
 
 
@@ -367,9 +368,8 @@ def submit_beehouse_details():
 def submit_comment_modal():
     beehouse = factory.get_from_id(flask.request.form.get('bh_id'),
                                    objects.Beehouse)
-
-
     comment_data = {
+        'beehouse': beehouse.id,
         'apiary': beehouse.apiary,
         'date': convert_to_date(flask.request.form.get('date')),
         'comment': flask.request.form.get('comment'),
@@ -408,7 +408,7 @@ def beehouse_profil():
     beehouse = factory.get_from_id(bh_id, objects.Beehouse, recursive=True)
 
     comments = factory.get_from_filters(objects.Comments,
-                                        {'beehouse': bh_id},
+                                        {'beehouse': int(bh_id)},
                                         recursive=True)
 
     action_filters = {'beehouse': bh_id, 'status': config.STATUS_PENDING}
@@ -421,6 +421,8 @@ def beehouse_profil():
     beehouse_actions = factory.get_all(objects.BeehouseAction)
     apiaries = factory.get_all(objects.Apiary)
     owners = factory.get_all(objects.Owner)
+
+    print('---->', bh_id, comments)
 
     return render("akingbee/beehouse/beehouse_details.html",
                   beehouse=beehouse,
@@ -459,13 +461,14 @@ def solve_action():
 
     action = factory.get_from_id(flask.request.form.get('ac_id'),
                                  objects.Actions)
+    beehouse = factory.get_from_id(action.beehouse, objects.Beehouse)
 
     data = {
         'comment': flask.request.form.get('comment'),
         'date': convert_to_date(flask.request.form.get('date')),
         'action': action.id,
-        'beehouse': action.beehouse,
-        'apiary': action.apiary,
+        'beehouse': beehouse.id,
+        'apiary': beehouse.apiary,
         'type': config.COMMENT_TYPE_ACTION,
     }
 

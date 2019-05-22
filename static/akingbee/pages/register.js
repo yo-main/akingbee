@@ -39,7 +39,7 @@ function validate_registration(){
         },
         success: function(answer, code){
             showSuccess(answer);
-            location = root_path + "/";
+            location = get_full_url("/");
         }
     });
 

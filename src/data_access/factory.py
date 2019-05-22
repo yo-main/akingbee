@@ -50,7 +50,6 @@ class Factory:
         raw_data = self._search(class_, filters)
         if not raw_data:
             return []
-
         out = self._build_class(class_, raw_data, recursive)
         return out
 

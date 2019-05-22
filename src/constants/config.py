@@ -46,7 +46,7 @@ DATABASE['PROD'] = {
 }
 
 
-URL_ROOT = '/akingbee'
+URL_ROOT = ''
 
 
 DEFAULT_HEALTH = (

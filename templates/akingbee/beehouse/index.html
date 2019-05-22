@@ -154,7 +154,7 @@
                     </div>
                     <div class="form-group">
                         <label for="comment_date" class="col-form-label">{{trads[55]}}</label>
-                        <input id="comment_date" class="form-control" type="text" name="date"/>
+                        <input id="comment_date" class="form-control" type="text" date_picker="true"/>
                     </div>
                     <div class="form-group">
                         <label for="comment_health" class="col-form-label">{{trads[42]}}</label>
@@ -204,11 +204,11 @@
                     </div>
                     <div class="form-group">
                         <label for="action_date" class="col-form-label">{{trads[59]}}</label>
-                        <input id="action_date" class="form-control" type="text" name="date"/>
+                        <input id="action_date" class="form-control" type="text" date_picker="true"/>
                     </div>
                     <div class="form-group">
                         <label for="action_deadline" class="col-form-label">{{trads[61]}}</label>
-                        <input id="action_deadline" class="form-control" type="text" name="date"/>
+                        <input id="action_deadline" class="form-control" type="text" date_picker="true"/>
                     </div>
                     <div class="form-group">
                         <label for="action_comment" class="col-form-label">{{trads[56]}}</label>
@@ -226,5 +226,5 @@
 
 {% block scripts %}
         <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
-        <script type='text/javascript' src="/static/akingbee/pages/beehouse/index.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/beehouses.js"></script>
 {% endblock %}

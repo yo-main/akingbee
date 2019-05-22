@@ -15,7 +15,7 @@ const toastrOptions = {
     "hideMethod": "fadeOut"
 }
 
-var root_path = "/akingbee"
+var root_path = ""
 
 
 function menu_highlight() {
@@ -35,6 +35,12 @@ function menu_highlight() {
     }
 }
 
+function get_full_url(path) {
+    let out;
+    out = window.location.protocol + "//" + window.location.host + root_path + path;
+    return out;
+}
+
 function display_alerts() {
     let msg = window.sessionStorage.getItem("msgSuccessBody");
     let title = window.sessionStorage.getItem("msgSuccessTitle");
@@ -49,13 +55,13 @@ function display_alerts() {
 
 function createError(msg, title){
     toastr.options = toastrOptions;
-	toastr["error"](msg, title);
+    toastr["error"](msg, title);
 }
 
 
 function createSuccess(msg, title){
     toastr.options = toastrOptions;
-	toastr["success"](msg, title);
+    toastr["success"](msg, title);
 }
 
 
@@ -89,13 +95,16 @@ function showSuccess(response){
 function changeLanguage(){
     //update the language upon edit on the language select box
     let data = {language: $("#userLanguage").val()};
+    let my_url = get_full_url("/language");
 
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/language";
     $.ajax({
         type: "POST",
         url: my_url,
         data: data,
-        success: function(){
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
             window.location.reload();
         }
     });
@@ -113,17 +122,17 @@ function set_active_language() {
 
 function set_date_picker() {
     let language = $("html").attr("lang");
-    if (language == "fr"){
+    
+    if (language == 'fr'){
         $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
-        $('[name="date"]').attr("placeholder", "jj/mm/aaaa");
-    }
-    else{    
+        $('[date_picker="true"]').attr("placeholder", "aaaa-mm-jj");
+    }else{    
         $.datepicker.setDefaults( $.datepicker.regional[ "" ] );
-        $('[name="date"]').attr("placeholder", "mm/dd/yyyy");
+        $('[date_picker="true"]').attr("placeholder", "yyyy-mm-dd");
     }
 
-    $('[name="date"]').datepicker();
-    
+    $('[date_picker="true"]').datepicker({dateFormat: 'yy-mm-dd'});
+
     $("#apiary_birthday").val(new Date().toDateInputValue());
     $("#beehouse_birthday").val(new Date().toDateInputValue());
 }
@@ -131,26 +140,20 @@ function set_date_picker() {
 
 Date.prototype.toDateInputValue = (function() {
     // format the date to the input box from html
-    // (DD/MM/YYYY or MM/DD/YYYY depending on the user language)
+    // (YYYY-MM-DD)
     let local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
 
     let language = $("html").attr("lang");
     let dateString;
     
-    if (language == "fr"){
-        dateString = ("0" + local.getUTCDate()).slice(-2) + "/" +
-                     ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" +
-                     local.getFullYear();
-    }
-    else {
-        dateString = ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" +
-                     ("0" + local.getUTCDate()).slice(-2) + "/" +
-                     local.getFullYear();
-    }
-    
+    dateString = (local.getFullYear() + "-" +
+                  ("0" + (local.getUTCMonth() + 1)).slice(-2) + "-" +
+                  ("0" + local.getUTCDate()).slice(-2));
+
     return dateString;
 });
+
 
 
 $(document).ready(function() {

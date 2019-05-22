@@ -121,6 +121,17 @@ class Table:
             );
             """
         )
+        cursor.execute(
+            """
+            INSERT INTO
+                status_action(id, en, fr, date_creation, date_modification)
+            VALUES
+                (1, "Pending", "En attente", "2019-01-01 00:00:00", "2019-01-01
+            00:00:00"),
+                (2, "Done", "Terminé", "2019-01-01 00:00:00", "2019-01-01
+            00:00:00");
+            """
+        )
 
         cursor.execute(
             """

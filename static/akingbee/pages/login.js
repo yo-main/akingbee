@@ -4,7 +4,7 @@ function validateLogin(){
         password: $("#password").val()
     };
     
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/login";
+    let my_url = get_full_url("/login");
     
     $.ajax({
         type: "POST",
@@ -15,7 +15,7 @@ function validateLogin(){
         },
         success: function(answer, code){
             showSuccess(answer);
-            location = root_path + "/";
+            location = get_full_url("/");
         }
     });
 
@@ -24,7 +24,7 @@ function validateLogin(){
 
 
 function forgot_password(){
-    let myUrl = window.location.protocol + "//" + window.location.host + "/akingbee/reset_password";
+    let myUrl = get_full_url("/reset_password");
     window.location = myUrl;
 }
 

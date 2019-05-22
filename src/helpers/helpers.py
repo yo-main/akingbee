@@ -78,21 +78,14 @@ def SQL(request, values =None):
 
 
 def convert_to_date(arg):
-    language = flask.session['language']
-
     if arg == "":
         return ""
 
-    args = list(map(int, arg.split("/")))
+    args = list(map(int, arg.split("-")))
 
-    if language == 'fr':
-        day = args[0]
-        month = args[1]
-        year = args[2]
-    else:
-        day = args[1]
-        month = args[0]
-        year = args[2]
+    day = args[2]
+    month = args[1]
+    year = args[0]
 
     myDate = datetime.datetime(year, month, day)
 

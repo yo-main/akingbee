@@ -12,7 +12,7 @@ function submit_apiary_modal(){
 
     let ap_id = $("#apiary_id").attr("name");
     let to_change = new Object();
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/index/submit_apiary_info";
+    let my_url = get_full_url("/apiary/index/submit_apiary_info");
     let language = $("html").attr("lang");
 
     to_change.ap_id = ap_id;
@@ -41,7 +41,7 @@ function submit_apiary_modal(){
 
 function modal_apiary_edit(button){
     let apiary_id = button.name.substring(5);
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/index/get_apiary_info";
+    let my_url = get_full_url("/apiary/index/get_apiary_info");
     let language = $("html").attr("lang");
 
     $.ajax({
@@ -73,7 +73,7 @@ function modal_apiary_edit(button){
 function delete_apiary(button){
     let apiary_id = button.name.substring(5);
     let confirm;
-    let my_url = window.location.protocol + "//" + window.location.host + "/akingbee/apiary/delete";
+    let my_url = get_full_url("/apiary/delete");
     let language = $("html").attr("lang");
 
     if (language == "fr"){
