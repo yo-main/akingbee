@@ -1,7 +1,11 @@
+import sys
 import os
 from yaml import load, Loader
 
-with open("environment.yaml", "r") as stream:
+
+CONFIG_FILE_PATH = os.path.join(sys.path[0], "environment.yaml")
+print(CONFIG_FILE_PATH)
+with open(CONFIG_FILE_PATH, "r") as stream:
     ENV = load(stream, Loader=Loader)
 
 
