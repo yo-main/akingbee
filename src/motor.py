@@ -12,6 +12,7 @@ import sys
 
 from src.constants import config
 from src.constants import alert_codes as alerts
+from src.constants.environments import URL_ROOT
 from src.data_access import objects
 from src.helpers.helpers import traductions
 from src.helpers.helpers import redirect
@@ -40,7 +41,7 @@ def render(url, **kwargs):
     return flask.render_template(url,
                                  lang=flask.session['language'],
                                  trads=traductions(),
-                                 url_root=config.URL_ROOT,
+                                 url_root=URL_ROOT,
                                  **kwargs)
 
 

@@ -1,5 +1,4 @@
 import datetime
-
 import flask
 
 from src.data_access.connectors import MySQL as SQL

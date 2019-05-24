@@ -1,12 +1,10 @@
-import sys
-import sqlite3
 import datetime
 import functools
 
 import flask
 
 from app import app
-from src.constants import config
+from src.constants.environments import URL_ROOT
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
@@ -15,7 +13,7 @@ from src.data_access import objects
 
 
 def redirect(url):
-    url = config.URL_ROOT + url
+    url = URL_ROOT + url
     return flask.redirect(url)
 
 
@@ -23,7 +21,7 @@ def route(url, **kwargs):
     def my_function(func):
         return app.route(url, **kwargs)(func)
 
-    url = config.URL_ROOT + url
+    url = URL_ROOT + url
 
     return my_function
 
@@ -55,29 +53,6 @@ def traductions(index=None):
     return out
 
 
-def SQL(request, values =None):
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
-
-    try:
-        if values:
-            data = cursor.execute(request, values)
-        else:
-            data = cursor.execute(request)
-    except:
-        print(request, values)
-        print(sys.exc_info())
-        db.close()
-        return False
-
-    toReturn = data.fetchall()
-
-    db.commit()
-    db.close()
-
-    return toReturn
-
-
 def convert_to_date(arg):
     if arg == "":
         return ""
@@ -100,19 +75,3 @@ def update_health(beehouse):
         most_recent_comment = max(comments, key=lambda comment: comment.date)
         beehouse.health = most_recent_comment.health
         beehouse.save()
-
-
-def get_error(arg):
-    toReturn = {'result': 'error',
-                'code': arg,
-                'msg': config.errorMsg[arg]}
-
-    return toReturn
-
-def get_success(arg):
-    toReturn = {'result': 'success',
-                'code': arg,
-                'msg': config.successMsg[arg]}
-
-    return toReturn
-

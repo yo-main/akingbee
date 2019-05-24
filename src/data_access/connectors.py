@@ -1,10 +1,9 @@
-import sqlite3
 import mysql.connector
 
-from src.constants.config import DATABASE, ENVIRONMENT
+from src.constants.config import DATABASE
+from src.constants.environments import PLATFORM_ENVIRONMENT
 
-
-database = DATABASE[ENVIRONMENT['platform']]
+database = DATABASE[PLATFORM_ENVIRONMENT]
 
 
 class MySQL:
@@ -27,14 +26,3 @@ class MySQL:
 
     def rollback(self):
         self.conn.rollback()
-
-
-class SQLite:
-    def __enter__(self):
-        self.conn = sqlite3.connect('database.db')
-        return self.conn.cursor()
-
-    def __exit__(self, type_, value, error):
-        self.conn.commit()
-        self.conn.close()
-

@@ -1,2 +1,8 @@
+
 platform: 'PROD' # PROD // TEST
+
+
+project_path: "/home/romain/var/www/html/akingbee"
+url_root: ''
+
 

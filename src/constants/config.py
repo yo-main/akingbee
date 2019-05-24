@@ -1,16 +1,10 @@
 #! -*- coding: utf-8 -*-
 
-from yaml import load, Loader
-
-
-
-
 FRENCH = 'fr'
 ENGLISH = 'en'
 
 STATUS_DONE = 1
 STATUS_PENDING = 2
-
 
 COMMENT_TYPE_USER = 1
 COMMENT_TYPE_SYSTEM = 2
@@ -28,8 +22,6 @@ LANGUAGES = (
     ENGLISH
 )
 
-with open("environment.yaml", "r") as stream:
-    ENVIRONMENT = load(stream, Loader=Loader)
 
 DATABASE = {}
 DATABASE['TEST'] = {
@@ -44,10 +36,6 @@ DATABASE['PROD'] = {
     'host': '157.230.24.210',
     'database': 'akingbee',
 }
-
-
-URL_ROOT = ''
-
 
 DEFAULT_HEALTH = (
     {FRENCH: "Bonne", ENGLISH: "Good"},
