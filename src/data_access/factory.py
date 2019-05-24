@@ -42,7 +42,6 @@ class Factory:
         return out[0]
 
 
-
     def get_from_filters(self, class_, filters, recursive=False):
         if not filters:
             return []

@@ -28,7 +28,7 @@ LANGUAGES = (
     ENGLISH
 )
 
-with open("/var/www/html/akingbee/environment.yaml", "r") as stream:
+with open("environment.yaml", "r") as stream:
     ENVIRONMENT = load(stream, Loader=Loader)
 
 DATABASE = {}

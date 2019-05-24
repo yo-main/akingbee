@@ -106,6 +106,7 @@ class SQLObject(BaseObject):
     def __repr__(self):
         return str(self.id)
 
+
     def __setattr__(self, key, item):
         if key == "columns":
             raise AttributeError("You cannot change the columns attribute")
