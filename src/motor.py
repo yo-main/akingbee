@@ -12,7 +12,7 @@ import sys
 
 from src.constants import config
 from src.constants import alert_codes as alerts
-from src.constants.environments import URL_ROOT
+from src.constants.environments import URL_ROOT, LOG_DIRECTORY
 from src.data_access import objects
 from src.helpers.helpers import traductions
 from src.helpers.helpers import redirect
@@ -27,9 +27,10 @@ from src.data_access.factory import Factory
 
 factory = Factory()
 
+
 def logger(text):
     text = str(text)
-    with open('logs.log', 'a') as f:
+    with open(LOG_DIRECTORY, 'a') as f:
         f.write(text)
         f.write('\n\n')
 
