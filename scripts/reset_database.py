@@ -1,5 +1,4 @@
 #! -*- coding: utf-8 -*-
-import app
 
 import sys
 import inspect
@@ -7,6 +6,7 @@ import os
 
 sys.path.insert(0, '/var/www/html/akingbee')
 
+import app
 from src.data_access import objects
 from src.data_access import connectors
 from src.data_access.tables import Table

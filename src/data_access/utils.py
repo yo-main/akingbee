@@ -31,6 +31,9 @@ class SQLObject(BaseObject):
         if factory is None:
             factory = Factory()
 
+        if 'user_id' not in flask.session:
+            flask.session['user_id'] = None
+
         if self.id:
             if ('user' in self.columns
                 and self.user != flask.session['user_id']):
@@ -41,7 +44,7 @@ class SQLObject(BaseObject):
                 if values:
                     factory.update(table, values)
         else:
-            if 'user' in self.columns:
+            if 'user' in self.columns and flask.session['user_id']:
                 self.user = flask.session['user_id']
 
             items = {key: getattr(self, key)
