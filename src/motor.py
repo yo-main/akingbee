@@ -28,7 +28,7 @@ factory = Factory()
 
 def logger(text):
     text = str(text)
-    with open('/var/www/html/akingbee/logs.log', 'a') as f:
+    with open('logs.log', 'a') as f:
         f.write(text)
         f.write('\n\n')
 

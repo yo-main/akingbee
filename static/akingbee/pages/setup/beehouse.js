@@ -30,7 +30,7 @@ function delete_data(button){
         source: window.location.pathname
     }
 
-    let my_url = get_full_url("/akingbee/setup/delete");
+    let my_url = get_full_url("/setup/delete");
 
     if (language == "fr"){
         confirm = window.confirm("Supprimer cette entrée ?");
@@ -69,7 +69,7 @@ function submit_modal_data_submit(){
         data.en = "";
     }
 
-    let my_url = get_full_url("/akingbee/setup/submit");
+    let my_url = get_full_url("/setup/submit");
 
     if ((data.fr == "") && (data.en == "")){
         if (language == "fr"){
