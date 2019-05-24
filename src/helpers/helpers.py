@@ -24,6 +24,7 @@ def route(url, **kwargs):
         return app.route(url, **kwargs)(func)
 
     url = config.URL_ROOT + url
+
     return my_function
 
 

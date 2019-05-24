@@ -1,4 +1,5 @@
 import flask
+import werkzeug
 
 from src.constants.config import FRENCH, ENGLISH
 from src.locals import alerts_fr as fr
@@ -12,7 +13,7 @@ class Error(Exception):
         self.code = code
 
         self.out = {}
-        self.out['result'] = "error"
+        self.out['status'] = "error"
         self.out['code'] = code
 
         self._generate_msg()
@@ -31,9 +32,8 @@ class Error(Exception):
 @app.errorhandler(Error)
 def handle_error(error):
     response = flask.jsonify(error.to_dict())
-    # the below line is there in order for the ajax call to return an error
-    response.status_code = error.code
-    return response
+    return response, 500
+
 
 
 

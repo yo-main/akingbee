@@ -10,7 +10,6 @@ import os
 import datetime
 import sys
 
-from app import app
 from src.constants import config
 from src.constants import alert_codes as alerts
 from src.data_access import objects
@@ -25,8 +24,13 @@ from src.services.alerts import Error, Success
 
 from src.data_access.factory import Factory
 
-
 factory = Factory()
+
+def logger(text):
+    text = str(text)
+    with open('/var/www/html/akingbee/logs.log', 'a') as f:
+        f.write(text)
+        f.write('\n\n')
 
 
 def render(url, **kwargs):
@@ -50,20 +54,20 @@ def get_user_from_username(username):
 def get_all(class_, recursive=False):
     return factory.get_from_filters(class_,
                                     {'user': flask.session['user_id']},
-                                    recursive=recursive)
+                                     recursive=recursive)
 
 
 @route("/", methods=['GET'])
 @login_required
 def home():
+    logger(flask.session['user_id'])
     return render("akingbee/index_akb.html")
 
 
 @route("/login", methods=['GET', 'POST'])
 def login():
-
     # We remove the user credentials if any in the cookie
-    flask.session.pop('user_id', None)
+    flask.session['user_id'] = None
     flask.session.pop('username', None)
 
     if flask.request.method == 'GET':
@@ -71,9 +75,7 @@ def login():
 
     username = flask.request.form.get('username')
     password = flask.request.form.get('password')
-
     user = get_user_from_username(username)
-
     if not (password and check_password_hash(user.pwd, password)):
         raise Error(alerts.INCORRECT_PASSWORD_ERROR)
 
@@ -89,7 +91,7 @@ def login():
 
 @route("/logout", methods=['GET'])
 def logout():
-    flask.session.pop('user_id', None)
+    flask.session['user_id'] = None
     flask.session.pop('username', None)
     return redirect("/")
 
@@ -159,7 +161,7 @@ def registerCheck():
 
 @route("/reset_password", methods=['GET', 'POST'])
 def reset_pwd():
-    if flask.session.get('user_id') is not None:
+    if flask.session['user_id'] is not None:
         return redirect("/")
 
     if flask.request.method == 'GET':
@@ -818,5 +820,3 @@ def del_apiary():
     return Success(alerts.DELETION_SUCCESS)
 
 
-if __name__ == "__main__":
-    app.run()
