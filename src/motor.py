@@ -1,5 +1,5 @@
-#! /home/romain/var/env/py3.6/bin/python3.6
 # -*- coding: utf-8 -*-
+
 import flask
 import flask_session
 import sqlite3
@@ -53,10 +53,10 @@ def get_user_from_username(username):
     return result[0]
 
 
-def get_all(class_, recursive=False):
+def get_all(class_, deepth=0):
     return factory.get_from_filters(class_,
                                     {'user': flask.session['user_id']},
-                                     recursive=recursive)
+                                    deepth=1)
 
 
 @route("/", methods=['GET'])
@@ -187,7 +187,7 @@ def reset_pwd():
 @route("/apiary/index", methods=['GET'])
 @login_required
 def apiary():
-    apiaries = get_all(objects.Apiary, recursive=True)
+    apiaries = get_all(objects.Apiary, deepth=1)
     apiary_statuses = get_all(objects.StatusApiary)
     honey_types = get_all(objects.HoneyType)
     location_list = list(set(a.location for a in apiaries))
@@ -258,7 +258,7 @@ def apiary_status_create():
 @route("/beehouse/index", methods=['GET'])
 @login_required
 def beehouse():
-    beehouses = factory.get_all(objects.Beehouse, recursive=True)
+    beehouses = factory.get_all(objects.Beehouse, deepth=2)
 
     healths = factory.get_all(objects.Health)
     beehouse_statuses = factory.get_all(objects.StatusBeehouse)
@@ -409,24 +409,22 @@ def submit_action_modal():
 @login_required
 def beehouse_profil():
     bh_id = flask.request.args.get('bh')
-    beehouse = factory.get_from_id(bh_id, objects.Beehouse, recursive=True)
+    beehouse = factory.get_from_id(bh_id, objects.Beehouse, deepth=1)
 
     comments = factory.get_from_filters(objects.Comments,
                                         {'beehouse': int(bh_id)},
-                                        recursive=True)
+                                        deepth=2)
 
     action_filters = {'beehouse': bh_id, 'status': config.STATUS_PENDING}
     actions = factory.get_from_filters(objects.Actions,
                                        action_filters,
-                                       recursive=True)
+                                       deepth=0)
     healths = factory.get_all(objects.Health)
     comment_types = factory.get_all(objects.CommentsType)
     beehouse_statuses = factory.get_all(objects.StatusBeehouse)
     beehouse_actions = factory.get_all(objects.BeehouseAction)
     apiaries = factory.get_all(objects.Apiary)
     owners = factory.get_all(objects.Owner)
-
-    print('---->', bh_id, comments)
 
     return render("akingbee/beehouse/beehouse_details.html",
                   beehouse=beehouse,

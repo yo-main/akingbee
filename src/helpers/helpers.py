@@ -10,6 +10,7 @@ from src.constants import alert_codes as alerts
 from src.services.alerts import Error
 from src.data_access.factory import Factory
 from src.data_access import objects
+from src.constants import environments as ENV
 
 
 def redirect(url):
@@ -22,7 +23,6 @@ def route(url, **kwargs):
         return app.route(url, **kwargs)(func)
 
     url = URL_ROOT + url
-
     return my_function
 
 
@@ -36,6 +36,8 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if flask.session.get('user_id') is None:
             return redirect("/login")
+        else:
+            ENV.USER_ID = flask.session.get('user_id')
         return f(*args, **kwargs)
     return decorated_function
 

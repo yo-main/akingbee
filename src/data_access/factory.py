@@ -1,8 +1,10 @@
+from concurrent import futures
 import datetime
 import flask
 
 from src.data_access.connectors import MySQL as SQL
 from src.data_access.base_object import BaseObject
+from src.constants import environments as ENV
 
 
 class Factory:
@@ -23,13 +25,16 @@ class Factory:
         self.conn.close()
 
 
-    def get_all(self, class_, recursive=False):
+    def get_all(self, class_, deepth=0):
         raw_data = self._search(class_, {})
-        out = self._build_class(class_, raw_data, recursive)
+        if not raw_data:
+            return None
+
+        out = self._build_class(class_, raw_data, deepth)
         return out
 
 
-    def get_from_id(self, id, class_, recursive=False):
+    def get_from_id(self, id, class_, deepth=0):
         if not id:
             return None
 
@@ -37,22 +42,25 @@ class Factory:
         if not raw_data:
             return None
 
-        out = self._build_class(class_, raw_data, recursive)
+        out = self._build_class(class_, raw_data, deepth)
         return out[0]
 
 
-    def get_from_filters(self, class_, filters, recursive=False):
+    def get_from_filters(self, class_, filters, deepth=0):
         if not filters:
             return []
 
         raw_data = self._search(class_, filters)
         if not raw_data:
             return []
-        out = self._build_class(class_, raw_data, recursive)
+
+        out = self._build_class(class_, raw_data, deepth)
         return out
 
 
-    def _execute(self, query, params=list()):
+    def _execute(self, query, params=None):
+        if params is None:
+            params = []
         print(query)
         print(params)
         try:
@@ -90,7 +98,7 @@ class Factory:
 
     def _search(self, class_, filters):
         if 'user' in class_.columns:
-            filters['user'] = flask.session['user_id']
+            filters['user'] = ENV.USER_ID
 
         columns, params = self._build_sql_params(filters, bounded=True)
         query = "SELECT {} FROM {} ".format(','.join(class_.columns),
@@ -102,7 +110,6 @@ class Factory:
 
         query += ";"
 
-
         raw_data = self._execute(query, params)
 
         if not raw_data:
@@ -110,19 +117,31 @@ class Factory:
         return raw_data
 
 
-    def _build_class(self, class_, raw_data, recursive):
+    def _build_class(self, class_, raw_data, deepth):
         out = []
 
-        for raw in raw_data:
-            data = {}
-            for key, item in zip(class_.columns, raw):
-                if item and class_.columns[key].args == datetime.datetime:
-                    if isinstance(item, str):
-                        item = self._convert_date(item)
-                data[key] = item
-            out.append(class_(data, recursive))
+        if deepth:
+            deepth -= 1
+
+        workers = 10
+        with futures.ThreadPoolExecutor(workers) as executor:
+            work = [executor.submit(self._build_all, class_, raw, deepth)
+                    for raw in raw_data]
+            for done in futures.as_completed(work):
+                res = done.result()
+                out.append(res)
 
         return out
+
+
+    def _build_all(self, class_, raw, deepth):
+        data = {}
+        for key, item in zip(class_.columns, raw):
+            if item and class_.columns[key].args == datetime.datetime:
+                if isinstance(item, str):
+                    item = self._convert_date(item)
+            data[key] = item
+        return class_(data, deepth)
 
 
     @staticmethod
