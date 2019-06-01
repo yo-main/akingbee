@@ -75,9 +75,6 @@ class Factory:
         except Exception as e:
             self.rollback()
             raise e
-        
-        if self.autocommit:
-            self.commit()
 
         return data
 
@@ -176,6 +173,9 @@ class Factory:
 
         self._execute(query, params)
 
+        if self.autocommit:
+            self.commit()
+
         return True
 
 
@@ -187,6 +187,9 @@ class Factory:
         params = [id_]
 
         self._execute(query, params)
+
+        if self.autocommit:
+            self.commit()
 
         return True
 
@@ -201,6 +204,9 @@ class Factory:
         query += "VALUES ({});".format(", ".join(['%s'] * len(params)))
 
         res = self._execute(query, params)
+
+        if self.autocommit:
+            self.commit()
 
         return res
 
