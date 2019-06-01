@@ -1,8 +1,0 @@
-
-platform: 'PROD' # PROD // TEST
-
-
-project_path: "/var/www/html/akingbee"
-url_root: ''
-
-

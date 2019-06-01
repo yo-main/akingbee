@@ -3,8 +3,7 @@ __pycache__
 .vscode/
 var/
 database.db
-.ropeproject
-environment.py
 *.log
 *.yaml
 *.pyc
+.ropeproject
