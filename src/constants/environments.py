@@ -18,3 +18,5 @@ URL_ROOT = ENV['url_root']
 URL_FLASK_SESSION = os.path.join(PROJECT_PATH, 'flask_session')
 
 LOG_DIRECTORY = os.path.join(PROJECT_PATH, 'logs.log')
+
+USER_ID = None

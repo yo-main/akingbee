@@ -15,11 +15,11 @@ class SQLObject(BaseObject):
     foreign = {}
     id = None
 
-    def __init__(self, data=None, recursive=False):
+    def __init__(self, data=None, deepth=0):
         if data:
             self._init_with_values(data)
         self._create_missing_attr()
-        if recursive:
+        if deepth:
             self._get_foreign_objects()
 
     def delete(self):
