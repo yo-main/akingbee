@@ -28,7 +28,7 @@ class Factory:
     def get_all(self, class_, deepth=0):
         raw_data = self._search(class_, {})
         if not raw_data:
-            return None
+            return []
 
         out = self._build_class(class_, raw_data, deepth)
         return out

@@ -56,7 +56,7 @@ def get_user_from_username(username):
 def get_all(class_, deepth=0):
     return factory.get_from_filters(class_,
                                     {'user': flask.session['user_id']},
-                                    deepth=1)
+                                    deepth)
 
 
 @route("/", methods=['GET'])
@@ -187,7 +187,7 @@ def reset_pwd():
 @route("/apiary/index", methods=['GET'])
 @login_required
 def apiary():
-    apiaries = get_all(objects.Apiary, deepth=1)
+    apiaries = get_all(objects.Apiary, deepth=2)
     apiary_statuses = get_all(objects.StatusApiary)
     honey_types = get_all(objects.HoneyType)
     location_list = list(set(a.location for a in apiaries))
