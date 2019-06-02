@@ -258,13 +258,13 @@ def apiary_status_create():
 @route("/beehouse/index", methods=['GET'])
 @login_required
 def beehouse():
-    beehouses = factory.get_all(objects.Beehouse, deepth=2)
-
-    healths = factory.get_all(objects.Health)
-    beehouse_statuses = factory.get_all(objects.StatusBeehouse)
-    beehouse_actions = factory.get_all(objects.BeehouseAction)
-    apiaries = factory.get_all(objects.Apiary)
-    owners = factory.get_all(objects.Owner)
+    with Factory() as facto:
+        beehouses = facto.get_all(objects.Beehouse, deepth=2)
+        healths = facto.get_all(objects.Health)
+        beehouse_statuses = facto.get_all(objects.StatusBeehouse)
+        beehouse_actions = facto.get_all(objects.BeehouseAction)
+        apiaries = facto.get_all(objects.Apiary)
+        owners = facto.get_all(objects.Owner)
 
     return render("akingbee/beehouse/index.html",
                   beehouses=beehouses,
@@ -279,11 +279,11 @@ def beehouse():
 @login_required
 def beehouse_create():
     if flask.request.method == 'GET':
-
-        owners = factory.get_all(objects.Owner)
-        apiaries = factory.get_all(objects.Apiary)
-        healths = factory.get_all(objects.Health)
-        beehouse_statuses = factory.get_all(objects.StatusBeehouse)
+        with Factory() as facto:
+            owners = facto.get_all(objects.Owner)
+            apiaries = facto.get_all(objects.Apiary)
+            healths = facto.get_all(objects.Health)
+            beehouse_statuses = facto.get_all(objects.StatusBeehouse)
 
         return render("akingbee/beehouse/create.html",
                       owners=owners,
@@ -409,22 +409,26 @@ def submit_action_modal():
 @login_required
 def beehouse_profil():
     bh_id = flask.request.args.get('bh')
-    beehouse = factory.get_from_id(bh_id, objects.Beehouse, deepth=1)
+    facto = Factory(autocommit=False)
 
-    comments = factory.get_from_filters(objects.Comments,
-                                        {'beehouse': int(bh_id)},
-                                        deepth=2)
+    beehouse = facto.get_from_id(bh_id, objects.Beehouse, deepth=1)
+
+    comments = facto.get_from_filters(objects.Comments,
+                                      {'beehouse': int(bh_id)},
+                                      deepth=2)
 
     action_filters = {'beehouse': bh_id, 'status': config.STATUS_PENDING}
-    actions = factory.get_from_filters(objects.Actions,
-                                       action_filters,
-                                       deepth=0)
-    healths = factory.get_all(objects.Health)
-    comment_types = factory.get_all(objects.CommentsType)
-    beehouse_statuses = factory.get_all(objects.StatusBeehouse)
-    beehouse_actions = factory.get_all(objects.BeehouseAction)
-    apiaries = factory.get_all(objects.Apiary)
-    owners = factory.get_all(objects.Owner)
+    actions = facto.get_from_filters(objects.Actions,
+                                     action_filters,
+                                     deepth=0)
+    healths = facto.get_all(objects.Health)
+    comment_types = facto.get_all(objects.CommentsType)
+    beehouse_statuses = facto.get_all(objects.StatusBeehouse)
+    beehouse_actions = facto.get_all(objects.BeehouseAction)
+    apiaries = facto.get_all(objects.Apiary)
+    owners = facto.get_all(objects.Owner)
+
+    facto.commit()
 
     return render("akingbee/beehouse/beehouse_details.html",
                   beehouse=beehouse,

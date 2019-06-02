@@ -8,21 +8,39 @@ from src.constants import environments as ENV
 
 
 class Factory:
+    state = False
 
     def __init__(self, autocommit=True):
+        self.autocommit = autocommit
+        if not autocommit and not self.state:
+            self._create_connection()
+
+    def __enter__(self):
+        if not self.state:
+            self._create_connection()
+        return self
+
+    def __exit__(self, type_, value, traceback):
+        if self.state:
+            self.conn.commit()
+            self.conn.close()
+
+    def _create_connection(self):
         self.conn = SQL()
         self.cursor = self.conn.cursor()
-        self.autocommit = autocommit
+        self.state = True
 
 
     def rollback(self):
         self.conn.rollback()
         self.conn.close()
+        self.state = False
 
 
     def commit(self):
         self.conn.commit()
         self.conn.close()
+        self.state = False
 
 
     def get_all(self, class_, deepth=0):
@@ -63,6 +81,10 @@ class Factory:
             params = []
         print(query)
         print(params)
+
+        if self.autocommit:
+            self._create_connection()
+
         try:
             self.cursor.execute(query, params)
 
