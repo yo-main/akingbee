@@ -9,3 +9,4 @@ environment.py
 *.log
 *.yaml
 *.pyc
+*.swp
