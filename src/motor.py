@@ -62,7 +62,6 @@ def home():
 
 @route("/login", methods=["GET", "POST"])
 def login():
-    logger.info("Connection attempt")
 
     # We remove the user credentials if any in the cookie
     flask.session["user_id"] = None
@@ -70,6 +69,8 @@ def login():
 
     if flask.request.method == "GET":
         return render("akingbee/login.html")
+
+    logger.info("Login attempt")
 
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
@@ -91,6 +92,7 @@ def login():
 
 @route("/logout", methods=["GET"])
 def logout():
+    logger.info("Logout")
     flask.session["user_id"] = None
     flask.session.pop("username", None)
     return redirect("/")
