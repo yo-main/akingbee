@@ -50,9 +50,7 @@
                                     <thead class="thead-dark">
                                         <tr>
                                             <th scope="col">#</th>
-                                            {% for colName in columns %}
-                                            <th scope="col">{{colName}}</th>
-                                            {% endfor %}
+                                            <th scope="col">{{column}}</th>
                                             <th scope="col"></th>
                                             <th scope="col"></th>
                                         </tr>
@@ -61,14 +59,7 @@
                                         {% for n in range(object_data|length) %}
                                             <tr>
                                                 <th scope="row">{{n+1}}</th>
-                                                {% if id_title == 'owner' %}
-                                                <td class="data_fr_td">{{object_data[n].name}}</td>
-                                                {% else %}
-                                                <td class="data_fr_td">{{object_data[n].fr}}</td>
-                                                {% endif %}
-                                                {% if columns|length == 2 %}
-                                                    <td class="data_en_td">{{object_data[n].en}}</td>
-                                                {% endif %}
+                                                <td class="data_td">{{object_data[n][column]}}</td>
                                                 <td><button type="button" class="btn btn-link" name="dt_{{object_data[n].id}}" onclick="modal_data_edit(this);">{{trads[85]}}</button></td>
                                                 <td><button type="button" class="btn btn-link" name="dt_{{object_data[n].id}}" onclick="delete_data(this);">{{trads[64]}}</button></td>
                                             </tr>
@@ -96,15 +87,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="data_name_fr_modal" class="col-form-label" id="data_fr_id">{{columns[0]}}</label>
-                        <input type="text" class="form-control" id="data_name_fr_modal">
+                        <label for="data_name_modal" class="col-form-label" id="data_id">{{title}}</label>
+                        <input type="text" class="form-control" id="data_name_modal">
                     </div>
-                    {% if columns|length == 2 %}
-                        <div class="form-group">
-                            <label for="data_name_en_modal" class="col-form-label" id="data_en_id">{{columns[1]}}</label>
-                            <input type="text" class="form-control" id="data_name_en_modal">
-                        </div>
-                    {% endif %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
@@ -126,15 +111,9 @@
                     </div>
                     <div class="modal-body"> 
                         <div class="form-group">
-                            <label for="submit_name_fr_modal" class="col-form-label" id="submit_fr_id">{{columns[0]}}</label>
-                            <input type="text" class="form-control" id="submit_name_fr_modal">
+                            <label for="submit_name_modal" class="col-form-label" id="submit_id">{{title}}</label>
+                            <input type="text" class="form-control" id="submit_name_modal">
                         </div>
-                        {% if columns|length == 2 %}
-                            <div class="form-group">
-                                <label for="submit_name_en_modal" class="col-form-label" id="submit_en_id">{{columns[1]}}</label>
-                                <input type="text" class="form-control" id="submit_name_en_modal">
-                            </div>
-                        {% endif %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
@@ -148,5 +127,5 @@
 
 {% block scripts %}
         <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
-        <script type='text/javascript' src="/static/akingbee/pages/setup/beehouse.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/setup.js"></script>
 {% endblock %}

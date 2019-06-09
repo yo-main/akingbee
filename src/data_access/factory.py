@@ -2,10 +2,15 @@ from concurrent import futures
 import datetime
 import flask
 
+from mysql.connector import errors as mysql_error
+
 from src.data_access.connectors import MySQL as SQL
 from src.data_access.base_object import BaseObject
 from src.constants import environments as ENV
 from src.services.logger import logger
+from src.services.alerts import Error
+from src.constants import alert_codes as alerts
+
 
 
 class Factory:
@@ -89,6 +94,10 @@ class Factory:
                 data = self.cursor.fetchall()
             else:
                 data = []
+        except mysql_error.IntegrityError as e:
+            logger.info(e)
+            self.rollback()
+            raise Error(alerts.SQL_FOREIGN_KEY_ERROR)
         except Exception as e:
             logger.critical(e)
             self.rollback()

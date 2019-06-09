@@ -16,6 +16,7 @@ errors = {
     EMAIL_ALREADY_EXISTS_ERROR: "Cet email est déjà utilisé",
     TRANSLATION_ID_DOES_NOT_EXISTS: default,
     USERS_MIXED_UP_ERROR: default,
+    SQL_FOREIGN_KEY_ERROR: "Cette donnée est actuellement utilisée et ne peut pas être supprimée",
     INTERNAL_ERROR: default,
 }
 

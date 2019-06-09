@@ -1,7 +1,7 @@
 function modal_data_submit(button){
     $("#submit_data").modal("show");
     let dataId = button.name.substring(3);
-    $("#data_en_id").attr("name", dataId);
+    $("#data_id").attr("name", dataId);
 }
 
 
@@ -11,13 +11,11 @@ function modal_data_edit(button){
     
     $("#edit_data").modal("show");
 
-    let dataFr = $(button).closest("tr").children("td.data_fr_td").text();
-    let dataEn = $(button).closest("tr").children("td.data_en_td").text();
+    let data = $(button).closest("tr").children("td.data_td").text();
     let dataId = button.name.substring(3);
 
-    $("#data_fr_id").attr("name", dataId);
-    $("#data_name_fr_modal").val(dataFr);
-    $("#data_name_en_modal").val(dataEn);
+    $("#data_id").attr("name", dataId);
+    $("#data_name_modal").val(data);
 }
 
 
@@ -60,8 +58,8 @@ function delete_data(button){
 function submit_modal_data_submit(){
     let language = $("html").attr("lang");
     let data = {
-        fr: $("#submit_name_fr_modal").val(),
-        en: $("#submit_name_en_modal").val(),
+        fr: $("#submit_name_modal").val(),
+        en: $("#submit_name_modal").val(),
         source: window.location.pathname
     }
 
@@ -99,20 +97,10 @@ function submit_modal_data_submit(){
 
 
 function submit_modal_data_edit(){
-    let data = {
-        fr: $("#data_name_fr_modal").val(),
-        en: $("#data_name_en_modal").val(),
-        dataId: $("#data_fr_id").attr('name'),
-        source: window.location.pathname
-    }
+    let language = $("html").attr("lang");
+    let name = $("#data_name_modal").val();
 
-    if (data.en == undefined){
-        data.en = "";
-    }
-
-    let my_url = get_full_url("/setup/update");
-
-    if ((data.fr == "") && (data.en == "")){
+    if (name == ""){
         if (language == "fr"){
             createError("Merci de remplir au moins un des deux champs");
         }
@@ -121,6 +109,15 @@ function submit_modal_data_edit(){
         }
         return false;
     }
+
+    let data = {
+        fr: name,
+        en: name,
+        dataId: $("#data_id").attr('name'),
+        source: window.location.pathname
+    }
+
+    let my_url = get_full_url("/setup/update");
 
     $.ajax({
         type: "POST",

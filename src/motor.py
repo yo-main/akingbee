@@ -537,7 +537,7 @@ def del_comment():
 @login_required
 def setupPage():
     if flask.request.method == "GET":
-        return render("akingbee/setup/setup.html", title=0, columns="")
+        return render("akingbee/setup/setup.html", title=0, column="")
 
 
 @route("/setup/update", methods=["POST"])
@@ -652,7 +652,7 @@ def setupStatusBh():
     return render(
         "akingbee/setup/setup.html",
         object_data=beehouse_statuses,
-        columns=(config.FRENCH, config.ENGLISH),
+        column=lang,
         menu=menu,
         title=title,
         id_title=id_title,
@@ -670,15 +670,12 @@ def setupOwner():
     owners = factory.get_all(objects.Owner)
 
     if lang == config.FRENCH:
-        columns = ("Nom",)
         title = "Apiculteur"
         description = (
             "L'apiculteur d'une ruche (juste au cas "
             "où vous gérez les ruches d'une autre personne)"
         )
     else:
-        columns = ("Name",)
-        title = "Beekeper"
         description = (
             "The beekeper of a beehouse (in case "
             "you manage beehouse on behalf of other people ?)"
@@ -687,7 +684,7 @@ def setupOwner():
     return render(
         "akingbee/setup/setup.html",
         object_data=owners,
-        columns=columns,
+        column="name",
         menu=menu,
         title=title,
         id_title=id_title,
@@ -719,7 +716,7 @@ def setupHealth():
     return render(
         "akingbee/setup/setup.html",
         object_data=healths,
-        columns=("fr", "en"),
+        column=lang,
         menu=menu,
         title=title,
         id_title=id_title,
@@ -749,7 +746,7 @@ def setupHoneyKind():
     return render(
         "akingbee/setup/setup.html",
         object_data=honey_types,
-        columns=("fr", "en"),
+        column=lang,
         menu=menu,
         title=title,
         id_title=id_title,
@@ -781,7 +778,7 @@ def setupBh_actions():
     return render(
         "akingbee/setup/setup.html",
         object_data=beehouse_actions,
-        columns=("fr", "en"),
+        column=lang,
         menu=menu,
         title=title,
         id_title=id_title,
@@ -812,7 +809,7 @@ def setupStatusAp():
     return render(
         "akingbee/setup/setup.html",
         object_data=apiary_statuses,
-        columns=("fr", "en"),
+        column=lang,
         menu=menu,
         title=title,
         id_title=id_title,

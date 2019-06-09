@@ -19,7 +19,9 @@ class Error(Exception):
         self.out["code"] = code
 
         self._generate_msg()
-        logger.error(self.out[ENGLISH])
+
+        if ENGLISH in self.out:
+            logger.error(self.out[ENGLISH])
 
     def _generate_msg(self):
         self.out[FRENCH], self.out[ENGLISH] = {}, {}
@@ -46,6 +48,7 @@ def Success(code=None):
         out[FRENCH]["title"], out[FRENCH]["message"] = fr.successes[code]
         out[ENGLISH]["title"], out[ENGLISH]["message"] = en.successes[code]
 
-    logger.info(out[ENGLISH])
+    if ENGLISH in out:
+        logger.info(out[ENGLISH])
 
     return flask.jsonify(out)
