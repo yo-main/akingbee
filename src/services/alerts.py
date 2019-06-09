@@ -4,6 +4,8 @@ import werkzeug
 from src.constants.config import FRENCH, ENGLISH
 from src.locals import alerts_fr as fr
 from src.locals import alerts_en as en
+from src.services.logger import logger
+
 from app import app
 
 
@@ -17,6 +19,7 @@ class Error(Exception):
         self.out['code'] = code
 
         self._generate_msg()
+        logger.error(self.out[ENGLISH])
 
     def _generate_msg(self):
         self.out[FRENCH], self.out[ENGLISH] = {}, {}
@@ -47,6 +50,8 @@ def Success(code=None):
         out[FRENCH], out[ENGLISH] = {}, {}
         out[FRENCH]['title'], out[FRENCH]['message'] = fr.successes[code]
         out[ENGLISH]['title'], out[ENGLISH]['message'] = en.successes[code]
+
+    logger.info(out[ENGLISH])
 
     return flask.jsonify(out)
 

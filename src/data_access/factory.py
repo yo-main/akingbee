@@ -5,6 +5,7 @@ import flask
 from src.data_access.connectors import MySQL as SQL
 from src.data_access.base_object import BaseObject
 from src.constants import environments as ENV
+from src.services.logger import logger
 
 
 class Factory:
@@ -79,8 +80,7 @@ class Factory:
     def _execute(self, query, params=None):
         if params is None:
             params = []
-        print(query)
-        print(params)
+        logger.info(query + params)
 
         if self.autocommit:
             self._create_connection()
@@ -95,6 +95,7 @@ class Factory:
             else:
                 data = []
         except Exception as e:
+            logger.critical(e)
             self.rollback()
             raise e
 

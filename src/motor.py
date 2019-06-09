@@ -12,7 +12,7 @@ import sys
 
 from src.constants import config
 from src.constants import alert_codes as alerts
-from src.constants.environments import URL_ROOT, LOG_DIRECTORY
+from src.constants.environments import URL_ROOT
 from src.data_access import objects
 from src.helpers.helpers import traductions
 from src.helpers.helpers import redirect
@@ -21,18 +21,12 @@ from src.helpers.helpers import route
 from src.helpers.helpers import convert_to_date
 from src.helpers import helpers
 from src.services.alerts import Error, Success
+from src.services.logger import logger
 
 
 from src.data_access.factory import Factory
 
 factory = Factory()
-
-
-def logger(text):
-    text = str(text)
-    with open(LOG_DIRECTORY, 'a') as f:
-        f.write(text)
-        f.write('\n\n')
 
 
 def render(url, **kwargs):
@@ -62,12 +56,13 @@ def get_all(class_, deepth=0):
 @route("/", methods=['GET'])
 @login_required
 def home():
-    logger(flask.session['user_id'])
     return render("akingbee/index_akb.html")
 
 
 @route("/login", methods=['GET', 'POST'])
 def login():
+    logger.info("Connection attempt")
+
     # We remove the user credentials if any in the cookie
     flask.session['user_id'] = None
     flask.session.pop('username', None)
@@ -120,6 +115,7 @@ def registerCheck():
     """
     Will check that we can correctly register a new user
     """
+    logger.info("Registration attempt")
 
     data = {
         'username': flask.request.form.get('username'),
@@ -218,8 +214,6 @@ def apiary_create():
             'status': flask.request.form.get('status'),
             'birthday': convert_to_date(flask.request.form.get('birthday')),
         }
-
-        print(data)
 
         apiary = objects.Apiary(data)
         apiary.save()
