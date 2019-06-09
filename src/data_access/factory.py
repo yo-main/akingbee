@@ -74,7 +74,8 @@ class Factory:
     def _execute(self, query, params=None):
         if params is None:
             params = []
-        logger.info(query + params)
+
+        logger.info(query + str(params))
 
         if self.autocommit:
             self._create_connection()
