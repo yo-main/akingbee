@@ -12,11 +12,12 @@ else:
 with open(CONFIG_FILE_PATH, "r") as stream:
     ENV = load(stream, Loader=Loader)
 
-
 PROJECT_PATH = ENV["project_path"]
 
 PLATFORM_ENVIRONMENT = ENV["platform"]
 assert PLATFORM_ENVIRONMENT in ("TEST", "PROD")
+
+PASSWORD_REQUESTED = ENV['password_requested']
 
 URL_ROOT = ENV["url_root"]
 URL_FLASK_SESSION = os.path.join(PROJECT_PATH, "flask_session")

@@ -12,14 +12,13 @@ import sys
 
 from src.constants import config
 from src.constants import alert_codes as alerts
-from src.constants.environments import URL_ROOT
+from src.constants import environments
 from src.data_access import objects
-from src.helpers.helpers import traductions
+from src.helpers import helpers
 from src.helpers.helpers import redirect
 from src.helpers.helpers import login_required
 from src.helpers.helpers import route
 from src.helpers.helpers import convert_to_date
-from src.helpers import helpers
 from src.services.alerts import Error, Success
 from src.services.logger import logger
 
@@ -36,8 +35,8 @@ def render(url, **kwargs):
     return flask.render_template(
         url,
         lang=flask.session["language"],
-        trads=traductions(),
-        url_root=URL_ROOT,
+        trads=helpers.traductions(),
+        url_root=environments.URL_ROOT,
         **kwargs,
     )
 
@@ -75,12 +74,14 @@ def login():
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
     user = get_user_from_username(username)
-    if not (password and check_password_hash(user.pwd, password)):
-        raise Error(alerts.INCORRECT_PASSWORD_ERROR)
 
-    # All good ! We can log in the user
-    user.date_last_connection = datetime.datetime.now()
-    user.save()
+    if environments.PASSWORD_REQUESTED:
+        if not (password and check_password_hash(user.pwd, password)):
+            raise Error(alerts.INCORRECT_PASSWORD_ERROR)
+
+        # All good ! We can log in the user
+        user.date_last_connection = datetime.datetime.now()
+        user.save()
 
     flask.session["user_id"] = user.id
     flask.session["username"] = user.username
@@ -415,7 +416,7 @@ def beehouse_profil():
     bh_id = flask.request.args.get("bh")
     facto = Factory(autocommit=False)
 
-    beehouse = facto.get_from_id(bh_id, objects.Beehouse, deepth=1)
+    beehouse = facto.get_from_id(bh_id, objects.Beehouse, deepth=2)
 
     comments = facto.get_from_filters(
         objects.Comments, {"beehouse": int(bh_id)}, deepth=2
