@@ -2,7 +2,6 @@ from src.data_access.connectors import MySQL
 
 
 class Table:
-
     @staticmethod
     def _create_tables():
         conn = MySQL()
@@ -261,6 +260,3 @@ class Table:
         )
 
         conn.commit()
-
-
-

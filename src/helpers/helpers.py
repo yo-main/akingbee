@@ -32,18 +32,20 @@ def login_required(f):
 
     http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
     """
+
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        if flask.session.get('user_id') is None:
+        if flask.session.get("user_id") is None:
             return redirect("/login")
         else:
-            ENV.USER_ID = flask.session.get('user_id')
+            ENV.USER_ID = flask.session.get("user_id")
         return f(*args, **kwargs)
+
     return decorated_function
 
 
 def traductions(index=None):
-    language = flask.session['language']
+    language = flask.session["language"]
 
     if index is None:
         out = {key: item[language] for key, item in trads.traductions.items()}
@@ -71,8 +73,9 @@ def convert_to_date(arg):
 
 
 def update_health(beehouse):
-    comments = Factory().get_from_filters(objects.Comments,
-                                          {'beehouse': beehouse.id})
+    comments = Factory().get_from_filters(
+        objects.Comments, {"beehouse": beehouse.id}
+    )
     if comments:
         most_recent_comment = max(comments, key=lambda comment: comment.date)
         beehouse.health = most_recent_comment.health

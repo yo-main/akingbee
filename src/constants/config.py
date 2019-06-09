@@ -1,7 +1,7 @@
 #! -*- coding: utf-8 -*-
 
-FRENCH = 'fr'
-ENGLISH = 'en'
+FRENCH = "fr"
+ENGLISH = "en"
 
 STATUS_DONE = 1
 STATUS_PENDING = 2
@@ -10,47 +10,40 @@ COMMENT_TYPE_USER = 1
 COMMENT_TYPE_SYSTEM = 2
 COMMENT_TYPE_ACTION = 3
 
-COMMENT_TYPES = (
-    COMMENT_TYPE_USER,
-    COMMENT_TYPE_SYSTEM,
-    COMMENT_TYPE_ACTION,
-)
+COMMENT_TYPES = (COMMENT_TYPE_USER, COMMENT_TYPE_SYSTEM, COMMENT_TYPE_ACTION)
 
 
-LANGUAGES = (
-    FRENCH,
-    ENGLISH
-)
+LANGUAGES = (FRENCH, ENGLISH)
 
 
 DATABASE = {}
-DATABASE['TEST'] = {
-    'user': 'rarnal',
-    'password': 'ForYanyansLove1*!',
-    'host': '157.230.24.210',
-    'database': 'akingbee_test',
+DATABASE["TEST"] = {
+    "user": "rarnal",
+    "password": "ForYanyansLove1*!",
+    "host": "157.230.24.210",
+    "database": "akingbee_test",
 }
-DATABASE['PROD'] = {
-    'user': 'rarnal',
-    'password': 'ForYanyansLove1*!',
-    'host': '157.230.24.210',
-    'database': 'akingbee',
+DATABASE["PROD"] = {
+    "user": "rarnal",
+    "password": "ForYanyansLove1*!",
+    "host": "157.230.24.210",
+    "database": "akingbee",
 }
 
 DEFAULT_HEALTH = (
     {FRENCH: "Bonne", ENGLISH: "Good"},
     {FRENCH: "Moyenne", ENGLISH: "Medium"},
-    {FRENCH: "Mauvais", ENGLISH: "Bad"}
+    {FRENCH: "Mauvais", ENGLISH: "Bad"},
 )
 
 DEFAULT_STATUS_BEEHOUSE = (
     {FRENCH: "Active", ENGLISH: "Active"},
-    {FRENCH: "Stock", ENGLISH: "Stock"}
+    {FRENCH: "Stock", ENGLISH: "Stock"},
 )
 
 DEFAULT_STATUS_APIARY = (
     {FRENCH: "Actif", ENGLISH: "Active"},
-    {FRENCH: "Inactif", ENGLISH: "Inactive"}
+    {FRENCH: "Inactif", ENGLISH: "Inactive"},
 )
 
 DEFAULT_ACTION_BEEHOUSE = (

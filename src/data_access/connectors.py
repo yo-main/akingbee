@@ -7,7 +7,6 @@ database = DATABASE[PLATFORM_ENVIRONMENT]
 
 
 class MySQL:
-
     def __init__(self):
         self._create()
 

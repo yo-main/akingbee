@@ -2,9 +2,11 @@ from src.constants.alert_codes import *
 
 fr = {}
 
-default = "Une erreur est survenue lors du traitement de votre " \
-          "demande, merci de contacter kingbee.root@gmail.com " \
-          "si l'erreur persiste."
+default = (
+    "Une erreur est survenue lors du traitement de votre "
+    "demande, merci de contacter kingbee.root@gmail.com "
+    "si l'erreur persiste."
+)
 
 errors = {
     SQL_PROCESSING_ERROR: default,
@@ -16,7 +18,6 @@ errors = {
     USERS_MIXED_UP_ERROR: default,
     INTERNAL_ERROR: default,
 }
-
 
 
 successes = {

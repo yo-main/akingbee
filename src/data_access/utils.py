@@ -26,17 +26,18 @@ class SQLObject(BaseObject):
         factory = Factory()
         return factory.delete(self.table, self.id)
 
-
     def save(self, factory=None):
         if factory is None:
             factory = Factory()
 
-        if 'user_id' not in flask.session:
-            flask.session['user_id'] = None
+        if "user_id" not in flask.session:
+            flask.session["user_id"] = None
 
         if self.id:
-            if ('user' in self.columns
-                and self.user != flask.session['user_id']):
+            if (
+                "user" in self.columns
+                and self.user != flask.session["user_id"]
+            ):
                 raise Error(alert.USERS_MIXED_UP_ERROR)
 
             new_values = self.get_diff()
@@ -44,15 +45,16 @@ class SQLObject(BaseObject):
                 if values:
                     factory.update(table, values)
         else:
-            if 'user' in self.columns and flask.session['user_id']:
-                self.user = flask.session['user_id']
+            if "user" in self.columns and flask.session["user_id"]:
+                self.user = flask.session["user_id"]
 
-            items = {key: getattr(self, key)
-                     for key in self.columns
-                     if getattr(self, key) is not None}
+            items = {
+                key: getattr(self, key)
+                for key in self.columns
+                if getattr(self, key) is not None
+            }
 
             self.id = factory.create(self.table, items)
-
 
     def get_diff(self):
         if self.id:
@@ -74,16 +76,14 @@ class SQLObject(BaseObject):
                     to_modify[self.table][key] = new_value
 
             if to_modify[self.table]:
-                to_modify[self.table]['id'] = self.id
+                to_modify[self.table]["id"] = self.id
 
         return to_modify
-
 
     def _init_with_values(self, data):
         assert all(key in self.columns for key in data)
         for key, item in data.items():
             setattr(self, key, item)
-
 
     def _create_missing_attr(self):
         for key in self.columns:
@@ -109,7 +109,6 @@ class SQLObject(BaseObject):
     def __repr__(self):
         return str(self.id)
 
-
     def __setattr__(self, key, item):
         if key == "columns":
             raise AttributeError("You cannot change the columns attribute")
@@ -118,8 +117,7 @@ class SQLObject(BaseObject):
         if item is None or validator.match(item):
             self.__dict__[key] = item
         else:
-            raise ValueError('"{}" is not correct for {}'
-                             .format(item, key))
+            raise ValueError('"{}" is not correct for {}'.format(item, key))
 
     def __eq__(self, other):
         if not isinstance(other, (int, str, type(self))):
@@ -138,16 +136,16 @@ class SQLObject(BaseObject):
     def __str__(self):
         template = "{column:>{size_column}} | {value}\n"
         size_column = len(max(self.columns, key=len))
-        out = template.format(column="COLUMNS",
-                              size_column=size_column,
-                              value="VALUES")
+        out = template.format(
+            column="COLUMNS", size_column=size_column, value="VALUES"
+        )
         for key in self.columns:
             value = getattr(self, key)
             if isinstance(value, BaseObject):
                 value = value.id
-            out += template.format(column=key,
-                                   size_column=size_column,
-                                   value=value)
+            out += template.format(
+                column=key, size_column=size_column, value=value
+            )
         return out
 
     def serialize(self):
@@ -158,19 +156,18 @@ class SQLObject(BaseObject):
         return out
 
 
-
-
 class DataValidator:
     def __init__(self, arg):
         self.regex = False
-        if isinstance(arg, type(re.compile(''))):
+        if isinstance(arg, type(re.compile(""))):
             self.regex = True
             self.validator = arg
         elif isinstance(arg, type):
             self.validator = arg
         else:
-            raise TypeError("The provided argument is not correct: {}"
-                            .format(arg))
+            raise TypeError(
+                "The provided argument is not correct: {}".format(arg)
+            )
 
     def validate(self, arg):
         if not self.regex:
@@ -179,7 +176,6 @@ class DataValidator:
                     arg = int(arg)
             return isinstance(arg, self.validator)
         return bool(self.validator.match(arg))
-
 
 
 class DataTemplate:
@@ -202,10 +198,8 @@ class DataTemplate:
         return self.args
 
 
-
 class DataAccess:
     def __call__(self, class_object):
         for key, item in class_object.columns.items():
             class_object.columns[key] = DataTemplate(item)
         return class_object
-
