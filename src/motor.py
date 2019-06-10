@@ -385,7 +385,7 @@ def submit_comment_modal():
         "date": convert_to_date(flask.request.form.get("date")),
         "comment": flask.request.form.get("comment"),
         "health": flask.request.form.get("health"),
-        "type": config.STATUS_PENDING,
+        "type": config.COMMENT_TYPE_USER,
     }
     comment = objects.Comments(comment_data)
     comment.save()
