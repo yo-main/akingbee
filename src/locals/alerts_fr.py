@@ -9,6 +9,7 @@ default = (
 )
 
 errors = {
+    INTERNAL_ERROR: default,
     SQL_PROCESSING_ERROR: default,
     USER_NOT_FOUND_ERROR: "Cet utilisateur n'existe pas",
     INCORRECT_PASSWORD_ERROR: "Le mot de passe fournit est incorrect",
@@ -16,8 +17,8 @@ errors = {
     EMAIL_ALREADY_EXISTS_ERROR: "Cet email est déjà utilisé",
     TRANSLATION_ID_DOES_NOT_EXISTS: default,
     USERS_MIXED_UP_ERROR: default,
-    SQL_FOREIGN_KEY_ERROR: "Cette donnée est actuellement utilisée et ne peut pas être supprimée",
-    INTERNAL_ERROR: default,
+    SQL_FOREIGN_KEY_ERROR: "Cette donnée est actuellement utilisée par d'autres objets et ne peut pas être supprimée",
+    OBJECT_COLUMN_NOT_FOUND: "La suppression n'a pas pu se faire. Contacter l'administrateur si cette erreur persiste."
 }
 
 

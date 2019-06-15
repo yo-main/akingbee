@@ -16,6 +16,14 @@ const toastrOptions = {
 }
 
 var root_path = ""
+var LANGUAGE = $("html").attr("lang");
+
+$(document).ready(function() {
+    set_active_language();
+    menu_highlight();
+    display_alerts();
+    set_date_picker();
+});
 
 
 function menu_highlight() {
@@ -40,6 +48,7 @@ function get_full_url(path) {
     out = window.location.protocol + "//" + window.location.host + root_path + path;
     return out;
 }
+
 
 function display_alerts() {
     let msg = window.sessionStorage.getItem("msgSuccessBody");
@@ -76,16 +85,14 @@ function showError(response){
         answer.code = "999";
     };
 
-    let language = $('html').attr("lang");
-    let content = answer[language];
+    let content = answer[LANGUAGE];
     let code = answer.code;
     createError(content.message, content.title);
 }
 
 
 function showSuccess(response){
-    let language = $('html').attr("lang");
-    let content = response[language];
+    let content = response[LANGUAGE];
     let code = response.code;
     window.sessionStorage.setItem("msgSuccessBody", content.message);
     window.sessionStorage.setItem("msgSuccessTitle", content.title);
@@ -94,7 +101,7 @@ function showSuccess(response){
 
 function changeLanguage(){
     //update the language upon edit on the language select box
-    let data = {language: $("#userLanguage").val()};
+    let data = {'language': $("#userLanguage").val()};
     let my_url = get_full_url("/language");
 
     $.ajax({
@@ -111,8 +118,7 @@ function changeLanguage(){
 }
 
 function set_active_language() {
-    let language = $("html").attr("lang");
-    if (language == "fr"){
+    if (LANGUAGE == "fr"){
         document.getElementById("userLanguage").selectedIndex = 0;
     }
     else{
@@ -121,9 +127,7 @@ function set_active_language() {
 }
 
 function set_date_picker() {
-    let language = $("html").attr("lang");
-    
-    if (language == 'fr'){
+    if (LANGUAGE == 'fr'){
         $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
         $('[date_picker="true"]').attr("placeholder", "aaaa-mm-jj");
     }else{    
@@ -144,7 +148,6 @@ Date.prototype.toDateInputValue = (function() {
     let local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
 
-    let language = $("html").attr("lang");
     let dateString;
     
     dateString = (local.getFullYear() + "-" +
@@ -153,14 +156,3 @@ Date.prototype.toDateInputValue = (function() {
 
     return dateString;
 });
-
-
-
-$(document).ready(function() {
-    set_active_language();
-    menu_highlight();
-    display_alerts();
-    set_date_picker();
-});
-
-

@@ -12,4 +12,11 @@ app.secret_key = """ZDFNqsovs1AL3n&:fd!!123dfq1nHcjAdfqçsdàçJCQFJs@"""
 
 flask_session.Session(app)
 
+
+@app.before_first_request
+def session_configuration():
+    # make cookies expires once the browser has been closed
+    flask.session.permanent = False
+
+
 import src.motor

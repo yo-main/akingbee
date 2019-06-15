@@ -98,7 +98,6 @@ function filter_table_beehouse_details(){
 
 
 function modal_edit_comment(button){
-    let language = $('html').attr("lang");
 
     $("#edit_comment_bh").modal("show");
 
@@ -115,18 +114,17 @@ function modal_edit_comment(button){
 
 
 function del_comment(button){
-    let language = $("html").attr("lang");
-    let confirm;
+    let confirmation;
     let my_url = get_full_url("/beehouse/index/delete_comment");
 
-    if (language == "fr"){
-        confirm = window.confirm("Etes-vous sur de vouloir supprimer ce commentaire ?");
+    if (LANGUAGE == "fr"){
+        confirmation = window.confirm("Etes-vous sur de vouloir supprimer ce commentaire ?");
     }
     else{
-        confirm = window.confirm ("Delete this comment ?");
+        confirmation = window.confirm("Delete this comment ?");
     }
 
-    if (confirm){
+    if (confirmation){
         let cm_id = button.name.substring(3);
 
         $.ajax({
@@ -155,7 +153,6 @@ function submit_solve_action_modal(){
     }
 
     let my_url = get_full_url("/beehouse/index/submit_solve_action_modal");
-    let language = $("html").attr("lang");
 
     $.ajax({
         type: "POST",
@@ -204,11 +201,10 @@ function new_health(){
         name_en: $('#health_name_en').val()
     };
 
-    let language = $('html').attr("lang");
     let my_url = get_full_url("/beehouse/create/new_health");
 
     if ((data.name_fr == "") && (data.name_en == "")){
-        if (language == "fr"){
+        if (LANGUAGE == "fr"){
             createError("Merci de compléter au moins un des deux champs");
         }
         else{
@@ -237,12 +233,11 @@ function new_health(){
 
 function new_owner(){
     let data = {owner: $("#owner_name").val()};
-    let language = $("html").attr("lang");
 
     let my_url = get_full_url("/beehouse/create/new_owner");
 
     if (data.owner == ""){
-        if (language == "fr"){
+        if (LANGUAGE == "fr"){
             createError("Merci de compléter tous les champs");
         }
         else{
@@ -278,7 +273,7 @@ function new_status_beehouse(){
     let my_url = get_full_url("/beehouse/create/new_beehouse_status");
 
     if ((data.name_fr == "") && (data.name_en == "")){
-        if (language == "fr"){
+        if (LANGUAGE == "fr"){
             createError("Merci de compléter au moins un des deux champs");
         }
         else{
@@ -307,17 +302,16 @@ function new_status_beehouse(){
 
 function redirect_create_apiary(){
     let my_url = get_full_url("/apiary/create");
-    let language = $("html").attr("lang");
-    let check;
+    let confirmation;
 
-    if (language == "fr"){
-        check = confirm("Vous allez être redirigé vers la page de création de rucher")
+    if (LANGUAGE == "fr"){
+        confirmation = window.confirm("Vous allez être redirigé vers la page de création de rucher")
     }
     else{
-        check = confirm("You will be redirected to the apiary creation page")
+        confirmation = window.confirm("You will be redirected to the apiary creation page")
     }
     
-    if (check){
+    if (confirmation){
         window.location = my_url;
     }
 }
@@ -359,7 +353,6 @@ function select_beehouse(button){
 
 
 function submit_action_modal(){
-    let language = $("html").attr("lang");
 
     let data = {
         date: $("#action_date").val(),
@@ -372,7 +365,7 @@ function submit_action_modal(){
     let my_url = get_full_url("/beehouse/index/submit_action_modal");
 
     if ((data.action_type == "") || (data.date == "")){
-        if (language == "fr"){
+        if (LANGUAGE == "fr"){
             createError("Merci de remplir tous les champs");
         }
         else{
@@ -398,7 +391,6 @@ function submit_action_modal(){
 
 
 function submit_modal_data_submit(){
-    let language = $("html").attr("lang");
     let data = {
         fr: $("#submit_name_fr_modal").val(),
         en: $("#submit_name_en_modal").val(),
@@ -412,7 +404,7 @@ function submit_modal_data_submit(){
     let my_url = get_full_url("/setup/submit");
 
     if ((data.fr == "") && (data.en == "")){
-        if (language == "fr"){
+        if (LANGUAGE == "fr"){
             createError("Merci de remplir les champs");
         }
         else{
@@ -435,7 +427,6 @@ function submit_modal_data_submit(){
         }
     });
 }
-
 
 function modal_comment(button){
 
@@ -466,7 +457,6 @@ function modal_beehouse_edit(button){
     let pName = window.location.pathname;
     let ruche_id;
     let my_url;
-    let language = $("html").attr("lang");
 
     my_url = get_full_url("/beehouse/index/get_beehouse_info");
 
@@ -570,7 +560,6 @@ function submit_beehouse_modal(){
     let bh_id = $("#beehouse_id").attr("name");
     let to_change = new Object();
     let my_url = get_full_url("/beehouse/index/submit_beehouse_info");
-    let language = $("html").attr("lang");
 
     to_change.bh_id = bh_id;
     to_change.apiary = new_apiary;
@@ -607,7 +596,7 @@ function submit_comment_modal(){
     let my_url = get_full_url("/beehouse/index/submit_comment_modal");
     
     if ((data.comment == "") || (data.health == "")){
-        if (language == "fr"){
+        if (LANGUAGE == "fr"){
             createError("Merci de remplir tous les champs");
         }
         else{
@@ -631,5 +620,35 @@ function submit_comment_modal(){
     });
 }
 
+
+function delete_beehouse(){
+    let params = (new URL(document.location)).searchParams;
+    let bh_id = params.get("bh");
+    let url = get_full_url("/beehouse/delete");
+
+    let data = {"bh_id": bh_id};
+
+    if (LANGUAGE == "fr"){
+        confirmation = window.confirm("Supprimer cette ruche ?");
+    }
+    else{
+        confirmation = window.confirm("Delete this beehouse ?");
+    }
+
+    if (confirmation){
+	$.ajax({
+	    type: "POST",
+	    url: url,
+	    data: data,
+	    error: function(answer, code){
+		showError(answer);
+	    },
+	    success: function(answer, code){
+		showSuccess(answer);
+		window.location = get_full_url("/beehouse/index");
+	    }
+	});
+    };
+}
 
 

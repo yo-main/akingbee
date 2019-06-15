@@ -527,7 +527,7 @@ def del_comment():
         action.date_done = None
         action.save()
 
-    comment.delete()
+    factory.delete_object(comment)
 
     beehouse = factory.get_from_id(comment.beehouse, objects.Beehouse)
     helpers.update_health(beehouse)
@@ -602,7 +602,7 @@ def delete_data():
     else:
         raise Error(alerts.INTERNAL_ERROR)
 
-    obj.delete()
+    factory.delete_object(obj)
 
     return Success(alerts.DELETION_SUCCESS)
 
@@ -850,6 +850,32 @@ def del_apiary():
     ap_id = flask.request.form.get("ap_id")
 
     apiary = factory.get_from_id(ap_id, objects.Apiary)
-    apiary.delete()
+    factory.delete_object(apiary)
 
     return Success(alerts.DELETION_SUCCESS)
+
+
+@route("/beehouse/delete", methods=["POST"])
+@login_required
+def delete_beehouse():
+    beehouse_id = flask.request.form.get("bh_id")
+    beehouse = factory.get_from_id(beehouse_id, objects.Beehouse)
+
+    facto = Factory(autocommit=False)
+    facto.delete_all_linked_to(objects.Comments, beehouse)
+    facto.delete_object(beehouse)
+    facto.commit()
+
+    return Success(alerts.DELETION_SUCCESS)
+
+
+
+
+
+
+
+
+
+
+
+

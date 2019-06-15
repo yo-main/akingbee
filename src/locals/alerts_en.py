@@ -9,6 +9,7 @@ default = (
 )
 
 errors = {
+    INTERNAL_ERROR: default,
     SQL_PROCESSING_ERROR: default,
     USER_NOT_FOUND_ERROR: "This user does not exist",
     INCORRECT_PASSWORD_ERROR: "The provided password is incorrect",
@@ -16,8 +17,8 @@ errors = {
     EMAIL_ALREADY_EXISTS_ERROR: "This email is already used",
     TRANSLATION_ID_DOES_NOT_EXISTS: default,
     USERS_MIXED_UP_ERROR: default,
-    SQL_FOREIGN_KEY_ERROR: "This data is currently being used and cannot be deleted",
-    INTERNAL_ERROR: default,
+    SQL_FOREIGN_KEY_ERROR: "This data is currently being used by other objects and cannot be deleted",
+    OBJECT_COLUMN_NOT_FOUND: "The deletion could not happen. Contact the administrateur if this error persists",
 }
 
 

@@ -22,9 +22,14 @@ class SQLObject(BaseObject):
         if deepth:
             self._get_foreign_objects()
 
-    def delete(self):
-        factory = Factory()
-        return factory.delete(self.table, self.id)
+
+    @classmethod
+    def find_column_related_to(class_, other):
+        column = [key for key, item in class_.foreign.items()
+                 if isinstance(other, item)]
+        if not column:
+            return None
+        return column[0]
 
     def save(self, factory=None):
         if factory is None:

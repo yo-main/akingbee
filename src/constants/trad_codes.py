@@ -100,4 +100,5 @@ traductions = {
     91: {FRENCH: "Français", ENGLISH: "French"},
     92: {FRENCH: "Anglais", ENGLISH: "English"},
     93: {FRENCH: "Modifier le rucher", ENGLISH: "Edit apiary"},
+    94: {FRENCH: "Supprimer", ENGLISH: "Delete"},
 }

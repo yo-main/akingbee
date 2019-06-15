@@ -96,11 +96,9 @@ class Factory:
                 data = []
         except mysql_error.IntegrityError as e:
             logger.info(e)
-            self.rollback()
             raise Error(alerts.SQL_FOREIGN_KEY_ERROR)
         except Exception as e:
             logger.critical(e)
-            self.rollback()
             raise e
 
         return data
@@ -202,12 +200,29 @@ class Factory:
 
         return True
 
-    def delete(self, table, id_):
-        if not id_:
+    def delete_all_linked_to(self, class_, obj_to_delete):
+        column = class_.find_column_related_to(obj_to_delete)
+
+        if not column:
+            raise Error(alerts.OBJECT_COLUMN_NOT_FOUND)
+
+        query = ("DELETE FROM {} WHERE {}=%s;"
+                 .format(class_.table, column))
+        params = [obj_to_delete.id]
+
+        self._execute(query, params)
+
+        if self.autocommit:
+            self.commit()
+
+        return True
+
+    def delete_object(self, obj):
+        if not obj.id:
             return False
 
-        query = "DELETE FROM {} WHERE id=%s;".format(table)
-        params = [id_]
+        query = "DELETE FROM {} WHERE id=%s;".format(obj.table)
+        params = [obj.id]
 
         self._execute(query, params)
 
