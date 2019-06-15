@@ -867,15 +867,3 @@ def delete_beehouse():
     facto.commit()
 
     return Success(alerts.DELETION_SUCCESS)
-
-
-
-
-
-
-
-
-
-
-
-

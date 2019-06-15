@@ -22,11 +22,13 @@ class SQLObject(BaseObject):
         if deepth:
             self._get_foreign_objects()
 
-
     @classmethod
     def find_column_related_to(class_, other):
-        column = [key for key, item in class_.foreign.items()
-                 if isinstance(other, item)]
+        column = [
+            key
+            for key, item in class_.foreign.items()
+            if isinstance(other, item)
+        ]
         if not column:
             return None
         return column[0]

@@ -18,7 +18,7 @@ errors = {
     TRANSLATION_ID_DOES_NOT_EXISTS: default,
     USERS_MIXED_UP_ERROR: default,
     SQL_FOREIGN_KEY_ERROR: "Cette donnée est actuellement utilisée par d'autres objets et ne peut pas être supprimée",
-    OBJECT_COLUMN_NOT_FOUND: "La suppression n'a pas pu se faire. Contacter l'administrateur si cette erreur persiste."
+    OBJECT_COLUMN_NOT_FOUND: "La suppression n'a pas pu se faire. Contacter l'administrateur si cette erreur persiste.",
 }
 
 

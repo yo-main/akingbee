@@ -12,7 +12,6 @@ from src.services.alerts import Error
 from src.constants import alert_codes as alerts
 
 
-
 class Factory:
     state = False
 
@@ -206,8 +205,7 @@ class Factory:
         if not column:
             raise Error(alerts.OBJECT_COLUMN_NOT_FOUND)
 
-        query = ("DELETE FROM {} WHERE {}=%s;"
-                 .format(class_.table, column))
+        query = "DELETE FROM {} WHERE {}=%s;".format(class_.table, column)
         params = [obj_to_delete.id]
 
         self._execute(query, params)
