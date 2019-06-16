@@ -168,7 +168,10 @@ class Factory:
 
     @staticmethod
     def _convert_date(date):
-        """ will convert to isoformat or convert to datetime from isoformat"""
+        """
+        Will convert to isoformat or convert to datetime from isoformat
+        date values read and inserted into database
+        """
         if isinstance(date, datetime.date):
             return date.isoformat(timespec="seconds")
         return datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")

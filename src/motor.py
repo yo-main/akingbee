@@ -18,7 +18,7 @@ from src.helpers import helpers
 from src.helpers.helpers import redirect
 from src.helpers.helpers import login_required
 from src.helpers.helpers import route
-from src.helpers.helpers import convert_to_date
+from src.services.date_formatting import convert_to_date
 from src.services.alerts import Error, Success
 from src.services.logger import logger
 
@@ -425,7 +425,7 @@ def beehouse_profil():
     )
 
     action_filters = {"beehouse": bh_id, "status": config.STATUS_PENDING}
-    actions = facto.get_from_filters(objects.Actions, action_filters, deepth=0)
+    actions = facto.get_from_filters(objects.Actions, action_filters, deepth=2)
     healths = facto.get_all(objects.Health)
     comment_types = facto.get_all(objects.CommentsType)
     beehouse_statuses = facto.get_all(objects.StatusBeehouse)

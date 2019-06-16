@@ -129,13 +129,13 @@ function set_active_language() {
 function set_date_picker() {
     if (LANGUAGE == 'fr'){
         $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
-        $('[date_picker="true"]').attr("placeholder", "aaaa-mm-jj");
+        $('[date_picker="true"]').attr("placeholder", "jj/mm/aaaa");
     }else{    
         $.datepicker.setDefaults( $.datepicker.regional[ "" ] );
-        $('[date_picker="true"]').attr("placeholder", "yyyy-mm-dd");
+        $('[date_picker="true"]').attr("placeholder", "dd/mm/yyyy");
     }
 
-    $('[date_picker="true"]').datepicker({dateFormat: 'yy-mm-dd'});
+    $('[date_picker="true"]').datepicker({dateFormat: 'dd/mm/yy'});
 
     $("#apiary_birthday").val(new Date().toDateInputValue());
     $("#beehouse_birthday").val(new Date().toDateInputValue());
@@ -144,15 +144,15 @@ function set_date_picker() {
 
 Date.prototype.toDateInputValue = (function() {
     // format the date to the input box from html
-    // (YYYY-MM-DD)
+    // (DD-MM-YYYY)
     let local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
 
     let dateString;
     
-    dateString = (local.getFullYear() + "-" +
-                  ("0" + (local.getUTCMonth() + 1)).slice(-2) + "-" +
-                  ("0" + local.getUTCDate()).slice(-2));
+    dateString = (("0" + local.getUTCDate()).slice(-2) + "/" +
+                  ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" +
+                  local.getFullYear());
 
     return dateString;
 });

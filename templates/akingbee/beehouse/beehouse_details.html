@@ -85,7 +85,8 @@
                                         <span>
                                             {{trads[65]}} : {{actions[n].type[lang]}}
                                             {% if actions[n].deadline %}
-                                                {{trads[66]}} {{actions[n].deadline}}
+                                                {{trads[66]}}
+                                                {{actions[n].deadline|datetime}}
                                             {% endif %}&nbsp&nbsp-&nbsp&nbsp
                                             {% if actions[n].comment %}
                                                 {{trads[67]}}: {{actions[n].comment}}
@@ -150,7 +151,7 @@
                                 {% for n in range(comments|length) %}
                                     <tr>
                                         <th scope="row">{{comments|length - n}}</th>
-                                        <td class="date_cm">{{comments[n].date.date()}}</td>
+                                        <td class="date_cm">{{comments[n].date|datetime}}</td>
                                         <td class="type_cm">{{comments[n].type[lang]}}</td>
                                         <td class="apiary_cm">{{comments[n].apiary.name}} - {{comments[n].apiary.location}}</td>
                                         <td class="health_cm">{{comments[n].health[lang]}}</td>

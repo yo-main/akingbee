@@ -57,21 +57,6 @@ def traductions(index=None):
     return out
 
 
-def convert_to_date(arg):
-    if arg == "":
-        return ""
-
-    args = list(map(int, arg.split("-")))
-
-    day = args[2]
-    month = args[1]
-    year = args[0]
-
-    myDate = datetime.datetime(year, month, day)
-
-    return myDate
-
-
 def update_health(beehouse):
     comments = Factory().get_from_filters(
         objects.Comments, {"beehouse": beehouse.id}
