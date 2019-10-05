@@ -1,0 +1,16 @@
+flask_session/
+__pycache__
+.vscode/
+var/
+env/
+log/
+database.db
+.ropeproject
+environment.yaml
+*.log
+*.yaml
+*.pyc
+*.swp
+.ycm_extra_conf.py
+tags
+.env

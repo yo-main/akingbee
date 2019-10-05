@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+    akingbee:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: akingbee
+        volumes:
+            - .:/app/akingbee
+        expose:
+            - 8080
+        env_file:
+            - .env
+        command: uwsgi --ini ./config_docker/uwsgi.ini
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        volumes:
+            - ./config_docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./templates/akingbee/images:/images/akingbee/
+        ports:
+            - 80:80
+            - 443:443
+        depends_on:
+            - akingbee
+
+

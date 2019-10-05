@@ -1,0 +1,22 @@
+{% extends "akingbee/layout.html" %}
+
+{% block title %}
+    Reset Password
+{% endblock %}
+
+{% block main %}
+<main class="container p-5">
+    <form name="resetForm" onsubmit="return validateResetForm();" method="POST">
+        <div class='form-group'>
+            <input autocomplete='off' autofocus class="form-control" id="username" placeholder="{{trads[2]}}" type="text" pattern="[A-Za-z0-9_-]{3,15}$" title="{{trads[16]}}"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="password" placeholder="{{trads[76]}}" type="password" pattern="^(?=.*[a-z])(?=.*[0-9])[a-zA-Z0-9_!@*%&$-]{8,}$" title="{{trads[18]}}"/>
+        </div>
+        <div class="form-group">
+            <input class="form-control" id="passwordConfirmation" placeholder="{{trads[77]}}" type="password" pattern="^(?=.*[a-z])(?=.*[0-9])[a-zA-Z0-9_!@*%&$-]{8,}$" title="{{trads[18]}}"/>
+        </div>
+        <button class="btn btn-primary" type="submit">{{trads[14]}}</button>
+    </form>
+</main>
+{% endblock %}

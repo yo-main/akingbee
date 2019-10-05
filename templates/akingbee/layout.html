@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang={{lang}}>
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <!-- documentation at http://getbootstrap.com/docs/4.0/, alternative themes at https://bootswatch.com/4-alpha/ -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <link href="/static/akingbee/external/toastr.css" rel="stylesheet"/>
+        <link href="/static/akingbee/external/jquery-ui.css" rel="stylesheet"/>
+        <link href="/static/akingbee/style.css" rel="stylesheet"/>
+
+        <title>aKingBee - {% block title %}{% endblock %}</title>
+
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-md navbar-light bg-light border">
+            <a class="navbar-brand" href="{{url_root}}/"><span class="red">A King Bee</span></a>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="main_menu">
+                {% if session.user_id %}
+                    <ul class="navbar-nav mr-auto mt-2">
+                        <!-- <li class="nav-item"><a class="nav-link" href="{{url_root}}/swarm">{{trads[95]}}</a></li> -->
+                        <li class="nav-item"><a class="nav-link" href="{{url_root}}/hive">{{trads[5]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{url_root}}/apiary">{{trads[6]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{url_root}}/setup">{{trads[7]}}</a></li>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <small class="navbar-text -sm" style="margin:3px; margin-right:10px;">{{trads[19]}} {{session.username}}</small>
+                        <li class="nav-item"><a class="nav-link" href="{{url_root}}/logout">{{trads[10]}}</a></li>
+                        <select class="languageDropList" id="userLanguage" onchange="changeLanguage()">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                        </select>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="{{url_root}}/register">{{trads[8]}}</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{url_root}}/login">{{trads[11]}}</a></li>
+                        <select class="languageDropList" id="userLanguage" onchange="changeLanguage()">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                        </select>
+                    </ul>
+                {% endif %}
+                    
+            </div>
+        </nav>
+        <header>
+            <div id="errorMsg"></div>
+        </header>
+
+        {% block main %}{% endblock %}
+
+
+        <script type='text/javascript' src="/static/akingbee/external/jquery.js"></script>
+        <script type='text/javascript' src="/static/akingbee/external/popper.js"></script>
+        <script type='text/javascript' src="/static/akingbee/external/jquery-ui.js"></script>
+        <script type='text/javascript' src="/static/akingbee/external/toastr.js"></script>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <script type='text/javascript' src="/static/akingbee/config.js"></script>
+        {% block scripts %}{% endblock %}
+    </body>
+
+</html>

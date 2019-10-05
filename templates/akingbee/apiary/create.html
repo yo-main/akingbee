@@ -1,0 +1,132 @@
+{% extends "akingbee/layout.html" %}
+
+{% block title %}
+    {{trads[6]}}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            {% include "akingbee/apiary/menu.html" %}
+            <div class="col-10">
+                <p><h5 id="form-title">{{trads[21]}}</h5></p>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="apiary_name">{{trads[22]}}</label>
+                        <input id="apiary_name" name="apiary_name" class="form-control" required/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="apiary_location">{{trads[23]}}</label>
+                        <input id="apiary_location" name="apiary_location" class="form-control" required/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="apiary_birthday">{{trads[31]}}</label>
+                        <input id="apiary_birthday" name="apiary_birthday" class="form-control" type="text" date_picker="true"/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="apiary_honey_type">{{trads[27]}}</label>
+                        <select id="apiary_honey_type" name="apiary_honey_type" class="custom-select d-block w-100" required="">
+                            <option value="">{{trads[26]}}</option>
+                            {% for type in honey_types %}
+                                <option value={{type.id}}>{{type[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_honey_type" area_hidden="true"></button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="apiary_status">{{trads[28]}}</label>
+                        <select id="apiary_status" name="apiary_status" class="custom-select d-block w-100" required="">
+                            {% for status in apiary_statuses %}
+                                <option value={{status.id}}>{{status[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_status_apiary" area_hidden="true"></button>
+                    </div>
+                </div>
+                <br/><br/>
+                <div class="row">
+                    <div class="col-4">
+                        <button id="submit_apiary" onclick="createNewApiary();" class="btn btn-primary" type="submit">{{trads[14]}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to create a new type of honey -->
+    <div class="modal fade" id="create_honey_type" tabindex="-1" role="dialog" aria-labelledby="title_honey_type" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_honey_type">{{trads[32]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name_fr" class="col-form-label">Français</label>
+                        <input type="text" class="form-control" id="name_fr" name="name_fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="name_en" class="col-form-label">English</label>
+                        <input type="text" class="form-control" id="name_en"></input>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_honey_type();">{{trads[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to create a new apiary status -->
+    <div class="modal fade" id="create_status_apiary" tabindex="-1" role="dialog" aria-labelledby="title_status_apiary" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_status_apiary">{{trads[53]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="status_fr" class="col-form-label">Français</label>
+                        <input type="text" class="form-control" id="status_fr" name="status_fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="status_en" class="col-form-label">English</label>
+                        <input type="text" class="form-control" id="status_en"></input>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_apiary_status();">{{trads[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+        <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/apiary/create.js"></script>
+{% endblock %}

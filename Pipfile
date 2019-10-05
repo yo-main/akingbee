@@ -1,0 +1,44 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+backcall = "*"
+decorator = "*"
+entrypoints = "*"
+flake8 = "*"
+isort = "*"
+itsdangerous = "*"
+jedi = "==0.13.3"
+lazy-object-proxy = "*"
+mccabe = "*"
+mysql-connector = "*"
+parso = "*"
+pexpect = "*"
+pickleshare = "*"
+ptyprocess = "*"
+six = "*"
+traitlets = "*"
+wcwidth = "*"
+wrapt = "*"
+peewee = "*"
+Flask = "*"
+Flask-Session = "*"
+Jinja2 = "*"
+MarkupSafe = "*"
+prompt_toolkit = "*"
+Pygments = "*"
+PyYAML = "*"
+uWSGI = "*"
+Werkzeug = "*"
+PyMySQL = "*"
+pytest = "*"
+mock = "*"
+pynvim = "*"
+
+[requires]
+python_version = "3.7"

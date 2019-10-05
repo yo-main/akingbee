@@ -1,0 +1,134 @@
+{% extends "akingbee/layout.html" %}
+
+{% block title %}
+    {{trads[5]}}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            {% include "akingbee/hive/menu.html" %}
+            <div class="col-10">
+                <br/><br/>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-auto">
+                            <label>{{trads[43]}}</label>
+                            <select class="custom-select" id="apiary_filter" onchange="filter_table_hive();">
+                                <option value=''>{{trads[51]}}</option>
+                                {% for apiary in apiaries %}
+                                <option value="{{apiary.name}} - {{apiary.location}}">{{apiary.name}} - {{apiary.location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label>{{trads[42]}}</label>
+                            <select class="custom-select" id="condition_filter" onchange="filter_table_hive();">
+                                <option value=''>{{trads[51]}}</option>
+                                {% for condition in hive_conditions %}
+                                    <option value="{{condition[lang]}}">{{condition[lang]}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <label>{{trads[40]}}</label>
+                            <select class="custom-select" id="owner_filter" onchange="filter_table_hive();">
+                                <option value=''>{{trads[51]}}</option>
+                                {% for owner in owners %}
+                                    <option value="{{owner.name}}">{{owner.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <br/><br/>
+                    <div class="row">
+                        <table class="table table-hover" id="hive_table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">{{trads[22]}}</th>
+                                    <th scope="col">{{trads[43]}}</th>
+                                    <th scope="col">{{trads[40]}}</th>
+                                    <th scope="col">{{trads[42]}}</th>
+                                    <th scope="col">{{trads[103]}}</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <body>
+                                {% for i in range(hives|length) %}
+                                    <tr>
+                                        <th scope="row">{{i+1}}</th>
+                                        <td class="name_td"><button type="button" class="btn btn-link black" name="bh_{{hives[i].id}}" onclick="select_hive(this);">{{hives[i].name}}</button></td>
+                                        <td class="apiary_td">{{hives[i].apiary.name}} - {{hives[i].apiary.location}}</td>
+                                        <td class="owner_td">{{hives[i].owner.name}}</td>
+                                        <td class="condition_td">{{hives[i].condition[lang]}}</td>
+                                        {% if hives[i].swarm %}
+                                        <td class="health_td">{{hives[i].swarm.health[lang]}}</td>
+                                        {% else %}
+                                        <td class="health_td">{{trads[104]}}</td>
+                                        {% endif %}
+                                        <td><button type="button" class="btn btn-link" name="bh_{{hives[i].id}}" onclick="modal_hive_edit(this);">{{trads[49]}}</button></td>
+                                    </tr>
+                                {% endfor %}
+                            </body>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal to edit a hive -->
+    <div class="modal fade" id="edit_hive" tabindex="-1" role="dialog" aria-labelledby="title_edit_hive" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_edit_hive">{{trads[49]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="hive_name_modal" class="col-form-label" id="hive_id">{{trads[52]}}</label>
+                        <input type="text" class="form-control" id="hive_name_modal">
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_name_modal" class="col-form-label">{{trads[43]}}</label>
+                        <select id="apiary_name_modal" class="custom-select d-block w-100" required="">
+                            {% for apiary in apiaries %}
+                                <option value={{apiary.id}}>{{apiary.name}} - {{apiary.location}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="owner_name_modal" class="col-form-label">{{trads[40]}}</label>
+                        <select id="owner_name_modal" class="custom-select d-block w-100" required="">
+                            {% for owner in owners %}
+                                <option value={{owner.id}}>{{owner.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hive_condition_modal" class="col-form-label">{{trads[28]}}</label>
+                        <select id="hive_condition_modal" class="custom-select d-block w-100" required="">
+                            {% for condition in hive_conditions %}
+                                <option value={{condition.id}}>{{condition[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_hive_modal();">{{trads[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+        <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/hives.js"></script>
+{% endblock %}

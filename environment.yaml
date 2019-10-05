@@ -1,0 +1,7 @@
+platform: 'PROD' # PROD // TEST
+password_requested: true
+
+project_path: "/app/akingbee"
+url_root: ''
+
+

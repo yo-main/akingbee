@@ -1,0 +1,99 @@
+{% extends "akingbee/layout.html" %}
+
+{% block title %}
+    {{trads[95]}}
+{% endblock %}
+
+{% block main %}
+    <div class="container-fluid">
+        <div class="row">
+            {% include "akingbee/swarm/menu.html" %}
+            <div class="col-10">
+                <p><h5 id="form-title">{{trads[98]}}</h5></p>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="swarm_name">{{trads[22]}}</label>
+                        <input id="swarm_name" name="swarm_name" class="form-control" required/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="swarm_birthday">{{trads[31]}}</label>
+                        <input id="swarm_birthday" name="swarm_birthday" class="form-control" type="text" date_picker="true"/>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="swarm_hive">{{trads[52]}}</label>
+                        <select id="swarm_hive" name="swarm_hive" class="custom-select d-block w-100" required="">
+                            <option value=''>{{trads[26]}}</option>
+                            {% for hive in hives %}
+                                <option value={{hive.id}}>{{hive.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" onclick="redirect_create_hive();"></button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="swarm_health">{{trads[99]}}</label>
+                        <select id="swarm_health" name="swarm_health" class="custom-select d-block w-100" required="">
+                            <option value=''>{{trads[26]}}</option>
+                            {% for health in healths %}
+                                <option value={{health.id}}>{{health[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_swarm_health" area_hidden="true"></button> 
+                    </div>
+                </div>
+                <br/><br/>
+                <div class="row">
+                    <div class="col-4">
+                        <button id="submit_swarm" class="btn btn-primary" onclick="createNewSwarm();">{{trads[14]}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal to create a new swarm health -->
+    <div class="modal fade" id="create_swarm_health" tabindex="-1" role="dialog" aria-labelledby="title_create_swarm_health" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_create_swarm_health">{{trads[100]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="swarm_health_name_fr" class="col-form-label">Français</label>
+                        <input type="text" class="form-control" id="swarm_health_name_fr" name="swarm_health_name_fr">
+                    </div>
+                    <div class="form-group">
+                        <label for="swarm_health_name_en" class="col-form-label">English</label>
+                        <input type="text" class="form-control" id="swarm_health_name_en" name="swarm_health_name_en">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_swarm_health();">{{trads[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+        <script type='text/javascript' src="/static/akingbee/main_script.js"></script>
+        <script type='text/javascript' src="/static/akingbee/pages/swarms.js"></script>
+{% endblock %}
