@@ -1,6 +1,6 @@
 # akingbee.com
 A website for beekeepers !
 
-This is a website that is still under construction. There is enough to make it usefull but many more features are to be added.
+This is an amator website I have built for my family.
 
-This website has been created as a CS50 final project.
+I use this website as a playground for me and as a way to support Bees as we need them !
