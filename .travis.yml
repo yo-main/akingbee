@@ -7,4 +7,6 @@ install:
     - pip install pipenv
     - pipenv install
 
-script: pytest -v
+script: 
+    - coverage run pytest -v
+    - coverage report
