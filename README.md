@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/yo-main/akingbee.svg?branch=master)](https://travis-ci.com/yo-main/akingbee)
 # akingbee.com
 A website for beekeepers !
 
