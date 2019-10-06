@@ -23,6 +23,7 @@ errors = {
     INCORRECT_PASSWORD_FORMAT: "Le format du mot de passe fournit est incorrect",
     MISSING_INFORMATION_REGISTER: "L'email ou le nom d'utilisateur n'ont pas été fourni",
     SWARM_ALREADY_EXISTS: "La ruche est déjà attaché à un essaim",
+    USER_COULD_NOT_BE_IDENTIFIED: "L'utilisateur connecté n'a pas pu être identifié",
 }
 
 

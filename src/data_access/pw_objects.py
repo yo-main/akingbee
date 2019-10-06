@@ -6,6 +6,8 @@ import peewee as pw
 from src.constants.environments import USER_ID
 from src.services.logger import logger
 from src.data_access.connectors import DB
+from src.constants import alert_codes as alerts
+from src.services.alerts import Error
 
 
 class BaseModel(pw.Model):
@@ -29,9 +31,8 @@ class BaseModel(pw.Model):
 
         # make sure that we automatically attach the current user_id to any object
         # it's probably buggy, to refactor - TODO
-        if "user_id" in self.columns:
+        if "user_id" in self.columns and self.user_id is None:
             self._create_user_id(kwargs.get("user_id"))
-
 
 
     def _create_user_id(self, user_id_kwargs):
@@ -43,11 +44,11 @@ class BaseModel(pw.Model):
         """
         try:
             setattr(self, "user_id", flask.session["user_id"])
-        except KeyError as e:
+        except KeyError:
             if user_id_kwargs:
                 setattr(self, "user_id", user_id_kwargs)
             else:
-                raise e
+                raise Error(alerts.USER_COULD_NOT_BE_IDENTIFIED)
 
 
     def serialize(self):

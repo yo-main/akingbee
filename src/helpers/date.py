@@ -1,7 +1,7 @@
 import datetime
 
 
-def date_formatting(value, length="short"):
+def jinja_date_formatting(value, length="short"):
     """
     Used as a jinja filter to print date
     """
@@ -11,7 +11,7 @@ def date_formatting(value, length="short"):
         return value.strftime("%d/%m/%Y")
 
 
-def convert_to_date(arg):
+def convert_to_date_object(arg):
     """
     Convert from string to datetime the date value received from the frontend
     """

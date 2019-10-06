@@ -23,6 +23,7 @@ errors = {
     INCORRECT_PASSWORD_FORMAT: "The format of the provided password is incorrect",
     MISSING_INFORMATION_REGISTER: "The username or email were not provided",
     SWARM_ALREADY_EXISTS: "The hive is already attached to a swarm",
+    USER_COULD_NOT_BE_IDENTIFIED: "The logged in user could not be identified",
 }
 
 

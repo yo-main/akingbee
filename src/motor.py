@@ -46,7 +46,7 @@ from src.helpers.checkers import validate_email
 from src.helpers.checkers import validate_password
 from src.services.logger import logger
 from src.services.alerts import Error, Success
-from src.services.date_formatting import convert_to_date
+from src.helpers.date import convert_to_date_object
 
 
 def render(url, **kwargs):
@@ -191,8 +191,8 @@ def registerCheck():
         for class_, datas in mapping:
             for d in datas:
                 try:
+                    d["user_id"] = user.id
                     tmp = class_(**d)
-                    tmp.user_id = user.id
                     tmp.save()
                 except Exception:
                     logger.critical(
@@ -264,7 +264,7 @@ def apiary_create():
             "location": flask.request.form.get("location"),
             "honey_type": flask.request.form.get("honey_type"),
             "status": flask.request.form.get("status"),
-            "birthday": convert_to_date(flask.request.form.get("birthday")),
+            "birthday": convert_to_date_object(flask.request.form.get("birthday")),
         }
 
         apiary = Apiary(**data)
@@ -342,7 +342,7 @@ def hive_create():
     elif flask.request.method == "POST":
         hive_data = {
             "name": flask.request.form.get("name"),
-            "birthday": convert_to_date(flask.request.form.get("date")),
+            "birthday": convert_to_date_object(flask.request.form.get("date")),
             "apiary": flask.request.form.get("apiary"),
             "owner": flask.request.form.get("owner"),
             "condition": flask.request.form.get("hive_condition"),
@@ -415,7 +415,7 @@ def submit_comment_modal():
         "hive": hive.id,
         "apiary": hive.apiary,
         "swarm": hive.swarm,
-        "date": convert_to_date(flask.request.form.get("date")),
+        "date": convert_to_date_object(flask.request.form.get("date")),
         "comment": flask.request.form.get("comment"),
         "health": flask.request.form.get("health"),
         "type": config.COMMENT_TYPE_USER,
@@ -433,10 +433,10 @@ def submit_comment_modal():
 def submit_action_modal():
     data = {
         "hive": flask.request.form.get("bh_id"),
-        "date": convert_to_date(flask.request.form.get("date")),
+        "date": convert_to_date_object(flask.request.form.get("date")),
         "description": flask.request.form.get("description"),
         "type_id": flask.request.form.get("action_type"),
-        "deadline": convert_to_date(flask.request.form.get("deadline")),
+        "deadline": convert_to_date_object(flask.request.form.get("deadline")),
         "status": config.STATUS_PENDING,
     }
     action = Action(**data)
@@ -518,7 +518,7 @@ def solve_action():
 
     data = {
         "comment": flask.request.form.get("description"),
-        "date": convert_to_date(flask.request.form.get("date")),
+        "date": convert_to_date_object(flask.request.form.get("date")),
         "action": action.id,
         "hive": hive.id,
         "apiary": hive.apiary,
@@ -542,7 +542,7 @@ def edit_comment():
 
     comment.comment = flask.request.form.get("comment")
     comment.health = flask.request.form.get("health")
-    comment.date = convert_to_date(flask.request.form.get("date"))
+    comment.date = convert_to_date_object(flask.request.form.get("date"))
     comment.save()
 
     helpers.update_swarm_health(comment.swarm)

@@ -5,13 +5,27 @@ from yaml import load, Loader
 
 
 CONFIG_FILE_NAME = "environment.yaml"
-if os.path.exists(CONFIG_FILE_NAME):
-    CONFIG_FILE_PATH = CONFIG_FILE_NAME
-else:
-    CONFIG_FILE_PATH = os.path.join(sys.path[0], "environment.yaml")
 
-with open(CONFIG_FILE_PATH, "r") as stream:
-    ENV = load(stream, Loader=Loader)
+# I don't remember the reason of below's funny thing but doesn't seem to be a problem anymore
+# Leaving this comment here just in case it might create some issue I don't see yet in the future
+#if os.path.exists(CONFIG_FILE_NAME):
+#    CONFIG_FILE_PATH = CONFIG_FILE_NAME
+#else:
+#     CONFIG_FILE_PATH = os.path.join(sys.path[0], "environment.yaml")
+
+
+# LOADING CONFIGURATION FILE
+# PROBABLY BETTER TO GET SOMETHING LIKE DYNACONF OR ELSE - TODO
+if not os.path.exists(CONFIG_FILE_NAME):
+    ENV = {
+        "platform": "TEST",
+        "url_root": "",
+        "password_requested": True,
+        "project_path": "."
+    }
+else:
+    with open(CONFIG_FILE_NAME, "r") as stream:
+        ENV = load(stream, Loader=Loader)
 
 PROJECT_PATH = os.getcwd()
 
@@ -24,6 +38,12 @@ FLASK_URL_SESSION = os.path.join(PROJECT_PATH, "flask_session")
 IMAGES_FOLDER = os.path.join(PROJECT_PATH, "images")
 LOG_DIRECTORY = os.path.join(PROJECT_PATH, "log")
 ACTIVITY_LOG = "activity.log"
+
+# create missing folders
+if not os.path.exists(LOG_DIRECTORY):
+    os.mkdir(LOG_DIRECTORY)
+if not os.path.exists(FLASK_URL_SESSION):
+    os.mkdir(FLASK_URL_SESSION)
 
 # environment variables
 FLASK_SECRET_KEY = os.environ.get("AKB_SECRET_KEY")
