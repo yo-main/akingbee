@@ -3,11 +3,10 @@ import datetime
 import flask
 import peewee as pw
 
-from src.constants.environments import USER_ID
 from src.services.logger import logger
 from src.data_access.connectors import DB
-from src.constants import alert_codes as alerts
 from src.services.alerts import Error
+from src.constants import alert_codes as alerts
 
 
 class BaseModel(pw.Model):

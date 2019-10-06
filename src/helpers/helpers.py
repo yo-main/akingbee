@@ -12,8 +12,8 @@ from src.constants.environments import FLASK_URL_ROOT
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
-from src.data_access import objects
-from src.data_access.factory import Factory
+# from src.data_access import objects
+# from src.data_access.factory import Factory
 from src.data_access.pw_objects import User
 from src.data_access.pw_objects import Comment
 from src.data_access.pw_objects import Swarm

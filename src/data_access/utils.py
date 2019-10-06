@@ -1,212 +1,216 @@
-import re
-import flask
-import datetime
-from copy import copy
+"""
+THIS MODULE IS DEPRECATED IS REPLACED BY PEEWEE
+"""
 
-from src.constants import alert_codes as alert
-from src.services.alerts import Error
-from src.data_access.factory import Factory
-from src.data_access.base_object import BaseObject
+# import re
+# import flask
+# import datetime
+# from copy import copy
 
-
-class SQLObject(BaseObject):
-    table = None
-    columns = ()
-    foreign = {}
-    id = None
-
-    def __init__(self, data=None, deepth=0):
-        if data:
-            self._init_with_values(data)
-        self._create_missing_attr()
-        if deepth:
-            self._get_foreign_objects()
-
-    @classmethod
-    def find_column_related_to(class_, other):
-        column = [
-            key
-            for key, item in class_.foreign.items()
-            if isinstance(other, item)
-        ]
-        if not column:
-            return None
-        return column[0]
-
-    def save(self, factory=None):
-        if factory is None:
-            factory = Factory()
-
-        if "user_id" not in flask.session:
-            flask.session["user_id"] = None
-
-        if self.id:
-            if (
-                "user" in self.columns
-                and self.user != flask.session["user_id"]
-            ):
-                raise Error(alert.USERS_MIXED_UP_ERROR)
-
-            new_values = self.get_diff()
-            for table, values in new_values.items():
-                if values:
-                    factory.update(table, values)
-        else:
-            if "user" in self.columns and flask.session["user_id"]:
-                self.user = flask.session["user_id"]
-
-            items = {
-                key: getattr(self, key)
-                for key in self.columns
-                if getattr(self, key) is not None
-            }
-
-            self.id = factory.create(self.table, items)
-
-    def get_diff(self):
-        if self.id:
-            original = Factory().get_from_id(self.id, type(self))
-        else:
-            original = type(self)()
-
-        to_modify = {}
-
-        to_modify[self.table] = {}
-        for key in self.columns:
-            new_value = getattr(self, key)
-            old_value = getattr(original, key)
-
-            if isinstance(new_value, BaseObject):
-                to_modify.update(new_value.get_diff())
-            else:
-                if new_value != old_value:
-                    to_modify[self.table][key] = new_value
-
-            if to_modify[self.table]:
-                to_modify[self.table]["id"] = self.id
-
-        return to_modify
-
-    def _init_with_values(self, data):
-        assert all(key in self.columns for key in data)
-        for key, item in data.items():
-            setattr(self, key, item)
-
-    def _create_missing_attr(self):
-        for key in self.columns:
-            if key not in self.__dict__:
-                self.__dict__[key] = None
-
-    def _get_foreign_objects(self):
-        for key, class_ in self.foreign.items():
-            id_ = getattr(self, key)
-            if id_:
-                self.__dict__[key] = Factory().get_from_id(id_, class_)
-
-    def copy(self):
-        return copy(self)
-
-    def __copy__(self):
-        new = type(self)()
-        new.__dict__.update(
-            {key: copy(item) for key, item in self.__dict__.items()}
-        )
-        return new
-
-    def __repr__(self):
-        return str(self.id)
-
-    def __setattr__(self, key, item):
-        if key == "columns":
-            raise AttributeError("You cannot change the columns attribute")
-
-        validator = self.columns[key]
-        if item is None or validator.match(item):
-            self.__dict__[key] = item
-        else:
-            raise ValueError('"{}" is not correct for {}'.format(item, key))
-
-    def __eq__(self, other):
-        if not isinstance(other, (int, str, type(self))):
-            return NotImplemented
-
-        if isinstance(other, str):
-            if not other.isdigit():
-                return False
-            other = int(other)
-
-        if isinstance(other, type(self)):
-            other = other.id
-
-        return self.id == other
-
-    def __str__(self):
-        template = "{column:>{size_column}} | {value}\n"
-        size_column = len(max(self.columns, key=len))
-        out = template.format(
-            column="COLUMNS", size_column=size_column, value="VALUES"
-        )
-        for key in self.columns:
-            value = getattr(self, key)
-            if isinstance(value, BaseObject):
-                value = value.id
-            out += template.format(
-                column=key, size_column=size_column, value=value
-            )
-        return out
-
-    def serialize(self):
-        out = self.__dict__
-        for key, item in out.items():
-            if isinstance(item, BaseObject):
-                out[key] = item.serialize()
-        return out
+# from src.constants import alert_codes as alert
+# from src.services.alerts import Error
+# from src.data_access.factory import Factory
+# from src.data_access.base_object import BaseObject
 
 
-class DataValidator:
-    def __init__(self, arg):
-        self.regex = False
-        if isinstance(arg, type(re.compile(""))):
-            self.regex = True
-            self.validator = arg
-        elif isinstance(arg, type):
-            self.validator = arg
-        else:
-            raise TypeError(
-                "The provided argument is not correct: {}".format(arg)
-            )
+# class SQLObject(BaseObject):
+#     table = None
+#     columns = ()
+#     foreign = {}
+#     id = None
 
-    def validate(self, arg):
-        if not self.regex:
-            if self.validator == int:
-                if isinstance(arg, str) and arg.isdigit():
-                    arg = int(arg)
-            return isinstance(arg, self.validator)
-        return bool(self.validator.match(arg))
+#     def __init__(self, data=None, deepth=0):
+#         if data:
+#             self._init_with_values(data)
+#         self._create_missing_attr()
+#         if deepth:
+#             self._get_foreign_objects()
+
+#     @classmethod
+#     def find_column_related_to(class_, other):
+#         column = [
+#             key
+#             for key, item in class_.foreign.items()
+#             if isinstance(other, item)
+#         ]
+#         if not column:
+#             return None
+#         return column[0]
+
+#     def save(self, factory=None):
+#         if factory is None:
+#             factory = Factory()
+
+#         if "user_id" not in flask.session:
+#             flask.session["user_id"] = None
+
+#         if self.id:
+#             if (
+#                 "user" in self.columns
+#                 and self.user != flask.session["user_id"]
+#             ):
+#                 raise Error(alert.USERS_MIXED_UP_ERROR)
+
+#             new_values = self.get_diff()
+#             for table, values in new_values.items():
+#                 if values:
+#                     factory.update(table, values)
+#         else:
+#             if "user" in self.columns and flask.session["user_id"]:
+#                 self.user = flask.session["user_id"]
+
+#             items = {
+#                 key: getattr(self, key)
+#                 for key in self.columns
+#                 if getattr(self, key) is not None
+#             }
+
+#             self.id = factory.create(self.table, items)
+
+#     def get_diff(self):
+#         if self.id:
+#             original = Factory().get_from_id(self.id, type(self))
+#         else:
+#             original = type(self)()
+
+#         to_modify = {}
+
+#         to_modify[self.table] = {}
+#         for key in self.columns:
+#             new_value = getattr(self, key)
+#             old_value = getattr(original, key)
+
+#             if isinstance(new_value, BaseObject):
+#                 to_modify.update(new_value.get_diff())
+#             else:
+#                 if new_value != old_value:
+#                     to_modify[self.table][key] = new_value
+
+#             if to_modify[self.table]:
+#                 to_modify[self.table]["id"] = self.id
+
+#         return to_modify
+
+#     def _init_with_values(self, data):
+#         assert all(key in self.columns for key in data)
+#         for key, item in data.items():
+#             setattr(self, key, item)
+
+#     def _create_missing_attr(self):
+#         for key in self.columns:
+#             if key not in self.__dict__:
+#                 self.__dict__[key] = None
+
+#     def _get_foreign_objects(self):
+#         for key, class_ in self.foreign.items():
+#             id_ = getattr(self, key)
+#             if id_:
+#                 self.__dict__[key] = Factory().get_from_id(id_, class_)
+
+#     def copy(self):
+#         return copy(self)
+
+#     def __copy__(self):
+#         new = type(self)()
+#         new.__dict__.update(
+#             {key: copy(item) for key, item in self.__dict__.items()}
+#         )
+#         return new
+
+#     def __repr__(self):
+#         return str(self.id)
+
+#     def __setattr__(self, key, item):
+#         if key == "columns":
+#             raise AttributeError("You cannot change the columns attribute")
+
+#         validator = self.columns[key]
+#         if item is None or validator.match(item):
+#             self.__dict__[key] = item
+#         else:
+#             raise ValueError('"{}" is not correct for {}'.format(item, key))
+
+#     def __eq__(self, other):
+#         if not isinstance(other, (int, str, type(self))):
+#             return NotImplemented
+
+#         if isinstance(other, str):
+#             if not other.isdigit():
+#                 return False
+#             other = int(other)
+
+#         if isinstance(other, type(self)):
+#             other = other.id
+
+#         return self.id == other
+
+#     def __str__(self):
+#         template = "{column:>{size_column}} | {value}\n"
+#         size_column = len(max(self.columns, key=len))
+#         out = template.format(
+#             column="COLUMNS", size_column=size_column, value="VALUES"
+#         )
+#         for key in self.columns:
+#             value = getattr(self, key)
+#             if isinstance(value, BaseObject):
+#                 value = value.id
+#             out += template.format(
+#                 column=key, size_column=size_column, value=value
+#             )
+#         return out
+
+#     def serialize(self):
+#         out = self.__dict__
+#         for key, item in out.items():
+#             if isinstance(item, BaseObject):
+#                 out[key] = item.serialize()
+#         return out
 
 
-class DataTemplate:
-    def __init__(self, args):
-        self.args = args
-        self.validators = []
-        if isinstance(args, (list, tuple)):
-            for arg in args:
-                self.validators.append(DataValidator(arg))
-        else:
-            self.validators.append(DataValidator(args))
+# class DataValidator:
+#     def __init__(self, arg):
+#         self.regex = False
+#         if isinstance(arg, type(re.compile(""))):
+#             self.regex = True
+#             self.validator = arg
+#         elif isinstance(arg, type):
+#             self.validator = arg
+#         else:
+#             raise TypeError(
+#                 "The provided argument is not correct: {}".format(arg)
+#             )
 
-    def match(self, other):
-        for validator in self.validators:
-            if validator.validate(other):
-                return True
-        return False
+#     def validate(self, arg):
+#         if not self.regex:
+#             if self.validator == int:
+#                 if isinstance(arg, str) and arg.isdigit():
+#                     arg = int(arg)
+#             return isinstance(arg, self.validator)
+#         return bool(self.validator.match(arg))
 
-    def __get__(self, obj, type=None):
-        return self.args
+
+# class DataTemplate:
+#     def __init__(self, args):
+#         self.args = args
+#         self.validators = []
+#         if isinstance(args, (list, tuple)):
+#             for arg in args:
+#                 self.validators.append(DataValidator(arg))
+#         else:
+#             self.validators.append(DataValidator(args))
+
+#     def match(self, other):
+#         for validator in self.validators:
+#             if validator.validate(other):
+#                 return True
+#         return False
+
+#     def __get__(self, obj, type=None):
+#         return self.args
 
 
-class DataAccess:
-    def __call__(self, class_object):
-        for key, item in class_object.columns.items():
-            class_object.columns[key] = DataTemplate(item)
-        return class_object
+# class DataAccess:
+#     def __call__(self, class_object):
+#         for key, item in class_object.columns.items():
+#             class_object.columns[key] = DataTemplate(item)
+#         return class_object

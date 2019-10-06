@@ -8,23 +8,13 @@ from playhouse.sqlite_ext import SqliteExtDatabase
 
 from app import app
 from src.data_access.pw_objects import MODELS
+from src.data_access.connectors import DB
 
-
-DATABASES = {}
-
-
-def use_database(name="_default"):
-    def wrapper(func):
-        @wraps(func)
-        def inner(*args, **kwargs):
-            with DATABASES[name].bind_ctx(MODELS):
-                DATABASES[name].create_tables(MODELS)
-                res = func(*args, **kwargs)
-            return res
-        return inner
-    if name not in DATABASES:
-        DATABASES[name] = SqliteExtDatabase(":memory:")
-    return wrapper
+@pytest.fixture(scope="session", autouse=True)
+def fake_database():
+    DB.bind(MODELS)
+    DB.create_tables(MODELS)
+    return DB
 
 
 @pytest.fixture

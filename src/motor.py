@@ -18,7 +18,7 @@ from src.constants import alert_codes as alerts
 
 from src.constants.environments import USER_ID
 
-from src.data_access import objects
+# from src.data_access import objects
 from src.data_access.pw_objects import User
 from src.data_access.pw_objects import Hive
 from src.data_access.pw_objects import Owner

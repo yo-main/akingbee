@@ -28,7 +28,10 @@ def session_configuration():
 
 @app.after_request
 def after_request_func(f):
-    app.config["DATABASE"].close()
+    
+    # doing this in DEV will close the :memory: database - which we don't really want
+    if env.PLATFORM_ENVIRONMENT != "DEV":
+        app.config["DATABASE"].close()
     return f
 
 

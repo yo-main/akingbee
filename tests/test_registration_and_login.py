@@ -3,19 +3,17 @@ import flask
 import pytest
 from mock import MagicMock
 
-from playhouse.sqlite_ext import SqliteExtDatabase
+from src.constants.environments import PLATFORM_ENVIRONMENT
 
-from tests.helpers import use_database
-from tests.helpers import client
+# don't go further if the below assertion fails
+assert PLATFORM_ENVIRONMENT == "DEV"
+
+from tests.helpers import client, fake_database
 
 from src.helpers import helpers
 from src.constants import alert_codes
 from src.data_access.pw_objects import MODELS
 
-
-DB = SqliteExtDatabase(":memory:")
-DB.bind(MODELS)
-DB.create_tables(MODELS)
 
 
 
