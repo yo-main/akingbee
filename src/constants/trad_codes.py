@@ -117,4 +117,7 @@ traductions = {
     108: {FRENCH: "Cliquer ici pour créer un nouvel essaim à cette ruche !",
           ENGLISH: "Click here to attach a new swarm to this hive !"},
     109: {FRENCH: "Attacher un nouvel essaim", ENGLISH: "Attach a new swarm"},
+    110: {FRENCH: "Essaim", ENGLISH: "Swarm"},
+    111: {FRENCH: "Historique", ENGLISH: "History"},
+    112: {FRENCH: "Actions", ENGLISH: "Actions"},
 }

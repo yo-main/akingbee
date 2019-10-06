@@ -61,7 +61,7 @@
                         <div class="col flex-end">
                             <div class="row">
                                 <div class="col-auto">
-                                    <button type="button" class="btn btn-link btn-smenu" onclick="modal_hive_edit(this);">{{trads[49]}}</button>
+                                    <button type="button" name="{{hive.name}}" class="btn btn-link btn-smenu" onclick="modal_hive_edit(this);">{{trads[49]}}</button>
                                 </div>
                                 <div class="col-auto">
                                     <button type="button" name="{{hive.name}}" class="btn btn-link btn-smenu" onclick="modal_comment(this);">{{trads[73]}}</button>
@@ -81,12 +81,12 @@
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="history_tab" data-toggle="tab" href="#history_content" role="tab" aria-control="history_content" aria-selected="true">History</a>
+                        <a class="nav-link active" id="history_tab" data-toggle="tab" href="#history_content" role="tab" aria-control="history_content" aria-selected="true">{{trads[111]}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">Swarm</a>
+                        <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a>
                     </li>
-                        <a class="nav-link" id="action_tab" data-toggle="tab" href="#action_content" role="tab" aria-control="action_content" aria-selected="true">Actions</a>
+                        <a class="nav-link" id="action_tab" data-toggle="tab" href="#action_content" role="tab" aria-control="action_content" aria-selected="true">{{trads[112]}}</a>
                     <li class="nav-item">
                     </li>
                 </ul>
