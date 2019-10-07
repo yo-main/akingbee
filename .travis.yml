@@ -4,9 +4,9 @@ python:
     - "3.7"
 
 install:
-    - pip install pipenv
-    - pipenv install
+    - pip install poetry
+    - poetry install
 
 script: 
-    - coverage run pytest -v
-    - coverage report
+    - poetry run coverage run -m pytest -v
+    - poetry run coverage report
