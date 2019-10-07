@@ -208,7 +208,7 @@ def registerCheck():
 
 @route("/reset_password", methods=["GET", "POST"])
 def reset_pwd():
-    if flask.session["user_id"] is not None:
+    if flask.session.get("user_id") is not None:
         return redirect("/")
 
     if flask.request.method == "GET":
@@ -217,9 +217,11 @@ def reset_pwd():
     if flask.request.method == "POST":
         pwd = flask.request.form.get("pwd")
         username = flask.request.form.get("username")
-        hashed_pwd = generate_password_hash(
-            pwd, method="pbkdf2:sha256", salt_length=8
-        )
+
+        if not validate_password(pwd):
+            raise Error(alerts.INCORRECT_PASSWORD_FORMAT)
+
+        hashed_pwd = create_password_hash(pwd)
 
         user = get_user_from_username(username)
         user.pwd = hashed_pwd
