@@ -10,6 +10,7 @@ from app import app
 from src.data_access.pw_objects import MODELS
 from src.data_access.connectors import DB
 
+
 @pytest.fixture(scope="session", autouse=True)
 def fake_database():
     DB.bind(MODELS)

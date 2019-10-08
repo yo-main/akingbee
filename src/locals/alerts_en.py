@@ -30,10 +30,7 @@ errors = {
 successes = {
     LOGIN_SUCCESS: ("Hello !", "You are connected"),
     REGISTER_SUCCESS: ("Welcome !", "You have been succesffully registered !"),
-    PASSWORD_RESET_SUCCESS: (
-        "",
-        "You password has been successfully reseted !",
-    ),
+    PASSWORD_RESET_SUCCESS: ("", "You password has been successfully reseted !"),
     NEW_PARAMETER_SUCCESS: ("", "New parameter successfully added !"),
     NEW_HIVE_SUCCESS: ("", "Hive successfully created !"),
     NEW_BEEKEEPER_SUCCESS: ("", "Beekeeper successfully created !"),

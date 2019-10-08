@@ -12,6 +12,7 @@ from src.constants.environments import FLASK_URL_ROOT
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
+
 # from src.data_access import objects
 # from src.data_access.factory import Factory
 from src.data_access.pw_objects import User
@@ -48,6 +49,7 @@ def login_required(f):
         else:
             ENV.USER_ID = user_id
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -59,9 +61,7 @@ def get_user_id():
 
 
 def create_password_hash(password):
-    return generate_password_hash(
-        password, method="pbkdf2:sha256", salt_length=8
-    )
+    return generate_password_hash(password, method="pbkdf2:sha256", salt_length=8)
 
 
 def verify_password(hashed, not_hashed):
@@ -98,17 +98,16 @@ def traductions(index=None):
 def update_swarm_health(swarm_id):
     if swarm_id is None:
         return False
-    
-    comments = list(Comment
-                    .select()
-                    .where(Comment.swarm == swarm_id)
-                    .order_by(Comment.date.desc()))
+
+    comments = list(
+        Comment.select().where(Comment.swarm == swarm_id).order_by(Comment.date.desc())
+    )
 
     if comments:
         swarm = Swarm.get_by_id(swarm_id)
         swarm.health = comments[0].health
         swarm.save()
-        
+
     return True
 
 
@@ -124,5 +123,3 @@ def get_all(main, *args):
         query = query.where(main.user == flask.session["user_id"])
 
     return query
-
-

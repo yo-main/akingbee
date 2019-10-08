@@ -197,9 +197,7 @@ def registerCheck():
                 except Exception:
                     logger.critical(
                         "Something bad happened while registering "
-                        "a new user with {} and data {}".format(
-                            class_.__name__, d
-                        )
+                        "a new user with {} and data {}".format(class_.__name__, d)
                     )
                     raise
 
@@ -332,13 +330,13 @@ def hive_create():
         apiaries = get_all(Apiary)
         hive_conditions = get_all(HiveCondition)
         swarm_healths = get_all(SwarmHealth)
-        
+
         return render(
             "akingbee/hive/create.html",
             owners=owners,
             apiaries=apiaries,
             hive_conditions=hive_conditions,
-            swarm_healths=swarm_healths
+            swarm_healths=swarm_healths,
         )
 
     elif flask.request.method == "POST":
@@ -353,8 +351,7 @@ def hive_create():
         with DB.atomic():
             swarm_health = flask.request.form.get("swarm_health")
             if swarm_health:
-                swarm = Swarm(health=swarm_health,
-                              birthday=datetime.datetime.now())
+                swarm = Swarm(health=swarm_health, birthday=datetime.datetime.now())
                 swarm.save()
                 hive_data["swarm_id"] = swarm.id
 
@@ -460,8 +457,7 @@ def hive_profil(bh_id):
         flask.abort(404)
 
     comments = (
-        Comment
-        .select(Comment, Hive, Apiary, CommentType)
+        Comment.select(Comment, Hive, Apiary, CommentType)
         .join(Hive)
         .switch(Comment)
         .join(Apiary)
@@ -483,7 +479,7 @@ def hive_profil(bh_id):
     action_types = get_all(ActionType)
     apiaries = get_all(Apiary)
     owners = get_all(Owner)
-    
+
     return render(
         "akingbee/hive/hive_details.html",
         hive=hive,
@@ -565,7 +561,7 @@ def del_comment():
 
     swarm_id = comment.swarm
     comment.delete_instance()
-    
+
     helpers.update_swarm_health(swarm_id)
 
     return Success(alerts.DELETION_SUCCESS)
@@ -714,9 +710,7 @@ def setupCondition():
 
     if lang == config.FRENCH:
         title = "États"
-        description = (
-            "Les différents états que vous souhaitez affecter à une ruche"
-        )
+        description = "Les différents états que vous souhaitez affecter à une ruche"
     else:
         title = "Conditions"
         description = "Different conditions that you wish to affect to a hive"
@@ -744,8 +738,7 @@ def setupHoneyKind():
     if lang == config.FRENCH:
         title = "Type de miel"
         description = (
-            "Les différents types de miel que "
-            "vous pouvez être amené à récolter"
+            "Les différents types de miel que " "vous pouvez être amené à récolter"
         )
     else:
         title = "Honey type"
@@ -803,14 +796,10 @@ def setupStatusAp():
 
     if lang == config.FRENCH:
         title = "Status des ruchers"
-        description = (
-            "Les différents status que vous pouvez donner à un rucher"
-        )
+        description = "Les différents status que vous pouvez donner à un rucher"
     else:
         title = "Apiary status"
-        description = (
-            "The different status that you may have to give to an apiary"
-        )
+        description = "The different status that you may have to give to an apiary"
 
     return render(
         "akingbee/setup/index.html",
@@ -935,8 +924,7 @@ def setupSwarmHealth():
     else:
         title = "Swarm health status"
         description = (
-            "The different kind of health conditions "
-            "that may be linked to a swarm"
+            "The different kind of health conditions " "that may be linked to a swarm"
         )
 
     return render(
@@ -957,24 +945,24 @@ def create_swarm():
     swarm_health = flask.request.form.get("swarm_health")
 
     hive = Hive.get_by_id(hive_id)
-    
+
     if hive.swarm:
         raise Error(alerts.SWARM_ALREADY_EXISTS)
-    
+
     swarm = Swarm()
     swarm.user = flask.session["user_id"]
     swarm.health_id = swarm_health
     swarm.birthday = datetime.datetime.now()
-    
+
     hive.swarm = swarm
-    
+
     with DB.atomic():
         swarm.save()
         hive.save()
-        
+
     return Success(alerts.SWARM_ATTACH_WITH_SUCCESS)
 
-    
+
 # @route("/swarm/get_swarm_info", methods=["POST"])
 # @login_required
 # def swarm_details():
@@ -995,6 +983,3 @@ def create_swarm():
 #     swarm.save()
 
 #     return Success(alerts.MODIFICATION_SUCCESS)
-
-
-
