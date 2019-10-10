@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "akingbee"
 version = "0.1.0"
-description = ""
+description = "akingbee"
 authors = ["Yomain <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]

@@ -12,6 +12,8 @@ import sys
 
 import peewee as pw
 
+from app import route
+
 from src.constants import config
 from src.constants import environments
 from src.constants import alert_codes as alerts
@@ -35,7 +37,6 @@ from src.data_access.pw_objects import StatusApiary
 
 from src.data_access.connectors import DB
 from src.helpers import helpers
-from src.helpers.helpers import route
 from src.helpers.helpers import get_all
 from src.helpers.helpers import redirect
 from src.helpers.helpers import login_required
@@ -170,36 +171,7 @@ def registerCheck():
     if email:
         raise Error(alerts.EMAIL_ALREADY_EXISTS_ERROR)
 
-    with DB.atomic():
-        # Creation of the user
-        user = User()
-        user.username = data["username"]
-        user.email = data["email"]
-        user.pwd = create_password_hash(data["pwd"])
-        user.save()
-
-        # Creation of all the different data linked to the user
-        mapping = (
-            (HiveCondition, config.DEFAULT_HIVE_CONDITION),
-            (StatusApiary, config.DEFAULT_STATUS_APIARY),
-            (ActionType, config.DEFAULT_ACTION_TYPE),
-            (HoneyType, config.DEFAULT_HONEY_KIND),
-            (SwarmHealth, config.DEFAULT_SWARM_HEALTH),
-            (Owner, ({"name": user.username},)),
-        )
-
-        for class_, datas in mapping:
-            for d in datas:
-                try:
-                    d["user_id"] = user.id
-                    tmp = class_(**d)
-                    tmp.save()
-                except Exception:
-                    logger.critical(
-                        "Something bad happened while registering "
-                        "a new user with {} and data {}".format(class_.__name__, d)
-                    )
-                    raise
+    helpers.create_new_user(data)
 
     return Success(alerts.REGISTER_SUCCESS)
 
@@ -262,13 +234,19 @@ def apiary_create():
         data = {
             "name": flask.request.form.get("name"),
             "location": flask.request.form.get("location"),
-            "honey_type": flask.request.form.get("honey_type"),
-            "status": flask.request.form.get("status"),
+            "honey_type_id": flask.request.form.get("honey_type"),
+            "status_id": flask.request.form.get("status"),
             "birthday": convert_to_date_object(flask.request.form.get("birthday")),
         }
-
-        apiary = Apiary(**data)
-        apiary.save()
+        
+        if not all(x for x in data.values()):
+            raise Error(alerts.MISSING_INFORMATION_APIARY)
+        
+        try:
+            apiary = Apiary(**data)
+            apiary.save()
+        except pw.IntegrityError:
+            raise Error(alerts.INCONSISTANT_DATA)
 
         return Success(alerts.NEW_APIARY_SUCCESS)
 
@@ -276,12 +254,13 @@ def apiary_create():
 @route("/apiary/create/new_honey_type", methods=["POST"])
 @login_required
 def apiary_create_honey():
-    data = {
-        "fr": flask.request.form.get("name_fr"),
-        "en": flask.request.form.get("name_en"),
-    }
+    fr = flask.request.form.get("name_fr")
+    en = flask.request.form.get("name_en")
 
-    honey = HoneyType(**data)
+    if not fr or not en:
+        raise Error(alerts.INCONSISTANT_DATA)
+
+    honey = HoneyType(fr=fr, en=en)
     honey.save()
 
     return Success(alerts.NEW_PARAMETER_SUCCESS)
@@ -290,12 +269,13 @@ def apiary_create_honey():
 @route("/apiary/create/new_apiary_status", methods=["POST"])
 @login_required
 def apiary_status_create():
-    data = {
-        "fr": flask.request.form.get("name_fr"),
-        "en": flask.request.form.get("name_en"),
-    }
+    fr = flask.request.form.get("name_fr")
+    en = flask.request.form.get("name_en")
+    
+    if not fr or not en:
+        raise Error(alerts.INCONSISTANT_DATA)
 
-    status_apiary = StatusApiary(**data)
+    status_apiary = StatusApiary(fr=fr, en=en)
     status_apiary.save()
 
     return Success(alerts.NEW_PARAMETER_SUCCESS)
@@ -859,53 +839,6 @@ def delete_hive():
     return Success(alerts.DELETION_SUCCESS)
 
 
-# @route("/swarm", methods=["GET"])
-# def swarm_index():
-#     swarms = get_all(Swarm, Hive, SwarmHealth)
-#     hives = tuple(set(swarm.hive for swarm in swarms))
-#     healths = tuple(set(swarm.health for swarm in swarms))
-
-#     return render(
-#         "akingbee/swarm/index.html",
-#         swarms=swarms,
-#         hives=hives,
-#         healths=healths,
-#     )
-
-
-# @route("/swarm/create", methods=["GET", "POST"])
-# @login_required
-# def create_swarm():
-#     if flask.request.method == "GET":
-#         apiaries = get_all(Apiary)
-#         hives = get_all(Hive)
-#         healths = get_all(SwarmHealth)
-
-#         return render(
-#             "akingbee/swarm/create.html",
-#             hives=hives,
-#             apiaries=apiaries,
-#             healths=healths,
-#         )
-
-#     elif flask.request.method == "POST":
-#         data = {
-#             "name": flask.request.form.get("name"),
-#             "hive": flask.request.form.get("hive"),
-#             "health": flask.request.form.get("health"),
-#             "birthday": convert_to_date(flask.request.form.get("birthday")),
-#         }
-
-#         data["apiary"] = tuple(Apiary
-#                                .select(Apiary)
-#                                .join(Hive)
-#                                .where(Hive.id == data["hive"]))[0]
-#         swarm = Swarm(**data)
-#         swarm.save()
-
-#         return Success(alerts.NEW_SWARM_SUCCESS)
-
-
 @route("/setup/swarm/health", methods=["GET"])
 @login_required
 def setupSwarmHealth():
@@ -961,25 +894,3 @@ def create_swarm():
         hive.save()
 
     return Success(alerts.SWARM_ATTACH_WITH_SUCCESS)
-
-
-# @route("/swarm/get_swarm_info", methods=["POST"])
-# @login_required
-# def swarm_details():
-#     swarm_id = flask.request.form.get("swarm_id")
-#     print(swarm_id)
-#     swarm = Swarm.get_by_id(swarm_id)
-#     return flask.jsonify(swarm.serialize())
-
-
-# @route("/swarm/submit_swarm_info", methods=["POST"])
-# @login_required
-# def submit_swarm_details():
-#     swarm = Swarm.get_by_id(flask.request.form.get("swarm_id"))
-
-#     swarm.name = flask.request.form.get("name")
-#     swarm.hive = flask.request.form.get("hive")
-#     swarm.health = flask.request.form.get("health")
-#     swarm.save()
-
-#     return Success(alerts.MODIFICATION_SUCCESS)

@@ -1,18 +1,9 @@
 import flask
 
 import pytest
-from mock import MagicMock
 
-from src.constants.environments import PLATFORM_ENVIRONMENT
-
-# don't go further if the below assertion fails
-assert PLATFORM_ENVIRONMENT == "DEV"
-
-from tests.helpers import client, fake_database
-
-from src.helpers import helpers
 from src.constants import alert_codes
-from src.data_access.pw_objects import MODELS
+from tests.fixtures import client, fake_database
 
 
 def test_index_page_logged_out(client):

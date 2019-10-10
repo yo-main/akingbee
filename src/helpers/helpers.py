@@ -7,31 +7,24 @@ import flask
 
 import peewee as pw
 
-from app import app
+from src.data_access.connectors import DB
 from src.constants.environments import FLASK_URL_ROOT
+from src.constants import config
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
+from src.services.logger import logger
 
 # from src.data_access import objects
 # from src.data_access.factory import Factory
-from src.data_access.pw_objects import User
-from src.data_access.pw_objects import Comment
-from src.data_access.pw_objects import Swarm
+from src.data_access.pw_objects import User, Comment, Swarm, HiveCondition, HoneyType
+from src.data_access.pw_objects import ActionType, StatusApiary, Owner, SwarmHealth
 from src.constants import environments as ENV
 
 
 def redirect(url):
     url = FLASK_URL_ROOT + url
     return flask.redirect(url)
-
-
-def route(url, **kwargs):
-    def my_function(func):
-        return app.route(url, **kwargs)(func)
-
-    url = FLASK_URL_ROOT + url
-    return my_function
 
 
 def login_required(f):
@@ -123,3 +116,37 @@ def get_all(main, *args):
         query = query.where(main.user == flask.session["user_id"])
 
     return query
+
+
+def create_new_user(data):
+    with DB.atomic():
+        # Creation of the user
+        user = User()
+        user.username = data["username"]
+        user.email = data["email"]
+        user.pwd = create_password_hash(data["pwd"])
+        user.save()
+
+        # Creation of all the different data linked to the user
+        mapping = (
+            (HiveCondition, config.DEFAULT_HIVE_CONDITION),
+            (StatusApiary, config.DEFAULT_STATUS_APIARY),
+            (ActionType, config.DEFAULT_ACTION_TYPE),
+            (HoneyType, config.DEFAULT_HONEY_KIND),
+            (SwarmHealth, config.DEFAULT_SWARM_HEALTH),
+            (Owner, ({"name": user.username},)),
+        )
+
+        for class_, datas in mapping:
+            for d in datas:
+                try:
+                    d["user_id"] = user.id
+                    tmp = class_(**d)
+                    tmp.save()
+                except Exception:
+                    logger.critical(
+                        "Something bad happened while registering "
+                        "a new user with {} and data {}".format(class_.__name__, d)
+                    )
+                    raise
+    return True

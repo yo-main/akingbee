@@ -6,8 +6,6 @@ from src.locals import alerts_fr as fr
 from src.locals import alerts_en as en
 from src.services.logger import logger
 
-from app import app
-
 
 class Error(Exception):
     def __init__(self, code):
@@ -32,12 +30,6 @@ class Error(Exception):
 
     def to_dict(self):
         return self.out
-
-
-@app.errorhandler(Error)
-def handle_error(error):
-    response = flask.jsonify(error.to_dict())
-    return response, 500
 
 
 def Success(code=None):

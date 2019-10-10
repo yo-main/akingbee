@@ -24,6 +24,9 @@ errors = {
     MISSING_INFORMATION_REGISTER: "The username or email were not provided",
     SWARM_ALREADY_EXISTS: "The hive is already attached to a swarm",
     USER_COULD_NOT_BE_IDENTIFIED: "The logged in user could not be identified",
+    STRING_CANNOT_BE_CONVERTED_TO_DATE: "An error happened while trying to convert some date",
+    MISSING_INFORMATION_APIARY: "Some information were missing to register the apiary",
+    INCONSISTANT_DATA: "Inconsistant data was received",
 }
 
 
