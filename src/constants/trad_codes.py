@@ -15,14 +15,20 @@ traductions = {
     10: {FRENCH: "Déconnexion", ENGLISH: "Log out"},
     11: {FRENCH: "Connexion", ENGLISH: "Log in"},
     12: {FRENCH: "Langage", ENGLISH: "Language"},
-    13: {FRENCH: "Confirmer le mot de passe", ENGLISH: "Confirm your password"},
+    13: {
+        FRENCH: "Confirmer le mot de passe",
+        ENGLISH: "Confirm your password",
+    },
     14: {FRENCH: "Valider", ENGLISH: "Submit"},
     15: {FRENCH: "Email", ENGLISH: "Email"},
     16: {
         FRENCH: "Utilisez seulement des lettres et des nombres !",
         ENGLISH: "Only use letters and numbers !",
     },
-    17: {FRENCH: "Il faut un email valide", ENGLISH: "Insert a valid email address"},
+    17: {
+        FRENCH: "Il faut un email valide",
+        ENGLISH: "Insert a valid email address",
+    },
     18: {
         FRENCH: "Utilisez au moins 8 caractères",
         ENGLISH: "Must have 8 or more characters",

@@ -236,12 +236,14 @@ def apiary_create():
             "location": flask.request.form.get("location"),
             "honey_type_id": flask.request.form.get("honey_type"),
             "status_id": flask.request.form.get("status"),
-            "birthday": convert_to_date_object(flask.request.form.get("birthday")),
+            "birthday": convert_to_date_object(
+                flask.request.form.get("birthday")
+            ),
         }
-        
+
         if not all(x for x in data.values()):
             raise Error(alerts.MISSING_INFORMATION_APIARY)
-        
+
         try:
             apiary = Apiary(**data)
             apiary.save()
@@ -271,7 +273,7 @@ def apiary_create_honey():
 def apiary_status_create():
     fr = flask.request.form.get("name_fr")
     en = flask.request.form.get("name_en")
-    
+
     if not fr or not en:
         raise Error(alerts.INCONSISTANT_DATA)
 
@@ -331,7 +333,9 @@ def hive_create():
         with DB.atomic():
             swarm_health = flask.request.form.get("swarm_health")
             if swarm_health:
-                swarm = Swarm(health=swarm_health, birthday=datetime.datetime.now())
+                swarm = Swarm(
+                    health=swarm_health, birthday=datetime.datetime.now()
+                )
                 swarm.save()
                 hive_data["swarm_id"] = swarm.id
 
@@ -690,7 +694,9 @@ def setupCondition():
 
     if lang == config.FRENCH:
         title = "États"
-        description = "Les différents états que vous souhaitez affecter à une ruche"
+        description = (
+            "Les différents états que vous souhaitez affecter à une ruche"
+        )
     else:
         title = "Conditions"
         description = "Different conditions that you wish to affect to a hive"
@@ -718,7 +724,8 @@ def setupHoneyKind():
     if lang == config.FRENCH:
         title = "Type de miel"
         description = (
-            "Les différents types de miel que " "vous pouvez être amené à récolter"
+            "Les différents types de miel que "
+            "vous pouvez être amené à récolter"
         )
     else:
         title = "Honey type"
@@ -776,10 +783,14 @@ def setupStatusAp():
 
     if lang == config.FRENCH:
         title = "Status des ruchers"
-        description = "Les différents status que vous pouvez donner à un rucher"
+        description = (
+            "Les différents status que vous pouvez donner à un rucher"
+        )
     else:
         title = "Apiary status"
-        description = "The different status that you may have to give to an apiary"
+        description = (
+            "The different status that you may have to give to an apiary"
+        )
 
     return render(
         "akingbee/setup/index.html",
@@ -857,7 +868,8 @@ def setupSwarmHealth():
     else:
         title = "Swarm health status"
         description = (
-            "The different kind of health conditions " "that may be linked to a swarm"
+            "The different kind of health conditions "
+            "that may be linked to a swarm"
         )
 
     return render(

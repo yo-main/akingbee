@@ -19,7 +19,9 @@ class BaseModel(pw.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.columns = [field.column.name for field in self.alias().get_field_aliases()]
+        self.columns = [
+            field.column.name for field in self.alias().get_field_aliases()
+        ]
 
         # logger.info("USER {}: {} {} object with columns \n{}"
         #             .format(flask.session["user_id"],

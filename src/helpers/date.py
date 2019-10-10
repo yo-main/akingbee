@@ -3,6 +3,7 @@ import datetime
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
 
+
 def jinja_date_formatting(value, length="short"):
     """
     Used as a jinja filter to print date

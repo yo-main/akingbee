@@ -17,8 +17,19 @@ from src.services.logger import logger
 
 # from src.data_access import objects
 # from src.data_access.factory import Factory
-from src.data_access.pw_objects import User, Comment, Swarm, HiveCondition, HoneyType
-from src.data_access.pw_objects import ActionType, StatusApiary, Owner, SwarmHealth
+from src.data_access.pw_objects import (
+    User,
+    Comment,
+    Swarm,
+    HiveCondition,
+    HoneyType,
+)
+from src.data_access.pw_objects import (
+    ActionType,
+    StatusApiary,
+    Owner,
+    SwarmHealth,
+)
 from src.constants import environments as ENV
 
 
@@ -54,7 +65,9 @@ def get_user_id():
 
 
 def create_password_hash(password):
-    return generate_password_hash(password, method="pbkdf2:sha256", salt_length=8)
+    return generate_password_hash(
+        password, method="pbkdf2:sha256", salt_length=8
+    )
 
 
 def verify_password(hashed, not_hashed):
@@ -93,7 +106,9 @@ def update_swarm_health(swarm_id):
         return False
 
     comments = list(
-        Comment.select().where(Comment.swarm == swarm_id).order_by(Comment.date.desc())
+        Comment.select()
+        .where(Comment.swarm == swarm_id)
+        .order_by(Comment.date.desc())
     )
 
     if comments:
@@ -146,7 +161,9 @@ def create_new_user(data):
                 except Exception:
                     logger.critical(
                         "Something bad happened while registering "
-                        "a new user with {} and data {}".format(class_.__name__, d)
+                        "a new user with {} and data {}".format(
+                            class_.__name__, d
+                        )
                     )
                     raise
     return True
