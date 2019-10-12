@@ -9,7 +9,7 @@ from peewee import SqliteDatabase
 from app import app
 from src.models import MODELS
 from src.database import DB
-from src.helpers.helpers import create_new_user
+from src.helpers.users import create_new_user
 
 @pytest.fixture(scope="module", autouse=True)
 def fake_database():

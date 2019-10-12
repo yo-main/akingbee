@@ -2,14 +2,24 @@ import flask
 import flask_session
 
 from src import database
-from src.motor import api
+from src.views.users import api as ns_users
+from src.views.apiary import api as ns_apiary
+from src.views.hive import api as ns_hive
+from src.views.swarm import api as ns_swarm
+from src.views.setup import api as ns_setup
+
 from src.services.alerts import Error
 from src.constants import environments as env
 from src.helpers.date import jinja_date_formatting
 
 
 app = flask.Flask(__name__)
-app.register_blueprint(api)
+app.register_blueprint(ns_users)
+app.register_blueprint(ns_apiary)
+app.register_blueprint(ns_hive)
+app.register_blueprint(ns_swarm)
+app.register_blueprint(ns_setup)
+
 app.config["TEMPLATE_AUTO_RELOAD"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = 60*10  # lifetime of a cookie -> 10 minutes
 app.config["SESSION_TYPE"] = 'filesystem'

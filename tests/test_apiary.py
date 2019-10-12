@@ -6,7 +6,7 @@ import flask
 from tests.fixtures import client, fake_database
 
 from src.constants import alert_codes
-from src.helpers.helpers import create_new_user
+from src.helpers.users import create_new_user
 from src.models import User
 
 
