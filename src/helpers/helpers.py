@@ -7,7 +7,6 @@ import flask
 
 import peewee as pw
 
-from src.data_access.connectors import DB
 from src.constants.environments import FLASK_URL_ROOT
 from src.constants import config
 from src.constants import trad_codes as trads
@@ -15,22 +14,10 @@ from src.constants import alert_codes as alerts
 from src.services.alerts import Error
 from src.services.logger import logger
 
-# from src.data_access import objects
-# from src.data_access.factory import Factory
-from src.data_access.pw_objects import (
-    User,
-    Comment,
-    Swarm,
-    HiveCondition,
-    HoneyType,
-)
-from src.data_access.pw_objects import (
-    ActionType,
-    StatusApiary,
-    Owner,
-    SwarmHealth,
-)
+from src.database import DB
+from src.models import User, Comment, Swarm, HiveCondition, HoneyType, ActionType, StatusApiary, Owner, SwarmHealth
 from src.constants import environments as ENV
+
 
 
 def redirect(url):

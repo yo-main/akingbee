@@ -12,30 +12,26 @@ import sys
 
 import peewee as pw
 
-from app import route
-
 from src.constants import config
 from src.constants import environments
 from src.constants import alert_codes as alerts
 
-from src.constants.environments import USER_ID
+from src.models import User
+from src.models import Hive
+from src.models import Owner
+from src.models import Swarm
+from src.models import Action
+from src.models import Apiary
+from src.models import Comment
+from src.models import HoneyType
+from src.models import HiveCondition
+from src.models import ActionType
+from src.models import CommentType
+from src.models import SwarmHealth
+from src.models import StatusApiary
 
-# from src.data_access import objects
-from src.data_access.pw_objects import User
-from src.data_access.pw_objects import Hive
-from src.data_access.pw_objects import Owner
-from src.data_access.pw_objects import Swarm
-from src.data_access.pw_objects import Action
-from src.data_access.pw_objects import Apiary
-from src.data_access.pw_objects import Comment
-from src.data_access.pw_objects import HoneyType
-from src.data_access.pw_objects import HiveCondition
-from src.data_access.pw_objects import ActionType
-from src.data_access.pw_objects import CommentType
-from src.data_access.pw_objects import SwarmHealth
-from src.data_access.pw_objects import StatusApiary
+from src.database import DB
 
-from src.data_access.connectors import DB
 from src.helpers import helpers
 from src.helpers.helpers import get_all
 from src.helpers.helpers import redirect
@@ -48,6 +44,9 @@ from src.helpers.checkers import validate_password
 from src.services.logger import logger
 from src.services.alerts import Error, Success
 from src.helpers.date import convert_to_date_object
+
+
+api = flask.Blueprint("akb", __name__)
 
 
 def render(url, **kwargs):
@@ -63,13 +62,13 @@ def render(url, **kwargs):
     )
 
 
-@route("/", methods=["GET"])
+@api.route("/", methods=["GET"])
 @login_required
 def home():
     return render("akingbee/index_akb.html")
 
 
-@route("/images/<path:filename>", methods=["GET"])
+@api.route("/images/<path:filename>", methods=["GET"])
 def get_image(filename):
     filepath = os.path.join(environments.IMAGES_FOLDER, filename)
     if os.path.exists(filepath):
@@ -77,7 +76,7 @@ def get_image(filename):
     return flask.abort(404)
 
 
-@route("/favicon.ico", methods=["GET"])
+@api.route("/favicon.ico", methods=["GET"])
 def get_favicon():
     filepath = os.path.join(os.getcwd(), "favicon.ico")
     if os.path.exists(filepath):
@@ -85,7 +84,7 @@ def get_favicon():
     return flask.abort(404)
 
 
-@route("/login", methods=["GET", "POST"])
+@api.route("/login", methods=["GET", "POST"])
 def login():
 
     # We remove the user credentials if any in the cookie
@@ -116,7 +115,7 @@ def login():
     return Success(alerts.LOGIN_SUCCESS)
 
 
-@route("/logout", methods=["GET"])
+@api.route("/logout", methods=["GET"])
 def logout():
     logger.info("Logout")
     flask.session["user_id"] = None
@@ -124,7 +123,7 @@ def logout():
     return redirect("/")
 
 
-@route("/language", methods=["POST"])
+@api.route("/language", methods=["POST"])
 def updateLanguage():
     """Change the user language"""
     newLanguage = flask.request.form.get("language")
@@ -136,12 +135,12 @@ def updateLanguage():
     return Success()
 
 
-@route("/register", methods=["GET"])
+@api.route("/register", methods=["GET"])
 def register():
     return render("akingbee/register.html")
 
 
-@route("/registercheck", methods=["POST"])
+@api.route("/registercheck", methods=["POST"])
 def registerCheck():
     """
     Will check that we can correctly register a new user
@@ -176,7 +175,7 @@ def registerCheck():
     return Success(alerts.REGISTER_SUCCESS)
 
 
-@route("/reset_password", methods=["GET", "POST"])
+@api.route("/reset_password", methods=["GET", "POST"])
 def reset_pwd():
     if flask.session.get("user_id") is not None:
         return redirect("/")
@@ -200,7 +199,7 @@ def reset_pwd():
         return Success(alerts.PASSWORD_RESET_SUCCESS)
 
 
-@route("/apiary", methods=["GET"])
+@api.route("/apiary", methods=["GET"])
 @login_required
 def apiary():
     apiaries = get_all(Apiary, StatusApiary, HoneyType)
@@ -217,7 +216,7 @@ def apiary():
     )
 
 
-@route("/apiary/create", methods=["GET", "POST"])
+@api.route("/apiary/create", methods=["GET", "POST"])
 @login_required
 def apiary_create():
     if flask.request.method == "GET":
@@ -247,13 +246,13 @@ def apiary_create():
         try:
             apiary = Apiary(**data)
             apiary.save()
-        except pw.IntegrityError:
+        except pw.IntegrityError as e:
             raise Error(alerts.INCONSISTANT_DATA)
 
         return Success(alerts.NEW_APIARY_SUCCESS)
 
 
-@route("/apiary/create/new_honey_type", methods=["POST"])
+@api.route("/apiary/create/new_honey_type", methods=["POST"])
 @login_required
 def apiary_create_honey():
     fr = flask.request.form.get("name_fr")
@@ -268,7 +267,7 @@ def apiary_create_honey():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@route("/apiary/create/new_apiary_status", methods=["POST"])
+@api.route("/apiary/create/new_apiary_status", methods=["POST"])
 @login_required
 def apiary_status_create():
     fr = flask.request.form.get("name_fr")
@@ -283,7 +282,7 @@ def apiary_status_create():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@route("/hive", methods=["GET"])
+@api.route("/hive", methods=["GET"])
 @login_required
 def hive():
     hives = get_all(Hive, Apiary, Owner, HiveCondition)
@@ -304,7 +303,7 @@ def hive():
     )
 
 
-@route("/hive/create", methods=["GET", "POST"])
+@api.route("/hive/create", methods=["GET", "POST"])
 @login_required
 def hive_create():
     if flask.request.method == "GET":
@@ -345,7 +344,7 @@ def hive_create():
         return Success(alerts.NEW_HIVE_SUCCESS)
 
 
-@route("/hive/create/new_owner", methods=["POST"])
+@api.route("/hive/create/new_owner", methods=["POST"])
 @login_required
 def hive_create_owner():
     data = {"name": flask.request.form.get("owner")}
@@ -355,7 +354,7 @@ def hive_create_owner():
     return Success(alerts.NEW_BEEKEEPER_SUCCESS)
 
 
-@route("/hive/create/new_condition", methods=["POST"])
+@api.route("/hive/create/new_condition", methods=["POST"])
 @login_required
 def hive_create_condition():
     data = {
@@ -368,7 +367,7 @@ def hive_create_condition():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@route("/hive/get_hive_info", methods=["POST"])
+@api.route("/hive/get_hive_info", methods=["POST"])
 @login_required
 def hive_details():
     bh_id = flask.request.form.get("bh_id")
@@ -376,7 +375,7 @@ def hive_details():
     return flask.jsonify(hive.serialize())
 
 
-@route("/hive/submit_hive_info", methods=["POST"])
+@api.route("/hive/submit_hive_info", methods=["POST"])
 @login_required
 def submit_hive_details():
     hive = Hive.get_by_id(flask.request.form.get("bh_id"))
@@ -390,7 +389,7 @@ def submit_hive_details():
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@route("/hive/submit_comment_modal", methods=["POST"])
+@api.route("/hive/submit_comment_modal", methods=["POST"])
 @login_required
 def submit_comment_modal():
     hive = Hive.get_by_id(flask.request.form.get("bh_id"))
@@ -411,7 +410,7 @@ def submit_comment_modal():
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@route("/hive/submit_action_modal", methods=["POST"])
+@api.route("/hive/submit_action_modal", methods=["POST"])
 @login_required
 def submit_action_modal():
     data = {
@@ -428,7 +427,7 @@ def submit_action_modal():
     return Success(alerts.ACTION_PLANIFICATION_SUCCESS)
 
 
-@route("/hive/<path:bh_id>", methods=["GET"])
+@api.route("/hive/<path:bh_id>", methods=["GET"])
 @login_required
 def hive_profil(bh_id):
 
@@ -477,7 +476,7 @@ def hive_profil(bh_id):
     )
 
 
-@route("/hive/select", methods=["POST"])
+@api.route("/hive/select", methods=["POST"])
 @login_required
 def select_hive():
     bh_id = int(flask.request.form.get("bh_id"))
@@ -491,7 +490,7 @@ def select_hive():
     return flask.jsonify(f"/hive/{new_id}")
 
 
-@route("/hive/submit_solve_action_modal", methods=["POST"])
+@api.route("/hive/submit_solve_action_modal", methods=["POST"])
 @login_required
 def solve_action():
 
@@ -517,7 +516,7 @@ def solve_action():
     return Success(alerts.ACTION_SOLVED_SUCCESS)
 
 
-@route("/hive/submit_edit_comment_modal", methods=["POST"])
+@api.route("/hive/submit_edit_comment_modal", methods=["POST"])
 @login_required
 def edit_comment():
     comment = Comment.get_by_id(flask.request.form.get("cm_id"))
@@ -532,7 +531,7 @@ def edit_comment():
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@route("/hive/delete_comment", methods=["POST"])
+@api.route("/hive/delete_comment", methods=["POST"])
 @login_required
 def del_comment():
     comment = Comment.get_by_id(flask.request.form.get("cm_id"))
@@ -551,14 +550,14 @@ def del_comment():
     return Success(alerts.DELETION_SUCCESS)
 
 
-@route("/setup", methods=["GET"])
+@api.route("/setup", methods=["GET"])
 @login_required
 def setupPage():
     if flask.request.method == "GET":
         return render("akingbee/setup/index.html", title=0, column="")
 
 
-@route("/setup/update", methods=["POST"])
+@api.route("/setup/update", methods=["POST"])
 @login_required
 def submit_data():
     fr = flask.request.form.get("fr")
@@ -597,7 +596,7 @@ def submit_data():
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@route("/setup/delete", methods=["POST"])
+@api.route("/setup/delete", methods=["POST"])
 @login_required
 def delete_data():
     data_id = flask.request.form.get("dataId")
@@ -623,7 +622,7 @@ def delete_data():
     return Success(alerts.DELETION_SUCCESS)
 
 
-@route("/setup/submit", methods=["POST"])
+@api.route("/setup/submit", methods=["POST"])
 @login_required
 def submit_new_data():
     fr = flask.request.form.get("fr")
@@ -650,7 +649,7 @@ def submit_new_data():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@route("/setup/hive/owner", methods=["GET"])
+@api.route("/setup/hive/owner", methods=["GET"])
 @login_required
 def setupOwner():
     lang = flask.session["language"]
@@ -683,7 +682,7 @@ def setupOwner():
     )
 
 
-@route("/setup/hive/conditions", methods=["GET"])
+@api.route("/setup/hive/conditions", methods=["GET"])
 @login_required
 def setupCondition():
     lang = flask.session["language"]
@@ -712,7 +711,7 @@ def setupCondition():
     )
 
 
-@route("/setup/hive/honey", methods=["GET"])
+@api.route("/setup/hive/honey", methods=["GET"])
 @login_required
 def setupHoneyKind():
     lang = flask.session["language"]
@@ -742,7 +741,7 @@ def setupHoneyKind():
     )
 
 
-@route("/setup/hive/actions", methods=["GET"])
+@api.route("/setup/hive/actions", methods=["GET"])
 @login_required
 def setupBh_actions():
     lang = flask.session["language"]
@@ -772,7 +771,7 @@ def setupBh_actions():
     )
 
 
-@route("/setup/apiary/status", methods=["GET"])
+@api.route("/setup/apiary/status", methods=["GET"])
 @login_required
 def setupStatusAp():
     lang = flask.session["language"]
@@ -803,7 +802,7 @@ def setupStatusAp():
     )
 
 
-@route("/apiary/get_apiary_info", methods=["POST"])
+@api.route("/apiary/get_apiary_info", methods=["POST"])
 @login_required
 def apiary_details():
     ap_id = flask.request.form.get("ap_id")
@@ -811,7 +810,7 @@ def apiary_details():
     return flask.jsonify(apiary.serialize())
 
 
-@route("/apiary/submit_apiary_info", methods=["POST"])
+@api.route("/apiary/submit_apiary_info", methods=["POST"])
 @login_required
 def submit_apiary_details():
     ap_id = flask.request.form.get("ap_id")
@@ -828,7 +827,7 @@ def submit_apiary_details():
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@route("/apiary/delete", methods=["POST"])
+@api.route("/apiary/delete", methods=["POST"])
 @login_required
 def del_apiary():
     ap_id = flask.request.form.get("ap_id")
@@ -839,7 +838,7 @@ def del_apiary():
     return Success(alerts.DELETION_SUCCESS)
 
 
-@route("/hive/delete", methods=["POST"])
+@api.route("/hive/delete", methods=["POST"])
 @login_required
 def delete_hive():
     hive_id = flask.request.form.get("bh_id")
@@ -850,7 +849,7 @@ def delete_hive():
     return Success(alerts.DELETION_SUCCESS)
 
 
-@route("/setup/swarm/health", methods=["GET"])
+@api.route("/setup/swarm/health", methods=["GET"])
 @login_required
 def setupSwarmHealth():
     lang = flask.session["language"]
@@ -883,7 +882,7 @@ def setupSwarmHealth():
     )
 
 
-@route("/swarm/create", methods=["POST"])
+@api.route("/swarm/create", methods=["POST"])
 @login_required
 def create_swarm():
     hive_id = flask.request.form.get("hive_id")

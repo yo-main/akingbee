@@ -1,9 +1,8 @@
-from src.data_access import pw_objects as obj
-from src.data_access.connectors import DB
-from src.data_access.pw_objects import CommentType, StatusAction
+from src.models import MODELS, CommentType, StatusAction
+from src.database import DB
 
 with DB:
-    DB.create_tables(obj.MODELS)
+    DB.create_tables(MODELS)
     
 
 COMMENT_TYPES = (

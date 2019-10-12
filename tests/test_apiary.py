@@ -3,10 +3,22 @@ import datetime
 import pytest
 import flask
 
+from tests.fixtures import client, fake_database
+
 from src.constants import alert_codes
 from src.helpers.helpers import create_new_user
-from tests.fixtures import client, fake_database
-from src.data_access.pw_objects import User
+from src.models import User
+
+
+@pytest.fixture(scope="module", autouse=True)
+def create_a_user():
+    create_new_user(
+        {
+            "username": "test",
+            "pwd": "123azeAZE",
+            "email": "aze@gmail.com"
+        }
+    )
 
 
 @pytest.mark.parametrize("name,location,honey_type,status,expected", [

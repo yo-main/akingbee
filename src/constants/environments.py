@@ -15,8 +15,8 @@ CONFIG_FILE_NAME = "environment.yaml"
 
 PROJECT_PATH = os.getcwd()
 
-PLATFORM_ENVIRONMENT = os.environ.get("AKB_ENVIRONMENT") or "DEV"
-assert PLATFORM_ENVIRONMENT in ("SIMU", "PROD", "DEV")
+PLATFORM_ENVIRONMENT = os.environ.get("AKB_ENVIRONMENT") or "TEST"
+assert PLATFORM_ENVIRONMENT in ("TEST", "PROD", "SIMU")
 
 # PATHS
 FLASK_URL_ROOT = ""
