@@ -19,8 +19,14 @@ def fake_database():
     # DB.drop_tables(MODELS)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def client():
     app.config["testing"] = True
     with app.test_client() as client:
         return client
+
+
+def logged_in(client):
+    with client.session_transaction() as session:
+        session["user_id"] = 1
+
