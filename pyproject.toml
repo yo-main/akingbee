@@ -24,6 +24,7 @@ black = {version = "^18.3-alpha.0", allows-prereleases = true}
 pynvim = "^0.3.2"
 coverage = "^4.5"
 mock = "^3.0"
+ipdb = "^0.12.2"
 
 [build-system]
 requires = ["poetry>=0.12"]

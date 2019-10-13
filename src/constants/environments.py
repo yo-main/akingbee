@@ -3,16 +3,6 @@ import os
 from yaml import load, Loader
 
 
-CONFIG_FILE_NAME = "environment.yaml"
-
-# I don't remember the reason of below's funny thing but doesn't seem to be a problem anymore
-# Leaving this comment here just in case it might create some issue I don't see yet in the future
-# if os.path.exists(CONFIG_FILE_NAME):
-#    CONFIG_FILE_PATH = CONFIG_FILE_NAME
-# else:
-#     CONFIG_FILE_PATH = os.path.join(sys.path[0], "environment.yaml")
-
-
 PROJECT_PATH = os.getcwd()
 
 PLATFORM_ENVIRONMENT = os.environ.get("AKB_ENVIRONMENT") or "TEST"

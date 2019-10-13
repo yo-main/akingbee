@@ -1,7 +1,7 @@
 import flask
 import flask_session
 
-from src import database
+from src import database as db
 from src.views.users import api as ns_users
 from src.views.apiary import api as ns_apiary
 from src.views.hive import api as ns_hive
@@ -32,19 +32,20 @@ app.jinja_env.filters['datetime'] = jinja_date_formatting
 
 # COOKIES
 flask_session.Session(app)
-database.init()
 
 @app.before_first_request
 def session_configuration():
+    # db.DB.init()
     # make cookies expires once the browser has been closed
+    db.init()
     flask.session.permanent = False
 
 
 @app.after_request
 def after_request_func(f):
     # doing this in DEV will close the :memory: database - which we don't really want
-    if not database.DB.is_closed() and not database.DB.database != ":memory":
-        database.DB.close()
+    if not db.DB.is_closed() and not db.DB.database != ":memory":
+        db.DB.close()
     return f
 
 @app.errorhandler(Error)
