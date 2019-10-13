@@ -32,12 +32,12 @@ app.jinja_env.filters['datetime'] = jinja_date_formatting
 
 # COOKIES
 flask_session.Session(app)
+db.init()
 
 @app.before_first_request
 def session_configuration():
     # db.DB.init()
     # make cookies expires once the browser has been closed
-    db.init()
     flask.session.permanent = False
 
 
