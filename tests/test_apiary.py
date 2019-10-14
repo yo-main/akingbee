@@ -1,15 +1,10 @@
-import datetime
-
+# pylint: disable=redefined-outer-name,too-many-arguments,unused-import
 import pytest
-import flask
-
-import peewee
 
 from tests.fixtures import client, fake_database, logged_in
 
 from src.constants import alert_codes
 from src.helpers.users import create_new_user
-from src.models import User
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -97,6 +92,14 @@ def test_create_new_honey_type_success(client):
     assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
 
+def test_get_apiary_info_fail(client):
+    logged_in(client)
+
+    data = {"ap_id": 2}  # wrong id
+    answer = client.post("/apiary/get_apiary_info", data=data)
+    assert answer.status_code == 500
+
+
 def test_get_apiary_info_success(client):
     logged_in(client)
 
@@ -106,16 +109,27 @@ def test_get_apiary_info_success(client):
     assert answer.json["id"] == 1
 
 
-def test_get_apiary_info_fail(client):
+@pytest.mark.parametrize("ap_id,name,location,status,honey,expected", [
+    (5, "name", "location", 1, 1, 500),
+    (1, "", "location", 1, 1, 500),
+    (1, "name", "", 1, 1, 500),
+    (1, "name", "location", 9, 1, 500),
+    (1, "name", "location", 1, 9, 500),
+])
+def test_modify_apiary_fail(client, expected, ap_id, name, location, status, honey):
     logged_in(client)
+    data = {
+        "ap_id": ap_id,
+        "name": name,
+        "location": location,
+        "status": status,
+        "honey": honey
+    }
+    answer = client.post("apiary/submit_apiary_info", data=data)
+    assert answer.status_code == expected
 
-    data = {"ap_id": 2}  # wrong id
 
-    answer = client.post("/apiary/get_apiary_info", data=data)
-    assert answer.status_code == 500
-
-
-def test_modify_apairy_success(client):
+def test_modify_apiary_success(client):
     logged_in(client)
 
     data = {
@@ -129,17 +143,19 @@ def test_modify_apairy_success(client):
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.MODIFICATION_SUCCESS
 
-def test_modify_delete_apiary(client):
+
+def test_modify_delete_apiary_fail(client):
+    logged_in(client)
+
+    data = {"ap_id": 5}
+    answer = client.post("apiary/delete", data=data)
+    assert answer.status_code == 500
+
+
+def test_modify_delete_apiary_success(client):
     logged_in(client)
 
     data = {"ap_id": 1}
     answer = client.post("apiary/delete", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.DELETION_SUCCESS
-
-
-
-
-
-
-

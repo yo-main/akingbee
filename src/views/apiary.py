@@ -111,10 +111,11 @@ def submit_apiary_details():
 
     apiary = Apiary.get_by_id(ap_id)
 
-    apiary.name = flask.request.form.get("name")
-    apiary.location = flask.request.form.get("location")
-    apiary.status = flask.request.form.get("status")
-    apiary.honey_type = flask.request.form.get("honey")
+    # or None is there to manage empty strings and raise a 500 error
+    apiary.name = flask.request.form.get("name") or None
+    apiary.location = flask.request.form.get("location") or None
+    apiary.status = flask.request.form.get("status") or None
+    apiary.honey_type = flask.request.form.get("honey") or None
 
     apiary.save()
 

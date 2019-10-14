@@ -57,7 +57,7 @@ def hive_create():
 
     elif flask.request.method == "POST":
         hive_data = {
-            "name": flask.request.form.get("name"),
+            "name": flask.request.form.get("name") or None,
             "birthday": convert_to_date_object(flask.request.form.get("date")),
             "apiary": flask.request.form.get("apiary"),
             "owner": flask.request.form.get("owner"),
@@ -82,7 +82,7 @@ def hive_create():
 @api.route("/hive/create/new_owner", methods=["POST"])
 @login_required
 def hive_create_owner():
-    data = {"name": flask.request.form.get("owner")}
+    data = {"name": flask.request.form.get("owner") or None}
     owner = Owner(**data)
     owner.save()
 
@@ -93,9 +93,10 @@ def hive_create_owner():
 @login_required
 def hive_create_condition():
     data = {
-        "fr": flask.request.form.get("name_fr"),
-        "en": flask.request.form.get("name_en"),
+        "fr": flask.request.form.get("name_fr") or None,
+        "en": flask.request.form.get("name_en") or None,
     }
+
     hive_condition = HiveCondition(**data)
     hive_condition.save()
 
@@ -115,9 +116,9 @@ def hive_details():
 def submit_hive_details():
     hive = Hive.get_by_id(flask.request.form.get("bh_id"))
 
-    hive.apiary = flask.request.form.get("apiary")
-    hive.name = flask.request.form.get("hive")
-    hive.owner = flask.request.form.get("owner")
+    hive.apiary = flask.request.form.get("apiary") or None
+    hive.name = flask.request.form.get("hive") or None
+    hive.owner = flask.request.form.get("owner") or None
     # hive.condition = flask.request.form.get("condition")
     hive.save()
 
