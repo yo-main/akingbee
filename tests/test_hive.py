@@ -65,7 +65,7 @@ def test_create_new_hive_fail(name, birthday, apiary, owner, condition, client):
         "owner": owner,
         "hive_condition": condition
     }
-    answer = client.post("/hive/create", data=data)
+    answer = client.post("/hive", data=data)
     assert answer.status_code == 500
 
 
@@ -79,7 +79,7 @@ def test_create_new_hive_success(client):
         "owner": 1,
         "hive_condition": 1
     }
-    answer = client.post("/hive/create", data=data)
+    answer = client.post("/hive", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alerts.NEW_HIVE_SUCCESS
 

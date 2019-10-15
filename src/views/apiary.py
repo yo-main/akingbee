@@ -12,36 +12,22 @@ from src.models import Apiary, StatusApiary, HoneyType
 api = flask.Blueprint("Apiary", __name__)
 
 
-@api.route("/apiary", methods=["GET"])
+@api.route("/apiary", methods=["GET", "POST"])
 @login_required
 def apiary():
-    apiaries = get_all(Apiary, StatusApiary, HoneyType)
-    apiary_statuses = tuple(set(apiary.status for apiary in apiaries))
-    honey_types = tuple(set(apiary.honey_type for apiary in apiaries))
-    location_list = tuple(set(apiary.location for apiary in apiaries))
-
-    return render(
-        "akingbee/apiary/index.html",
-        apiaries=apiaries,
-        locations=location_list,
-        apiary_statuses=apiary_statuses,
-        honey_types=honey_types,
-    )
-
-
-@api.route("/apiary/create", methods=["GET", "POST"])
-@login_required
-def apiary_create():
     if flask.request.method == "GET":
-        honey_types = get_all(HoneyType)
+        apiaries = get_all(Apiary, StatusApiary, HoneyType)
         apiary_statuses = get_all(StatusApiary)
+        honey_types = get_all(HoneyType)
+        location_list = tuple(set(apiary.location for apiary in apiaries))
 
         return render(
-            "akingbee/apiary/create.html",
-            honey_types=honey_types,
+            "akingbee/apiary/index.html",
+            apiaries=apiaries,
+            locations=location_list,
             apiary_statuses=apiary_statuses,
+            honey_types=honey_types,
         )
-
     elif flask.request.method == "POST":
         data = {
             "name": flask.request.form.get("name"),
@@ -65,69 +51,83 @@ def apiary_create():
         return Success(alerts.NEW_APIARY_SUCCESS)
 
 
-@api.route("/apiary/create/new_honey_type", methods=["POST"])
+@api.route("/apiary/create", methods=["GET"])
+@login_required
+def apiary_create():
+    honey_types = get_all(HoneyType)
+    apiary_statuses = get_all(StatusApiary)
+
+    return render(
+        "akingbee/apiary/create.html",
+        honey_types=honey_types,
+        apiary_statuses=apiary_statuses,
+    )
+
+
+@api.route("/honey_type", methods=["POST"])
 @login_required
 def apiary_create_honey():
-    fr = flask.request.form.get("name_fr")
-    en = flask.request.form.get("name_en")
+    value = flask.request.form.get("value")
 
-    if not fr or not en:
+    if not value:
         raise Error(alerts.INCONSISTANT_DATA)
 
-    honey = HoneyType(fr=fr, en=en)
+    honey = HoneyType(fr=value, en=value)
     honey.save()
 
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@api.route("/apiary/create/new_apiary_status", methods=["POST"])
+@api.route("/apiary_status", methods=["POST"])
 @login_required
 def apiary_status_create():
-    fr = flask.request.form.get("name_fr")
-    en = flask.request.form.get("name_en")
+    value = flask.request.form.get("value")
 
-    if not fr or not en:
+    if not value:
         raise Error(alerts.INCONSISTANT_DATA)
 
-    status_apiary = StatusApiary(fr=fr, en=en)
+    status_apiary = StatusApiary(fr=value, en=value)
     status_apiary.save()
 
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
 
-@api.route("/apiary/get_apiary_info", methods=["POST"])
+@api.route("/apiary/<path:apiary_id>", methods=["GET", "PUT", "DELETE"])
 @login_required
-def apiary_details():
-    ap_id = flask.request.form.get("ap_id")
-    apiary = Apiary.get_by_id(ap_id)
-    return flask.jsonify(apiary.serialize())
+def apiary_details(apiary_id):
+    if flask.request.method == "GET":
+        apiary = Apiary.get_by_id(apiary_id)
+        return flask.jsonify(apiary.serialize())
+
+    elif flask.request.method == "PUT":
+        apiary = Apiary.get_by_id(apiary_id)
+        form = flask.request.form
+        count = 0
+
+        # or None is there to manage empty strings and raise a 500 error
+        if "name" in form:
+            apiary.name = form["name"]
+            count += 1
+        if "location" in form:
+            apiary.location = form["location"]
+            count += 1
+        if "status" in form:
+            apiary.status = form["status"]
+            count += 1
+        if "honey" in form:
+            apiary.honey_type = form["honey"]
+            count += 1
+
+        if not count:
+            raise Error(alerts.INCONSISTANT_DATA)
+
+        apiary.save()
+        return Success(alerts.MODIFICATION_SUCCESS)
+
+    elif flask.request.method == "DELETE":
+        apiary = Apiary.get_by_id(apiary_id)
+        apiary.delete_instance()
+        return Success(alerts.DELETION_SUCCESS)
 
 
-@api.route("/apiary/submit_apiary_info", methods=["POST"])
-@login_required
-def submit_apiary_details():
-    ap_id = flask.request.form.get("ap_id")
-
-    apiary = Apiary.get_by_id(ap_id)
-
-    # or None is there to manage empty strings and raise a 500 error
-    apiary.name = flask.request.form.get("name") or None
-    apiary.location = flask.request.form.get("location") or None
-    apiary.status = flask.request.form.get("status") or None
-    apiary.honey_type = flask.request.form.get("honey") or None
-
-    apiary.save()
-
-    return Success(alerts.MODIFICATION_SUCCESS)
-
-
-@api.route("/apiary/delete", methods=["POST"])
-@login_required
-def del_apiary():
-    ap_id = flask.request.form.get("ap_id")
-
-    apiary = Apiary.get_by_id(ap_id)
-    apiary.delete_instance()
-
-    return Success(alerts.DELETION_SUCCESS)

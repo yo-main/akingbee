@@ -306,7 +306,7 @@ function createNewHive(){
         }
     }
 
-    let my_url = get_full_url("/hive/create");
+    let my_url = get_full_url("/hive");
 
     $.ajax({
         type: "POST",

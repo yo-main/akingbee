@@ -17,42 +17,21 @@ from src.models import Hive, Apiary, Owner, HiveCondition, Swarm, SwarmHealth, C
 api = flask.Blueprint("Hive", __name__)
 
 
-@api.route("/hive", methods=["GET"])
+@api.route("/hive", methods=["GET", "POST"])
 @login_required
 def hive():
-    hives = get_all(Hive, Apiary, Owner, HiveCondition)
-    apiaries = tuple(set(hive.apiary for hive in hives))
-    owners = tuple(set(hive.owner for hive in hives))
-
-    # Above fields will only show values already linked to a hive
-    # However for the edit modal we need all conditions so we make a specific query
-    # It's probably something we would need to do for the above value but it'll impact performance...
-    hive_conditions = get_all(HiveCondition)
-
-    return render(
-        "akingbee/hive/index.html",
-        hives=hives,
-        apiaries=apiaries,
-        hive_conditions=hive_conditions,
-        owners=owners,
-    )
-
-
-@api.route("/hive/create", methods=["GET", "POST"])
-@login_required
-def hive_create():
     if flask.request.method == "GET":
-        owners = get_all(Owner)
+        hives = get_all(Hive, Apiary, Owner, HiveCondition)
         apiaries = get_all(Apiary)
+        owners = get_all(Owner)
         hive_conditions = get_all(HiveCondition)
-        swarm_healths = get_all(SwarmHealth)
 
         return render(
-            "akingbee/hive/create.html",
-            owners=owners,
+            "akingbee/hive/index.html",
+            hives=hives,
             apiaries=apiaries,
             hive_conditions=hive_conditions,
-            swarm_healths=swarm_healths,
+            owners=owners,
         )
 
     elif flask.request.method == "POST":
@@ -77,6 +56,25 @@ def hive_create():
             hive.save()
 
         return Success(alerts.NEW_HIVE_SUCCESS)
+
+
+
+@api.route("/hive/create", methods=["GET"])
+@login_required
+def hive_create():
+    if flask.request.method == "GET":
+        owners = get_all(Owner)
+        apiaries = get_all(Apiary)
+        hive_conditions = get_all(HiveCondition)
+        swarm_healths = get_all(SwarmHealth)
+
+        return render(
+            "akingbee/hive/create.html",
+            owners=owners,
+            apiaries=apiaries,
+            hive_conditions=hive_conditions,
+            swarm_healths=swarm_healths,
+        )
 
 
 @api.route("/hive/create/new_owner", methods=["POST"])

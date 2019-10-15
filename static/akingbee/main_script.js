@@ -148,6 +148,15 @@ function set_active_language() {
     }
 }
 
+function field_name_not_provided_error() {
+    if (LANGUAGE == "fr"){
+        createError("Merci de compléter le nom du champs");
+    }
+    else{
+        createError("Please fill-in the field's name");
+    }
+}
+
 function set_date_picker() {
     if (LANGUAGE == 'fr'){
         $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );

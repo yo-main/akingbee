@@ -36,7 +36,7 @@ def test_create_apiary_fail(name, location, honey, status, expected, client):
         "status": status,
         "birthday": "01/01/2019",
     }
-    answer = client.post("/apiary/create", data=data)
+    answer = client.post("/apiary", data=data)
     assert answer.status_code == 500
     assert answer.json["code"] == expected
 
@@ -51,7 +51,7 @@ def test_create_apiary_success(client):
         "status": "1",
         "birthday": "01/01/2019",
     }
-    answer = client.post("/apiary/create", data=data)
+    answer = client.post("/apiary", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.NEW_APIARY_SUCCESS
 
@@ -59,8 +59,8 @@ def test_create_apiary_success(client):
 def test_create_new_apiary_status_fail(client):
     logged_in(client)
 
-    data = {"name_fr": "test", "name_en": ""}
-    answer = client.post("/apiary/create/new_apiary_status", data=data)
+    data = {"value": ""}
+    answer = client.post("/apiary_status", data=data)
     assert answer.status_code == 500
     assert answer.json["code"] == alert_codes.INCONSISTANT_DATA
 
@@ -68,8 +68,8 @@ def test_create_new_apiary_status_fail(client):
 def test_create_new_apiary_status_success(client):
     logged_in(client)
 
-    data = {"name_fr": "test", "name_en": "te"}
-    answer = client.post("/apiary/create/new_apiary_status", data=data)
+    data = {"value": "test"}
+    answer = client.post("/apiary_status", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
@@ -77,8 +77,8 @@ def test_create_new_apiary_status_success(client):
 def test_create_new_honey_type_fail(client):
     logged_in(client)
 
-    data = {"name_fr": "test", "name_en": ""}
-    answer = client.post("/apiary/create/new_honey_type", data=data)
+    data = {"value": ""}
+    answer = client.post("/honey_type", data=data)
     assert answer.status_code == 500
     assert answer.json["code"] == alert_codes.INCONSISTANT_DATA
 
@@ -86,25 +86,21 @@ def test_create_new_honey_type_fail(client):
 def test_create_new_honey_type_success(client):
     logged_in(client)
 
-    data = {"name_fr": "test", "name_en": "te"}
-    answer = client.post("/apiary/create/new_honey_type", data=data)
+    data = {"value": "test"}
+    answer = client.post("/honey_type", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
 
 def test_get_apiary_info_fail(client):
     logged_in(client)
-
-    data = {"ap_id": 2}  # wrong id
-    answer = client.post("/apiary/get_apiary_info", data=data)
+    answer = client.get("/apiary/2") # wrong id
     assert answer.status_code == 500
 
 
 def test_get_apiary_info_success(client):
     logged_in(client)
-
-    data = {"ap_id": 1}
-    answer = client.post("/apiary/get_apiary_info", data=data)
+    answer = client.get("/apiary/1")
     assert answer.status_code == 200
     assert answer.json["id"] == 1
 
@@ -119,13 +115,12 @@ def test_get_apiary_info_success(client):
 def test_modify_apiary_fail(client, expected, ap_id, name, location, status, honey):
     logged_in(client)
     data = {
-        "ap_id": ap_id,
         "name": name,
         "location": location,
         "status": status,
         "honey": honey
     }
-    answer = client.post("apiary/submit_apiary_info", data=data)
+    answer = client.put("/apiary/{ap_id}")
     assert answer.status_code == expected
 
 
@@ -133,29 +128,25 @@ def test_modify_apiary_success(client):
     logged_in(client)
 
     data = {
-        "ap_id": 1,
         "name": "wesh",
         "location": "vazy",
         "status": 2,
         "honey": 3
     }
-    answer = client.post("apiary/submit_apiary_info", data=data)
+    answer = client.put("/apiary/1", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.MODIFICATION_SUCCESS
 
 
 def test_modify_delete_apiary_fail(client):
     logged_in(client)
-
-    data = {"ap_id": 5}
-    answer = client.post("apiary/delete", data=data)
+    answer = client.delete("/apiary/5")
     assert answer.status_code == 500
 
 
 def test_modify_delete_apiary_success(client):
     logged_in(client)
 
-    data = {"ap_id": 1}
-    answer = client.post("apiary/delete", data=data)
+    answer = client.delete("/apiary/1")
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.DELETION_SUCCESS
