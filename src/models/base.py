@@ -49,4 +49,3 @@ class BaseModel(Model):
     def serialize(self):
         data = {column: getattr(self, column) for column in self.columns}
         return data
-

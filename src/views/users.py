@@ -10,7 +10,12 @@ from src.constants import environments, config
 from src.constants import alert_codes as alerts
 from src.services.logger import logger
 from src.services.alerts import Error, Success
-from src.helpers.users import get_user_from_username, verify_password, create_password_hash, create_new_user
+from src.helpers.users import (
+    get_user_from_username,
+    verify_password,
+    create_password_hash,
+    create_new_user,
+)
 from src.helpers.tools import login_required
 
 from src.models import User

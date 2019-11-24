@@ -12,43 +12,21 @@ from src.models import Apiary, StatusApiary, HoneyType
 api = flask.Blueprint("Apiary", __name__)
 
 
-@api.route("/apiary", methods=["GET", "POST"])
+@api.route("/apiary", methods=["GET"])
 @login_required
 def apiary():
-    if flask.request.method == "GET":
-        apiaries = get_all(Apiary, StatusApiary, HoneyType)
-        apiary_statuses = get_all(StatusApiary)
-        honey_types = get_all(HoneyType)
-        location_list = tuple(set(apiary.location for apiary in apiaries))
+    apiaries = get_all(Apiary, StatusApiary, HoneyType)
+    apiary_statuses = get_all(StatusApiary)
+    honey_types = get_all(HoneyType)
+    location_list = tuple(set(apiary.location for apiary in apiaries))
 
-        return render(
-            "akingbee/apiary/index.html",
-            apiaries=apiaries,
-            locations=location_list,
-            apiary_statuses=apiary_statuses,
-            honey_types=honey_types,
-        )
-    elif flask.request.method == "POST":
-        data = {
-            "name": flask.request.form.get("name"),
-            "location": flask.request.form.get("location"),
-            "honey_type_id": flask.request.form.get("honey_type"),
-            "status_id": flask.request.form.get("status"),
-            "birthday": convert_to_date_object(
-                flask.request.form.get("birthday")
-            ),
-        }
-
-        if not all(x for x in data.values()):
-            raise Error(alerts.MISSING_INFORMATION_APIARY)
-
-        try:
-            apiary = Apiary(**data)
-            apiary.save()
-        except IntegrityError as e:
-            raise Error(alerts.INCONSISTANT_DATA)
-
-        return Success(alerts.NEW_APIARY_SUCCESS)
+    return render(
+        "akingbee/apiary/index.html",
+        apiaries=apiaries,
+        locations=location_list,
+        apiary_statuses=apiary_statuses,
+        honey_types=honey_types,
+    )
 
 
 @api.route("/apiary/create", methods=["GET"])
@@ -64,7 +42,10 @@ def apiary_create():
     )
 
 
-@api.route("/honey_type", methods=["POST"])
+######
+
+
+@api.route("/api/honey_type", methods=["POST"])
 @login_required
 def apiary_create_honey():
     value = flask.request.form.get("value")
@@ -78,7 +59,7 @@ def apiary_create_honey():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@api.route("/apiary_status", methods=["POST"])
+@api.route("/api/apiary_status", methods=["POST"])
 @login_required
 def apiary_status_create():
     value = flask.request.form.get("value")
@@ -92,8 +73,30 @@ def apiary_status_create():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
+@api.route("/api/apiary", methods=["POST"])
+@login_required
+def create_apiary_api():
+    data = {
+        "name": flask.request.form.get("name"),
+        "location": flask.request.form.get("location"),
+        "honey_type_id": flask.request.form.get("honey_type"),
+        "status_id": flask.request.form.get("status"),
+        "birthday": convert_to_date_object(flask.request.form.get("birthday")),
+    }
 
-@api.route("/apiary/<path:apiary_id>", methods=["GET", "PUT", "DELETE"])
+    if not all(x for x in data.values()):
+        raise Error(alerts.MISSING_INFORMATION_APIARY)
+
+    try:
+        apiary = Apiary(**data)
+        apiary.save()
+    except IntegrityError as e:
+        raise Error(alerts.INCONSISTANT_DATA)
+
+    return Success(alerts.NEW_APIARY_SUCCESS)
+
+
+@api.route("/api/apiary/<path:apiary_id>", methods=["GET", "PUT", "DELETE"])
 @login_required
 def apiary_details(apiary_id):
     if flask.request.method == "GET":
@@ -129,5 +132,3 @@ def apiary_details(apiary_id):
         apiary = Apiary.get_by_id(apiary_id)
         apiary.delete_instance()
         return Success(alerts.DELETION_SUCCESS)
-
-

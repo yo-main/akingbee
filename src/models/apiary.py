@@ -20,8 +20,8 @@ class HoneyType(BaseModel):
     user = ForeignKeyField(User, backref="honey_types")
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)
-    
-    
+
+
 class Apiary(BaseModel):
     user = ForeignKeyField(User, backref="apiaries")
     name = CharField()

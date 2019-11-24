@@ -29,7 +29,9 @@ context_filter = ContextFilter()
 logger.addFilter(context_filter)
 
 if environments.PLATFORM_ENVIRONMENT != "TEST":
-    log_path = os.path.join(environments.LOG_DIRECTORY, environments.ACTIVITY_LOG)
+    log_path = os.path.join(
+        environments.LOG_DIRECTORY, environments.ACTIVITY_LOG
+    )
     file_handler = RotatingFileHandler(log_path, "a", 1000000, 1)
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)

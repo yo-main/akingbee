@@ -27,6 +27,7 @@ errors = {
     STRING_CANNOT_BE_CONVERTED_TO_DATE: "Une erreur est survenue lors du traitement d'une date",
     MISSING_INFORMATION_APIARY: "Des informations manquantes bloquent la création du rucher",
     INCONSISTANT_DATA: "Des données inconsistantes ont été reçues",
+    EMPTY_FIELD: "Des données reçues sont vides",
 }
 
 

@@ -5,7 +5,14 @@ from src.services.alerts import Error, Success
 from src.constants import alert_codes as alerts
 from src.constants import config
 
-from src.models import Owner, HiveCondition, HoneyType, ActionType, SwarmHealth, StatusApiary
+from src.models import (
+    Owner,
+    HiveCondition,
+    HoneyType,
+    ActionType,
+    SwarmHealth,
+    StatusApiary,
+)
 
 
 api = flask.Blueprint("Setup", __name__)
@@ -261,7 +268,6 @@ def setupStatusAp():
         id_title=id_title,
         description=description,
     )
-
 
 
 @api.route("/setup/swarm/health", methods=["GET"])

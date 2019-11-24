@@ -4,14 +4,29 @@ import flask
 from peewee import IntegrityError, DoesNotExist, JOIN
 
 from src.database import DB
-from src.helpers.tools import render, get_all, login_required
+from src.helpers.tools import (
+    render,
+    get_all,
+    login_required,
+    update_hive_history,
+)
 from src.helpers.date import convert_to_date_object
-from src.helpers.swarm import update_swarm_health
 from src.constants import config
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error, Success
 
-from src.models import Hive, Apiary, Owner, HiveCondition, Swarm, SwarmHealth, Comment, CommentType, Action, ActionType
+from src.models import (
+    Hive,
+    Apiary,
+    Owner,
+    HiveCondition,
+    Swarm,
+    SwarmHealth,
+    Comment,
+    CommentType,
+    Action,
+    ActionType,
+)
 
 
 api = flask.Blueprint("Hive", __name__)
@@ -34,99 +49,99 @@ def hive():
             owners=owners,
         )
 
-    elif flask.request.method == "POST":
-        hive_data = {
-            "name": flask.request.form.get("name") or None,
-            "birthday": convert_to_date_object(flask.request.form.get("date")),
-            "apiary": flask.request.form.get("apiary"),
-            "owner": flask.request.form.get("owner"),
-            "condition": flask.request.form.get("hive_condition"),
-        }
-
-        with DB.atomic():
-            swarm_health = flask.request.form.get("swarm_health")
-            if swarm_health:
-                swarm = Swarm(
-                    health=swarm_health, birthday=datetime.datetime.now()
-                )
-                swarm.save()
-                hive_data["swarm_id"] = swarm.id
-
-            hive = Hive(**hive_data)
-            hive.save()
-
-        return Success(alerts.NEW_HIVE_SUCCESS)
-
-
 
 @api.route("/hive/create", methods=["GET"])
 @login_required
 def hive_create():
-    if flask.request.method == "GET":
-        owners = get_all(Owner)
-        apiaries = get_all(Apiary)
-        hive_conditions = get_all(HiveCondition)
-        swarm_healths = get_all(SwarmHealth)
+    owners = get_all(Owner)
+    apiaries = get_all(Apiary)
+    hive_conditions = get_all(HiveCondition)
+    swarm_healths = get_all(SwarmHealth)
 
-        return render(
-            "akingbee/hive/create.html",
-            owners=owners,
-            apiaries=apiaries,
-            hive_conditions=hive_conditions,
-            swarm_healths=swarm_healths,
-        )
+    return render(
+        "akingbee/hive/create.html",
+        owners=owners,
+        apiaries=apiaries,
+        hive_conditions=hive_conditions,
+        swarm_healths=swarm_healths,
+    )
 
 
-@api.route("/hive/create/new_owner", methods=["POST"])
+@api.route("/api/owner", methods=["POST"])
 @login_required
 def hive_create_owner():
-    data = {"name": flask.request.form.get("owner") or None}
-    owner = Owner(**data)
-    owner.save()
+    value = flask.request.form.get("value")
+    if not value:
+        raise Error(alerts.INCONSISTANT_DATA)
 
+    owner = Owner(name=value)
+    owner.save()
     return Success(alerts.NEW_BEEKEEPER_SUCCESS)
 
 
-@api.route("/hive/create/new_condition", methods=["POST"])
+@api.route("/api/hive_condition", methods=["POST"])
 @login_required
 def hive_create_condition():
-    data = {
-        "fr": flask.request.form.get("name_fr") or None,
-        "en": flask.request.form.get("name_en") or None,
-    }
+    name = flask.request.form.get("value")
+    if not name:
+        raise Error(alerts.INCONSISTANT_DATA)
 
-    hive_condition = HiveCondition(**data)
+    hive_condition = HiveCondition(name=name)
     hive_condition.save()
 
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@api.route("/hive/get_hive_info", methods=["POST"])
+@api.route("/api/hive/<path:hive_id>", methods=["GET", "PUT"])
 @login_required
-def hive_details():
-    bh_id = flask.request.form.get("bh_id")
-    hive = Hive.get_by_id(bh_id)
-    return flask.jsonify(hive.serialize())
+def hive_details(hive_id):
+    if flask.request.method == "GET":
+        hive = Hive.get_by_id(hive_id)
+        return flask.jsonify(hive.serialize())
+
+    if flask.request.method == "PUT":
+        hive = Hive.get_by_id(hive_id)
+        hive.name = flask.request.form.get("hive")
+        hive.owner = flask.request.form.get("owner")
+
+        if not hive.name or not hive.owner:
+            raise Error(alerts.EMPTY_FIELD)
+
+        hive.save()
+
+        return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@api.route("/hive/submit_hive_info", methods=["POST"])
+@api.route("/api/hive", methods=["POST"])
+def create_hive_api():
+    hive_data = {
+        "name": flask.request.form.get("name") or None,
+        "birthday": convert_to_date_object(flask.request.form.get("date")),
+        "apiary": flask.request.form.get("apiary"),
+        "owner": flask.request.form.get("owner"),
+        "condition": flask.request.form.get("hive_condition"),
+    }
+
+    swarm_health = flask.request.form.get("swarm_health")
+
+    with DB.atomic():
+        if swarm_health:
+            swarm = Swarm(
+                health=swarm_health, birthday=datetime.datetime.now()
+            )
+            swarm.save()
+            hive_data["swarm_id"] = swarm.id
+
+        hive = Hive(**hive_data)
+        hive.save()
+
+    return Success(alerts.NEW_HIVE_SUCCESS)
+
+
+@api.route("/api/comment", methods=["POST"])
 @login_required
-def submit_hive_details():
-    hive = Hive.get_by_id(flask.request.form.get("bh_id"))
-
-    hive.apiary = flask.request.form.get("apiary") or None
-    hive.name = flask.request.form.get("hive") or None
-    hive.owner = flask.request.form.get("owner") or None
-    # hive.condition = flask.request.form.get("condition")
-    hive.save()
-
-    return Success(alerts.MODIFICATION_SUCCESS)
-
-
-@api.route("/hive/submit_comment_modal", methods=["POST"])
-@login_required
-def submit_comment_modal():
-    hive = Hive.get_by_id(flask.request.form.get("bh_id"))
+def create_a_comment():
+    hive = Hive.get_by_id(flask.request.form.get("hive_id"))
     comment_data = {
         "hive": hive.id,
         "apiary": hive.apiary,
@@ -134,27 +149,30 @@ def submit_comment_modal():
         "date": convert_to_date_object(flask.request.form.get("date")),
         "comment": flask.request.form.get("comment"),
         "health": flask.request.form.get("health"),
+        "condition": flask.request.form.get("condition"),
         "type": config.COMMENT_TYPE_USER,
     }
+
     comment = Comment(**comment_data)
     comment.save()
 
-    update_swarm_health(hive.swarm)
+    update_hive_history(hive)
 
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@api.route("/hive/submit_action_modal", methods=["POST"])
+@api.route("/api/action", methods=["POST"])
 @login_required
 def submit_action_modal():
     data = {
-        "hive": flask.request.form.get("bh_id"),
+        "hive": flask.request.form.get("hive_id"),
         "date": convert_to_date_object(flask.request.form.get("date")),
         "description": flask.request.form.get("description"),
         "type_id": flask.request.form.get("action_type"),
         "deadline": convert_to_date_object(flask.request.form.get("deadline")),
         "status": config.STATUS_PENDING,
     }
+
     action = Action(**data)
     action.save()
 
@@ -192,6 +210,7 @@ def hive_profil(bh_id):
         Action.hive == bh_id and Action.status == config.STATUS_PENDING
     )
 
+    hive_conditions = get_all(HiveCondition)
     swarm_healths = get_all(SwarmHealth)
     action_types = get_all(ActionType)
     apiaries = get_all(Apiary)
@@ -203,6 +222,7 @@ def hive_profil(bh_id):
         comments=comments,
         actions=actions,
         comment_types=comment_types,
+        hive_conditions=hive_conditions,
         apiaries=apiaries,
         swarm_healths=swarm_healths,
         owners=owners,
@@ -213,11 +233,11 @@ def hive_profil(bh_id):
 @api.route("/hive/select", methods=["POST"])
 @login_required
 def select_hive():
-    bh_id = int(flask.request.form.get("bh_id"))
+    hive_id = int(flask.request.form.get("hive_id"))
     way = int(flask.request.form.get("way"))
 
     hives = [hive.id for hive in get_all(Hive)]
-    index = hives.index(bh_id)
+    index = hives.index(hive_id)
 
     new_id = hives[(index + way) % len(hives)]
 
@@ -260,7 +280,8 @@ def edit_comment():
     comment.date = convert_to_date_object(flask.request.form.get("date"))
     comment.save()
 
-    update_swarm_health(comment.swarm)
+    hive = Hive.get_by_id(comment.hive)
+    update_hive_history(hive)
 
     return Success(alerts.MODIFICATION_SUCCESS)
 
@@ -276,13 +297,12 @@ def del_comment():
         action.date_done = None
         action.save()
 
-    swarm_id = comment.swarm
+    hive = Hive.get_by_id(comment.hive)
     comment.delete_instance()
 
-    update_swarm_health(swarm_id)
+    update_hive_history(hive)
 
     return Success(alerts.DELETION_SUCCESS)
-
 
 
 @api.route("/hive/delete", methods=["POST"])

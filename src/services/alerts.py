@@ -7,8 +7,6 @@ from src.locals import alerts_en as en
 from src.services.logger import logger
 
 
-
-
 class Error(Exception):
     def __init__(self, code):
         super().__init__(self)

@@ -20,5 +20,5 @@ MODELS = (
     StatusAction,
     Action,
     CommentType,
-    Comment
+    Comment,
 )

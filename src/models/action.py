@@ -16,13 +16,11 @@ class ActionType(BaseModel):
     date_modification = DateTimeField(default=datetime.datetime.now)
 
 
-
 class StatusAction(BaseModel):
     fr = CharField()
     en = CharField()
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)
-
 
 
 class Action(BaseModel):
@@ -33,7 +31,7 @@ class Action(BaseModel):
     apiary = ForeignKeyField(Apiary, backref="actions", null=True)
     status = ForeignKeyField(StatusAction, backref="actions")
     hive = ForeignKeyField(Hive, backref="actions", null=True)
-    deadline = DateTimeField()
+    deadline = DateTimeField(null=True)
     description = TextField()
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)

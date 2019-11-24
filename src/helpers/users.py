@@ -1,11 +1,17 @@
-
 import flask
 from peewee import DoesNotExist
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
 from src.models import User
-from src.models import HiveCondition, HoneyType, ActionType, StatusApiary, SwarmHealth, Owner
+from src.models import (
+    HiveCondition,
+    HoneyType,
+    ActionType,
+    StatusApiary,
+    SwarmHealth,
+    Owner,
+)
 
 from src.constants import alert_codes as alerts
 from src.constants import config

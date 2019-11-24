@@ -20,4 +20,3 @@ class Swarm(BaseModel):
     birthday = DateField()
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)
-    

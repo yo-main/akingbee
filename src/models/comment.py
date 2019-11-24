@@ -5,9 +5,8 @@ from .base import BaseModel
 from .users import User
 from .swarm import SwarmHealth, Swarm
 from .apiary import Apiary
-from .hive import Hive
+from .hive import Hive, HiveCondition
 from .action import Action
-
 
 
 class CommentType(BaseModel):
@@ -15,7 +14,7 @@ class CommentType(BaseModel):
     en = CharField()
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)
-    
+
 
 class Comment(BaseModel):
     date = DateTimeField()
@@ -27,5 +26,6 @@ class Comment(BaseModel):
     action = ForeignKeyField(Action, backref="comments", null=True)
     comment = TextField()
     hive = ForeignKeyField(Hive, backref="comments", null=True)
+    condition = ForeignKeyField(HiveCondition, backref="comments", null=True)
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)

@@ -122,4 +122,6 @@ traductions = {
     110: {FRENCH: "Essaim", ENGLISH: "Swarm"},
     111: {FRENCH: "Historique", ENGLISH: "History"},
     112: {FRENCH: "Actions", ENGLISH: "Actions"},
+    113: {FRENCH: "Santé de l'essaim", ENGLISH: "Swarm's health"},
+    114: {FRENCH: "Etat de la ruche", ENGLISH: "Hive's condition"},
 }

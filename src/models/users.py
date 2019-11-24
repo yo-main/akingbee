@@ -4,6 +4,7 @@ from peewee import CharField, DateTimeField, ForeignKeyField
 
 from .base import BaseModel
 
+
 class User(BaseModel):
     username = CharField(unique=True)
     pwd = CharField()

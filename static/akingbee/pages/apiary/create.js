@@ -1,9 +1,9 @@
 function new_honey_type(){
     let value = $("#honey_value").val();
-    let my_url = get_full_url("/honey_type");
+    let my_url = get_full_url("/api/honey_type");
 
     if (value == ""){
-        field_name_not_provided_error();
+        missing_field();
     }
     else{
         $.ajax({
@@ -25,10 +25,10 @@ function new_honey_type(){
 
 function new_apiary_status(){
     let value = $("#status_value").val();
-    let my_url = get_full_url("/apiary_status");
+    let my_url = get_full_url("/api/apiary_status");
 
     if (value == ""){
-        field_name_not_provided_error();
+        missing_field();
     }
     else{
         $.ajax({
@@ -57,7 +57,7 @@ function create_new_apiary(){
         honey_type: $("#apiary_honey_type").val(),
     };
 
-    let my_url = get_full_url("/apiary");
+    let my_url = get_full_url("/api/apiary");
 
     $.ajax({
         type: "POST",

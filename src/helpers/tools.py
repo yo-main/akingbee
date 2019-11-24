@@ -1,13 +1,15 @@
 import functools
 
 import flask
+from peewee import DoesNotExist
 
 from src.helpers.users import get_user_id
 from src.constants import config
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
-
+from src.models.comment import Comment
+from src.models.swarm import Swarm
 
 
 def redirect(url):
@@ -49,10 +51,7 @@ def render(url, **kwargs):
         flask.session["language"] = config.FRENCH
 
     return flask.render_template(
-        url,
-        lang=flask.session["language"],
-        trads=traductions(),
-        **kwargs,
+        url, lang=flask.session["language"], trads=traductions(), **kwargs
     )
 
 
@@ -68,3 +67,32 @@ def get_all(main, *args):
         query = query.where(main.user == flask.session["user_id"])
 
     return query
+
+
+def update_hive_history(hive):
+    try:
+        most_recent_comment = (
+            Comment.select(Comment)
+            .where(Comment.swarm == hive.swarm)
+            .order_by(Comment.date.desc(), Comment.id.desc())
+            .get()
+        )
+    except DoesNotExist:
+        return True
+
+    if (
+        hive.swarm is not None
+        and hive.swarm.health != most_recent_comment.health
+    ):
+        swarm = hive.swarm
+        swarm.health = most_recent_comment.health
+        swarm.save()
+
+    if (
+        most_recent_comment.condition is not None
+        and hive.condition != most_recent_comment.condition
+    ):
+        hive.condition = most_recent_comment.condition
+        hive.save()
+
+    return True

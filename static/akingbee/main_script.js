@@ -148,12 +148,12 @@ function set_active_language() {
     }
 }
 
-function field_name_not_provided_error() {
+function missing_field() {
     if (LANGUAGE == "fr"){
-        createError("Merci de compléter le nom du champs");
+        createError("Certains champs ne sont pas remplis !");
     }
     else{
-        createError("Please fill-in the field's name");
+        createError("Some fields are not filled in !");
     }
 }
 

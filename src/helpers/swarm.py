@@ -4,13 +4,13 @@ import functools
 from src.models import Comment, Swarm
 
 
-def update_swarm_health(swarm_id):
+def update_swarm_health(hive_id, swarm_id):
     if swarm_id is None:
         return False
 
     comments = list(
-        Comment.select()
-        .where(Comment.swarm == swarm_id)
+        Comment.select(Comment)
+        .where(Comment.swarm == swarm_id, Comment.health.is_null(False))
         .order_by(Comment.date.desc())
     )
 
@@ -20,6 +20,3 @@ def update_swarm_health(swarm_id):
         swarm.save()
 
     return True
-
-
-

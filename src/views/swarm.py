@@ -12,6 +12,7 @@ from src.models import Swarm
 
 api = flask.Blueprint("Swarm", __name__)
 
+
 @api.route("/swarm/create", methods=["POST"])
 @login_required
 def create_swarm():

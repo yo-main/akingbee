@@ -1,13 +1,13 @@
 
 function submit_apiary_modal(){
     let apiary_id = $("#apiary_id").attr("name");
-    let my_url = get_full_url("/apiary/" + apiary_id);
+    let my_url = get_full_url("/api/apiary/" + apiary_id);
 
     let data = {
-        "new_name": $("#apiary_name_modal").val(),
-        "new_location": $("#apiary_location_modal").val(),
-        "new_status": $("#apiary_status_modal").val(),
-        "new_honey": $("#apiary_honey_modal").val()
+        "name": $("#apiary_name_modal").val(),
+        "location": $("#apiary_location_modal").val(),
+        "status": $("#apiary_status_modal").val(),
+        "honey": $("#apiary_honey_modal").val(),
     }
 
     $.ajax({
@@ -28,7 +28,7 @@ function submit_apiary_modal(){
 
 function modal_apiary_edit(button){
     let apiary_id = button.name.substring(5);
-    let my_url = get_full_url("/apiary/" + apiary_id);
+    let my_url = get_full_url("/api/apiary/" + apiary_id);
 
     $.ajax({
         type: "GET",
@@ -58,7 +58,7 @@ function modal_apiary_edit(button){
 function delete_apiary(button){
     let apiary_id = button.name.substring(5);
     let confirm;
-    let my_url = get_full_url("/apiary/" + apiary_id);
+    let my_url = get_full_url("/api/apiary/" + apiary_id);
 
     if (LANGUAGE == "fr"){
         confirm = window.confirm("Supprimer ce rucher ?");
