@@ -33,7 +33,7 @@ from src.models import (
 api = flask.Blueprint("Hive", __name__)
 
 
-@api.route("/hive", methods=["GET", "POST"])
+@api.route("/hive", methods=["GET"])
 @login_required
 def hive():
     if flask.request.method == "GET":
@@ -93,14 +93,14 @@ def hive_create_condition():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@api.route("/api/hive/<int:hive_id>", methods=["GET", "PUT"])
+@api.route("/api/hive/<int:hive_id>", methods=["GET", "PUT", "DEL"])
 @login_required
 def hive_details(hive_id):
     if flask.request.method == "GET":
         hive = Hive.get_by_id(hive_id)
         return flask.jsonify(hive.serialize())
 
-    if flask.request.method == "PUT":
+    elif flask.request.method == "PUT":
         hive = Hive.get_by_id(hive_id)
         hive.name = flask.request.form.get("hive")
         hive.owner = flask.request.form.get("owner")
@@ -112,6 +112,10 @@ def hive_details(hive_id):
 
         return Success(alerts.MODIFICATION_SUCCESS)
 
+    elif flask.request.method == "DEL":
+        hive = Hive.get_by_id(hive_id)
+        hive.delete_instance()
+        return Success(alerts.DELETION_SUCCESS)
 
 @api.route("/api/hive", methods=["POST"])
 def create_hive_api():
@@ -260,7 +264,7 @@ def hive_profil(hive_id):
     )
 
 
-@api.route("/hive/<int:hive_id>/<string:way>", methods=["GET"])
+@api.route("/api/hive/<int:hive_id>/<string:way>", methods=["GET"])
 @login_required
 def select_hive(hive_id, way):
     if way not in ("next", "prev"):
@@ -310,12 +314,3 @@ def operate_comment(comment_id):
         return Success(alerts.DELETION_SUCCESS)
 
 
-@api.route("/hive/delete", methods=["POST"])
-@login_required
-def delete_hive():
-    hive_id = flask.request.form.get("bh_id")
-    hive = Hive.get_by_id(hive_id)
-
-    hive.delete_instance()
-
-    return Success(alerts.DELETION_SUCCESS)

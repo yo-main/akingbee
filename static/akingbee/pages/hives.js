@@ -1,6 +1,6 @@
 function arrowAction(way){
     let pathname = window.location.pathname;
-    let my_url = get_full_url(pathname + "/" + way);
+    let my_url = get_full_url("/api" + pathname + "/" + way);
 
     $.get({
         type: "GET",
@@ -495,11 +495,9 @@ function filter_table_hive(){
 
 
 function delete_hive(){
-    let params = (new URL(document.location)).searchParams;
-    let bh_id = params.get("bh");
-    let url = get_full_url("/hive/delete");
-
-    let data = {"bh_id": bh_id};
+    let params = window.location.pathname;
+    let hive_id = params.split("/")[2];
+    let url = get_full_url("/api/hive/" + hive_id);
 
     if (LANGUAGE == "fr"){
         confirmation = window.confirm("Supprimer cette ruche ?");
@@ -510,15 +508,14 @@ function delete_hive(){
 
     if (confirmation){
         $.ajax({
-            type: "POST",
+            type: "DEL",
             url: url,
-            data: data,
             error: function(answer, code){
-            showError(answer);
+                showError(answer);
             },
             success: function(answer, code){
-            showSuccess(answer);
-            window.location = get_full_url("/hive");
+                showSuccess(answer);
+                window.location = get_full_url("/hive");
             }
         });
     };
