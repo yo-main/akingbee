@@ -124,4 +124,6 @@ traductions = {
     112: {FRENCH: "Actions", ENGLISH: "Actions"},
     113: {FRENCH: "Santé de l'essaim", ENGLISH: "Swarm's health"},
     114: {FRENCH: "Etat de la ruche", ENGLISH: "Hive's condition"},
+    115: {FRENCH: "Note", ENGLISH: "Note"},
+    116: {FRENCH: "Fait", ENGLISH: "Done"},
 }

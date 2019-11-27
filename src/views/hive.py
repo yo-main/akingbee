@@ -14,6 +14,7 @@ from src.helpers.date import convert_to_date_object
 from src.constants import config
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error, Success
+from src.constants.trad_codes import traductions
 
 from src.models import (
     Hive,
@@ -92,7 +93,7 @@ def hive_create_condition():
     return Success(alerts.NEW_PARAMETER_SUCCESS)
 
 
-@api.route("/api/hive/<path:hive_id>", methods=["GET", "PUT"])
+@api.route("/api/hive/<int:hive_id>", methods=["GET", "PUT"])
 @login_required
 def hive_details(hive_id):
     if flask.request.method == "GET":
@@ -163,11 +164,11 @@ def create_a_comment():
 
 @api.route("/api/action", methods=["POST"])
 @login_required
-def submit_action_modal():
+def create_action():
     data = {
         "hive": flask.request.form.get("hive_id"),
         "date": convert_to_date_object(flask.request.form.get("date")),
-        "description": flask.request.form.get("description"),
+        "note": flask.request.form.get("note"),
         "type_id": flask.request.form.get("action_type"),
         "deadline": convert_to_date_object(flask.request.form.get("deadline")),
         "status": config.STATUS_PENDING,
@@ -178,13 +179,42 @@ def submit_action_modal():
 
     return Success(alerts.ACTION_PLANIFICATION_SUCCESS)
 
-
-@api.route("/hive/<path:bh_id>", methods=["GET"])
+@api.route("/api/action/<int:action_id>", methods=["PUT"])
 @login_required
-def hive_profil(bh_id):
+def update_action(action_id):
+    action = Action.get_by_id(action_id)
+    hive = Hive.get_by_id(action.hive)
+
+    data = {
+        "date": convert_to_date_object(flask.request.form.get("date")),
+        "action": action.id,
+        "hive": hive.id,
+        "apiary": hive.apiary,
+        "type": config.COMMENT_TYPE_ACTION,
+    }
+
+    text = flask.request.form.get('name')
+    if flask.request.form.get("description"):
+        text += f" - {flask.request.form['description']}"
+    data["comment"] = text
+
+    comment = Comment(**data)
+    comment.save()
+
+    action.date_done = data["date"]
+    action.status = config.STATUS_DONE
+    action.save()
+
+    return Success(alerts.ACTION_SOLVED_SUCCESS)
+
+
+
+@api.route("/hive/<int:hive_id>", methods=["GET"])
+@login_required
+def hive_profil(hive_id):
 
     try:
-        hive = Hive.get_by_id(bh_id)
+        hive = Hive.get_by_id(hive_id)
     except DoesNotExist:
         flask.abort(404)
 
@@ -200,14 +230,14 @@ def hive_profil(bh_id):
         .join(SwarmHealth, JOIN.LEFT_OUTER)
         .switch(Comment)
         .join(CommentType)
-        .where(Comment.hive_id == bh_id)
+        .where(Comment.hive_id == hive_id)
         .order_by(Comment.date.desc())
     )
 
     comment_types = tuple(set(comment.type for comment in comments))
 
     actions = Action.select().where(
-        Action.hive == bh_id and Action.status == config.STATUS_PENDING
+        Action.hive == hive_id and Action.status == config.STATUS_PENDING
     )
 
     hive_conditions = get_all(HiveCondition)
@@ -230,79 +260,54 @@ def hive_profil(bh_id):
     )
 
 
-@api.route("/hive/select", methods=["POST"])
+@api.route("/hive/<int:hive_id>/<string:way>", methods=["GET"])
 @login_required
-def select_hive():
-    hive_id = int(flask.request.form.get("hive_id"))
-    way = int(flask.request.form.get("way"))
+def select_hive(hive_id, way):
+    if way not in ("next", "prev"):
+        flask.abort(404)
 
     hives = [hive.id for hive in get_all(Hive)]
     index = hives.index(hive_id)
 
-    new_id = hives[(index + way) % len(hives)]
+    inc = 1 if way == "next" else -1
+    new_id = hives[(index + inc) % len(hives)]
 
     return flask.jsonify(f"/hive/{new_id}")
 
 
-@api.route("/hive/submit_solve_action_modal", methods=["POST"])
+
+@api.route("/api/comment/<int:comment_id>", methods=["DEL", "PUT"])
 @login_required
-def solve_action():
+def operate_comment(comment_id):
+    if flask.request.method == "PUT":
+        comment = Comment.get_by_id(comment_id)
 
-    action = Action.get_by_id(flask.request.form.get("ac_id"))
-    hive = Hive.get_by_id(action.hive)
+        comment.comment = flask.request.form.get("comment")
+        comment.health = flask.request.form.get("health")
+        comment.condition = flask.request.form.get("condition")
+        comment.date = convert_to_date_object(flask.request.form.get("date"))
+        comment.save()
 
-    data = {
-        "comment": flask.request.form.get("description"),
-        "date": convert_to_date_object(flask.request.form.get("date")),
-        "action": action.id,
-        "hive": hive.id,
-        "apiary": hive.apiary,
-        "type": config.COMMENT_TYPE_ACTION,
-    }
+        hive = Hive.get_by_id(comment.hive)
+        update_hive_history(hive)
 
-    comment = Comment(**data)
-    comment.save()
+        return Success(alerts.MODIFICATION_SUCCESS)
 
-    action.date_done = data["date"]
-    action.status = config.STATUS_DONE
-    action.save()
+    elif flask.request.method == "DEL":
+        comment = Comment.get_by_id(comment_id)
 
-    return Success(alerts.ACTION_SOLVED_SUCCESS)
+        if comment.type.id == config.COMMENT_TYPE_ACTION:
+            action = Action.get_by_id(comment.action)
+            action.status = config.STATUS_PENDING
+            action.date_done = None
+            action.save()
 
+        hive = Hive.get_by_id(comment.hive)
+        comment.delete_instance()
 
-@api.route("/hive/submit_edit_comment_modal", methods=["POST"])
-@login_required
-def edit_comment():
-    comment = Comment.get_by_id(flask.request.form.get("cm_id"))
+        update_hive_history(hive)
 
-    comment.comment = flask.request.form.get("comment")
-    comment.health = flask.request.form.get("health")
-    comment.date = convert_to_date_object(flask.request.form.get("date"))
-    comment.save()
-
-    hive = Hive.get_by_id(comment.hive)
-    update_hive_history(hive)
-
-    return Success(alerts.MODIFICATION_SUCCESS)
-
-
-@api.route("/hive/delete_comment", methods=["POST"])
-@login_required
-def del_comment():
-    comment = Comment.get_by_id(flask.request.form.get("cm_id"))
-
-    if comment.type == config.COMMENT_TYPE_ACTION:
-        action = Action.get_by_id(comment.action)
-        action.status = config.STATUS_PENDING
-        action.date_done = None
-        action.save()
-
-    hive = Hive.get_by_id(comment.hive)
-    comment.delete_instance()
-
-    update_hive_history(hive)
-
-    return Success(alerts.DELETION_SUCCESS)
+        return Success(alerts.DELETION_SUCCESS)
 
 
 @api.route("/hive/delete", methods=["POST"])

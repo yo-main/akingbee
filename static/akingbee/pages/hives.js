@@ -1,17 +1,10 @@
 function arrowAction(way){
     let pathname = window.location.pathname;
-    let args = pathname.split("/");
+    let my_url = get_full_url(pathname + "/" + way);
 
-    let hive_id = args[2];
-    let my_url = get_full_url("/hive/select");
-
-    $.ajax({
-        type: "POST",
+    $.get({
+        type: "GET",
         url: my_url,
-        data: {
-            hive_id: hive_id,
-            way: way
-        },
         error: function(answer, code){
             showError(answer);
         },
@@ -19,16 +12,6 @@ function arrowAction(way){
             window.location = get_full_url(answer);
         }
     });
-}
-
-
-
-
-function modal_solve_action(button){
-    $("#solve_action").modal("show");
-    let name = button.title;
-    $("#action_name_done").val(name)
-    $("#action_name_done").attr("name", button.name);
 }
 
 
@@ -76,25 +59,11 @@ function filter_table_hive_details(){
 }
 
 
-function show_modal_edit_comment(button){
-
-    $("#edit_comment_bh").modal("show");
-
-    let date = $(button).closest("tr").children("td.date_cm").text();
-    let health = $(button).closest("tr").children("td.health_cm").text();
-    let comment = $(button).closest("tr").children("td.comm_cm").text();
-    let cm_id = button.name.substring(3);
-    
-    $("#comment_comment_edit").attr('name', cm_id);
-    $("#comment_date_edit").val(date);
-    $("#comment_comment_edit").val(comment);
-    $("comment_condition_edit").val(condition).change();
-}
-
 
 function del_comment(button){
     let confirmation;
-    let my_url = get_full_url("/hive/delete_comment");
+    let comment_id = button.getAttribute("comment_id");
+    let my_url = get_full_url("/api/comment/" + comment_id);
 
     if (LANGUAGE == "fr"){
         confirmation = window.confirm("Etes-vous sur de vouloir supprimer ce commentaire ?");
@@ -104,12 +73,9 @@ function del_comment(button){
     }
 
     if (confirmation){
-        let cm_id = button.name.substring(3);
-
         $.ajax({
-            type: "POST",
+            type: "DEL",
             url: my_url,
-            data: {cm_id: cm_id},
             error: function(answer, code){
                 showError(answer);
             },
@@ -123,25 +89,35 @@ function del_comment(button){
 }
 
 
+function modal_solve_action(button){
+    $("#modal_solve_action").modal("show");
+    $("#modal_solve_action").attr("action_id", button.getAttribute("action_id"));
+
+    $("#solve_action_name").attr("name", button.title);
+    $("#solve_action_name").val(button.title);
+}
+
+
 function submit_solve_action_modal(){
+    let action_id = $("#modal_solve_action").attr("action_id");
+
     let data = {
-        name: $("#action_name_done").val(),
-        description: $("#action_description_done").val(),
-        ac_id: $("#action_name_done").attr("name"),
-        date: $("#action_date_done").val()
+        name: $("#solve_action_name").val(),
+        date: $("#solve_action_date").val(),
+        description: $("#solve_action_comment").val(),
     }
 
-    let my_url = get_full_url("/hive/submit_solve_action_modal");
+    let my_url = get_full_url("/api/action/" + action_id);
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: my_url,
         data: data,
         error: function(answer, code){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#modal_solve_action").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -274,7 +250,7 @@ function submit_new_action(){
         date: $("#new_action_date").val(),
         action_type: $("#new_action_type").val(),
         deadline: $("#new_action_deadline").val(),
-        description: $("#new_action_description").val(),
+        note: $("#new_action_note").val(),
         hive_id: $("#modal_new_action").attr("hive_id"),
     };
 
@@ -378,17 +354,37 @@ function submit_new_comment(){
 }
 
 
-function submit_edit_comment_modal(){
+function show_modal_edit_comment(button){
+    let comment_id = button.getAttribute("comment_id");
+
+    let date = $(button).closest("tr").children("td.date_cm").text();
+    let health = $(button).closest("tr").children("td.health_cm").attr("health_id");
+    let condition = $(button).closest("tr").children("td.condition_cm").attr("condition_id");
+    let comment = $(button).closest("tr").children("td.comm_cm").text();
+    
+    $("#edit_comment_date").val(date);
+    $("#edit_comment_text").val(comment);
+    $("#edit_comment_health").val(health).change();
+    $("#edit_comment_condition").val(condition).change();
+
+    $("#modal_edit_comment").attr('comment_id', comment_id);
+    $("#modal_edit_comment").modal("show");
+}
+
+
+function edit_comment(){
+    let comment_id = $("#modal_edit_comment").attr("comment_id");
+
     let data = {
-        comment: $("#comment_comment_edit").val(),
-        cm_id: $("#comment_comment_edit").attr("name"),
-        condition: $("#comment_condition_edit").find("option:selected").attr('title'),
-        date: $("#comment_date_edit").val()
+        date: $("#edit_comment_date").val(),
+        comment: $("#edit_comment_text").val(),
+        health: $("#edit_comment_health").val(),
+        condition: $("#edit_comment_condition").val(),
     }
-    let my_url = get_full_url("/hive/submit_edit_comment_modal");
+    let my_url = get_full_url("/api/comment/" + comment_id);
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: my_url,
         data: data,
         error: function(answer, code){

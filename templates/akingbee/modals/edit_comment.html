@@ -1,42 +1,42 @@
-<!-- Modal to leave a comment -->
-<div class="modal fade" id="submit_comment" tabindex="-1" role="dialog" aria-labelledby="title_submit_comment" aria-hidden="true">
+<!-- Modal to edit a comment -->
+<div class="modal fade" id="modal_edit_comment" tabindex="-1" role="dialog" aria-labelledby="title_edit_comment" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="title_submit_comment">{{trads[50]}}</h5>
+                <h5 class="modal-title" id="title_edit_comment">{{trads[50]}}</h5>
                 <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="comment_date" class="col-form-label">{{trads[55]}}</label>
-                    <input id="comment_date" class="form-control" type="text" date_picker="true"/>
+                    <label for="edit_comment_date" class="col-form-label">{{trads[55]}}</label>
+                    <input id="edit_comment_date" class="form-control" type="text" date_picker="true"/>
                 </div>
                 <div class="form-group">
-                    <label for="apiary_name_modal" class="col-form-label">{{trads[43]}}</label>
-                    <select id="apiary_name_modal" class="custom-select d-block w-100" required="">
+                    <label for="edit_comment_apiary" class="col-form-label">{{trads[43]}}</label>
+                    <select id="edit_comment_apiary" class="custom-select d-block w-100" required="">
                         {% for apiary in apiaries %}
                             <option value={{apiary.id}}>{{apiary.name}} - {{apiary.location}}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="comment_condition" class="col-form-label">{{trads[99]}}</label>
-                    <select class="custom-select d-block w-100" id="comment_condition">
-                        <option value=''>{{trads[26]}}</option>
+                    <label for="edit_comment_condition" class="col-form-label">{{trads[114]}}</label>
+                    <select class="custom-select d-block w-100" id="edit_comment_condition">
+                        <option value='' selected disabled hidden>{{trads[26]}}</option> <!-- empty field as "Select..." -->
                         {% for condition in hive_conditions %}
                             <option value={{condition.id}}>{{condition[lang]}}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="comment_health" class="col-form-label">{{trads[99]}}</label>
+                    <label for="edit_comment_health" class="col-form-label">{{trads[113]}}</label>
                     {% if hive.swarm == none %}
                     <select disabled class="custom-select d-block w-100"></select>
                     {% else %}
-                    <select class="custom-select d-block w-100" id="comment_health">
-                        <option value=''>{{trads[26]}}</option>
+                    <select class="custom-select d-block w-100" id="edit_comment_health">
+                        <option value='' selected disabled hidden>{{trads[26]}}</option> <!-- empty field as "Select..." -->
                         {% for health in swarm_healths %}
                             <option value={{health.id}}>{{health[lang]}}</option>
                         {% endfor %}
@@ -44,13 +44,13 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    <label for="comment_comment" class="col-form-label">{{trads[56]}}</label>
-                    <textarea aria-label="With textarea" class="form-control" id="comment_comment"></textarea>
+                    <label for="edit_comment_text" class="col-form-label">{{trads[56]}}</label>
+                    <textarea aria-label="With textarea" class="form-control" id="edit_comment_text"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                <button type="button" class="btn btn-primary" onclick="submit_comment_modal();">{{trads[14]}}</button>
+                <button type="button" class="btn btn-primary" onclick="edit_comment();">{{trads[14]}}</button>
             </div>
         </div>
     </div>

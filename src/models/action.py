@@ -32,6 +32,6 @@ class Action(BaseModel):
     status = ForeignKeyField(StatusAction, backref="actions")
     hive = ForeignKeyField(Hive, backref="actions", null=True)
     deadline = DateTimeField(null=True)
-    description = TextField()
+    note = TextField()
     date_creation = DateTimeField(default=datetime.datetime.now)
     date_modification = DateTimeField(default=datetime.datetime.now)

@@ -22,7 +22,7 @@ app.register_blueprint(ns_swarm)
 app.register_blueprint(ns_setup)
 
 app.config["TEMPLATE_AUTO_RELOAD"] = True
-app.config["PERMANENT_SESSION_LIFETIME"] = 60*10  # lifetime of a cookie -> 10 minutes
+app.config["PERMANENT_SESSION_LIFETIME"] = 60*60  # lifetime of a cookie -> 1 hour
 app.config["SESSION_TYPE"] = 'filesystem'
 app.config["SESSION_FILE_DIR"] = env.FLASK_URL_SESSION
 

@@ -15,13 +15,13 @@
                         <div class="col-3">
                         </div>
                         <div class="col-1 text-right">
-                            <button type="button" class="btn btn-light left-arrow" area_hidden="true" onclick="arrowAction(-1)"></button>
+                            <button type="button" class="btn btn-light left-arrow" area_hidden="true" onclick="arrowAction('prev')"></button>
                         </div>
                         <div class="col-3">
                             <h2 class="text-center">{{hive.name}}</h2>
                         </div>
                         <div class="col-1 text-left">
-                            <button type="button" class="btn btn-light right-arrow" area_hidden="true" onclick="arrowAction(1)"></button>
+                            <button type="button" class="btn btn-light right-arrow" area_hidden="true" onclick="arrowAction('next')"></button>
                         </div>
                         <div class="col-4">
                         </div>
@@ -43,12 +43,12 @@
                                     </tr>
                                     <tr>
                                         <!-- condition -->
-                                        <th>{{trads[42]}}</th>
+                                        <th>{{trads[114]}}</th>
                                         <td>{{hive.condition[lang]}}</td>
                                     </tr>
                                     <tr>
                                         <!-- swarm health -->
-                                        <th>{{trads[99]}}</th>
+                                        <th>{{trads[113]}}</th>
                                         <td>
                                         {% if hive.swarm %}
                                         {{hive.swarm.health[lang]}}
@@ -83,9 +83,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="history_tab" data-toggle="tab" href="#history_content" role="tab" aria-control="history_content" aria-selected="true">{{trads[111]}}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a>
-                    </li>
+                    <!-- <li class="nav-item"> -->
+                    <!--     <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a> -->
+                    <!-- </li> -->
                     <li class="nav-item">
                         <a class="nav-link" id="action_tab" data-toggle="tab" href="#action_content" role="tab" aria-control="action_content" aria-selected="true">{{trads[112]}}</a>
                     </li>
@@ -135,6 +135,7 @@
                                         <th scope="col">{{trads[59]}}</th>
                                         <th scope="col">{{trads[63]}}</th>
                                         <th scope="col">{{trads[43]}}</th>
+                                        <th scope="col">{{trads[42]}}</th>
                                         <th scope="col">{{trads[99]}}</th>
                                         <th scope="col-4">{{trads[50]}}</th>
                                         <th scope="col"></th>
@@ -148,10 +149,15 @@
                                             <td class="date_cm">{{comments[n].date|datetime}}</td>
                                             <td class="type_cm">{{comments[n].type[lang]}}</td>
                                             <td class="apiary_cm">{{comments[n].apiary.name}} - {{comments[n].apiary.location}}</td>
-                                            <td class="health_cm">{{comments[n].health[lang]}}</td>
+                                            <td class="condition_cm" condition_id="{{comments[n].condition.id}}">{{comments[n].condition[lang]}}</td>
+                                            <td class="health_cm" health_id="{{comments[n].health.id}}">{{comments[n].health[lang]}}</td>
                                             <td class="comm_cm col-4">{{comments[n].comment}}</td>
-                                            <td><button type="button" class="btn btn-link" name="bh_{{comments[n].id}}" onclick="modal_edit_comment(this);">{{trads[70]}}</button></td>
-                                            <td><button type="button" class="btn btn-link" name="bh_{{comments[n].id}}" onclick="del_comment(this);">{{trads[64]}}</button></td>
+                                            {% if comments[n].type.id == 1 %}
+                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="show_modal_edit_comment(this);">{{trads[70]}}</button></td>
+                                            {% else %}
+                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="show_modal_edit_comment(this);" disabled>{{trads[70]}}</button></td>
+                                            {% endif %}
+                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="del_comment(this);">{{trads[64]}}</button></td>
                                         </tr>
                                     {% endfor %}
                                 </body>
@@ -176,14 +182,15 @@
                                                 {% if actions[n].deadline %}
                                                     {{trads[66]}}
                                                     {{actions[n].deadline|datetime}}
-                                                {% endif %}&nbsp&nbsp-&nbsp&nbsp
-                                                {% if actions[n].description %}
-                                                    {{trads[67]}}: {{actions[n].description}}
+                                                {% endif %}&nbsp&nbsp
+                                                {% if actions[n].note %}
+                                                    -&nbsp&nbsp
+                                                    {{trads[115]}}: {{actions[n].note}}
                                                 {% endif %}
                                             </span>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="button" class="btn btn-link btn-alert" title="{{actions[n].type[lang]}}" name="{{actions[n].id}}" onclick="modal_solve_action(this);">{{trads[68]}}</button>
+                                            <button type="button" id="hello" class="btn btn-link btn-alert" title="{{actions[n].type[lang]}}" action_id="{{actions[n].id}}" onclick="modal_solve_action(this);">{{trads[68]}}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -194,49 +201,17 @@
                     {% endif %}
                     </div>
 
-                    <!-- SWARM SECTION-->
-                    <div class="tab-pane fade" id="swarm_content" role="tabpanel" aria-labelledby="swarm_tab">
-                        <br/>
-                        {% if hive.swarm %}
-                        <p>Bien</p>
-                        {% else %}
-                        <p>{{trads[107]}}</p>
-                        <button type="button" class="btn btn-link btn-alert" hive="{{hive.id}}" onclick="swarm_create_modal();">{{trads[108]}}</button>
-                        {% endif %}
-                    </div>
+<!--                     <1!-- SWARM SECTION--1>-->
+<!--                     <div class="tab-pane fade" id="swarm_content" role="tabpanel" aria-labelledby="swarm_tab">-->
+<!--                         <br/>-->
+<!--                         {% if hive.swarm %}-->
+<!--                         <p>Bien</p>-->
+<!--                         {% else %}-->
+<!--                         <p>{{trads[107]}}</p>-->
+<!--                         <button type="button" class="btn btn-link btn-alert" hive="{{hive.id}}" onclick="swarm_create_modal();">{{trads[108]}}</button>-->
+<!--                         {% endif %}-->
+<!--                     </div>-->
                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal to mark an action as done -->
-    <div class="modal fade" id="solve_action" tabindex="-1" role="dialog" aria-labelledby="title_solve_action" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_solve_action">{{trads[69]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="action_name_done" class="col-form-label">{{trads[48]}}</label>
-                        <input type="text" class="form-control" id="action_name_done" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_date_done" class="col-form-label">{{trads[59]}}</label>
-                        <input id="action_date_done" class="form-control" type="text" date_picker="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_description_done" class="col-form-label">{{trads[56]}}</label>
-                        <textarea aria-label="With textarea" class="form-control" id="action_description_done"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_solve_action_modal();">{{trads[14]}}</button>
-                </div>
             </div>
         </div>
     </div>
@@ -246,6 +221,7 @@
 {% include "/akingbee/modals/new_action.html" %}
 {% include "/akingbee/modals/new_comment.html" %}
 {% include "/akingbee/modals/edit_comment.html" %}
+{% include "/akingbee/modals/solve_action.html" %}
 
 {% endblock %}
 
