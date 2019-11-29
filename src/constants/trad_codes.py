@@ -126,4 +126,7 @@ traductions = {
     114: {FRENCH: "Etat de la ruche", ENGLISH: "Hive's condition"},
     115: {FRENCH: "Note", ENGLISH: "Note"},
     116: {FRENCH: "Fait", ENGLISH: "Done"},
+    117: {FRENCH: "Valeur", ENGLISH: "Value"},
+    118: {FRENCH: "Status d'un rucher", ENGLISH: "Apiary statuses"},
+    119: {FRENCH: "Types d'action", ENGLISH: "Action types"},
 }

@@ -28,6 +28,7 @@ errors = {
     MISSING_INFORMATION_APIARY: "Des informations manquantes bloquent la création du rucher",
     INCONSISTANT_DATA: "Des données inconsistantes ont été reçues",
     EMPTY_FIELD: "Des données reçues sont vides",
+    UNKNOWN_DATA: "Type de donnée inconnu",
 }
 
 

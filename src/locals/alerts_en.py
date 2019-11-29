@@ -28,6 +28,7 @@ errors = {
     MISSING_INFORMATION_APIARY: "Some information were missing to register the apiary",
     INCONSISTANT_DATA: "Inconsistant data was received",
     EMPTY_FIELD: "Received data were empty",
+    UNKNOWN_DATA: "Unknown data type",
 }
 
 

@@ -41,8 +41,7 @@ def hive():
         apiaries = get_all(Apiary)
         owners = get_all(Owner)
         hive_conditions = get_all(HiveCondition)
-
-        return render(
+nder(
             "akingbee/hive/index.html",
             hives=hives,
             apiaries=apiaries,
