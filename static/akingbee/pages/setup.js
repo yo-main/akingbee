@@ -1,36 +1,26 @@
-function modal_data_submit(button){
-    $("#submit_data").modal("show");
-    let dataId = button.name.substring(3);
-    $("#data_id").attr("name", dataId);
+function show_modal_new_data(button){
+    $("#modal_new_data").modal("show");
 }
 
-
-
-function modal_data_edit(button){
-    let language = $("html").attr("lang");
-    
-    $("#edit_data").modal("show");
-
+function show_modal_data_edit(button){
     let data = $(button).closest("tr").children("td.data_td").text();
-    let dataId = button.name.substring(3);
+    let data_id = button.getAttribute("data_id");
 
-    $("#data_id").attr("name", dataId);
-    $("#data_name_modal").val(data);
+    $("#modal_edit_data").attr("data_id", data_id);
+    $("#edit_data_name").val(data);
+
+    $("#modal_edit_data").modal("show");
 }
 
 
 
-function delete_data(button){
-    let language = $("html").attr("lang");
+function show_delete_data(button){
     let confirm;
-    let data = {
-        dataId: button.name.substring(3),
-        source: window.location.pathname
-    }
+    let id = button.getAttribute("data_id");
 
-    let my_url = get_full_url("/setup/delete");
+    let my_url = window.location.href;
 
-    if (language == "fr"){
+    if (LANGUAGE == "fr"){
         confirm = window.confirm("Supprimer cette entrée ?");
     }
     else{
@@ -40,8 +30,8 @@ function delete_data(button){
     if (confirm){
         $.ajax({
             url: my_url,
-            type: "POST",
-            data: data,
+            type: "DEL",
+            data: {id: id},
             error: function(answer, code){
                 showError(answer);
             },
@@ -55,39 +45,34 @@ function delete_data(button){
 
 
 
-function submit_modal_data_submit(){
-    let language = $("html").attr("lang");
-    let data = {
-        fr: $("#submit_name_modal").val(),
-        en: $("#submit_name_modal").val(),
-        source: window.location.pathname
-    }
+function create_data(){
+    let value = $("#new_data_name").val();
+    send_data(value, "", "POST");
+}
 
-    if (data.en == undefined){
-        data.en = "";
-    }
+function edit_data(){
+    let id = $("#modal_edit_data").attr("data_id");
+    let value = $("#edit_data_name").val();
+    send_data(value, id, "PUT");
+}
 
-    let my_url = get_full_url("/setup/submit");
+function send_data(value, id, method) {
 
-    if ((data.fr == "") && (data.en == "")){
-        if (language == "fr"){
-            createError("Merci de remplir les champs");
-        }
-        else{
-            createError("Please fill-in the fields");
-        }
+    let my_url = window.location.href;
+
+    if (method != "DEL" && !value){
+        missing_field();
         return false;
     }
     
     $.ajax({
         url: my_url,
-        type: "POST",
-        data: data,
+        type: method,
+        data: {data: value, id: id},
         error: function(answer, code){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_data").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -95,42 +80,4 @@ function submit_modal_data_submit(){
 }
 
 
-
-function submit_modal_data_edit(){
-    let language = $("html").attr("lang");
-    let name = $("#data_name_modal").val();
-
-    if (name == ""){
-        if (language == "fr"){
-            createError("Merci de remplir au moins un des deux champs");
-        }
-        else{
-            createError("Please fill-in at least one of the two fields");
-        }
-        return false;
-    }
-
-    let data = {
-        fr: name,
-        en: name,
-        dataId: $("#data_id").attr('name'),
-        source: window.location.pathname
-    }
-
-    let my_url = get_full_url("/setup/update");
-
-    $.ajax({
-        type: "POST",
-        url: my_url,
-        data: data,
-        error: function(answer, code){
-            showError(answer);
-        },
-        success: function(answer, code){
-            $("#submit_action").modal("hide");
-            showSuccess(answer);
-            window.location.reload();
-        }
-    });
-}
 

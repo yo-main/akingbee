@@ -65,7 +65,7 @@
                         </select>
                     </div>
                     <div class="col-1">
-                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_hive_status" area_hidden="true"></button> 
+                        <button type="button" class="btn btn-light create_new_type_button" data-toggle="modal" data-target="#create_hive_condition" area_hidden="true"></button> 
                     </div>
                 </div>
                 <br/>
@@ -83,7 +83,7 @@
                 <br/><br/>
                 <div class="row">
                     <div class="col-4">
-                        <button id="submit_hive" class="btn btn-primary" onclick="createNewHive();">{{trads[14]}}</button>
+                        <button id="submit_hive" class="btn btn-primary" onclick="create_new_hive();">{{trads[14]}}</button>
                     </div>
                 </div>
             </div>
@@ -114,29 +114,25 @@
         </div>
     </div>
 
-    <!-- Modal to create a new hive status -->
-    <div class="modal fade" id="create_hive_status" tabindex="-1" role="dialog" aria-labelledby="title_create_hive_status" aria-hidden="true">
+    <!-- Modal to create a new hive condition -->
+    <div class="modal fade" id="create_hive_condition" tabindex="-1" role="dialog" aria-labelledby="title_create_hive_condition" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="title_create_hive_status">{{trads[45]}}</h5>
+                    <h5 class="modal-title" id="title_create_hive_condition">{{trads[45]}}</h5>
                     <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="hive_status_name_fr" class="col-form-label">Français</label>
-                        <input type="text" class="form-control" id="hive_status_name_fr" name="hive_status_name_fr">
-                    </div>
-                    <div class="form-group">
-                        <label for="hive_status_name_en" class="col-form-label">English</label>
-                        <input type="text" class="form-control" id="hive_status_name_en" name="hive_status_name_en">
+                        <label for="hive_condition_name" class="col-form-label">English</label>
+                        <input type="text" class="form-control" id="hive_condition_name" name="hive_condition_name">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_hive_status();">{{trads[14]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="new_hive_condition();">{{trads[14]}}</button>
                 </div>
             </div>
         </div>

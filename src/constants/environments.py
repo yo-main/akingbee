@@ -3,20 +3,17 @@ import os
 from yaml import load, Loader
 
 
-CONFIG_FILE_NAME = "environment.yaml"
-
-# I don't remember the reason of below's funny thing but doesn't seem to be a problem anymore
-# Leaving this comment here just in case it might create some issue I don't see yet in the future
-# if os.path.exists(CONFIG_FILE_NAME):
-#    CONFIG_FILE_PATH = CONFIG_FILE_NAME
-# else:
-#     CONFIG_FILE_PATH = os.path.join(sys.path[0], "environment.yaml")
-
-
 PROJECT_PATH = os.getcwd()
 
-PLATFORM_ENVIRONMENT = os.environ.get("AKB_ENVIRONMENT") or "DEV"
-assert PLATFORM_ENVIRONMENT in ("SIMU", "PROD", "DEV")
+if os.path.exists(".env"):
+    for row in open(".env"):
+        row = row.strip()
+        if row:
+            var_name, var_value = row.split("=")
+            os.environ[var_name] = var_value
+
+PLATFORM_ENVIRONMENT = os.environ.get("AKB_ENVIRONMENT") or "TEST"
+assert PLATFORM_ENVIRONMENT in ("TEST", "PROD", "SIMU")
 
 # PATHS
 FLASK_URL_ROOT = ""

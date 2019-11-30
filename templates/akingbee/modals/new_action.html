@@ -1,0 +1,56 @@
+<!-- Modal to planify an action -->
+<div class="modal fade" id="modal_new_action" hive_id="{{hive.id}}" tabindex="-1" role="dialog" aria-labelledby="title_submit_action" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title_submit_action">{{trads[60]}}</h5>
+                <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <!-- hive name -->
+                <div class="form-group">
+                    <label for="new_action_hive_name" class="col-form-label">{{trads[52]}}</label>
+                    <input type="text" class="form-control" id="new_action_hive_name" value="{{hive.name}}" disabled>
+                </div>
+
+                <!-- action type -->
+                <div class="form-group">
+                    <label for="new_action_type" class="col-form-label">{{trads[48]}}</label>
+                    <select class="custom-select d-block w-100" id="new_action_type">
+                    <option value='' selected disabled hidden>{{trads[26]}}</option> <!-- empty field as "Select..." -->
+                        {% for action in action_types %}
+                            <option value={{action.id}}>{{action[lang]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- current date -->
+                <div class="form-group">
+                    <label for="new_action_date" class="col-form-label">{{trads[59]}}</label>
+                    <input id="new_action_date" class="form-control" type="text" date_picker="true"/>
+                </div>
+
+                <!-- deadline -->
+                <div class="form-group">
+                    <label for="new_action_deadline" class="col-form-label">{{trads[61]}}</label>
+                    <input id="new_action_deadline" class="form-control" type="text" date_picker="true"/>
+                </div>
+
+                <!-- note -->
+                <div class="form-group">
+                    <label for="new_action_note" class="col-form-label">{{trads[115]}}</label>
+                    <textarea aria-label="With textarea" class="form-control" id="new_action_note"></textarea>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                <button type="button" class="btn btn-primary" onclick="submit_new_action();">{{trads[14]}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+

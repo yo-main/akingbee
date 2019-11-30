@@ -1,25 +1,15 @@
 function new_honey_type(){
-    let data = {
-        name_fr: $("#name_fr").val(),
-        name_en: $("#name_en").val()
-    };
+    let value = $("#honey_value").val();
+    let my_url = get_full_url("/api/honey_type");
 
-    let language = $("html").attr("lang");
-    let my_url = get_full_url("/apiary/create/new_honey_type");
-
-    if ((data.name_fr == "") && (data.name_en == "")){
-        if (language == "fr"){
-            createError("Merci de compléter au moins un des deux champs");
-        }
-        else{
-            createError("Please fill-in at least one of the two fields");
-        }
+    if (value == ""){
+        missing_field();
     }
     else{
         $.ajax({
             type: "POST",
             url: my_url,
-            data: data,
+            data: {"value": value},
             error: function(answer, code){
                 showError(answer);  
             },
@@ -34,28 +24,17 @@ function new_honey_type(){
 
 
 function new_apiary_status(){
-    let data = {
-        name_fr: $("#status_fr").val(),
-        name_en: $("#status_en").val()
-    };
+    let value = $("#status_value").val();
+    let my_url = get_full_url("/api/apiary_status");
 
-    let language = $("html").attr("lang");
-
-    let my_url = get_full_url("/apiary/create/new_apiary_status");
-
-    if ((data.name_fr == "") && (data.name_en == "")){
-        if (language == "fr"){
-            createError("Merci de compléter au moins un des deux champs");
-        }
-        else{
-            createError("Please fill-in at least one of the two fields");
-        }
+    if (value == ""){
+        missing_field();
     }
     else{
         $.ajax({
             type: "POST",
             url: my_url,
-            data: data,
+            data: {"value": value},
             error: function(answer, code){
                 showError(answer);  
             },
@@ -69,7 +48,7 @@ function new_apiary_status(){
 }
 
 
-function createNewApiary(){
+function create_new_apiary(){
     let data = {
         name: $("#apiary_name").val(),
         location: $('#apiary_location').val(),
@@ -78,7 +57,7 @@ function createNewApiary(){
         honey_type: $("#apiary_honey_type").val(),
     };
 
-    let my_url = get_full_url("/apiary/create");
+    let my_url = get_full_url("/api/apiary");
 
     $.ajax({
         type: "POST",
@@ -90,9 +69,7 @@ function createNewApiary(){
         },
         success: function(answer, code){
             showSuccess(answer);
-            window.location = root_path + "/apiary";
+            window.location.reload();
         }
     });
-
-    return false;
 }

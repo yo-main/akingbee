@@ -1,17 +1,10 @@
 function arrowAction(way){
     let pathname = window.location.pathname;
-    let args = pathname.split("/");
+    let my_url = get_full_url("/api" + pathname + "/" + way);
 
-    let bh_id = args[2];
-    let my_url = get_full_url("/hive/select");
-
-    $.ajax({
-        type: "POST",
+    $.get({
+        type: "GET",
         url: my_url,
-        data: {
-            bh_id: bh_id,
-            way: way
-        },
         error: function(answer, code){
             showError(answer);
         },
@@ -19,40 +12,6 @@ function arrowAction(way){
             window.location = get_full_url(answer);
         }
     });
-}
-
-
-function modal_action(button){
-
-    let bh_name;
-    let bh_id;
-
-    pName = window.location.pathname;
-
-    if (pName == "/hive"){
-        bh_id = button.name.substring(3);
-        bh_name = $(button).closest("tr").children("td.name_td").text();
-    }
-    else if (pName.includes("/hive/")){
-        let pathname = window.location.pathname;
-        let args = pathname.split("/");
-        bh_id = args[2];
-        bh_name = $(button).attr("name");
-    }
-
-    $("#submit_action").modal("show");
-
-    $("#action_name").val(bh_name);
-    $("#action_name").attr("name", bh_id);
-    $("#action_date").val(new Date().toDateInputValue());
-}
-
-
-function modal_solve_action(button){
-    $("#solve_action").modal("show");
-    let name = button.title;
-    $("#action_name_done").val(name)
-    $("#action_name_done").attr("name", button.name);
 }
 
 
@@ -100,25 +59,11 @@ function filter_table_hive_details(){
 }
 
 
-function modal_edit_comment(button){
-
-    $("#edit_comment_bh").modal("show");
-
-    let date = $(button).closest("tr").children("td.date_cm").text();
-    let health = $(button).closest("tr").children("td.health_cm").text();
-    let comment = $(button).closest("tr").children("td.comm_cm").text();
-    let cm_id = button.name.substring(3);
-    
-    $("#comment_comment_edit").attr('name', cm_id);
-    $("#comment_date_edit").val(date);
-    $("#comment_comment_edit").val(comment);
-    $("comment_condition_edit").val(condition).change();
-}
-
 
 function del_comment(button){
     let confirmation;
-    let my_url = get_full_url("/hive/delete_comment");
+    let comment_id = button.getAttribute("comment_id");
+    let my_url = get_full_url("/api/comment/" + comment_id);
 
     if (LANGUAGE == "fr"){
         confirmation = window.confirm("Etes-vous sur de vouloir supprimer ce commentaire ?");
@@ -128,12 +73,9 @@ function del_comment(button){
     }
 
     if (confirmation){
-        let cm_id = button.name.substring(3);
-
         $.ajax({
-            type: "POST",
+            type: "DEL",
             url: my_url,
-            data: {cm_id: cm_id},
             error: function(answer, code){
                 showError(answer);
             },
@@ -147,50 +89,35 @@ function del_comment(button){
 }
 
 
-function submit_solve_action_modal(){
-    let data = {
-        name: $("#action_name_done").val(),
-        description: $("#action_description_done").val(),
-        ac_id: $("#action_name_done").attr("name"),
-        date: $("#action_date_done").val()
-    }
+function modal_solve_action(button){
+    $("#modal_solve_action").modal("show");
+    $("#modal_solve_action").attr("action_id", button.getAttribute("action_id"));
 
-    let my_url = get_full_url("/hive/submit_solve_action_modal");
-
-    $.ajax({
-        type: "POST",
-        url: my_url,
-        data: data,
-        error: function(answer, code){
-            showError(answer);
-        },
-        success: function(answer, code){
-            $("#submit_action").modal("hide");
-            showSuccess(answer);
-            window.location.reload();
-        }
-    });
+    $("#solve_action_name").attr("name", button.title);
+    $("#solve_action_name").val(button.title);
 }
 
 
-function submit_edit_comment_modal(){
+function submit_solve_action_modal(){
+    let action_id = $("#modal_solve_action").attr("action_id");
+
     let data = {
-        comment: $("#comment_comment_edit").val(),
-        cm_id: $("#comment_comment_edit").attr("name"),
-        condition: $("#comment_condition_edit").find("option:selected").attr('title'),
-        date: $("#comment_date_edit").val()
+        name: $("#solve_action_name").val(),
+        date: $("#solve_action_date").val(),
+        description: $("#solve_action_comment").val(),
     }
-    let my_url = get_full_url("/hive/submit_edit_comment_modal");
+
+    let my_url = get_full_url("/api/action/" + action_id);
 
     $.ajax({
-        type: "POST",
+        type: "PUT",
         url: my_url,
         data: data,
         error: function(answer, code){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#modal_solve_action").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -199,27 +126,18 @@ function submit_edit_comment_modal(){
 
 
 function new_hive_condition(){
-    let data = {
-        name_fr: $("#hive_condition_name_fr").val(),
-        name_en: $('#hive_condition_name_en').val()
-    };
+    let my_url = get_full_url("/setup/hive/conditions");
+    let name = $("#hive_condition_name").val()
 
-    let my_url = get_full_url("/hive/create/new_condition");
-
-    if ((data.name_fr == "") && (data.name_en == "")){
-        if (LANGUAGE == "fr"){
-            createError("Merci de compléter au moins un des deux champs");
-        }
-        else{
-            createError("Please fill-in at least one of the two fields");
-        }
+    if (name == ""){
+        missing_field();
         return false;
     }
 
     $.ajax({
         type: "POST",
         url: my_url,
-        data: data,
+        data: {"data": name},
         error: function(answer, code){
             showError(answer);
         },
@@ -229,41 +147,31 @@ function new_hive_condition(){
             window.location.reload();
         }
     });
-
-    return false;
 }
 
 
 function new_owner(){
-    let data = {owner: $("#owner_name").val()};
+    let name = $("#owner_name").val();
 
-    let my_url = get_full_url("/hive/create/new_owner");
+    let my_url = get_full_url("/setup/hive/owner");
 
-    if (data.owner == ""){
-        if (LANGUAGE == "fr"){
-            createError("Merci de compléter tous les champs");
-        }
-        else{
-            createError("Please fill-in every fields");
-        }
+    if (name == ""){
+        missing_field();
         return false;
     }
 
     $.ajax({
         type: "POST",
         url: my_url,
-        data: data,
+        data: {"data": name},
         error: function(answer, code){
             showError(answer);
         },
         success: function(answer, code){
-            $("#create_owner").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
     });
-
-    return false;
 }
 
 
@@ -284,7 +192,7 @@ function redirect_create_apiary(){
 }
 
 
-function createNewHive(){
+function create_new_hive(){
     let data = {
         "name": $("#hive_name").val(),
         "date": $('#hive_birthday').val(),
@@ -306,7 +214,7 @@ function createNewHive(){
         }
     }
 
-    let my_url = get_full_url("/hive/create");
+    let my_url = get_full_url("/api/hive");
 
     $.ajax({
         type: "POST",
@@ -330,26 +238,25 @@ function select_hive(button){
     window.location = myUrl;
 }
 
+function show_modal_new_action(button){
+    $("#new_action_date").val(new Date().toDateInputValue());
+    $("#modal_new_action").modal("show");
+}
 
-function submit_action_modal(){
+function submit_new_action(){
 
     let data = {
-        date: $("#action_date").val(),
-        description: $("#action_description").val(),
-        bh_id: $("#action_name").attr("name"),
-        deadline: $("#action_deadline").val(),
-        action_type: $("#action_type").val()
+        date: $("#new_action_date").val(),
+        action_type: $("#new_action_type").val(),
+        deadline: $("#new_action_deadline").val(),
+        note: $("#new_action_note").val(),
+        hive_id: $("#modal_new_action").attr("hive_id"),
     };
 
-    let my_url = get_full_url("/hive/submit_action_modal");
+    let my_url = get_full_url("/api/action");
 
-    if ((data.action_type == "") || (data.date == "")){
-        if (LANGUAGE == "fr"){
-            createError("Merci de remplir tous les champs", "Titre");
-        }
-        else{
-            createError("Please fill-in all the fields", "Title");
-        }
+    if (!data.action_type || !data.date){
+        missing_field();
         return false;
     }
 
@@ -361,7 +268,7 @@ function submit_action_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#modal_new_action").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -407,67 +314,136 @@ function submit_modal_data_submit(){
     });
 }
 
-function modal_comment(button){
-
-    let pName = window.location.pathname;
-    let bh_id;
-    let bh_name;
-
-    if (pName == "/hive"){
-        bh_id = button.name.substring(3);
-        bh_name = $(button).closest("tr").children("td.name_td").text();
-    }
-    else if (pName.includes("/hive/")){
-        let pathname = window.location.pathname;
-        let args = pathname.split("/");
-        bh_id = args[2];
-        bh_name = $(button).attr("name");
-    }
-
-    $("#submit_comment").modal("show");
-
-    $("#comment_name").val(bh_name);
-    $("#comment_name").attr("name", bh_id);
-    $("#comment_date").val(new Date().toDateInputValue());
+function show_modal_new_comment(){
+    $("#new_comment_date").val(new Date().toDateInputValue());
+    $("#modal_new_comment").modal("show");
 }
 
 
-function modal_hive_edit(button){
-
-    let pName = window.location.pathname;
-    let ruche_id;
-    let my_url;
-
-    my_url = get_full_url("/hive/get_hive_info");
-    
-    if (pName.includes("/hive/")){
-        ruche_id = pName.split("/")[2];
+function submit_new_comment(){
+    let data = {
+        date: $("#new_comment_date").val(),
+        comment: $("#new_comment_text").val(),
+        health: $("#new_comment_health").val(),
+        condition: $("#new_comment_condition").val(),
+        hive_id: $("#modal_new_comment").attr("hive_id")
     }
-    else if (pName.includes("/hive")){
-        ruche_id = button.name.substring(3);
+
+    let my_url = get_full_url("/api/comment");
+
+    if (!data.comment || !data.date || !data.condition ||
+        ($("#new_comment_health").is(":enabled") && !data.health)){
+        missing_field();
+        return false;
     }
 
     $.ajax({
         type: "POST",
         url: my_url,
-        data: {bh_id: ruche_id},
-        error: function (answer, code){
+        data: data,
+        error: function(answer, code){
             showError(answer);
         },
         success: function(answer, code){
-            let hive = answer;
-            $("#edit_hive").modal("show");
-    
-            $("#hive_id").attr("name", ruche_id);
-            $("#hive_name_modal").attr("name", hive.name);
-            $("#apiary_name_modal").attr("name", hive.apiary_id);
-            $("#owner_name_modal").attr("name", hive.owner_id);
-            $("#hive_condition_modal").attr("name", hive.condition_id);
+            $("#submit_new_comment").modal("hide");
+            showSuccess(answer);
+            window.location.reload();
+        }
+    });
+}
 
-            $("#hive_name_modal").val(hive.name);
-            $("#apiary_name_modal").val(hive.apiary_id).change();
-            $("#owner_name_modal").val(hive.owner_id).change();
-            $("#hive_condition_modal").val(hive.condition_id).change();
+
+function show_modal_edit_comment(button){
+    let comment_id = button.getAttribute("comment_id");
+
+    let date = $(button).closest("tr").children("td.date_cm").text();
+    let health = $(button).closest("tr").children("td.health_cm").attr("health_id");
+    let condition = $(button).closest("tr").children("td.condition_cm").attr("condition_id");
+    let comment = $(button).closest("tr").children("td.comm_cm").text();
+    
+    $("#edit_comment_date").val(date);
+    $("#edit_comment_text").val(comment);
+    $("#edit_comment_health").val(health).change();
+    $("#edit_comment_condition").val(condition).change();
+
+    $("#modal_edit_comment").attr('comment_id', comment_id);
+    $("#modal_edit_comment").modal("show");
+}
+
+
+function edit_comment(){
+    let comment_id = $("#modal_edit_comment").attr("comment_id");
+
+    let data = {
+        date: $("#edit_comment_date").val(),
+        comment: $("#edit_comment_text").val(),
+        health: $("#edit_comment_health").val(),
+        condition: $("#edit_comment_condition").val(),
+    }
+    let my_url = get_full_url("/api/comment/" + comment_id);
+
+    $.ajax({
+        type: "PUT",
+        url: my_url,
+        data: data,
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            $("#submit_action").modal("hide");
+            showSuccess(answer);
+            window.location.reload();
+        }
+    });
+}
+
+
+function show_modal_hive_edit(){
+    $("#modal_edit_hive").modal("show");
+}
+
+
+function update_hive(){
+    let hive_id = $("#modal_edit_hive").attr("hive_id");
+    let my_url = get_full_url("/api/hive/" + hive_id);
+
+    let old_owner = $("#owner_name_edit_modal").attr("old");
+    let new_owner = $("#owner_name_edit_modal").val();
+
+    let old_hive = $("#hive_name_edit_modal").attr("old");
+    let new_hive = $("#hive_name_edit_modal").val();
+
+
+    if (old_owner == new_owner && old_hive == new_hive) {
+        if (LANGUAGE == "fr") {
+            createError("Aucune valeur n'a été modifiée !");
+        } else {
+            createError("No value were modified !");
+        }
+        return false;
+    }
+
+    if (!new_owner || !new_hive) {
+        missing_field()
+        return false;        
+    }
+    
+    data = {
+        "owner": new_owner,
+        "hive": new_hive,
+    }
+
+    $.ajax({
+        type: "PUT",
+        url: my_url,
+        data: data,
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            $("#modal_edit_hive").modal("hide");
+            showSuccess(answer);
+            window.location.reload();
         }
     });
 }
@@ -517,87 +493,10 @@ function filter_table_hive(){
 }
 
 
-function submit_hive_modal(){
-    let new_hive = $("#hive_name_modal").val();
-    let new_apiary = $("#apiary_name_modal").val();
-    let new_owner = $("#owner_name_modal").val();
-    let new_condition = $("#hive_condition_modal").val();
-
-    let hive = $("#hive_name_modal").attr("name");
-    let apiary = $("#apiary_name_modal").attr("name");
-    let owner = $("#owner_name_modal").attr("name");
-    let condition = $("#hive_condition_modal").attr("name");
-
-    let bh_id = $("#hive_id").attr("name");
-    let to_change = new Object();
-    let my_url = get_full_url("/hive/submit_hive_info");
-
-    to_change.bh_id = bh_id;
-    to_change.apiary = new_apiary;
-    to_change.hive = new_hive;
-    to_change.owner = new_owner;
-    to_change.condition = new_condition;
-    
-    if (Object.keys(to_change).length > 1){
-        $.ajax({
-            type: "POST",
-            url: my_url,
-            data: to_change,
-            error: function(answer, code){
-                showError(answer);
-            },
-            success: function(answer, code){
-                $("#edit_hive").modal("hide");
-                showSuccess(answer);
-                window.location.reload();
-            }
-        });
-    }
-}
-
-
-function submit_comment_modal(){
-    let data = {
-        date: $("#comment_date").val(),
-        health: $("#comment_health").val(),
-        comment: $("#comment_comment").val(),
-        bh_id: $("#comment_name").attr("name")
-    }
-
-    let my_url = get_full_url("/hive/submit_comment_modal");
-    
-    if ((data.comment == "") || (data.health == "")){
-        if (LANGUAGE == "fr"){
-            createError("Merci de remplir tous les champs");
-        }
-        else{
-            createError("Please fill-in all the fields");
-        }
-        return false;
-    }
-
-    $.ajax({
-        type: "POST",
-        url: my_url,
-        data: data,
-        error: function(answer, code){
-            showError(answer);
-        },
-        success: function(answer, code){
-            $("#submit_comment").modal("hide");
-            showSuccess(answer);
-            window.location.reload();
-        }
-    });
-}
-
-
 function delete_hive(){
-    let params = (new URL(document.location)).searchParams;
-    let bh_id = params.get("bh");
-    let url = get_full_url("/hive/delete");
-
-    let data = {"bh_id": bh_id};
+    let params = window.location.pathname;
+    let hive_id = params.split("/")[2];
+    let url = get_full_url("/api/hive/" + hive_id);
 
     if (LANGUAGE == "fr"){
         confirmation = window.confirm("Supprimer cette ruche ?");
@@ -608,15 +507,14 @@ function delete_hive(){
 
     if (confirmation){
         $.ajax({
-            type: "POST",
+            type: "DEL",
             url: url,
-            data: data,
             error: function(answer, code){
-            showError(answer);
+                showError(answer);
             },
             success: function(answer, code){
-            showSuccess(answer);
-            window.location = get_full_url("/hive");
+                showSuccess(answer);
+                window.location = get_full_url("/hive");
             }
         });
     };
@@ -647,7 +545,7 @@ function attach_swarm_on_hive(button) {
 
 }
 
-function swarm_create_modal(){
+function show_swarm_create_modal(){
     let pName = window.location.pathname;
     $("#submit_new_swarm").modal("show");
     $("#comment_name").attr("name", bh_id);

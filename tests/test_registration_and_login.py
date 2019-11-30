@@ -8,6 +8,7 @@ from tests.fixtures import client, fake_database
 
 def test_index_page_logged_out(client):
     answer = client.get("/", follow_redirects=True)
+
     assert answer.status_code == 200
     assert b"<title>aKingBee - \n    Login\n</title>" in answer.data
 

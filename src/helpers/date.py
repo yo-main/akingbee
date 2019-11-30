@@ -18,8 +18,8 @@ def convert_to_date_object(arg):
     """
     Convert from string to datetime the date value received from the frontend
     """
-    if arg == "":
-        return ""
+    if not arg:
+        return None
 
     try:
         date = datetime.datetime.strptime(arg, "%d/%m/%Y")

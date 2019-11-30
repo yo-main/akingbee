@@ -15,13 +15,13 @@
                         <div class="col-3">
                         </div>
                         <div class="col-1 text-right">
-                            <button type="button" class="btn btn-light left-arrow" area_hidden="true" onclick="arrowAction(-1)"></button>
+                            <button type="button" class="btn btn-light left-arrow" area_hidden="true" onclick="arrowAction('prev')"></button>
                         </div>
                         <div class="col-3">
                             <h2 class="text-center">{{hive.name}}</h2>
                         </div>
                         <div class="col-1 text-left">
-                            <button type="button" class="btn btn-light right-arrow" area_hidden="true" onclick="arrowAction(1)"></button>
+                            <button type="button" class="btn btn-light right-arrow" area_hidden="true" onclick="arrowAction('next')"></button>
                         </div>
                         <div class="col-4">
                         </div>
@@ -43,12 +43,12 @@
                                     </tr>
                                     <tr>
                                         <!-- condition -->
-                                        <th>{{trads[42]}}</th>
+                                        <th>{{trads[114]}}</th>
                                         <td>{{hive.condition[lang]}}</td>
                                     </tr>
                                     <tr>
                                         <!-- swarm health -->
-                                        <th>{{trads[99]}}</th>
+                                        <th>{{trads[113]}}</th>
                                         <td>
                                         {% if hive.swarm %}
                                         {{hive.swarm.health[lang]}}
@@ -61,13 +61,13 @@
                         <div class="col flex-end">
                             <div class="row">
                                 <div class="col-auto">
-                                    <button type="button" name="{{hive.name}}" class="btn btn-link btn-smenu" onclick="modal_hive_edit(this);">{{trads[49]}}</button>
+                                    <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_hive_edit();">{{trads[49]}}</button>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="button" name="{{hive.name}}" class="btn btn-link btn-smenu" onclick="modal_comment(this);">{{trads[73]}}</button>
+                                    <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_comment();">{{trads[73]}}</button>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="button" name="{{hive.name}}" class="btn btn-link btn-smenu" onclick="modal_action(this);">{{trads[54]}}</button>
+                                    <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_action();">{{trads[54]}}</button>
                                 </div>
                                 <div class="col-auto">
                                     <button type="button"
@@ -83,9 +83,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="history_tab" data-toggle="tab" href="#history_content" role="tab" aria-control="history_content" aria-selected="true">{{trads[111]}}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a>
-                    </li>
+                    <!-- <li class="nav-item"> -->
+                    <!--     <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a> -->
+                    <!-- </li> -->
                     <li class="nav-item">
                         <a class="nav-link" id="action_tab" data-toggle="tab" href="#action_content" role="tab" aria-control="action_content" aria-selected="true">{{trads[112]}}</a>
                     </li>
@@ -135,6 +135,7 @@
                                         <th scope="col">{{trads[59]}}</th>
                                         <th scope="col">{{trads[63]}}</th>
                                         <th scope="col">{{trads[43]}}</th>
+                                        <th scope="col">{{trads[42]}}</th>
                                         <th scope="col">{{trads[99]}}</th>
                                         <th scope="col-4">{{trads[50]}}</th>
                                         <th scope="col"></th>
@@ -148,10 +149,15 @@
                                             <td class="date_cm">{{comments[n].date|datetime}}</td>
                                             <td class="type_cm">{{comments[n].type[lang]}}</td>
                                             <td class="apiary_cm">{{comments[n].apiary.name}} - {{comments[n].apiary.location}}</td>
-                                            <td class="health_cm">{{comments[n].health[lang]}}</td>
+                                            <td class="condition_cm" condition_id="{{comments[n].condition.id}}">{{comments[n].condition[lang]}}</td>
+                                            <td class="health_cm" health_id="{{comments[n].health.id}}">{{comments[n].health[lang]}}</td>
                                             <td class="comm_cm col-4">{{comments[n].comment}}</td>
-                                            <td><button type="button" class="btn btn-link" name="bh_{{comments[n].id}}" onclick="modal_edit_comment(this);">{{trads[70]}}</button></td>
-                                            <td><button type="button" class="btn btn-link" name="bh_{{comments[n].id}}" onclick="del_comment(this);">{{trads[64]}}</button></td>
+                                            {% if comments[n].type.id == 1 %}
+                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="show_modal_edit_comment(this);">{{trads[70]}}</button></td>
+                                            {% else %}
+                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="show_modal_edit_comment(this);" disabled>{{trads[70]}}</button></td>
+                                            {% endif %}
+                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="del_comment(this);">{{trads[64]}}</button></td>
                                         </tr>
                                     {% endfor %}
                                 </body>
@@ -176,14 +182,15 @@
                                                 {% if actions[n].deadline %}
                                                     {{trads[66]}}
                                                     {{actions[n].deadline|datetime}}
-                                                {% endif %}&nbsp&nbsp-&nbsp&nbsp
-                                                {% if actions[n].description %}
-                                                    {{trads[67]}}: {{actions[n].description}}
+                                                {% endif %}&nbsp&nbsp
+                                                {% if actions[n].note %}
+                                                    -&nbsp&nbsp
+                                                    {{trads[115]}}: {{actions[n].note}}
                                                 {% endif %}
                                             </span>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="button" class="btn btn-link btn-alert" title="{{actions[n].type[lang]}}" name="{{actions[n].id}}" onclick="modal_solve_action(this);">{{trads[68]}}</button>
+                                            <button type="button" id="hello" class="btn btn-link btn-alert" title="{{actions[n].type[lang]}}" action_id="{{actions[n].id}}" onclick="modal_solve_action(this);">{{trads[68]}}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -194,252 +201,28 @@
                     {% endif %}
                     </div>
 
-                    <!-- SWARM SECTION-->
-                    <div class="tab-pane fade" id="swarm_content" role="tabpanel" aria-labelledby="swarm_tab">
-                        <br/>
-                        {% if hive.swarm %}
-                        <p>Bien</p>
-                        {% else %}
-                        <p>{{trads[107]}}</p>
-                        <button type="button" class="btn btn-link btn-alert" hive="{{hive.id}}" onclick="swarm_create_modal();">{{trads[108]}}</button>
-                        {% endif %}
-                    </div>
+<!--                     <1!-- SWARM SECTION--1>-->
+<!--                     <div class="tab-pane fade" id="swarm_content" role="tabpanel" aria-labelledby="swarm_tab">-->
+<!--                         <br/>-->
+<!--                         {% if hive.swarm %}-->
+<!--                         <p>Bien</p>-->
+<!--                         {% else %}-->
+<!--                         <p>{{trads[107]}}</p>-->
+<!--                         <button type="button" class="btn btn-link btn-alert" hive="{{hive.id}}" onclick="swarm_create_modal();">{{trads[108]}}</button>-->
+<!--                         {% endif %}-->
+<!--                     </div>-->
                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal to mark an action as done -->
-    <div class="modal fade" id="solve_action" tabindex="-1" role="dialog" aria-labelledby="title_solve_action" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_solve_action">{{trads[69]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="action_name_done" class="col-form-label">{{trads[48]}}</label>
-                        <input type="text" class="form-control" id="action_name_done" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_date_done" class="col-form-label">{{trads[59]}}</label>
-                        <input id="action_date_done" class="form-control" type="text" date_picker="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_description_done" class="col-form-label">{{trads[56]}}</label>
-                        <textarea aria-label="With textarea" class="form-control" id="action_description_done"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_solve_action_modal();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% include "/akingbee/modals/edit_hive.html" %}
+{% include "/akingbee/modals/new_swarm.html" %}
+{% include "/akingbee/modals/new_action.html" %}
+{% include "/akingbee/modals/new_comment.html" %}
+{% include "/akingbee/modals/edit_comment.html" %}
+{% include "/akingbee/modals/solve_action.html" %}
 
-    <!-- Modal to edit a comment -->
-    <div class="modal fade" id="edit_comment_bh" tabindex="-1" role="dialog" aria-labelledby="title_edit_comment_bh" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_edit_comment_bh">{{trads[50]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="comment_date_edit" class="col-form-label">{{trads[55]}}</label>
-                        <input id="comment_date_edit" class="form-control" type="text" date_picker="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment_health_edit" class="col-form-label">{{trads[99]}}</label>
-                        {% if hive.swarm == none %}
-                        <select disabled class="custom-select d-block w-100"></select>
-                        {% else %}
-                        <select class="custom-select d-block w-100" id="comment_health_edit">
-                            <option value=''>{{trads[26]}}</option>
-                            {% for health in swarm_healths %}
-                                <option title={{health.id}} value={{health[lang]}}>{{health[lang]}}</option>
-                            {% endfor %}
-                        </select>
-                        {% endif %}
-                    </div>
-                    <div class="form-group">
-                        <label for="comment_comment_edit" class="col-form-label">{{trads[56]}}</label>
-                        <textarea aria-label="With textarea" class="form-control" id="comment_comment_edit"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_edit_comment_modal();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal to edit a hive -->
-    <div class="modal fade" id="edit_hive" tabindex="-1" role="dialog" aria-labelledby="title_edit_hive" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_edit_hive">{{trads[49]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="hive_name_modal" class="col-form-label" id="hive_id">{{trads[52]}}</label>
-                        <input type="text" class="form-control" id="hive_name_modal">
-                    </div>
-                    <div class="form-group">
-                        <label for="apiary_name_modal" class="col-form-label">{{trads[43]}}</label>
-                        <select id="apiary_name_modal" class="custom-select d-block w-100" required="">
-                            {% for apiary in apiaries %}
-                                <option value={{apiary.id}}>{{apiary.name}} - {{apiary.location}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="owner_name_modal" class="col-form-label">{{trads[40]}}</label>
-                        <select id="owner_name_modal" class="custom-select d-block w-100" required="">
-                            {% for owner in owners %}
-                                <option value={{owner.id}}>{{owner.name}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_hive_modal();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal to leave a comment -->
-    <div class="modal fade" id="submit_comment" tabindex="-1" role="dialog" aria-labelledby="title_submit_comment" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_submit_comment">{{trads[50]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="comment_name" class="col-form-label">{{trads[52]}}</label>
-                        <input type="text" class="form-control" id="comment_name" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment_date" class="col-form-label">{{trads[55]}}</label>
-                        <input id="comment_date" class="form-control" type="text" date_picker="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment_health" class="col-form-label">{{trads[99]}}</label>
-                        {% if hive.swarm == none %}
-                        <select disabled class="custom-select d-block w-100"></select>
-                        {% else %}
-                        <select class="custom-select d-block w-100" id="comment_health">
-                            <option value=''>{{trads[26]}}</option>
-                            {% for health in swarm_healths %}
-                                <option value={{health.id}}>{{health[lang]}}</option>
-                            {% endfor %}
-                        </select>
-                        {% endif %}
-                    </div>
-                    <div class="form-group">
-                        <label for="comment_comment" class="col-form-label">{{trads[56]}}</label>
-                        <textarea aria-label="With textarea" class="form-control" id="comment_comment"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_comment_modal();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal to planify an action -->
-    <div class="modal fade" id="submit_action" tabindex="-1" role="dialog" aria-labelledby="title_submit_action" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_submit_action">{{trads[60]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="action_name" class="col-form-label">{{trads[52]}}</label>
-                        <input type="text" class="form-control" id="action_name" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_type" class="col-form-label">{{trads[48]}}</label>
-                        <select class="custom-select d-block w-100" id="action_type">
-                        <option value=''>{{trads[26]}}</option>
-                            {% for action in action_types %}
-                                <option value={{action.id}}>{{action[lang]}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_date" class="col-form-label">{{trads[59]}}</label>
-                        <input id="action_date" class="form-control" type="text" date_picker="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_deadline" class="col-form-label">{{trads[61]}}</label>
-                        <input id="action_deadline" class="form-control" type="text" date_picker="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="action_description" class="col-form-label">{{trads[56]}}</label>
-                        <textarea aria-label="With textarea" class="form-control" id="action_description"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_action_modal();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal to attach a swarm to the hive -->
-    <div class="modal fade" id="submit_new_swarm" tabindex="-1" role="dialog" aria-labelledby="title_submit_new_swarm" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_submit_new_swarm">{{trads[109]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="swarm_health" class="col-form-label">{{trads[103]}}</label>
-                        <select class="custom-select d-block w-100" id="swarm_health">
-                        <option value=''>{{trads[26]}}</option>
-                            {% for health in swarm_healths %}
-                                <option value={{health.id}}>{{health[lang]}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" hive="{{hive.id}}" onclick="attach_swarm_on_hive(this);">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block scripts %}

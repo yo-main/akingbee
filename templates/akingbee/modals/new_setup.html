@@ -1,0 +1,48 @@
+    
+    <!-- Modal to edit a data -->
+    <div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="title_edit_data" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_edit_data">{{trads[90]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="data_name_modal" class="col-form-label" id="data_id">{{title}}</label>
+                        <input type="text" class="form-control" id="data_name_modal">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="button" class="btn btn-primary" onclick="submit_modal_data_edit();">{{trads[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Modal to submit a new data -->
+<div class="modal fade" id="modal_new_data" tabindex="-1" role="dialog" aria-labelledby="title_submit_data" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title_modal_new_data">{{trads[90]}}</h5>
+                <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"> 
+                <div class="form-group">
+                    <label for="new_data_name" class="col-form-label" id="submit_id">{{title}}</label>
+                    <input type="text" class="form-control" id="new_data_name">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                <button type="button" class="btn btn-primary" onclick="create_data();">{{trads[14]}}</button>
+            </div>
+        </div>
+    </div>
+</div>

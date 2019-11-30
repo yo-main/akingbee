@@ -27,6 +27,8 @@ errors = {
     STRING_CANNOT_BE_CONVERTED_TO_DATE: "An error happened while trying to convert some date",
     MISSING_INFORMATION_APIARY: "Some information were missing to register the apiary",
     INCONSISTANT_DATA: "Inconsistant data was received",
+    EMPTY_FIELD: "Received data were empty",
+    UNKNOWN_DATA: "Unknown data type",
 }
 
 

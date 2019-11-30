@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container-fluid" id="menu_nb" name="{{menu}}">
+    <div class="container-fluid">
         <div class="row">
             {% include "akingbee/setup/menu.html" %}
             <div class="col-10">
                 <br/><br/>
-                {% if title == 0 %}
+                {% if not title_id %}
                     <div class="row">
                         <div class="col-4"></div>
                         <div class="col-4 justify-center"><p><h4>{{trads[87]}}</h4></p></div>
@@ -21,46 +21,42 @@
                         <p class="text-center">
                             Ici vous pouvez modifier les différentes données liés à votre compte. Choisissez le type de données que vous voulez modifier via le menu à gauche.
                         </p>
-                    {% endif %}
-                    {% if lang == 'en' %}
+                    {% else %}
                         <p class="text-center">
                             Here you can modify all the different data linked to your account. You can select the data you wish to modify from the left side menu.
                         </p>
                     {% endif %}
-                {% endif %}
-                {% if title != 0 %}
+                {% else %}
                     <div class="row">
                         <div class="col-4"></div>
-                        <div class="col-4 justify-center"><h4>{{t}}</h4></div>
+                        <div class="col-4 justify-center"><h4>{{trads[title_id]}}</h4></div>
                         <div class="col-4"></div>
                     </div>
-                    <div class="row">
-                        <div class="col-12 text-center"><h6>{{d}}</h6></div>
-                    </div>
-                    <br/><br/>
+                    <br/>
                     <div class="row">
                         <div class="col-4 justify-center">
-                            <button type="button" class="btn btn-secondary" onclick="modal_data_submit(this);">{{trads[89]}}</button>
+                            <button type="button" class="btn btn-secondary" onclick="show_modal_new_data();">{{trads[89]}}</button>
                         </div>
-                        <div class="col-4 justify-center">
-                            {% if object_data|length > 0 %}
-                                <table class="table table-striped table-bordered" id="data_table">
-                                    <thead class="thead-dark">
+                    <div class="col-4 justify-center">
+                            {% if objects|length > 0 %}
+
+                            <table class="table table-striped table-bordered" id="data_table">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">{{trads[117]}}</th>
+                                        <th scope="col"></th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <body>
+                                    {% for n in range(objects|length) %}
                                         <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">{{column}}</th>
-                                            <th scope="col"></th>
-                                            <th scope="col"></th>
+                                            <th scope="row">{{n+1}}</th>
+                                            <td class="data_td">{{objects[n][column_name]}}</td>
+                                            <td><button type="button" class="btn btn-link" data_id="{{objects[n].id}}" onclick="show_modal_data_edit(this);">{{trads[85]}}</button></td>
+                                            <td><button type="button" class="btn btn-link" data_id="{{objects[n].id}}" onclick="show_delete_data(this);">{{trads[64]}}</button></td>
                                         </tr>
-                                    </thead>
-                                    <body>
-                                        {% for n in range(object_data|length) %}
-                                            <tr>
-                                                <th scope="row">{{n+1}}</th>
-                                                <td class="data_td">{{object_data[n][column]}}</td>
-                                                <td><button type="button" class="btn btn-link" name="dt_{{object_data[n].id}}" onclick="modal_data_edit(this);">{{trads[85]}}</button></td>
-                                                <td><button type="button" class="btn btn-link" name="dt_{{object_data[n].id}}" onclick="delete_data(this);">{{trads[64]}}</button></td>
-                                            </tr>
                                         {% endfor %}
                                     </body>
                                 </table>
@@ -72,54 +68,8 @@
         </div>
     </div>
 
-    
-    <!-- Modal to edit a data -->
-    <div class="modal fade" id="edit_data" tabindex="-1" role="dialog" aria-labelledby="title_edit_data" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_edit_data">{{trads[90]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="data_name_modal" class="col-form-label" id="data_id">{{title}}</label>
-                        <input type="text" class="form-control" id="data_name_modal">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_modal_data_edit();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <!-- Modal to submit a new data -->
-        <div class="modal fade" id="submit_data" tabindex="-1" role="dialog" aria-labelledby="title_submit_data" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="title_submit_data">{{trads[90]}}</h5>
-                        <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> 
-                        <div class="form-group">
-                            <label for="submit_name_modal" class="col-form-label" id="submit_id">{{title}}</label>
-                            <input type="text" class="form-control" id="submit_name_modal">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                        <button type="button" class="btn btn-primary" onclick="submit_modal_data_submit();">{{trads[14]}}</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+{% include "/akingbee/modals/new_setup.html" %}
+{% include "/akingbee/modals/edit_setup.html" %}
     
 {% endblock %}
 
