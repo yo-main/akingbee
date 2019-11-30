@@ -65,7 +65,7 @@ def test_create_new_hive_fail(name, birthday, apiary, owner, condition, client):
         "owner": owner,
         "hive_condition": condition
     }
-    answer = client.post("/hive", data=data)
+    answer = client.post("/api/hive", data=data)
     assert answer.status_code == 500
 
 
@@ -79,83 +79,49 @@ def test_create_new_hive_success(client):
         "owner": 1,
         "hive_condition": 1
     }
-    answer = client.post("/hive", data=data)
+    answer = client.post("/api/hive", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alerts.NEW_HIVE_SUCCESS
 
 
-def test_create_new_owner_fail(client):
-    logged_in(client)
-    answer = client.post("/hive/create/new_owner", data={"owner": ""})
-    assert answer.status_code == 500
-
-
-def test_create_new_owner_success(client):
-    logged_in(client)
-    answer = client.post("/hive/create/new_owner", data={"owner": "Bob"})
-    assert answer.status_code == 200
-    assert answer.json["code"] == alerts.NEW_BEEKEEPER_SUCCESS
-
-
-def test_create_new_condition_fail(client):
-    logged_in(client)
-    data = {"name_fr": "Co", "name_en": ""}
-    answer = client.post("/hive/create/new_condition", data=data)
-    assert answer.status_code == 500
-
-
-def test_create_new_condition_success(client):
-    logged_in(client)
-    data = {"name_fr": "Co", "name_en": "Co"}
-    answer = client.post("/hive/create/new_condition", data=data)
-    assert answer.status_code == 200
-    assert answer.json["code"] == alerts.NEW_PARAMETER_SUCCESS
-
-
 def test_get_hive_info_fail(client):
     logged_in(client)
-    data = {"bh_id": 10}
-    answer = client.post("/hive/get_hive_info", data=data)
-    assert answer.status_code == 500
+    answer = client.get("/api/hive/10")
+    assert answer.status_code == 404
 
 
 def test_get_hive_info_success(client):
     logged_in(client)
-    data = {"bh_id": 1}
-    answer = client.post("/hive/get_hive_info", data=data)
+    answer = client.get("/api/hive/1")
     assert answer.status_code == 200
     assert answer.json["id"] == 1
 
 
-@pytest.mark.parametrize("bh_id,apiary,name,owner", [
-    (1, "", 1, 1),
-    (1, "apiary", 10, 1),
-    (1, "apiary", 1, 10),
-    (10, "apiary", 1, 1),
+@pytest.mark.parametrize("hive_id,name,owner,expected", [
+    (1, "", 1, 500),
+    (1,  1, 10, 500),
+    (10, 1, 1, 404),
 ])
-def test_modify_hive_fail(bh_id, apiary, name, owner, client):
+def test_modify_hive_fail(hive_id, name, owner, expected, client):
     logged_in(client)
 
     data = {
-        "bh_id": bh_id,
         "hive": name,
-        "apiary": apiary,
         "owner": owner,
     }
-    answer = client.post("/hive/submit_hive_info", data=data)
-    assert answer.status_code == 500
+    answer = client.put(f"/api/hive/{hive_id}", data=data)
+    assert answer.status_code == expected
 
 
 def test_modify_hive_success(client):
     logged_in(client)
 
     data = {
-        "bh_id": 1,
         "hive": "test_hive_modification",
         "apiary": 1,
         "owner": 1,
     }
-    answer = client.post("/hive/submit_hive_info", data=data)
+    answer = client.put("/api/hive/1", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alerts.MODIFICATION_SUCCESS
 

@@ -35,13 +35,14 @@ api = flask.Blueprint("Hive", __name__)
 
 @api.route("/hive", methods=["GET"])
 @login_required
-def hive():
+def hive_index():
     if flask.request.method == "GET":
         hives = get_all(Hive, Apiary, Owner, HiveCondition)
         apiaries = get_all(Apiary)
         owners = get_all(Owner)
         hive_conditions = get_all(HiveCondition)
-nder(
+
+        return render(
             "akingbee/hive/index.html",
             hives=hives,
             apiaries=apiaries,
@@ -67,52 +68,34 @@ def hive_create():
     )
 
 
-@api.route("/api/owner", methods=["POST"])
-@login_required
-def hive_create_owner():
-    value = flask.request.form.get("value")
-    if not value:
-        raise Error(alerts.INCONSISTANT_DATA)
-
-    owner = Owner(name=value)
-    owner.save()
-    return Success(alerts.NEW_BEEKEEPER_SUCCESS)
-
-
-@api.route("/api/hive_condition", methods=["POST"])
-@login_required
-def hive_create_condition():
-    name = flask.request.form.get("value")
-    if not name:
-        raise Error(alerts.INCONSISTANT_DATA)
-
-    hive_condition = HiveCondition(name=name)
-    hive_condition.save()
-
-    return Success(alerts.NEW_PARAMETER_SUCCESS)
-
-
 @api.route("/api/hive/<int:hive_id>", methods=["GET", "PUT", "DEL"])
 @login_required
 def hive_details(hive_id):
-    if flask.request.method == "GET":
+    try:
         hive = Hive.get_by_id(hive_id)
+    except DoesNotExist:
+        flask.abort(404)
+
+    if flask.request.method == "GET":
         return flask.jsonify(hive.serialize())
 
     elif flask.request.method == "PUT":
-        hive = Hive.get_by_id(hive_id)
-        hive.name = flask.request.form.get("hive")
-        hive.owner = flask.request.form.get("owner")
+        name = flask.request.form.get("hive")
+        owner = flask.request.form.get("owner")
 
-        if not hive.name or not hive.owner:
+        if not name or not owner:
             raise Error(alerts.EMPTY_FIELD)
 
-        hive.save()
+        try:
+            hive.name = name
+            hive.owner = owner
+            hive.save()
+        except IntegrityError:
+            raise Error(alerts.INCONSISTANT_DATA)
 
         return Success(alerts.MODIFICATION_SUCCESS)
 
     elif flask.request.method == "DEL":
-        hive = Hive.get_by_id(hive_id)
         hive.delete_instance()
         return Success(alerts.DELETION_SUCCESS)
 
@@ -128,16 +111,19 @@ def create_hive_api():
 
     swarm_health = flask.request.form.get("swarm_health")
 
-    with DB.atomic():
-        if swarm_health:
-            swarm = Swarm(
-                health=swarm_health, birthday=datetime.datetime.now()
-            )
-            swarm.save()
-            hive_data["swarm_id"] = swarm.id
+    try:
+        with DB.atomic():
+            if swarm_health:
+                swarm = Swarm(
+                    health=swarm_health, birthday=datetime.datetime.now()
+                )
+                swarm.save()
+                hive_data["swarm_id"] = swarm.id
 
-        hive = Hive(**hive_data)
-        hive.save()
+            hive = Hive(**hive_data)
+            hive.save()
+    except IntegrityError:
+        raise Error(alerts.INCONSISTANT_DATA)
 
     return Success(alerts.NEW_HIVE_SUCCESS)
 

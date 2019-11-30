@@ -1,6 +1,6 @@
 import flask
 
-from peewee import IntegrityError
+from peewee import IntegrityError, DoesNotExist
 
 from src.helpers.tools import get_all, render, login_required
 from src.helpers.date import convert_to_date_object
@@ -99,12 +99,15 @@ def create_apiary_api():
 @api.route("/api/apiary/<path:apiary_id>", methods=["GET", "PUT", "DELETE"])
 @login_required
 def apiary_details(apiary_id):
-    if flask.request.method == "GET":
+    try:
         apiary = Apiary.get_by_id(apiary_id)
+    except DoesNotExist:
+        flask.abort(404)
+
+    if flask.request.method == "GET":
         return flask.jsonify(apiary.serialize())
 
     elif flask.request.method == "PUT":
-        apiary = Apiary.get_by_id(apiary_id)
         form = flask.request.form
         count = 0
 
@@ -129,6 +132,5 @@ def apiary_details(apiary_id):
         return Success(alerts.MODIFICATION_SUCCESS)
 
     elif flask.request.method == "DELETE":
-        apiary = Apiary.get_by_id(apiary_id)
         apiary.delete_instance()
         return Success(alerts.DELETION_SUCCESS)

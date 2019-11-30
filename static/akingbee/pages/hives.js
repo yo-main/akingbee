@@ -126,7 +126,7 @@ function submit_solve_action_modal(){
 
 
 function new_hive_condition(){
-    let my_url = get_full_url("/api/hive_condition");
+    let my_url = get_full_url("/setup/hive/condition");
     let name = $("#hive_condition_name").val()
 
     if (name == ""){
@@ -137,7 +137,7 @@ function new_hive_condition(){
     $.ajax({
         type: "POST",
         url: my_url,
-        data: {"value": name},
+        data: {"data": name},
         error: function(answer, code){
             showError(answer);
         },
@@ -153,7 +153,7 @@ function new_hive_condition(){
 function new_owner(){
     let name = $("#owner_name").val();
 
-    let my_url = get_full_url("/api/owner");
+    let my_url = get_full_url("/setup/hive/owner");
 
     if (name == ""){
         missing_field();
@@ -163,12 +163,11 @@ function new_owner(){
     $.ajax({
         type: "POST",
         url: my_url,
-        data: {"value": name},
+        data: {"data": name},
         error: function(answer, code){
             showError(answer);
         },
         success: function(answer, code){
-            $("#create_owner").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }

@@ -36,7 +36,7 @@ def test_create_apiary_fail(name, location, honey, status, expected, client):
         "status": status,
         "birthday": "01/01/2019",
     }
-    answer = client.post("/apiary", data=data)
+    answer = client.post("/api/apiary", data=data)
     assert answer.status_code == 500
     assert answer.json["code"] == expected
 
@@ -51,7 +51,7 @@ def test_create_apiary_success(client):
         "status": "1",
         "birthday": "01/01/2019",
     }
-    answer = client.post("/apiary", data=data)
+    answer = client.post("/api/apiary", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.NEW_APIARY_SUCCESS
 
@@ -60,7 +60,7 @@ def test_create_new_apiary_status_fail(client):
     logged_in(client)
 
     data = {"value": ""}
-    answer = client.post("/apiary_status", data=data)
+    answer = client.post("/api/apiary_status", data=data)
     assert answer.status_code == 500
     assert answer.json["code"] == alert_codes.INCONSISTANT_DATA
 
@@ -69,7 +69,7 @@ def test_create_new_apiary_status_success(client):
     logged_in(client)
 
     data = {"value": "test"}
-    answer = client.post("/apiary_status", data=data)
+    answer = client.post("/api/apiary_status", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
@@ -78,7 +78,7 @@ def test_create_new_honey_type_fail(client):
     logged_in(client)
 
     data = {"value": ""}
-    answer = client.post("/honey_type", data=data)
+    answer = client.post("/api/honey_type", data=data)
     assert answer.status_code == 500
     assert answer.json["code"] == alert_codes.INCONSISTANT_DATA
 
@@ -87,30 +87,30 @@ def test_create_new_honey_type_success(client):
     logged_in(client)
 
     data = {"value": "test"}
-    answer = client.post("/honey_type", data=data)
+    answer = client.post("/api/honey_type", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
 
 def test_get_apiary_info_fail(client):
     logged_in(client)
-    answer = client.get("/apiary/2") # wrong id
-    assert answer.status_code == 500
+    answer = client.get("/api/apiary/2") # wrong id
+    assert answer.status_code == 404
 
 
 def test_get_apiary_info_success(client):
     logged_in(client)
-    answer = client.get("/apiary/1")
+    answer = client.get("/api/apiary/1")
     assert answer.status_code == 200
     assert answer.json["id"] == 1
 
 
 @pytest.mark.parametrize("ap_id,name,location,status,honey,expected", [
-    (5, "name", "location", 1, 1, 500),
-    (1, "", "location", 1, 1, 500),
-    (1, "name", "", 1, 1, 500),
-    (1, "name", "location", 9, 1, 500),
-    (1, "name", "location", 1, 9, 500),
+    (5, "name", "location", 1, 1, 404),
+    (1, "", "location", 1, 1, 404),
+    (1, "name", "", 1, 1, 404),
+    (1, "name", "location", 9, 1, 404),
+    (1, "name", "location", 1, 9, 404),
 ])
 def test_modify_apiary_fail(client, expected, ap_id, name, location, status, honey):
     logged_in(client)
@@ -120,7 +120,7 @@ def test_modify_apiary_fail(client, expected, ap_id, name, location, status, hon
         "status": status,
         "honey": honey
     }
-    answer = client.put("/apiary/{ap_id}")
+    answer = client.put("/api/apiary/{ap_id}")
     assert answer.status_code == expected
 
 
@@ -133,20 +133,20 @@ def test_modify_apiary_success(client):
         "status": 2,
         "honey": 3
     }
-    answer = client.put("/apiary/1", data=data)
+    answer = client.put("/api/apiary/1", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.MODIFICATION_SUCCESS
 
 
 def test_modify_delete_apiary_fail(client):
     logged_in(client)
-    answer = client.delete("/apiary/5")
-    assert answer.status_code == 500
+    answer = client.delete("/api/apiary/5")
+    assert answer.status_code == 404
 
 
 def test_modify_delete_apiary_success(client):
     logged_in(client)
 
-    answer = client.delete("/apiary/1")
+    answer = client.delete("/api/apiary/1")
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.DELETION_SUCCESS
