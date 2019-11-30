@@ -126,7 +126,7 @@ function submit_solve_action_modal(){
 
 
 function new_hive_condition(){
-    let my_url = get_full_url("/setup/hive/condition");
+    let my_url = get_full_url("/setup/hive/conditions");
     let name = $("#hive_condition_name").val()
 
     if (name == ""){
