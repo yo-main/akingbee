@@ -45,6 +45,9 @@ def submit_new_data(entity, data_name):
     if flask.request.method == "POST":
         data = flask.request.form.get("data")
 
+        if not data:
+            raise Error(alerts.EMPTY_FIELD)
+
         if class_ == Owner:
             obj = class_(**{"name": data})
         else:
@@ -58,6 +61,9 @@ def submit_new_data(entity, data_name):
         data_id = flask.request.form.get("id")
         data = flask.request.form.get("data")
         obj = class_.get_by_id(data_id)
+
+        if not data:
+            raise Error(alerts.EMPTY_FIELD)
 
         if class_ == Owner:
             obj.name = data

@@ -35,11 +35,13 @@ def login_required(f):
 
 def traductions(index=None):
     language = flask.session["language"]
+    return _get_trads(language, index)
 
+def _get_trads(language, index):
     if index is None:
         out = {key: item[language] for key, item in trads.traductions.items()}
     elif index in trads.traductions:
-        out = {index: trads.traductions[index][language]}
+        out = trads.traductions[index][language]
     else:
         raise Error(alerts.TRANSLATION_ID_DOES_NOT_EXISTS)
 
