@@ -37,6 +37,7 @@ def traductions(index=None):
     language = flask.session["language"]
     return _get_trads(language, index)
 
+
 def _get_trads(language, index):
     if index is None:
         out = {key: item[language] for key, item in trads.traductions.items()}

@@ -99,6 +99,7 @@ def hive_details(hive_id):
         hive.delete_instance()
         return Success(alerts.DELETION_SUCCESS)
 
+
 @api.route("/api/hive", methods=["POST"])
 def create_hive_api():
     hive_data = {
@@ -168,6 +169,7 @@ def create_action():
 
     return Success(alerts.ACTION_PLANIFICATION_SUCCESS)
 
+
 @api.route("/api/action/<int:action_id>", methods=["PUT"])
 @login_required
 def update_action(action_id):
@@ -182,7 +184,7 @@ def update_action(action_id):
         "type": config.COMMENT_TYPE_ACTION,
     }
 
-    text = flask.request.form.get('name')
+    text = flask.request.form.get("name")
     if flask.request.form.get("description"):
         text += f" - {flask.request.form['description']}"
     data["comment"] = text
@@ -195,7 +197,6 @@ def update_action(action_id):
     action.save()
 
     return Success(alerts.ACTION_SOLVED_SUCCESS)
-
 
 
 @api.route("/hive/<int:hive_id>", methods=["GET"])
@@ -264,7 +265,6 @@ def select_hive(hive_id, way):
     return flask.jsonify(f"/hive/{new_id}")
 
 
-
 @api.route("/api/comment/<int:comment_id>", methods=["DEL", "PUT"])
 @login_required
 def operate_comment(comment_id):
@@ -297,5 +297,3 @@ def operate_comment(comment_id):
         update_hive_history(hive)
 
         return Success(alerts.DELETION_SUCCESS)
-
-

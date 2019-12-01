@@ -35,7 +35,10 @@ def setupPage():
         return render("akingbee/setup/index.html", objects=None, title_id=None)
 
 
-@api.route("/setup/<string:entity>/<string:data_name>", methods=["GET", "POST", "PUT", "DEL"])
+@api.route(
+    "/setup/<string:entity>/<string:data_name>",
+    methods=["GET", "POST", "PUT", "DEL"],
+)
 @login_required
 def submit_new_data(entity, data_name):
     if data_name not in REFS:
@@ -86,7 +89,8 @@ def submit_new_data(entity, data_name):
         return render(
             "akingbee/setup/index.html",
             objects=get_all(class_),
-            column_name="name" if class_ == Owner else flask.session["language"],
-            title_id=REFS[data_name]["title"]
+            column_name="name"
+            if class_ == Owner
+            else flask.session["language"],
+            title_id=REFS[data_name]["title"],
         )
-
