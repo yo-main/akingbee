@@ -100,6 +100,7 @@ function modal_solve_action(button){
 
 function submit_solve_action_modal(){
     let action_id = $("#modal_solve_action").attr("action_id");
+    let my_url = get_full_url("/api/action/" + action_id);
 
     let data = {
         name: $("#solve_action_name").val(),
@@ -107,7 +108,11 @@ function submit_solve_action_modal(){
         description: $("#solve_action_comment").val(),
     }
 
-    let my_url = get_full_url("/api/action/" + action_id);
+    if (!data["date"]) {
+        missing_field();
+        return false;
+    }
+
 
     $.ajax({
         type: "PUT",

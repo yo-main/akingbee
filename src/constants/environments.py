@@ -10,7 +10,8 @@ if os.path.exists(".env"):
         row = row.strip()
         if row:
             var_name, var_value = row.split("=")
-            os.environ[var_name] = var_value
+            if var_name not in os.environ:
+                os.environ[var_name] = var_value
 
 PLATFORM_ENVIRONMENT = os.environ.get("AKB_ENVIRONMENT") or "TEST"
 assert PLATFORM_ENVIRONMENT in ("TEST", "PROD", "SIMU")
