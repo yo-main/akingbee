@@ -144,6 +144,8 @@ def create_a_comment():
         "type": config.COMMENT_TYPE_USER,
     }
 
+    comment_data = {key: item or None for key, item in comment_data.items()}
+
     comment = Comment(**comment_data)
     comment.save()
 
