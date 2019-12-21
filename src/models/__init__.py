@@ -3,7 +3,7 @@ from .users import User, Owner
 from .swarm import SwarmHealth, Swarm
 from .apiary import StatusApiary, HoneyType, Apiary
 from .hive import HiveCondition, Hive
-from .action import ActionType, StatusAction, Action
+from .events import EventType, StatusEvent, Event
 from .comment import CommentType, Comment
 
 MODELS = (
@@ -16,9 +16,9 @@ MODELS = (
     Apiary,
     HiveCondition,
     Hive,
-    ActionType,
-    StatusAction,
-    Action,
+    EventType,
+    StatusEvent,
+    Event,
     CommentType,
     Comment,
 )

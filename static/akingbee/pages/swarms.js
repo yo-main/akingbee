@@ -22,7 +22,7 @@ function arrowAction(way){
 }
 
 
-function modal_action(button){
+function modal_event(button){
 
     let bh_name;
     let bh_id;
@@ -40,19 +40,19 @@ function modal_action(button){
         swarm_name = $(button).attr("name");
     }
 
-    $("#submit_action").modal("show");
+    $("#submit_event").modal("show");
 
-    $("#action_name").val(swarm_name);
-    $("#action_name").attr("name", swarm_id);
-    $("#action_date").val(new Date().toDateInputValue());
+    $("#event_name").val(swarm_name);
+    $("#event_name").attr("name", swarm_id);
+    $("#event_date").val(new Date().toDateInputValue());
 }
 
 
-function modal_solve_action(button){
-    $("#solve_action").modal("show");
+function modal_solve_event(button){
+    $("#solve_event").modal("show");
     let name = button.title;
-    $("#action_name_done").val(name)
-    $("#action_name_done").attr("name", button.name);
+    $("#event_name_done").val(name)
+    $("#event_name_done").attr("name", button.name);
 }
 
 
@@ -138,7 +138,7 @@ function del_comment(button){
                 showError(answer);
             },
             success: function(answer, code){
-                $("#submit_action").modal("hide");
+                $("#submit_event").modal("hide");
                 showSuccess(answer);
                 window.location.reload();
             }
@@ -147,15 +147,15 @@ function del_comment(button){
 }
 
 
-function submit_solve_action_modal(){
+function submit_solve_event_modal(){
     let data = {
-        name: $("#action_name_done").val(),
-        comment: $("#action_comment_done").val(),
-        ac_id: $("#action_name_done").attr("name"),
-        date: $("#action_date_done").val()
+        name: $("#event_name_done").val(),
+        comment: $("#event_comment_done").val(),
+        ac_id: $("#event_name_done").attr("name"),
+        date: $("#event_date_done").val()
     }
 
-    let my_url = get_full_url("/hive/submit_solve_action_modal");
+    let my_url = get_full_url("/hive/submit_solve_event_modal");
 
     $.ajax({
         type: "POST",
@@ -165,7 +165,7 @@ function submit_solve_action_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#submit_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -190,7 +190,7 @@ function submit_edit_comment_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#submit_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -295,19 +295,19 @@ function select_swarm(button){
     window.location = myUrl;
 }
 
-function submit_action_modal(){
+function submit_event_modal(){
 
     let data = {
-        date: $("#action_date").val(),
-        comment: $("#action_comment").val(),
-        bh_id: $("#action_name").attr("name"),
-        deadline: $("#action_deadline").val(),
-        action_type: $("#action_type").val()
+        date: $("#event_date").val(),
+        comment: $("#event_comment").val(),
+        bh_id: $("#event_name").attr("name"),
+        deadline: $("#event_deadline").val(),
+        event_type: $("#event_type").val()
     };
 
-    let my_url = get_full_url("/hive/submit_action_modal");
+    let my_url = get_full_url("/hive/submit_event_modal");
 
-    if ((data.action_type == "") || (data.date == "")){
+    if ((data.event_type == "") || (data.date == "")){
         if (LANGUAGE == "fr"){
             createError("Merci de remplir tous les champs", "Titre");
         }
@@ -325,7 +325,7 @@ function submit_action_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#submit_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }

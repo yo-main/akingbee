@@ -6,7 +6,7 @@ from .users import User
 from .swarm import SwarmHealth, Swarm
 from .apiary import Apiary
 from .hive import Hive, HiveCondition
-from .action import Action
+from .events import Event
 
 
 class CommentType(BaseModel):
@@ -23,7 +23,7 @@ class Comment(BaseModel):
     type = ForeignKeyField(CommentType, backref="comments")
     apiary = ForeignKeyField(Apiary, backref="comments", null=True)
     health = ForeignKeyField(SwarmHealth, backref="comments", null=True)
-    action = ForeignKeyField(Action, backref="comments", null=True)
+    event = ForeignKeyField(Event, backref="comments", null=True)
     comment = TextField()
     hive = ForeignKeyField(Hive, backref="comments", null=True)
     condition = ForeignKeyField(HiveCondition, backref="comments", null=True)

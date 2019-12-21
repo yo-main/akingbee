@@ -7,7 +7,7 @@ from src.models import User
 from src.models import (
     HiveCondition,
     HoneyType,
-    ActionType,
+    EventType,
     StatusApiary,
     SwarmHealth,
     Owner,
@@ -65,7 +65,7 @@ def create_new_user(data):
         mapping = (
             (HiveCondition, config.DEFAULT_HIVE_CONDITION),
             (StatusApiary, config.DEFAULT_STATUS_APIARY),
-            (ActionType, config.DEFAULT_ACTION_TYPE),
+            (EventType, config.DEFAULT_EVENT_TYPE),
             (HoneyType, config.DEFAULT_HONEY_KIND),
             (SwarmHealth, config.DEFAULT_SWARM_HEALTH),
             (Owner, ({"name": user.username},)),

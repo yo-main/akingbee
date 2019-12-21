@@ -15,6 +15,5 @@ def init():
     DB.initialize(database)
 
     if PLATFORM_ENVIRONMENT == "TEST":
-        from src.models import MODELS
-
+        from src.models import MODELS, User
         DB.create_tables(MODELS)

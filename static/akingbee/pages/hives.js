@@ -80,7 +80,7 @@ function del_comment(button){
                 showError(answer);
             },
             success: function(answer, code){
-                $("#submit_action").modal("hide");
+                $("#submit_event").modal("hide");
                 showSuccess(answer);
                 window.location.reload();
             }
@@ -89,23 +89,23 @@ function del_comment(button){
 }
 
 
-function modal_solve_action(button){
-    $("#modal_solve_action").modal("show");
-    $("#modal_solve_action").attr("action_id", button.getAttribute("action_id"));
+function modal_solve_event(button){
+    $("#modal_solve_event").modal("show");
+    $("#modal_solve_event").attr("event_id", button.getAttribute("event_id"));
 
-    $("#solve_action_name").attr("name", button.title);
-    $("#solve_action_name").val(button.title);
+    $("#solve_event_name").attr("name", button.title);
+    $("#solve_event_name").val(button.title);
 }
 
 
-function submit_solve_action_modal(){
-    let action_id = $("#modal_solve_action").attr("action_id");
-    let my_url = get_full_url("/api/action/" + action_id);
+function submit_solve_event_modal(){
+    let event_id = $("#modal_solve_event").attr("event_id");
+    let my_url = get_full_url("/api/event/" + event_id);
 
     let data = {
-        name: $("#solve_action_name").val(),
-        date: $("#solve_action_date").val(),
-        description: $("#solve_action_comment").val(),
+        name: $("#solve_event_name").val(),
+        date: $("#solve_event_date").val(),
+        description: $("#solve_event_comment").val(),
     }
 
     if (!data["date"]) {
@@ -122,7 +122,7 @@ function submit_solve_action_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#modal_solve_action").modal("hide");
+            $("#modal_solve_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -243,24 +243,24 @@ function select_hive(button){
     window.location = myUrl;
 }
 
-function show_modal_new_action(button){
-    $("#new_action_date").val(new Date().toDateInputValue());
-    $("#modal_new_action").modal("show");
+function show_modal_new_event(button){
+    $("#new_event_date").val(new Date().toDateInputValue());
+    $("#modal_new_event").modal("show");
 }
 
-function submit_new_action(){
+function submit_new_event(){
 
     let data = {
-        date: $("#new_action_date").val(),
-        action_type: $("#new_action_type").val(),
-        deadline: $("#new_action_deadline").val(),
-        note: $("#new_action_note").val(),
-        hive_id: $("#modal_new_action").attr("hive_id"),
+        date: $("#new_event_date").val(),
+        event_type: $("#new_event_type").val(),
+        deadline: $("#new_event_deadline").val(),
+        note: $("#new_event_note").val(),
+        hive_id: $("#modal_new_event").attr("hive_id"),
     };
 
-    let my_url = get_full_url("/api/action");
+    let my_url = get_full_url("/api/event");
 
-    if (!data.action_type || !data.date){
+    if (!data.event_type || !data.date){
         missing_field();
         return false;
     }
@@ -273,7 +273,7 @@ function submit_new_action(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#modal_new_action").modal("hide");
+            $("#modal_new_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
@@ -395,7 +395,7 @@ function edit_comment(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_action").modal("hide");
+            $("#submit_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }

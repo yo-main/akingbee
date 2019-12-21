@@ -30,7 +30,7 @@ def test_get_setup_page_success(client):
     ("hive", "owner"),
     ("swarm", "health"),
     ("hive", "conditions"),
-    ("hive", "actions"),
+    ("hive", "events"),
     ("hive", "honey")
 ])
 def test_create_elements_fail(entity, data_name, client):
@@ -43,7 +43,7 @@ def test_create_elements_fail(entity, data_name, client):
     ("hive", "owner"),
     ("swarm", "health"),
     ("hive", "conditions"),
-    ("hive", "actions"),
+    ("hive", "events"),
     ("hive", "honey")
 ])
 def test_create_elements_success(entity, data_name, client):
@@ -60,7 +60,7 @@ def test_create_elements_success(entity, data_name, client):
     ("hive", "owner"),
     ("swarm", "health"),
     ("hive", "conditions"),
-    ("hive", "actions"),
+    ("hive", "events"),
     ("hive", "honey")
 ])
 def test_modify_elements_success(entity, data_name, client):

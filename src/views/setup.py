@@ -9,7 +9,7 @@ from src.models import (
     Owner,
     HiveCondition,
     HoneyType,
-    ActionType,
+    EventType,
     SwarmHealth,
     StatusApiary,
 )
@@ -22,7 +22,7 @@ REFS = {
     "owner": {"object": Owner, "title": 40},
     "conditions": {"object": HiveCondition, "title": 114},
     "honey": {"object": HoneyType, "title": 27},
-    "actions": {"object": ActionType, "title": 119},
+    "events": {"object": EventType, "title": 119},
     "status": {"object": StatusApiary, "title": 118},
     "health": {"object": SwarmHealth, "title": 113},
 }

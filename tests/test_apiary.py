@@ -8,7 +8,7 @@ from src.helpers.users import create_new_user
 
 
 @pytest.fixture(scope="module", autouse=True)
-def create_a_user():
+def create_a_user(fake_database):
     create_new_user(
         {
             "username": "test",

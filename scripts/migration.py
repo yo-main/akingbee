@@ -1,17 +1,17 @@
-from src.models import MODELS, CommentType, StatusAction
+from src.models import MODELS, CommentType, StatusEvent
 from src.database import DB
 
 with DB:
     DB.create_tables(MODELS)
-    
+
 
 COMMENT_TYPES = (
     {"fr": "Utilisateur", "en": "User"},
     {"fr": "Système", "en": "System"},
-    {"fr": "Action", "en": "Action"},
+    {"fr": "Évènement", "en": "Event"},
 )
 
-ACTION_STATUS = (
+EVENT_STATUS = (
     {"fr": "Fait", "en": "Done"},
     {"fr": "En attente", "en": "Pending"},
 )
@@ -20,8 +20,8 @@ with DB:
     for data in COMMENT_TYPES:
         entry = CommentType(**data)
         entry.save()
-        
-    for data in ACTION_STATUS:
-        entry = StatusAction(**data)
+
+    for data in EVENT_STATUS:
+        entry = StatusEvent(**data)
         entry.save()
- 
+

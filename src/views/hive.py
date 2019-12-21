@@ -25,8 +25,8 @@ from src.models import (
     SwarmHealth,
     Comment,
     CommentType,
-    Action,
-    ActionType,
+    Event,
+    EventType,
 )
 
 
@@ -154,36 +154,36 @@ def create_a_comment():
     return Success(alerts.MODIFICATION_SUCCESS)
 
 
-@api.route("/api/action", methods=["POST"])
+@api.route("/api/event", methods=["POST"])
 @login_required
-def create_action():
+def create_event():
     data = {
         "hive": flask.request.form.get("hive_id"),
         "date": convert_to_date_object(flask.request.form.get("date")),
         "note": flask.request.form.get("note"),
-        "type_id": flask.request.form.get("action_type"),
+        "type_id": flask.request.form.get("event_type"),
         "deadline": convert_to_date_object(flask.request.form.get("deadline")),
         "status": config.STATUS_PENDING,
     }
 
-    action = Action(**data)
-    action.save()
+    event = Event(**data)
+    event.save()
 
-    return Success(alerts.ACTION_PLANIFICATION_SUCCESS)
+    return Success(alerts.EVENT_PLANIFICATION_SUCCESS)
 
 
-@api.route("/api/action/<int:action_id>", methods=["PUT"])
+@api.route("/api/event/<int:event_id>", methods=["PUT"])
 @login_required
-def update_action(action_id):
-    action = Action.get_by_id(action_id)
-    hive = Hive.get_by_id(action.hive)
+def update_event(event_id):
+    event = Event.get_by_id(event_id)
+    hive = Hive.get_by_id(event.hive)
 
     data = {
         "date": convert_to_date_object(flask.request.form.get("date")),
-        "action": action.id,
+        "event": event.id,
         "hive": hive.id,
         "apiary": hive.apiary,
-        "type": config.COMMENT_TYPE_ACTION,
+        "type": config.COMMENT_TYPE_EVENT,
     }
 
     text = flask.request.form.get("name")
@@ -194,11 +194,11 @@ def update_action(action_id):
     comment = Comment(**data)
     comment.save()
 
-    action.date_done = data["date"]
-    action.status = config.STATUS_DONE
-    action.save()
+    event.date_done = data["date"]
+    event.status = config.STATUS_DONE
+    event.save()
 
-    return Success(alerts.ACTION_SOLVED_SUCCESS)
+    return Success(alerts.EVENT_SOLVED_SUCCESS)
 
 
 @api.route("/hive/<int:hive_id>", methods=["GET"])
@@ -228,13 +228,13 @@ def hive_profil(hive_id):
 
     comment_types = tuple(set(comment.type for comment in comments))
 
-    actions = Action.select().where(
-        Action.hive == hive_id and Action.status == config.STATUS_PENDING
+    events = Event.select().where(
+        Event.hive == hive_id and Event.status == config.STATUS_PENDING
     )
 
     hive_conditions = get_all(HiveCondition)
     swarm_healths = get_all(SwarmHealth)
-    action_types = get_all(ActionType)
+    event_types = get_all(EventType)
     apiaries = get_all(Apiary)
     owners = get_all(Owner)
 
@@ -242,13 +242,13 @@ def hive_profil(hive_id):
         "akingbee/hive/hive_details.html",
         hive=hive,
         comments=comments,
-        actions=actions,
+        events=events,
         comment_types=comment_types,
         hive_conditions=hive_conditions,
         apiaries=apiaries,
         swarm_healths=swarm_healths,
         owners=owners,
-        action_types=action_types,
+        event_types=event_types,
     )
 
 
@@ -287,11 +287,11 @@ def operate_comment(comment_id):
     elif flask.request.method == "DEL":
         comment = Comment.get_by_id(comment_id)
 
-        if comment.type.id == config.COMMENT_TYPE_ACTION:
-            action = Action.get_by_id(comment.action)
-            action.status = config.STATUS_PENDING
-            action.date_done = None
-            action.save()
+        if comment.type.id == config.COMMENT_TYPE_EVENT:
+            event = Event.get_by_id(comment.event)
+            event.status = config.STATUS_PENDING
+            event.date_done = None
+            event.save()
 
         hive = Hive.get_by_id(comment.hive)
         comment.delete_instance()

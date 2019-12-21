@@ -67,7 +67,7 @@
                                     <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_comment();">{{trads[73]}}</button>
                                 </div>
                                 <div class="col-auto">
-                                    <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_action();">{{trads[54]}}</button>
+                                    <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_event();">{{trads[54]}}</button>
                                 </div>
                                 <div class="col-auto">
                                     <button type="button"
@@ -87,7 +87,7 @@
                     <!--     <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a> -->
                     <!-- </li> -->
                     <li class="nav-item">
-                        <a class="nav-link" id="action_tab" data-toggle="tab" href="#action_content" role="tab" aria-control="action_content" aria-selected="true">{{trads[112]}}</a>
+                        <a class="nav-link" id="event_tab" data-toggle="tab" href="#event_content" role="tab" aria-control="event_content" aria-selected="true">{{trads[112]}}</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
@@ -168,29 +168,29 @@
                     {% endif %}
                     </div>
 
-                     <!-- ACTION SECTION -->
-                    <div class="tab-pane fade" id="action_content" role="tabpanel" aria-labelledby="action_tab">
+                     <!-- EVENT SECTION -->
+                    <div class="tab-pane fade" id="event_content" role="tabpanel" aria-labelledby="event_tab">
                     <br/>
-                    {% if actions|length > 0 %}
-                        {% for n in range(actions|length) %}
+                    {% if events|length > 0 %}
+                        {% for n in range(events|length) %}
                             <div class="row justify-center">
                                 <div class="col-11 alert alert-warning">
                                     <div class="row">
                                         <div class="col-auto">
                                             <span>
-                                                {{trads[65]}} : {{actions[n].type[lang]}}
-                                                {% if actions[n].deadline %}
+                                                {{trads[65]}} : {{events[n].type[lang]}}
+                                                {% if events[n].deadline %}
                                                     {{trads[66]}}
-                                                    {{actions[n].deadline|datetime}}
+                                                    {{events[n].deadline|datetime}}
                                                 {% endif %}&nbsp&nbsp
-                                                {% if actions[n].note %}
+                                                {% if events[n].note %}
                                                     -&nbsp&nbsp
-                                                    {{trads[115]}}: {{actions[n].note}}
+                                                    {{trads[115]}}: {{events[n].note}}
                                                 {% endif %}
                                             </span>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="button" id="hello" class="btn btn-link btn-alert" title="{{actions[n].type[lang]}}" action_id="{{actions[n].id}}" onclick="modal_solve_action(this);">{{trads[68]}}</button>
+                                            <button type="button" id="hello" class="btn btn-link btn-alert" title="{{events[n].type[lang]}}" event_id="{{events[n].id}}" onclick="modal_solve_event(this);">{{trads[68]}}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -218,10 +218,10 @@
 
 {% include "/akingbee/modals/edit_hive.html" %}
 {% include "/akingbee/modals/new_swarm.html" %}
-{% include "/akingbee/modals/new_action.html" %}
+{% include "/akingbee/modals/new_event.html" %}
 {% include "/akingbee/modals/new_comment.html" %}
 {% include "/akingbee/modals/edit_comment.html" %}
-{% include "/akingbee/modals/solve_action.html" %}
+{% include "/akingbee/modals/solve_event.html" %}
 
 {% endblock %}
 
