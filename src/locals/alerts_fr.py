@@ -29,6 +29,7 @@ errors = {
     INCONSISTANT_DATA: "Des données inconsistantes ont été reçues",
     EMPTY_FIELD: "Des données reçues sont vides",
     UNKNOWN_DATA: "Type de donnée inconnu",
+    HIVE_ALREADY_IN_APIARY: "La ruche fait déjà partie du rucher",
 }
 
 
@@ -47,4 +48,5 @@ successes = {
     NEW_COMMENT_SUCCESS: ("", "Nouveau commentaire enregistré !"),
     NEW_SWARM_SUCCESS: ("", "Nouvel essaim enregistré !"),
     SWARM_ATTACH_WITH_SUCCESS: ("", "Nouvel essaim enregistré !"),
+    HIVE_MOVE_SUCCESS: ("", "Ruche démanagée avec succès"),
 }

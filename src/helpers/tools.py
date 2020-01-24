@@ -1,4 +1,5 @@
 import functools
+import datetime
 
 import flask
 from peewee import DoesNotExist
@@ -33,7 +34,7 @@ def login_required(f):
     return decorated_function
 
 
-def traductions(index=None):
+def get_traductions(index=None):
     language = flask.session["language"]
     return _get_trads(language, index)
 
@@ -54,7 +55,7 @@ def render(url, **kwargs):
         flask.session["language"] = config.FRENCH
 
     return flask.render_template(
-        url, lang=flask.session["language"], trads=traductions(), **kwargs
+        url, lang=flask.session["language"], trads=get_traductions(), **kwargs
     )
 
 
@@ -99,3 +100,20 @@ def update_hive_history(hive):
         hive.save()
 
     return True
+
+def create_system_comment_from_hive(msg, hive):
+    comment = Comment(
+        comment=msg,
+        date=datetime.datetime.now(),
+        user=hive.user_id,
+        hive=hive.id,
+        swarm=hive.swarm_id,
+        type=config.COMMENT_TYPE_SYSTEM,
+        apiary=hive.apiary_id,
+        condition=hive.condition,
+    )
+
+    if hive.swarm:
+        comment.health = hive.swarm.health_id
+
+    return comment

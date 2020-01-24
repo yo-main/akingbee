@@ -29,6 +29,7 @@ errors = {
     INCONSISTANT_DATA: "Inconsistant data was received",
     EMPTY_FIELD: "Received data were empty",
     UNKNOWN_DATA: "Unknown data type",
+    HIVE_ALREADY_IN_APIARY: "The hive already belongs to that apiary",
 }
 
 
@@ -50,4 +51,5 @@ successes = {
     NEW_COMMENT_SUCCESS: ("", "Commentary successfully registered !"),
     NEW_SWARM_SUCCESS: ("", "Swarm successfully created !"),
     SWARM_ATTACH_WITH_SUCCESS: ("", "Swarm successfully created !"),
+    HIVE_MOVE_SUCCESS: ("", "Hive successfully moved"),
 }

@@ -7,14 +7,16 @@ from src.database import DB
 from src.helpers.tools import (
     render,
     get_all,
+    get_traductions,
     login_required,
     update_hive_history,
+    create_system_comment_from_hive,
 )
 from src.helpers.date import convert_to_date_object
+from src.helpers.users import get_user_id
 from src.constants import config
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error, Success
-from src.constants.trad_codes import traductions
 
 from src.models import (
     Hive,
@@ -98,6 +100,36 @@ def hive_details(hive_id):
     elif flask.request.method == "DEL":
         hive.delete_instance()
         return Success(alerts.DELETION_SUCCESS)
+
+@api.route("/api/hive/<int:hive_id>/move/<int:apiary_id>", methods=["POST"])
+def move_hive(hive_id, apiary_id):
+    try:
+        hive = Hive.get_by_id(hive_id)
+        apiary = Apiary.get_by_id(apiary_id)
+    except DoesNotExist:
+        flask.abort(404)
+
+    if hive.apiary_id == apiary.id:
+        raise Error(alerts.HIVE_ALREADY_IN_APIARY)
+
+    user_id = get_user_id()
+    if not user_id:
+        raise Error(alerts.USER_COULD_NOT_BE_IDENTIFIED)
+
+    if user_id != hive.user_id or hive.user != apiary.user:
+        raise Error(alerts.INCONSISTANT_DATA)
+
+    msg = get_traductions(122).format(old=hive.apiary.name, new=apiary.name)
+    new_comment = create_system_comment_from_hive(msg, hive)
+
+    hive.apiary = apiary
+
+    with DB.atomic():
+        hive.save()
+        new_comment.save()
+
+    return Success(alerts.HIVE_MOVE_SUCCESS)
+
 
 
 @api.route("/api/hive", methods=["POST"])
@@ -217,7 +249,7 @@ def hive_profil(hive_id):
         Comment.select(Comment, Hive, Apiary, CommentType)
         .join(Hive)
         .switch(Comment)
-        .join(Apiary)
+        .join(Apiary, JOIN.LEFT_OUTER)
         .switch(Comment)
         .join(SwarmHealth, JOIN.LEFT_OUTER)
         .switch(Comment)

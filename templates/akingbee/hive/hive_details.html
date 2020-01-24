@@ -60,18 +60,28 @@
                         </div>
                         <div class="col flex-end">
                             <div class="row">
+                                <!-- Edit hive-->
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_hive_edit();">{{trads[49]}}</button>
                                 </div>
+                                <!-- New comment-->
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_comment();">{{trads[73]}}</button>
                                 </div>
+                                <!-- New event-->
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-link btn-smenu" onclick="show_modal_new_event();">{{trads[54]}}</button>
                                 </div>
+                                <!-- other actions-->
                                 <div class="col-auto">
-                                    <button type="button"
-                                        name="{{hive.name}}" class="btn btn-link btn-smenu" onclick="delete_hive();">{{trads[94]}}</button>
+                                    <button id="button_other_actions" type="btn-group" class="btn btn-link btn-smenu dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{trads[120]}}</button>
+                                    <div class="dropdown-menu" aria-labelledby="button_other_actions">
+                                        <!-- delete hive-->
+                                        <button class="dropdown-item" class="btn btn-link btn-smenu" name="{{hive.name}}" onclick="delete_hive({{hive.id}})">{{trads[94]}}</button>
+                                        {% if apiaries|length  >= 2 %}
+                                        <button class="dropdown-item" class="btn btn-link btn-smenu" name="{{hive.name}}" onclick="show_move_hive_modal()">{{trads[121]}}</button>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -83,9 +93,6 @@
                     <li class="nav-item">
                         <a class="nav-link active" id="history_tab" data-toggle="tab" href="#history_content" role="tab" aria-control="history_content" aria-selected="true">{{trads[111]}}</a>
                     </li>
-                    <!-- <li class="nav-item"> -->
-                    <!--     <a class="nav-link" id="swarm_tab" data-toggle="tab" href="#swarm_content" role="tab" aria-control="swarm_content" aria-selected="true">{{trads[110]}}</a> -->
-                    <!-- </li> -->
                     <li class="nav-item">
                         <a class="nav-link" id="event_tab" data-toggle="tab" href="#event_content" role="tab" aria-control="event_content" aria-selected="true">{{trads[112]}}</a>
                     </li>
@@ -200,17 +207,6 @@
                     <p>{{trads[105]}}</p>
                     {% endif %}
                     </div>
-
-<!--                     <1!-- SWARM SECTION--1>-->
-<!--                     <div class="tab-pane fade" id="swarm_content" role="tabpanel" aria-labelledby="swarm_tab">-->
-<!--                         <br/>-->
-<!--                         {% if hive.swarm %}-->
-<!--                         <p>Bien</p>-->
-<!--                         {% else %}-->
-<!--                         <p>{{trads[107]}}</p>-->
-<!--                         <button type="button" class="btn btn-link btn-alert" hive="{{hive.id}}" onclick="swarm_create_modal();">{{trads[108]}}</button>-->
-<!--                         {% endif %}-->
-<!--                     </div>-->
                </div>
             </div>
         </div>
@@ -222,6 +218,7 @@
 {% include "/akingbee/modals/new_comment.html" %}
 {% include "/akingbee/modals/edit_comment.html" %}
 {% include "/akingbee/modals/solve_event.html" %}
+{% include "/akingbee/modals/move_hive.html" %}
 
 {% endblock %}
 

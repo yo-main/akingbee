@@ -6,7 +6,7 @@ from tests.fixtures import client, fake_database, logged_in
 
 from src.constants import alert_codes as alerts
 from src.helpers.users import create_new_user
-from src.models import Apiary
+from src.models import Apiary, Hive, CommentType
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -18,6 +18,10 @@ def setup_database(fake_database):
             "email": "aze@gmail.com"
         }
     )
+
+    CommentType(en="english", fr="french").save()
+    CommentType(en="french", fr="english").save()
+
     Apiary(
         user_id=1,
         name="tets_apiary",
@@ -26,6 +30,17 @@ def setup_database(fake_database):
         location="test_location",
         honey_type=1
     ).save()
+
+    Apiary(
+        user_id=1,
+        name="here",
+        status=1,
+        birthday=datetime.date.today(),
+        location="there",
+        honey_type=2
+    ).save()
+
+
 
 
 
@@ -126,6 +141,23 @@ def test_modify_hive_success(client):
     assert answer.json["code"] == alerts.MODIFICATION_SUCCESS
 
 
+def test_move_hive_success(client):
+    logged_in(client)
+
+    assert Hive.get_by_id(1).apiary_id == 1
+    answer = client.post("/api/hive/1/move/2")
+    assert answer.status_code == 200
+    assert answer.json["code"] == alerts.HIVE_MOVE_SUCCESS
+    assert Hive.get_by_id(1).apiary_id == 2
+    answer = client.post("/api/hive/1/move/1")
+    assert Hive.get_by_id(1).apiary_id == 1
+
+def test_move_hive_fail(client):
+    logged_in(client)
+
+    assert Hive.get_by_id(1).apiary_id == 1
+    answer = client.post("/api/hive/1/move/3")
+    assert answer.status_code == 404
 
 
 

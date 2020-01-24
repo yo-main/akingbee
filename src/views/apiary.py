@@ -6,6 +6,7 @@ from src.helpers.tools import get_all, render, login_required
 from src.helpers.date import convert_to_date_object
 from src.services.alerts import Error, Success
 from src.constants import alert_codes as alerts
+from src.database import DB
 
 from src.models import Apiary, StatusApiary, HoneyType
 
@@ -132,5 +133,14 @@ def apiary_details(apiary_id):
         return Success(alerts.MODIFICATION_SUCCESS)
 
     elif flask.request.method == "DELETE":
-        apiary.delete_instance()
+        with DB.atomic():
+            for comment in apiary.comments:
+                comment.apiary = None
+                comment.save()
+
+            try:
+                apiary.delete_instance()
+            except IntegrityError:
+                raise Error(alerts.SQL_FOREIGN_KEY_ERROR)
+
         return Success(alerts.DELETION_SUCCESS)

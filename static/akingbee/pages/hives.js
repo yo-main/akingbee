@@ -458,7 +458,7 @@ function filter_table_hive(){
     let apiary = $("#apiary_filter").val();
     let owner = $("#owner_filter").val();
     let condition = $("#condition_filter").val();
-    
+
     let table = document.getElementById("hive_table");
     let tr = table.getElementsByTagName("tr");
 
@@ -481,13 +481,13 @@ function filter_table_hive(){
                 flag = 1;
             }
         }
-        
+
         if(condition){
             if (condition != condition_td){
                 flag = 1;
             }
         }
-        
+
         if (flag == 1){
             tr[i].style.display = "none";
         }
@@ -498,9 +498,7 @@ function filter_table_hive(){
 }
 
 
-function delete_hive(){
-    let params = window.location.pathname;
-    let hive_id = params.split("/")[2];
+function delete_hive(hive_id){
     let url = get_full_url("/api/hive/" + hive_id);
 
     if (LANGUAGE == "fr"){
@@ -528,7 +526,7 @@ function delete_hive(){
 
 function attach_swarm_on_hive(button) {
     hive_id = $(button).attr("hive");
-    
+
     let data = {
         "hive_id": hive_id,
         "swarm_health": $("#swarm_health").val()
@@ -547,17 +545,39 @@ function attach_swarm_on_hive(button) {
             window.location.reload();
         }
     });
-
 }
 
+
 function show_swarm_create_modal(){
-    let pName = window.location.pathname;
     $("#submit_new_swarm").modal("show");
     $("#comment_name").attr("name", bh_id);
 }
 
 
+function show_move_hive_modal(){
+    $("#modal_move_hive").modal("show");
+}
 
+function move_hive(hive_id){
+    let apiary_id = $("#apiary_name_move_modal").val();
 
+    if (!apiary_id) {
+        missing_field();
+        return false;
+    };
 
+    let url = get_full_url("/api/hive/" + hive_id + "/move/" + apiary_id);
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            showSuccess(answer);
+            window.location = get_full_url("/hive");
+        }
+    });
+}
 
