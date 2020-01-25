@@ -131,5 +131,5 @@ traductions = {
     119: {FRENCH: "Types d'évènement", ENGLISH: "Event types"},
     120: {FRENCH: "Autres actions", ENGLISH: "Other actions"},
     121: {FRENCH: "Deplacer la ruche", ENGLISH: "Move the hive"},
-    122: {FRENCH: "Ruche déplacer de {old} vers {new}", ENGLISH: "Hive moved from {old} to {new}"},
+    122: {FRENCH: "Ruche déplacée de {old} vers {new}", ENGLISH: "Hive moved from {old} to {new}"},
 }
