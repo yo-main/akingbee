@@ -47,11 +47,14 @@ class Config:
                 row = row.strip()  # get rid of empty lines
                 if row:
                     var_name, var_value = row.split("=")
-                    if var_value == "true":
-                        var_value = True
 
                     if var_name in os.environ:
                         var_value = os.environ[var_name]
+
+                    if var_value == "true":
+                        var_value = True
+                    elif var_value == "false":
+                        var_value = False
 
                     setattr(self, var_name, var_value)
 
