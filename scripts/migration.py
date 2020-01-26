@@ -24,4 +24,3 @@ with DB:
     for data in EVENT_STATUS:
         entry = StatusEvent(**data)
         entry.save()
-

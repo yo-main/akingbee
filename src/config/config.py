@@ -13,7 +13,9 @@ class Config:
     PATH_PROJECT = os.getcwd()
     PATH_LOGS = os.path.join(PATH_PROJECT, LOGS_FOLDER_NAME)
     PATH_IMAGES = os.path.join(PATH_PROJECT, IMAGES_FOLDER_NAME)
-    PATH_FLASK_SESSIONS = os.path.join(PATH_PROJECT, FLASK_SESSIONS_FOLDER_NAME)
+    PATH_FLASK_SESSIONS = os.path.join(
+        PATH_PROJECT, FLASK_SESSIONS_FOLDER_NAME
+    )
 
     URL_PREFIX = ""
 
@@ -30,7 +32,6 @@ class Config:
     DATABASE_SIMU = "akb_test"
     DATABASE_PROD = "akb"
 
-
     def __init__(self):
         self.load_env_file()
         self.validate()
@@ -43,7 +44,7 @@ class Config:
     def load_env_file(self):
         if os.path.exists(".env"):
             for row in open(".env"):
-                row = row.strip() # get rid of empty lines
+                row = row.strip()  # get rid of empty lines
                 if row:
                     var_name, var_value = row.split("=")
                     if var_value == "true":
@@ -69,5 +70,5 @@ class Config:
             "host": self.DATABASE_HOST,
             "user": self.DATABASE_USER,
             "password": self.DATABASE_PASSWORD,
-            "database": getattr(self, f"DATABASE_{self.ENV}")
+            "database": getattr(self, f"DATABASE_{self.ENV}"),
         }

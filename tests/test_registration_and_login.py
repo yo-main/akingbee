@@ -49,7 +49,11 @@ def test_register_user_wrong_password(password, client):
 
 
 def test_register_user_success(client):
-    form = {"username": "user_test", "email": "test@test.com", "pwd": "azeAZE123!!"}
+    form = {
+        "username": "user_test",
+        "email": "test@test.com",
+        "pwd": "azeAZE123!!",
+    }
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
@@ -59,7 +63,11 @@ def test_register_user_success(client):
 
 
 def test_register_user_username_taken(client):
-    form = {"username": "user_test", "email": "testing@test.com", "pwd": "azeAZE123!!"}
+    form = {
+        "username": "user_test",
+        "email": "testing@test.com",
+        "pwd": "azeAZE123!!",
+    }
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
@@ -69,7 +77,11 @@ def test_register_user_username_taken(client):
 
 
 def test_register_user_email_taken(client):
-    form = {"username": "user_testing", "email": "test@test.com", "pwd": "azeAZE123!!"}
+    form = {
+        "username": "user_testing",
+        "email": "test@test.com",
+        "pwd": "azeAZE123!!",
+    }
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 

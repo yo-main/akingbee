@@ -101,6 +101,7 @@ def update_hive_history(hive):
 
     return True
 
+
 def create_system_comment_from_hive(msg, hive):
     comment = Comment(
         comment=msg,

@@ -101,6 +101,7 @@ def hive_details(hive_id):
         hive.delete_instance()
         return Success(alerts.DELETION_SUCCESS)
 
+
 @api.route("/api/hive/<int:hive_id>/move/<int:apiary_id>", methods=["POST"])
 def move_hive(hive_id, apiary_id):
     try:
@@ -129,7 +130,6 @@ def move_hive(hive_id, apiary_id):
         new_comment.save()
 
     return Success(alerts.HIVE_MOVE_SUCCESS)
-
 
 
 @api.route("/api/hive", methods=["POST"])

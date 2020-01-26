@@ -15,4 +15,5 @@ def init():
 
     if CONFIG.ENV == "TEST":
         from src.models import MODELS, User
+
         DB.create_tables(MODELS)

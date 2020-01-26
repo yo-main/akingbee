@@ -17,8 +17,10 @@ def create_app():
     app = flask.Flask(__name__)
 
     app.config["TEMPLATE_AUTO_RELOAD"] = True
-    app.config["PERMANENT_SESSION_LIFETIME"] = 60*60  # lifetime of a cookie -> 1 hour
-    app.config["SESSION_TYPE"] = 'filesystem'
+    app.config["PERMANENT_SESSION_LIFETIME"] = (
+        60 * 60
+    )  # lifetime of a cookie -> 1 hour
+    app.config["SESSION_TYPE"] = "filesystem"
     app.config["SESSION_FILE_DIR"] = CONFIG.PATH_FLASK_SESSIONS
     app.config["SESSION_PERMANENT"] = False
 
@@ -29,7 +31,7 @@ def create_app():
     db.init()
 
     # JINJA
-    app.jinja_env.filters['datetime'] = jinja_date_formatting
+    app.jinja_env.filters["datetime"] = jinja_date_formatting
 
     # COOKIES
     flask_session.Session(app)
@@ -67,4 +69,3 @@ def register_blueprint(app):
     app.register_blueprint(views.ns_hive)
     app.register_blueprint(views.ns_swarm)
     app.register_blueprint(views.ns_setup)
-

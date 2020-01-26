@@ -81,7 +81,10 @@ traductions = {
         FRENCH: "Cliquer ici pour marquer comme fait !",
         ENGLISH: "Click here to mark as done !",
     },
-    69: {FRENCH: "Marquer l'évènement comme fait", ENGLISH: "Mark the event as done"},
+    69: {
+        FRENCH: "Marquer l'évènement comme fait",
+        ENGLISH: "Mark the event as done",
+    },
     70: {FRENCH: "Modifier le commentaire", ENGLISH: "Edit comment"},
     72: {FRENCH: "Toutes", ENGLISH: "All"},
     73: {FRENCH: "Nouveau commentaire", ENGLISH: "New comment"},
@@ -131,5 +134,8 @@ traductions = {
     119: {FRENCH: "Types d'évènement", ENGLISH: "Event types"},
     120: {FRENCH: "Autres actions", ENGLISH: "Other actions"},
     121: {FRENCH: "Deplacer la ruche", ENGLISH: "Move the hive"},
-    122: {FRENCH: "Ruche déplacée de {old} vers {new}", ENGLISH: "Hive moved from {old} to {new}"},
+    122: {
+        FRENCH: "Ruche déplacée de {old} vers {new}",
+        ENGLISH: "Hive moved from {old} to {new}",
+    },
 }

@@ -26,4 +26,3 @@ def logged_in(client):
     with client.session_transaction() as session:
         session["user_id"] = 1
         session["language"] = "fr"
-

@@ -10,22 +10,21 @@ from src.helpers.users import create_new_user
 @pytest.fixture(scope="module", autouse=True)
 def create_a_user(fake_database):
     create_new_user(
-        {
-            "username": "test",
-            "pwd": "123azeAZE",
-            "email": "aze@gmail.com"
-        }
+        {"username": "test", "pwd": "123azeAZE", "email": "aze@gmail.com"}
     )
 
 
-@pytest.mark.parametrize("name,location,honey,status,expected", [
-    ("", "Location", "1", "1", alert_codes.MISSING_INFORMATION_APIARY),
-    ("Name", "", "1", "1", alert_codes.MISSING_INFORMATION_APIARY),
-    ("Name", "Location", "", "1", alert_codes.MISSING_INFORMATION_APIARY),
-    ("Name", "Location", "1", "", alert_codes.MISSING_INFORMATION_APIARY),
-    ("Name", "Location", "9", "1", alert_codes.INCONSISTANT_DATA),
-    ("Name", "Location", "1", "5", alert_codes.INCONSISTANT_DATA),
-])
+@pytest.mark.parametrize(
+    "name,location,honey,status,expected",
+    [
+        ("", "Location", "1", "1", alert_codes.MISSING_INFORMATION_APIARY),
+        ("Name", "", "1", "1", alert_codes.MISSING_INFORMATION_APIARY),
+        ("Name", "Location", "", "1", alert_codes.MISSING_INFORMATION_APIARY),
+        ("Name", "Location", "1", "", alert_codes.MISSING_INFORMATION_APIARY),
+        ("Name", "Location", "9", "1", alert_codes.INCONSISTANT_DATA),
+        ("Name", "Location", "1", "5", alert_codes.INCONSISTANT_DATA),
+    ],
+)
 def test_create_apiary_fail(name, location, honey, status, expected, client):
     logged_in(client)
 
@@ -94,7 +93,7 @@ def test_create_new_honey_type_success(client):
 
 def test_get_apiary_info_fail(client):
     logged_in(client)
-    answer = client.get("/api/apiary/2") # wrong id
+    answer = client.get("/api/apiary/2")  # wrong id
     assert answer.status_code == 404
 
 
@@ -105,20 +104,25 @@ def test_get_apiary_info_success(client):
     assert answer.json["id"] == 1
 
 
-@pytest.mark.parametrize("ap_id,name,location,status,honey,expected", [
-    (5, "name", "location", 1, 1, 404),
-    (1, "", "location", 1, 1, 404),
-    (1, "name", "", 1, 1, 404),
-    (1, "name", "location", 9, 1, 404),
-    (1, "name", "location", 1, 9, 404),
-])
-def test_modify_apiary_fail(client, expected, ap_id, name, location, status, honey):
+@pytest.mark.parametrize(
+    "ap_id,name,location,status,honey,expected",
+    [
+        (5, "name", "location", 1, 1, 404),
+        (1, "", "location", 1, 1, 404),
+        (1, "name", "", 1, 1, 404),
+        (1, "name", "location", 9, 1, 404),
+        (1, "name", "location", 1, 9, 404),
+    ],
+)
+def test_modify_apiary_fail(
+    client, expected, ap_id, name, location, status, honey
+):
     logged_in(client)
     data = {
         "name": name,
         "location": location,
         "status": status,
-        "honey": honey
+        "honey": honey,
     }
     answer = client.put("/api/apiary/{ap_id}")
     assert answer.status_code == expected
@@ -127,12 +131,7 @@ def test_modify_apiary_fail(client, expected, ap_id, name, location, status, hon
 def test_modify_apiary_success(client):
     logged_in(client)
 
-    data = {
-        "name": "wesh",
-        "location": "vazy",
-        "status": 2,
-        "honey": 3
-    }
+    data = {"name": "wesh", "location": "vazy", "status": 2, "honey": 3}
     answer = client.put("/api/apiary/1", data=data)
     assert answer.status_code == 200
     assert answer.json["code"] == alert_codes.MODIFICATION_SUCCESS

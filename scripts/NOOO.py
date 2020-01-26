@@ -4,7 +4,7 @@ import sys
 import inspect
 import os
 
-sys.path.insert(0, '/var/www/html/akingbee')
+sys.path.insert(0, "/var/www/html/akingbee")
 
 import app
 from src.data_access import objects
@@ -13,11 +13,15 @@ from src.data_access.tables import Table
 
 
 def main():
-    classes = inspect.getmembers(sys.modules[objects.__name__],
-                                 inspect.isclass)
+    classes = inspect.getmembers(
+        sys.modules[objects.__name__], inspect.isclass
+    )
 
-    tables = set(obj[1].table for obj in classes if obj[0] != "DataAccess" and
-                                                    obj[1].table)
+    tables = set(
+        obj[1].table
+        for obj in classes
+        if obj[0] != "DataAccess" and obj[1].table
+    )
     conn = connectors.MySQL()
     cursor = conn.cursor()
 
@@ -41,7 +45,7 @@ def main():
             if tables:
                 errors += 1
             if errors > 10:
-                raise Exception('noooooo')
+                raise Exception("noooooo")
 
     except Exception as e:
         conn.rollback()
