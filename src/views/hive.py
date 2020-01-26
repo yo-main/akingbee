@@ -14,7 +14,7 @@ from src.helpers.tools import (
 )
 from src.helpers.date import convert_to_date_object
 from src.helpers.users import get_user_id
-from src.constants import config
+from src import constants
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error, Success
 
@@ -173,7 +173,7 @@ def create_a_comment():
         "comment": flask.request.form.get("comment"),
         "health": flask.request.form.get("health"),
         "condition": flask.request.form.get("condition"),
-        "type": config.COMMENT_TYPE_USER,
+        "type": constants.COMMENT_TYPE_USER,
     }
 
     comment_data = {key: item or None for key, item in comment_data.items()}
@@ -195,7 +195,7 @@ def create_event():
         "note": flask.request.form.get("note"),
         "type_id": flask.request.form.get("event_type"),
         "deadline": convert_to_date_object(flask.request.form.get("deadline")),
-        "status": config.STATUS_PENDING,
+        "status": constants.STATUS_PENDING,
     }
 
     event = Event(**data)
@@ -215,7 +215,7 @@ def update_event(event_id):
         "event": event.id,
         "hive": hive.id,
         "apiary": hive.apiary,
-        "type": config.COMMENT_TYPE_EVENT,
+        "type": constants.COMMENT_TYPE_EVENT,
     }
 
     text = flask.request.form.get("name")
@@ -227,7 +227,7 @@ def update_event(event_id):
     comment.save()
 
     event.date_done = data["date"]
-    event.status = config.STATUS_DONE
+    event.status = constants.STATUS_DONE
     event.save()
 
     return Success(alerts.EVENT_SOLVED_SUCCESS)
@@ -261,7 +261,7 @@ def hive_profil(hive_id):
     comment_types = tuple(set(comment.type for comment in comments))
 
     events = Event.select().where(
-        Event.hive == hive_id and Event.status == config.STATUS_PENDING
+        Event.hive == hive_id and Event.status == constants.STATUS_PENDING
     )
 
     hive_conditions = get_all(HiveCondition)
@@ -319,9 +319,9 @@ def operate_comment(comment_id):
     elif flask.request.method == "DEL":
         comment = Comment.get_by_id(comment_id)
 
-        if comment.type.id == config.COMMENT_TYPE_EVENT:
+        if comment.type.id == constants.COMMENT_TYPE_EVENT:
             event = Event.get_by_id(comment.event)
-            event.status = config.STATUS_PENDING
+            event.status = constants.STATUS_PENDING
             event.date_done = None
             event.save()
 

@@ -13,10 +13,10 @@ from src.models import (
     Owner,
 )
 
+from src import constants
 from src.constants import alert_codes as alerts
-from src.constants import config
 from src.services.alerts import Error
-from src.services.logger import logger
+from src.log.logger import logger
 
 from src.database import DB
 
@@ -63,11 +63,11 @@ def create_new_user(data):
 
         # Creation of all the different data linked to the user
         mapping = (
-            (HiveCondition, config.DEFAULT_HIVE_CONDITION),
-            (StatusApiary, config.DEFAULT_STATUS_APIARY),
-            (EventType, config.DEFAULT_EVENT_TYPE),
-            (HoneyType, config.DEFAULT_HONEY_KIND),
-            (SwarmHealth, config.DEFAULT_SWARM_HEALTH),
+            (HiveCondition, constants.DEFAULT_HIVE_CONDITION),
+            (StatusApiary, constants.DEFAULT_STATUS_APIARY),
+            (EventType, constants.DEFAULT_EVENT_TYPE),
+            (HoneyType, constants.DEFAULT_HONEY_KIND),
+            (SwarmHealth, constants.DEFAULT_SWARM_HEALTH),
             (Owner, ({"name": user.username},)),
         )
 

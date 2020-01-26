@@ -1,10 +1,10 @@
 import flask
 import werkzeug
 
-from src.constants.config import FRENCH, ENGLISH
+from src.constants import FRENCH, ENGLISH
 from src.locals import alerts_fr as fr
 from src.locals import alerts_en as en
-from src.services.logger import logger
+from src.log.logger import logger
 
 
 class Error(Exception):

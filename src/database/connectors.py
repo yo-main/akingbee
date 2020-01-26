@@ -1,19 +1,18 @@
 from peewee import MySQLDatabase, SqliteDatabase, DatabaseProxy
 
-from src.constants.environments import DATABASE
-from src.constants.environments import PLATFORM_ENVIRONMENT
+from src.config import CONFIG
 
 DB = DatabaseProxy()
 
 
 def init():
-    if PLATFORM_ENVIRONMENT == "TEST":
+    if CONFIG.ENV == "TEST":
         database = SqliteDatabase(":memory:", pragmas=(("foreign_keys", 1),))
     else:
-        database = MySQLDatabase(**DATABASE[PLATFORM_ENVIRONMENT])
+        database = MySQLDatabase(**CONFIG.DATABASE)
 
     DB.initialize(database)
 
-    if PLATFORM_ENVIRONMENT == "TEST":
+    if CONFIG.ENV == "TEST":
         from src.models import MODELS, User
         DB.create_tables(MODELS)

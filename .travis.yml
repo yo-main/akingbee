@@ -8,5 +8,5 @@ install:
     - poetry install
 
 script: 
-    - poetry run coverage run -m pytest -v
+    - ENV=TEST poetry run coverage run -m pytest -v
     - poetry run coverage report

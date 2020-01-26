@@ -1,4 +1,4 @@
-from src.constants.environments import PLATFORM_ENVIRONMENT
+from src.config import CONFIG
 
 # don't go further if the below assertion fails
-assert PLATFORM_ENVIRONMENT == "TEST"
+assert CONFIG.ENV == "TEST"

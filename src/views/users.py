@@ -6,9 +6,10 @@ from flask import Blueprint
 
 from src.helpers.tools import render, redirect
 from src.helpers.checkers import validate_email, validate_password
-from src.constants import environments, config
+from src import constants
 from src.constants import alert_codes as alerts
-from src.services.logger import logger
+from src.config import CONFIG
+from src.log.logger import logger
 from src.services.alerts import Error, Success
 from src.helpers.users import (
     get_user_from_username,
@@ -31,7 +32,7 @@ def home():
 
 @api.route("/images/<path:filename>", methods=["GET"])
 def get_image(filename):
-    filepath = os.path.join(environments.IMAGES_FOLDER, filename)
+    filepath = os.path.join(CONFIG.PATH_IMAGES, filename)
     if os.path.exists(filepath):
         return flask.send_file(filepath, mimetype="image/svg+xml")
     return flask.abort(404)
@@ -63,7 +64,7 @@ def login():
     user = get_user_from_username(username)
 
     # this variable should only be set to false in test
-    if environments.PASSWORD_REQUESTED:
+    if CONFIG.PASSWORD_REQUESTED:
         if not verify_password(user.pwd, password):
             raise Error(alerts.INCORRECT_PASSWORD_ERROR)
 
@@ -89,8 +90,8 @@ def updateLanguage():
     """Change the user language"""
     newLanguage = flask.request.form.get("language")
 
-    if newLanguage not in config.LANGUAGES:
-        newLanguage = config.ENGLISH
+    if newLanguage not in constants.LANGUAGES:
+        newLanguage = constants.ENGLISH
 
     flask.session["language"] = newLanguage
     return Success()

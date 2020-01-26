@@ -2,7 +2,7 @@ import flask
 
 from src.helpers.tools import login_required, render, get_all
 from src.services.alerts import Error, Success
-from src.constants import config, alert_codes as alerts
+from src.constants import alert_codes as alerts
 
 from src.models import (
     Owner,

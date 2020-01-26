@@ -5,7 +5,7 @@ import flask
 from peewee import DoesNotExist
 
 from src.helpers.users import get_user_id
-from src.constants import config
+from src import constants
 from src.constants import trad_codes as trads
 from src.constants import alert_codes as alerts
 from src.services.alerts import Error
@@ -52,7 +52,7 @@ def _get_trads(language, index):
 
 def render(url, **kwargs):
     if "language" not in flask.session:
-        flask.session["language"] = config.FRENCH
+        flask.session["language"] = constants.FRENCH
 
     return flask.render_template(
         url, lang=flask.session["language"], trads=get_traductions(), **kwargs
@@ -108,7 +108,7 @@ def create_system_comment_from_hive(msg, hive):
         user=hive.user_id,
         hive=hive.id,
         swarm=hive.swarm_id,
-        type=config.COMMENT_TYPE_SYSTEM,
+        type=constants.COMMENT_TYPE_SYSTEM,
         apiary=hive.apiary_id,
         condition=hive.condition,
     )
