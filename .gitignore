@@ -8,6 +8,7 @@ database.db
 .ropeproject
 environment.yaml
 *.log
+!*log/
 *.yaml
 *.pyc
 *.swp
