@@ -1,13 +1,89 @@
+function new_honey_type(){
+    let value = $("#honey_value").val();
+    let my_url = get_full_url("/api/honey_type");
+
+    if (value == ""){
+        missing_field();
+    }
+    else{
+        $.ajax({
+            type: "POST",
+            url: my_url,
+            data: {"value": value},
+            error: function(answer, code){
+                showError(answer);  
+            },
+            success: function(answer, code){
+                $("#create_honey_type").modal("hide");
+                showSuccess(answer);
+                window.location.reload();
+            }
+        });
+    }
+}
+
+
+function new_apiary_status(){
+    let value = $("#status_value").val();
+    let my_url = get_full_url("/api/apiary_status");
+
+    if (value == ""){
+        missing_field();
+    }
+    else{
+        $.ajax({
+            type: "POST",
+            url: my_url,
+            data: {"value": value},
+            error: function(answer, code){
+                showError(answer);  
+            },
+            success: function(answer, code){
+                $("#create_apiary_status").modal("hide");
+                showSuccess(answer);
+                window.location.reload();
+            }
+        });
+    }
+}
+
+
+function create_new_apiary(){
+    let data = {
+        name: $("#apiary_name").val(),
+        location: $('#apiary_location').val(),
+        birthday: $("#apiary_birthday").val(),
+        status: $("#apiary_status").val(),
+        honey_type: $("#apiary_honey_type").val(),
+    };
+
+    let my_url = get_full_url("/api/apiary");
+
+    $.ajax({
+        type: "POST",
+        url: my_url,
+        dataType: "json",
+        data: data,
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            showSuccess(answer);
+            window.location.reload();
+        }
+    });
+}
+
 
 function submit_apiary_modal(){
-    let apiary_id = $("#apiary_id").attr("name");
-    let my_url = get_full_url("/api/apiary/" + apiary_id);
+    let apiary_id = $("#apiary_id").attr("name");  
+    let my_url = get_full_url("/api/apiary/" + apiary_id);  
 
-    let data = {
-        "name": $("#apiary_name_modal").val(),
-        "location": $("#apiary_location_modal").val(),
-        "status": $("#apiary_status_modal").val(),
-        "honey": $("#apiary_honey_modal").val(),
+    let data = {  
+        "name": $("#apiary_name_modal").val(),  
+        "location": $("#apiary_location_modal").val(),  
+        "status": $("#apiary_status_modal").val(),  
+        "honey": $("#apiary_honey_modal").val(),  
     }
 
     $.ajax({
@@ -39,7 +115,7 @@ function modal_apiary_edit(button){
         success: function(answer, code){
             let apiary = answer;
             $("#edit_apiary").modal("show");
-            
+
             $("#apiary_name_modal").val(apiary.name);
             $("#apiary_location_modal").val(apiary.location);
             $("#apiary_status_modal").val(apiary.status_id).change();
@@ -58,7 +134,7 @@ function modal_apiary_edit(button){
 function delete_apiary(button){
     let apiary_id = button.name.substring(5);
     let confirm;
-    let my_url = get_full_url("/api/apiary/" + apiary_id);
+    let my_url = get_full_url("/apiary/" + apiary_id);
 
     if (LANGUAGE == "fr"){
         confirm = window.confirm("Supprimer ce rucher ?");
@@ -87,7 +163,7 @@ function filter_table_apiary(){
     let location = $("#location_filter").val();
     let status = $("#status_filter").val();
     let honey = $("#honey_filter").val();
-    
+
     let table = document.getElementById("apiary_table");
     let tr = table.getElementsByTagName("tr");
 
@@ -104,19 +180,19 @@ function filter_table_apiary(){
                 flag = 1;
             }
         }
-        
+
         if(status){
             if (status != status_td){
                 flag = 1;
             }
         }
-        
+
         if(honey){
             if (honey != honey_td){
                 flag = 1;
             }
         }
-        
+
         if (flag == 1){
             tr[i].style.display = "none";
         }
