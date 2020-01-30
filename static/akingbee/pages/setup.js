@@ -2,24 +2,16 @@ function show_modal_new_data(button){
     $("#modal_new_data").modal("show");
 }
 
-function show_modal_data_edit(button){
-    let data = $(button).closest("tr").children("td.data_td").text();
-    let data_id = button.getAttribute("data_id");
-
+function show_modal_data_edit(data_id, data_name){
     $("#modal_edit_data").attr("data_id", data_id);
-    $("#edit_data_name").val(data);
-
+    $("#edit_data_name").val(data_name);
     $("#modal_edit_data").modal("show");
 }
 
-
-
-function show_delete_data(button){
-    let confirm;
-    let id = button.getAttribute("data_id");
-
+function show_delete_data(data_id){
     let my_url = window.location.href;
 
+    let confirm;
     if (LANGUAGE == "fr"){
         confirm = window.confirm("Supprimer cette entrée ?");
     }
@@ -31,7 +23,7 @@ function show_delete_data(button){
         $.ajax({
             url: my_url,
             type: "DEL",
-            data: {id: id},
+            data: {id: data_id},
             error: function(answer, code){
                 showError(answer);
             },
@@ -43,32 +35,16 @@ function show_delete_data(button){
     }
 }
 
+$("#new-data-form").submit( function(event) {
+    event.preventDefault();
 
-
-function create_data(){
-    let value = $("#new_data_name").val();
-    send_data(value, "", "POST");
-}
-
-function edit_data(){
-    let id = $("#modal_edit_data").attr("data_id");
-    let value = $("#edit_data_name").val();
-    send_data(value, id, "PUT");
-}
-
-function send_data(value, id, method) {
-
+    let data_name = $("#new_data_name").val();
     let my_url = window.location.href;
 
-    if (method != "DEL" && !value){
-        missing_field();
-        return false;
-    }
-    
     $.ajax({
+        type: "POST",
         url: my_url,
-        type: method,
-        data: {data: value, id: id},
+        data: {data: data_name},
         error: function(answer, code){
             showError(answer);
         },
@@ -77,7 +53,29 @@ function send_data(value, id, method) {
             window.location.reload();
         }
     });
-}
+});
+
+$("#edit-data-form").submit( function(event) {
+    event.preventDefault();
+
+    let my_url = window.location.href;
+
+    let data_id = $("#modal_edit_data").attr("data_id");
+    let data_name = $("#edit_data_name").val();
+
+    $.ajax({
+        type: "PUT",
+        url: my_url,
+        data: {data: data_name, id: data_id},
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            showSuccess(answer);
+            window.location.reload();
+        }
+    });
+});
 
 
 

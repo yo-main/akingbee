@@ -15,7 +15,7 @@ const toastrOptions = {
     "hideMethod": "fadeOut"
 }
 
-var root_path = ""
+var ROOT_PATH = ""
 var LANGUAGE = $("html").attr("lang");
 
 $(document).ready(function() {
@@ -28,18 +28,14 @@ $(document).ready(function() {
 
 function menu_highlight() {
     let protocol = window.location.protocol;
-    let root = window.location.hostname;
     let pathname = window.location.pathname;
+    let root = window.location.hostname;
     let port = window.location.port;
 
-    // check this is working with a hidden port (http or https)
-    // I implemented this specifically for flask and port 5000
     let url = protocol + "//" + root;
-    if (port) {
-        url = url + ":" + port
-    }
+    // to deal with custom port (Hi flask)
+    if (port) { url = url + ":" + port };
     url = url + pathname;
-
 
     // Highlight of the top menu
     let menu = document.getElementById("main_menu");
@@ -68,7 +64,7 @@ function menu_highlight() {
 
 function get_full_url(path) {
     let out;
-    out = window.location.protocol + "//" + window.location.host + root_path + path;
+    out = window.location.protocol + "//" + window.location.host + ROOT_PATH + path;
     return out;
 }
 
@@ -77,9 +73,9 @@ function display_alerts() {
     let msg = window.sessionStorage.getItem("msgSuccessBody");
     let title = window.sessionStorage.getItem("msgSuccessTitle");
     if (msg){
-            createSuccess(msg, title);
-            window.sessionStorage.removeItem("msgSuccessBody");
-            window.sessionStorage.removeItem("msgSuccessTitle");
+        createSuccess(msg, title);
+        window.sessionStorage.removeItem("msgSuccessBody");
+        window.sessionStorage.removeItem("msgSuccessTitle");
     }
 }
 
@@ -98,24 +94,24 @@ function createSuccess(msg, title){
 
 function showError(response){
     let answer = response.responseJSON;
-    if (answer == null){
-        answer = [];
-        answer['fr'] = [];
-        answer['en'] = [];
-        answer['fr']['message'] = "Une erreur interne s'est produite. Désolé :(";
-        answer['en']['message'] = "An internal error happened. Sorry :(";
-        answer.code = "999";
+    if (answer == null) {
+        answer = {
+            'fr': {
+                'message': "Une erreur interne s'est produite. Désolé :("
+            },
+            'en': {
+                'message': "An internal error happened. Sorry :("
+            }
+        }
     };
 
     let content = answer[LANGUAGE];
-    let code = answer.code;
     createError(content.message, content.title);
 }
 
 
 function showSuccess(response){
     let content = response[LANGUAGE];
-    let code = response.code;
     window.sessionStorage.setItem("msgSuccessBody", content.message);
     window.sessionStorage.setItem("msgSuccessTitle", content.title);
 }
@@ -149,7 +145,7 @@ function set_active_language() {
 }
 
 function missing_field() {
-    if (LANGUAGE == "fr"){
+    if (LANGUAGE == "fr") {
         createError("Certains champs ne sont pas remplis !");
     }
     else{
@@ -158,10 +154,10 @@ function missing_field() {
 }
 
 function set_date_picker() {
-    if (LANGUAGE == 'fr'){
+    if (LANGUAGE == 'fr') {
         $.datepicker.setDefaults( $.datepicker.regional[ "fr" ] );
         $('[date_picker="true"]').attr("placeholder", "jj/mm/aaaa");
-    }else{    
+    } else {
         $.datepicker.setDefaults( $.datepicker.regional[ "" ] );
         $('[date_picker="true"]').attr("placeholder", "dd/mm/yyyy");
     }
@@ -180,7 +176,7 @@ Date.prototype.toDateInputValue = (function() {
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
 
     let dateString;
-    
+
     dateString = (("0" + local.getUTCDate()).slice(-2) + "/" +
                   ("0" + (local.getUTCMonth() + 1)).slice(-2) + "/" +
                   local.getFullYear());

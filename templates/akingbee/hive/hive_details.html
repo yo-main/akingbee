@@ -159,12 +159,12 @@
                                             <td class="condition_cm" condition_id="{{comments[n].condition.id}}">{{comments[n].condition[lang]}}</td>
                                             <td class="health_cm" health_id="{{comments[n].health.id}}">{{comments[n].health[lang]}}</td>
                                             <td class="comm_cm col-4">{{comments[n].comment}}</td>
-                                            {% if comments[n].type.id == 1 %}
-                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="show_modal_edit_comment(this);">{{trads[70]}}</button></td>
+                                            {% if comments[n].type.id == 1 %}  <!-- if it's a "user" comment, it can be edited, otherwise no -->
+                                            <td><button type="button" class="btn btn-link" onclick="show_modal_edit_comment('{{comments[n].id}}', this);">{{trads[70]}}</button></td>
                                             {% else %}
-                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="show_modal_edit_comment(this);" disabled>{{trads[70]}}</button></td>
+                                            <td><button type="button" class="btn btn-link" disabled>{{trads[70]}}</button></td>
                                             {% endif %}
-                                            <td><button type="button" class="btn btn-link" comment_id="{{comments[n].id}}" onclick="del_comment(this);">{{trads[64]}}</button></td>
+                                            <td><button type="button" class="btn btn-link" onclick="del_comment({{comments[n].id}});">{{trads[64]}}</button></td>
                                         </tr>
                                     {% endfor %}
                                 </body>
@@ -197,7 +197,7 @@
                                             </span>
                                         </div>
                                         <div class="col-auto">
-                                            <button type="button" id="hello" class="btn btn-link btn-alert" title="{{events[n].type[lang]}}" event_id="{{events[n].id}}" onclick="modal_solve_event(this);">{{trads[68]}}</button>
+                                            <button type="button" id="hello" class="btn btn-link btn-alert" onclick="modal_solve_event('{{events[n].id}}', '{{events[n].type[lang]}}');">{{trads[68]}}</button>
                                         </div>
                                     </div>
                                 </div>

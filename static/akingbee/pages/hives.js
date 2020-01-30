@@ -31,24 +31,14 @@ function filter_table_hive_details(){
         let apiary_td = td[2].innerText;
         let health_td = td[3].innerText;
 
-        if(apiary){
-            if (apiary != apiary_td){
-                flag = 1;
-            }
+        if (apiary && apiary != apiary_td){
+            flag = 1;
+        } else if(source && source != source_td){
+            flag = 1;
+        } else if(health && health != health_td){
+            flag = 1;
         }
-        
-        if(source){
-            if (source != source_td){
-                flag = 1;
-            }
-        }
-        
-        if(health){
-            if (health != health_td){
-                flag = 1;
-            }
-        }
-        
+
         if (flag == 1){
             tr[i].style.display = "none";
         }
@@ -59,10 +49,8 @@ function filter_table_hive_details(){
 }
 
 
-
-function del_comment(button){
+function del_comment(comment_id){
     let confirmation;
-    let comment_id = button.getAttribute("comment_id");
     let my_url = get_full_url("/api/comment/" + comment_id);
 
     if (LANGUAGE == "fr"){
@@ -80,7 +68,6 @@ function del_comment(button){
                 showError(answer);
             },
             success: function(answer, code){
-                $("#submit_event").modal("hide");
                 showSuccess(answer);
                 window.location.reload();
             }
@@ -89,17 +76,17 @@ function del_comment(button){
 }
 
 
-function modal_solve_event(button){
+function modal_solve_event(event_id, title){
     $("#modal_solve_event").modal("show");
-    $("#modal_solve_event").attr("event_id", button.getAttribute("event_id"));
-
-    $("#solve_event_name").attr("name", button.title);
-    $("#solve_event_name").val(button.title);
+    $("#solve_event_hive_id").val(event_id);
+    $("#solve_event_name").val(title);
 }
 
 
-function submit_solve_event_modal(){
-    let event_id = $("#modal_solve_event").attr("event_id");
+$("#solve-event-form").submit( function(event) {
+    event.preventDefault();
+
+    let event_id = $("#solve_event_hive_id").val();
     let my_url = get_full_url("/api/event/" + event_id);
 
     let data = {
@@ -107,12 +94,6 @@ function submit_solve_event_modal(){
         date: $("#solve_event_date").val(),
         description: $("#solve_event_comment").val(),
     }
-
-    if (!data["date"]) {
-        missing_field();
-        return false;
-    }
-
 
     $.ajax({
         type: "PUT",
@@ -122,22 +103,18 @@ function submit_solve_event_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#modal_solve_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
     });
-}
+});
 
 
-function new_hive_condition(){
+$("#new-hive-condition-form").submit( function(event) {
+    event.preventDefault();
+
     let my_url = get_full_url("/setup/hive/conditions");
     let name = $("#hive_condition_name").val()
-
-    if (name == ""){
-        missing_field();
-        return false;
-    }
 
     $.ajax({
         type: "POST",
@@ -147,24 +124,20 @@ function new_hive_condition(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#create_hive_condition").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
     });
-}
+});
 
 
-function new_owner(){
+$("#new-owner-form").submit( function(event) {
+    event.preventDefault();
+
     let name = $("#owner_name").val();
 
     let my_url = get_full_url("/setup/hive/owner");
 
-    if (name == ""){
-        missing_field();
-        return false;
-    }
-
     $.ajax({
         type: "POST",
         url: my_url,
@@ -177,7 +150,7 @@ function new_owner(){
             window.location.reload();
         }
     });
-}
+});
 
 
 function redirect_create_apiary(){
@@ -248,23 +221,19 @@ function show_modal_new_event(button){
     $("#modal_new_event").modal("show");
 }
 
-function submit_new_event(){
+$("#new-event-form").submit( function(event) {
+    event.preventDefault();
 
     let data = {
-        date: $("#new_event_date").val(),
-        event_type: $("#new_event_type").val(),
-        deadline: $("#new_event_deadline").val(),
         note: $("#new_event_note").val(),
-        hive_id: $("#modal_new_event").attr("hive_id"),
+        date: $("#new_event_date").val(),
+        hive_id: $("#new_event_hive_id").val(),
+        deadline: $("#new_event_deadline").val(),
+        event_type: $("#new_event_type").val(),
     };
 
     let my_url = get_full_url("/api/event");
 
-    if (!data.event_type || !data.date){
-        missing_field();
-        return false;
-    }
-
     $.ajax({
         type: "POST",
         url: my_url,
@@ -273,51 +242,12 @@ function submit_new_event(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#modal_new_event").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
     });
-}
+});
 
-
-function submit_modal_data_submit(){
-    let data = {
-        fr: $("#submit_name_fr_modal").val(),
-        en: $("#submit_name_en_modal").val(),
-        source: window.location.pathname
-    }
-
-    if (data.en == undefined){
-        data.en = "";
-    }
-
-    let my_url = get_full_url("/setup/submit");
-
-    if ((data.fr == "") && (data.en == "")){
-        if (LANGUAGE == "fr"){
-            createError("Merci de remplir les champs");
-        }
-        else{
-            createError("Please fill-in the fields");
-        }
-        return false;
-    }
-    
-    $.ajax({
-        type: "POST",
-        url: my_url,
-        data: data,
-        error: function(answer, code){
-            showError(answer);
-        },
-        success: function(answer, code){
-            $("#submit_data").modal("hide");
-            showSuccess(answer);
-            window.location.reload();
-        }
-    });
-}
 
 function show_modal_new_comment(){
     $("#new_comment_date").val(new Date().toDateInputValue());
@@ -325,22 +255,18 @@ function show_modal_new_comment(){
 }
 
 
-function submit_new_comment(){
+$("#new-comment-form").submit( function(event) {
+    event.preventDefault();
+
     let data = {
         date: $("#new_comment_date").val(),
-        comment: $("#new_comment_text").val(),
         health: $("#new_comment_health").val(),
+        comment: $("#new_comment_text").val(),
+        hive_id: $("#new_comment_hive_id").val(),
         condition: $("#new_comment_condition").val(),
-        hive_id: $("#modal_new_comment").attr("hive_id")
     }
 
     let my_url = get_full_url("/api/comment");
-
-    if (!data.comment || !data.date || !data.condition ||
-        ($("#new_comment_health").is(":enabled") && !data.health)){
-        missing_field();
-        return false;
-    }
 
     $.ajax({
         type: "POST",
@@ -350,22 +276,19 @@ function submit_new_comment(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#submit_new_comment").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
     });
-}
+});
 
 
-function show_modal_edit_comment(button){
-    let comment_id = button.getAttribute("comment_id");
-
+function show_modal_edit_comment(comment_id, button){
     let date = $(button).closest("tr").children("td.date_cm").text();
     let health = $(button).closest("tr").children("td.health_cm").attr("health_id");
     let condition = $(button).closest("tr").children("td.condition_cm").attr("condition_id");
     let comment = $(button).closest("tr").children("td.comm_cm").text();
-    
+
     $("#edit_comment_date").val(date);
     $("#edit_comment_text").val(comment);
     $("#edit_comment_health").val(health).change();
@@ -376,7 +299,9 @@ function show_modal_edit_comment(button){
 }
 
 
-function edit_comment(){
+$("#edit-comment-form").submit( function(event) {
+    event.preventDefault();
+
     let comment_id = $("#modal_edit_comment").attr("comment_id");
 
     let data = {
@@ -400,7 +325,7 @@ function edit_comment(){
             window.location.reload();
         }
     });
-}
+});
 
 
 function show_modal_hive_edit(){
@@ -408,8 +333,10 @@ function show_modal_hive_edit(){
 }
 
 
-function update_hive(){
-    let hive_id = $("#modal_edit_hive").attr("hive_id");
+$("#edit-hive-form").submit( function(event) {
+    event.preventDefault();
+
+    let hive_id = $("#hive_id_edit_modal").val();
     let my_url = get_full_url("/api/hive/" + hive_id);
 
     let old_owner = $("#owner_name_edit_modal").attr("old");
@@ -428,11 +355,6 @@ function update_hive(){
         return false;
     }
 
-    if (!new_owner || !new_hive) {
-        missing_field()
-        return false;        
-    }
-    
     data = {
         "owner": new_owner,
         "hive": new_hive,
@@ -451,7 +373,7 @@ function update_hive(){
             window.location.reload();
         }
     });
-}
+});
 
 
 function filter_table_hive(){
@@ -470,28 +392,17 @@ function filter_table_hive(){
         let owner_td = td[2].innerText;
         let condition_td = td[3].innerText;
 
-        if(apiary){
-            if (apiary != apiary_td){
-                flag = 1;
-            }
-        }
-
-        if(owner){
-            if (owner != owner_td){
-                flag = 1;
-            }
-        }
-
-        if(condition){
-            if (condition != condition_td){
-                flag = 1;
-            }
+        if (apiary && apiary != apiary_td){
+            flag = 1;
+        } else if(owner && owner != owner_td){
+            flag = 1;
+        } else if(condition && condition != condition_td){
+            flag = 1;
         }
 
         if (flag == 1){
             tr[i].style.display = "none";
-        }
-        else{
+        } else{
             tr[i].style.display = "";
         }
     }
@@ -524,14 +435,15 @@ function delete_hive(hive_id){
 }
 
 
-function attach_swarm_on_hive(button) {
-    hive_id = $(button).attr("hive");
+$("#new-swarm-form").submit( function(event) {
+    hive_id = $("#new_swarm_hive_id").val();
 
     let data = {
         "hive_id": hive_id,
-        "swarm_health": $("#swarm_health").val()
-    }
-    let url = get_full_url("/swarm/create")
+        "swarm_health": $("#new_swarm_health").val()
+    };
+
+    let url = get_full_url("/swarm/create");
 
     $.ajax({
         type: "POST",
@@ -558,13 +470,11 @@ function show_move_hive_modal(){
     $("#modal_move_hive").modal("show");
 }
 
-function move_hive(hive_id){
-    let apiary_id = $("#apiary_name_move_modal").val();
+$("#move-hive-form").submit( function(event) {
+    event.preventDefault();
 
-    if (!apiary_id) {
-        missing_field();
-        return false;
-    };
+    let hive_id = $("#hive_id_move_modal").val();
+    let apiary_id = $("#apiary_name_move_modal").val();
 
     let url = get_full_url("/api/hive/" + hive_id + "/move/" + apiary_id);
 
@@ -579,5 +489,5 @@ function move_hive(hive_id){
             window.location = get_full_url("/hive");
         }
     });
-}
+});
 

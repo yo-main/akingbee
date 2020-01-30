@@ -90,54 +90,12 @@
         </div>
     </div>
 
-    <!-- Modal to create a new owner -->
-    <div class="modal fade" id="create_owner" tabindex="-1" role="dialog" aria-labelledby="title_create_owner" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_create_owner">{{trads[44]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="owner_name" class="col-form-label">{{trads[40]}}</label>
-                        <input type="text" class="form-control" id="owner_name" name="owner_name">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_owner();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% include "/akingbee/modals/new_hive_condition.html" %}
+{% include "/akingbee/modals/new_owner.html" %}
 
-    <!-- Modal to create a new hive condition -->
-    <div class="modal fade" id="create_hive_condition" tabindex="-1" role="dialog" aria-labelledby="title_create_hive_condition" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_create_hive_condition">{{trads[45]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="hive_condition_name" class="col-form-label">English</label>
-                        <input type="text" class="form-control" id="hive_condition_name" name="hive_condition_name">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="new_hive_condition();">{{trads[14]}}</button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
+
+
 
 {% block scripts %}
         <script type='text/javascript' src="/static/akingbee/main_script.js"></script>

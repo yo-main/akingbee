@@ -1,6 +1,6 @@
 
 <!-- Modal to edit a hive -->
-<div class="modal fade" id="modal_edit_hive" hive_id="{{hive.id}}" tabindex="-1" role="dialog" aria-labelledby="title_edit_hive" aria-hidden="true">
+<div class="modal fade" id="modal_edit_hive" tabindex="-1" role="dialog" aria-labelledby="title_edit_hive" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,31 +11,34 @@
             </div>
 
             <div class="modal-body">
+                <form id="edit-hive-form" method="POST">
 
-                <!-- Hive name -->
-                <div class="form-group">
-                    <label for="hive_name_edit_modal" class="col-form-label">{{trads[52]}}</label>
-                    <input type="text" class="form-control" id="hive_name_edit_modal" old="{{hive.name}}" value="{{hive.name}}" required>
-                </div>
-                
-                <!-- Owner name -->
-                <div class="form-group">
-                    <label for="owner_name_edit_modal" class="col-form-label">{{trads[40]}}</label>
-                    <select id="owner_name_edit_modal" class="custom-select d-block w-100" old="{{hive.owner}}" required>
-                        {% for owner in owners %}
-                            {% if owner.id == hive.id %}
-                                <option value={{owner.id}} selected="selected">{{owner.name}}</option>
-                            {% else %}
-                                <option value={{owner.id}}>{{owner.name}}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
+                    <!-- Hive name -->
+                    <input type="hidden" class="form-control" id="hive_id_edit_modal" value="{{hive.id}}">
+                    <div class="form-group">
+                        <label for="hive_name_edit_modal" class="col-form-label">{{trads[52]}}</label>
+                        <input type="text" class="form-control" id="hive_name_edit_modal" old="{{hive.name}}" value="{{hive.name}}" required>
+                    </div>
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                <button type="button" class="btn btn-primary" onclick="update_hive();">{{trads[14]}}</button>
+                    <!-- Owner name -->
+                    <div class="form-group">
+                        <label for="owner_name_edit_modal" class="col-form-label">{{trads[40]}}</label>
+                        <select id="owner_name_edit_modal" class="custom-select d-block w-100" old="{{hive.owner}}" required>
+                            {% for owner in owners %}
+                                {% if owner.id == hive.id %}
+                                    <option value={{owner.id}} selected="selected">{{owner.name}}</option>
+                                {% else %}
+                                    <option value={{owner.id}}>{{owner.name}}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                        <button type="submit" class="btn btn-primary">{{trads[14]}}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

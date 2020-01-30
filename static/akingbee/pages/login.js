@@ -1,11 +1,13 @@
-function validateLogin(){
+$("#login-form").submit( function(event) {
+    event.preventDefault();
+
     let data = {
         username: $("#username").val(),
         password: $("#password").val()
     };
-    
+
     let my_url = get_full_url("/login");
-    
+
     $.ajax({
         type: "POST",
         url: my_url,
@@ -18,23 +20,22 @@ function validateLogin(){
             window.location.href = get_full_url("/");
         }
     });
-
-    return false;
-}
+});
 
 
-function forgot_password(){
+function forgot_password() {
     let myUrl = get_full_url("/reset_password");
     window.location = myUrl;
 }
 
 
+$("#reset-form").submit( function(event) {
+    event.preventDefault();
 
-function validateResetForm(){
     let username = $("#username").val();
     let pwd1 = $("#password").val();
     let pwd2 = $("#passwordConfirmation").val();
-    
+
     if (username == '' || pwd1 == '' || pwd2 == ''){
         return false;
     }
@@ -46,16 +47,16 @@ function validateResetForm(){
         else{
             createError("The passwords are not matching");
         }
-        
+
         return false;
-    }  
+    }
 
     url = get_full_url("/reset_password");
     data = {username: username, pwd: pwd1}
-    
+
     $.ajax({
         type: "POST",
-        url: my_url,
+        url: url,
         data: data,
         error: function(answer, code){
             showError(answer);
@@ -65,6 +66,4 @@ function validateResetForm(){
             window.location.href = get_full_url("/");
         }
     });
-
-    return false;   
-}
+});

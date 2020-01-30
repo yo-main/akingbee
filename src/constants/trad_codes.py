@@ -30,8 +30,8 @@ traductions = {
         ENGLISH: "Insert a valid email address",
     },
     18: {
-        FRENCH: "Utilisez au moins 8 caractères",
-        ENGLISH: "Must have 8 or more characters",
+        FRENCH: "Minimum de huit caractères comprenant au moins: 1 lettre minuscule et 1 majuscule, 1 nombre, 1 caractère spécial",
+        ENGLISH: "Minimum of 8 characters with at least: 1 lower and 1 upper letter, 1 digit and 1 special character",
     },
     19: {FRENCH: "Connecté en tant que", ENGLISH: "Logged in as"},
     20: {FRENCH: "Créer un rucher", ENGLISH: "New Apiary"},

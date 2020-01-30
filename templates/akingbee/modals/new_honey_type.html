@@ -1,0 +1,25 @@
+<!-- Modal to create a new type of honey -->
+<div class="modal fade" id="create_honey_type" tabindex="-1" role="dialog" aria-labelledby="title_honey_type" aria-hidden="true">
+    <form id="form-new-honey-type">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title_honey_type">{{trads[32]}}</h5>
+                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="honey_value" class="col-form-label">{{trads[22]}}</label>
+                        <input type="text" class="form-control" id="honey_value" name="honey_value" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                    <button type="submit" class="btn btn-primary">{{trads[14]}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -5,19 +5,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="title_modal_edit_data">{{trads[90]}}</h5>
-                <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="edit_data_name" class="col-form-label" id="data_id">{{title}}</label>
-                    <input type="text" class="form-control" id="edit_data_name">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                <button type="button" class="btn btn-primary" onclick="edit_data();">{{trads[14]}}</button>
+                <form id="edit-data-form" method="PUT">
+                    <div class="form-group">
+                        <label for="edit_data_name" class="col-form-label" id="data_id">{{title}}</label>
+                        <input type="text" class="form-control" id="edit_data_name" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                        <button type="submit" class="btn btn-primary">{{trads[14]}}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

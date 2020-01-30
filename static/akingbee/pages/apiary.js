@@ -1,54 +1,59 @@
-function new_honey_type(){
+$("#form-new-honey-type").submit( function(event) {
+    event.preventDefault();
+
     let value = $("#honey_value").val();
     let my_url = get_full_url("/api/honey_type");
 
     if (value == ""){
         missing_field();
+        return false;
     }
-    else{
-        $.ajax({
-            type: "POST",
-            url: my_url,
-            data: {"value": value},
-            error: function(answer, code){
-                showError(answer);  
-            },
-            success: function(answer, code){
-                $("#create_honey_type").modal("hide");
-                showSuccess(answer);
-                window.location.reload();
-            }
-        });
-    }
-}
+
+    $.ajax({
+        type: "POST",
+        url: my_url,
+        data: {"value": value},
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            $("#create_honey_type").modal("hide");
+            showSuccess(answer);
+            window.location.reload();
+        }
+    });
+});
 
 
-function new_apiary_status(){
+$("#form-new-apiary-status").submit( function(event) {
+    event.preventDefault();
     let value = $("#status_value").val();
     let my_url = get_full_url("/api/apiary_status");
 
     if (value == ""){
         missing_field();
+        return false;
     }
-    else{
-        $.ajax({
-            type: "POST",
-            url: my_url,
-            data: {"value": value},
-            error: function(answer, code){
-                showError(answer);  
-            },
-            success: function(answer, code){
-                $("#create_apiary_status").modal("hide");
-                showSuccess(answer);
-                window.location.reload();
-            }
-        });
-    }
-}
+
+    $.ajax({
+        type: "POST",
+        url: my_url,
+        data: {"value": value},
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            $("#create_apiary_status").modal("hide");
+            showSuccess(answer);
+            window.location.reload();
+        }
+    });
+});
 
 
-function create_new_apiary(){
+$("#form-create-apiary").submit( function(event) {
+    event.preventDefault();
+
     let data = {
         name: $("#apiary_name").val(),
         location: $('#apiary_location').val(),
@@ -72,10 +77,12 @@ function create_new_apiary(){
             window.location.reload();
         }
     });
-}
+});
 
 
-function submit_apiary_modal(){
+$("#form-edit-apiary").submit( function(event) {
+    event.preventDefault();
+
     let apiary_id = $("#apiary_id").attr("name");  
     let my_url = get_full_url("/api/apiary/" + apiary_id);  
 
@@ -94,16 +101,15 @@ function submit_apiary_modal(){
             showError(answer);
         },
         success: function(answer, code){
-            $("#edit_apiary").modal("hide");
+            $("#edit_apiary_modal").modal("hide");
             showSuccess(answer);
             window.location.reload();
         }
     });
-}
+});
 
 
-function modal_apiary_edit(button){
-    let apiary_id = button.name.substring(5);
+function modal_apiary_edit(apiary_id){
     let my_url = get_full_url("/api/apiary/" + apiary_id);
 
     $.ajax({
@@ -114,7 +120,7 @@ function modal_apiary_edit(button){
         },
         success: function(answer, code){
             let apiary = answer;
-            $("#edit_apiary").modal("show");
+            $("#edit_apiary_modal").modal("show");
 
             $("#apiary_name_modal").val(apiary.name);
             $("#apiary_location_modal").val(apiary.location);
@@ -131,15 +137,13 @@ function modal_apiary_edit(button){
 }
 
 
-function delete_apiary(button){
-    let apiary_id = button.name.substring(5);
+function delete_apiary(apiary_id){
     let confirm;
     let my_url = get_full_url("/apiary/" + apiary_id);
 
     if (LANGUAGE == "fr"){
         confirm = window.confirm("Supprimer ce rucher ?");
-    }
-    else{
+    } else {
         confirm = window.confirm ("Delete this apiary ?");
     }
 
@@ -158,7 +162,6 @@ function delete_apiary(button){
     }
 }
 
-
 function filter_table_apiary(){
     let location = $("#location_filter").val();
     let status = $("#status_filter").val();
@@ -175,22 +178,12 @@ function filter_table_apiary(){
         let status_td = td[2].innerText;
         let honey_td = td[3].innerText;
 
-        if(location){
-            if (location != location_td){
-                flag = 1;
-            }
-        }
-
-        if(status){
-            if (status != status_td){
-                flag = 1;
-            }
-        }
-
-        if(honey){
-            if (honey != honey_td){
-                flag = 1;
-            }
+        if (location && location != location_td){
+            flag = 1;
+        } else if (status && status != status_td){
+            flag = 1;
+        } else if (honey && honey != honey_td){
+            flag = 1;
         }
 
         if (flag == 1){

@@ -5,119 +5,77 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container-fluid">
-        <div class="row">
-            {% include "akingbee/apiary/menu.html" %}
-            <div class="col-10">
-                <br/><br/>
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-auto">
-                            <label>{{trads[23]}}</label>
-                            <select class="custom-select" id="location_filter" onchange="filter_table_apiary();">
-                                <option value=''>{{trads[72]}}</option>
-                                {% for location in locations %}
-                                <option value="{{location}}">{{location}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                        <label>{{trads[28]}}</label>
-                            <select class="custom-select" id="status_filter" onchange="filter_table_apiary();">
-                                <option value=''>{{trads[51]}}</option>
-                                {% for status in apiary_statuses %}
-                                    <option value="{{status[lang]}}">{{status[lang]}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <label>{{trads[27]}}</label>
-                            <select class="custom-select" id="honey_filter" onchange="filter_table_apiary();">
-                                <option value=''>{{trads[51]}}</option>
-                                {% for type in honey_types %}
-                                <option value="{{type[lang]}}">{{type[lang]}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
+<div class="container-fluid">
+    <div class="row">
+        {% include "akingbee/apiary/menu.html" %}
+        <div class="col-10">
+            <br/><br/>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-auto">
+                        <label>{{trads[23]}}</label>
+                        <select class="custom-select" id="location_filter" onchange="filter_table_apiary();">
+                            <option value=''>{{trads[72]}}</option>
+                            {% for location in locations %}
+                            <option value="{{location}}">{{location}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <br/><br/>
-                    <div class="row">
-                        <table class="table table-hower" id="apiary_table">
-                            <!-- name, location, birthday, status, honey -->
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">{{trads[22]}}</th>
-                                    <th scope="col">{{trads[23]}}</th>
-                                    <th scope="col">{{trads[28]}}</th>
-                                    <th scope="col">{{trads[27]}}</th>
-                                    <th scope="col"></th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <body>
-                                {% for n in range(apiaries|length) %}
-                                <tr>
-                                    <th scope="row">{{n+1}}</th>
-                                    <td class="name_td">{{apiaries[n].name}}</td>
-                                    <td class="location_td">{{apiaries[n].location}}</td>
-                                    <td class="status_td">{{apiaries[n].status[lang]}}</td>
-                                    <td class="honey_td">{{apiaries[n].honey_type[lang]}}</td>
-                                    <td><button type="button" class="btn btn-link" name="apia_{{apiaries[n].id}}" onclick="modal_apiary_edit(this);">{{trads[93]}}</button></td>
-                                    <td><button type="button" class="btn btn-link" name="apia_{{apiaries[n].id}}" onclick="delete_apiary(this);">{{trads[64]}}</button></td>
-                                </tr>
-                                {% endfor %}
-                            </body>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal to edit a hive -->
-    <div class="modal fade" id="edit_apiary" tabindex="-1" role="dialog" aria-labelledby="title_edit_apiary" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="title_edit_apiary">{{trads[93]}}</h5>
-                    <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="apiary_name_modal" class="col-form-label" id="apiary_id">{{trads[22]}}</label>
-                        <input type="text" class="form-control" id="apiary_name_modal">
-                    </div>
-                    <div class="form-group">
-                        <label for="apiary_location_modal" class="col-form-label">{{trads[23]}}</label>
-                        <input type="text" class="form-control" id="apiary_location_modal">
-                    </div>
-                    <div class="form-group">
-                        <label for="apiary_status_modal" class="col-form-label">{{trads[28]}}</label>
-                        <select id="apiary_status_modal" class="custom-select d-block w-100" required="">
+                    <div class="col-auto">
+                    <label>{{trads[28]}}</label>
+                        <select class="custom-select" id="status_filter" onchange="filter_table_apiary();">
+                            <option value=''>{{trads[51]}}</option>
                             {% for status in apiary_statuses %}
-                            <option value="{{status.id}}">{{status[lang]}}</option>
+                                <option value="{{status[lang]}}">{{status[lang]}}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="apiary_honey_modal" class="col-form-label">{{trads[27]}}</label>
-                        <select id="apiary_honey_modal" class="custom-select d-block w-100" required="">
+                    <div class="col-auto">
+                        <label>{{trads[27]}}</label>
+                        <select class="custom-select" id="honey_filter" onchange="filter_table_apiary();">
+                            <option value=''>{{trads[51]}}</option>
                             {% for type in honey_types %}
-                            <option value="{{type.id}}">{{type[lang]}}</option>
+                            <option value="{{type[lang]}}">{{type[lang]}}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                    <button type="button" class="btn btn-primary" onclick="submit_apiary_modal();">{{trads[14]}}</button>
+                <br/><br/>
+                <div class="row">
+                    <table class="table table-hower" id="apiary_table">
+                        <!-- name, location, birthday, status, honey -->
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">{{trads[22]}}</th>
+                                <th scope="col">{{trads[23]}}</th>
+                                <th scope="col">{{trads[28]}}</th>
+                                <th scope="col">{{trads[27]}}</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <body>
+                            {% for n in range(apiaries|length) %}
+                            <tr>
+                                <th scope="row">{{n+1}}</th>
+                                <td class="name_td">{{apiaries[n].name}}</td>
+                                <td class="location_td">{{apiaries[n].location}}</td>
+                                <td class="status_td">{{apiaries[n].status[lang]}}</td>
+                                <td class="honey_td">{{apiaries[n].honey_type[lang]}}</td>
+                                <td><button type="button" class="btn btn-link" onclick="modal_apiary_edit({{apiaries[n].id}});">{{trads[93]}}</button></td>
+                                <td><button type="button" class="btn btn-link" onclick="delete_apiary({{apiaries[n].id}});">{{trads[64]}}</button></td>
+                            </tr>
+                            {% endfor %}
+                        </body>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+{% include "/akingbee/modals/edit_apiary.html" %}
 {% endblock %}
 
 

@@ -1,5 +1,5 @@
 <!-- Modal to attach a swarm to the hive -->
-<div class="modal fade" id="submit_new_swarm" tabindex="-1" role="dialog" aria-labelledby="title_submit_new_swarm" aria-hidden="true">
+<div class="modal fade" id="new_swarm_modal" tabindex="-1" role="dialog" aria-labelledby="title_submit_new_swarm" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,19 +9,22 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="swarm_health" class="col-form-label">{{trads[103]}}</label>
-                    <select class="custom-select d-block w-100" id="swarm_health">
-                    <option value=''>{{trads[26]}}</option>
-                        {% for health in swarm_healths %}
-                            <option value={{health.id}}>{{health[lang]}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
-                <button type="button" class="btn btn-primary" hive="{{hive.id}}" onclick="attach_swarm_on_hive(this);">{{trads[14]}}</button>
+                <form id="new-swarm-form">
+                    <input type="hidden" class="form-control" id="new_swarm_hive_id" value="{{hive.id}}">
+                    <div class="form-group">
+                        <label for="swarm_health" class="col-form-label">{{trads[103]}}</label>
+                        <select class="custom-select d-block w-100" id="new_swarm_health" required>
+                        <option value=''>{{trads[26]}}</option>
+                            {% for health in swarm_healths %}
+                                <option value={{health.id}}>{{health[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                        <button type="submit" class="btn btn-primary">{{trads[14]}}</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

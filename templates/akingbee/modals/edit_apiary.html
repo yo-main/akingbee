@@ -1,0 +1,46 @@
+
+<!-- Modal to edit an apiary -->
+<div class="modal fade" id="edit_apiary_modal" tabindex="-1" role="dialog" aria-labelledby="title_edit_apiary" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title_edit_apiary">{{trads[93]}}</h5>
+                <button type="btn btn-secondary btn-sm" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form-edit-apiary">
+                    <div class="form-group">
+                        <label for="apiary_name_modal" class="col-form-label" id="apiary_id">{{trads[22]}}</label>
+                        <input type="text" class="form-control" id="apiary_name_modal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_location_modal" class="col-form-label">{{trads[23]}}</label>
+                        <input type="text" class="form-control" id="apiary_location_modal" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_status_modal" class="col-form-label">{{trads[28]}}</label>
+                        <select id="apiary_status_modal" class="custom-select d-block w-100" required>
+                            {% for status in apiary_statuses %}
+                            <option value="{{status.id}}">{{status[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="apiary_honey_modal" class="col-form-label">{{trads[27]}}</label>
+                        <select id="apiary_honey_modal" class="custom-select d-block w-100" required>
+                            {% for type in honey_types %}
+                            <option value="{{type.id}}">{{type[lang]}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{trads[33]}}</button>
+                        <button type="submit" class="btn btn-primary">{{trads[14]}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

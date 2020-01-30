@@ -6,7 +6,7 @@
 
 {% block main %}
 <main class="container p-5">
-        <form method="POST" onsubmit="return validateLogin();">
+        <form id="login-form" method="post">
             <div class='form-group'>
                 <input autocomplete='off' autofocus class="form-control" id="username" placeholder="{{trads[2]}}" type="text" required/>
             </div>
