@@ -436,6 +436,8 @@ function delete_hive(hive_id){
 
 
 $("#new-swarm-form").submit( function(event) {
+    event.preventDefault();
+
     hive_id = $("#new_swarm_hive_id").val();
 
     let data = {
@@ -443,7 +445,7 @@ $("#new-swarm-form").submit( function(event) {
         "swarm_health": $("#new_swarm_health").val()
     };
 
-    let url = get_full_url("/swarm/create");
+    let url = get_full_url("/api/swarm");
 
     $.ajax({
         type: "POST",
@@ -457,12 +459,11 @@ $("#new-swarm-form").submit( function(event) {
             window.location.reload();
         }
     });
-}
+});
 
 
-function show_swarm_create_modal(){
-    $("#submit_new_swarm").modal("show");
-    $("#comment_name").attr("name", bh_id);
+function show_create_swarm_modal(){
+    $("#new_swarm_modal").modal("show");
 }
 
 
@@ -486,8 +487,35 @@ $("#move-hive-form").submit( function(event) {
         },
         success: function(answer, code){
             showSuccess(answer);
-            window.location = get_full_url("/hive");
+            window.location.reload();
         }
     });
 });
+
+
+function delete_swarm(hive_id){
+    let url = get_full_url("/api/swarm");
+
+    if (LANGUAGE == "fr"){
+        confirmation = window.confirm("Supprimer l'essaim rattaché à cette ruche ?");
+    }
+    else{
+        confirmation = window.confirm("Delete the swarm attached to this hive ?");
+    }
+
+    if (confirmation){
+        $.ajax({
+            type: "DEL",
+            url: url,
+            data: {hive_id: hive_id},
+            error: function(answer, code){
+                showError(answer);
+            },
+            success: function(answer, code){
+                showSuccess(answer);
+                window.location.reload();
+            }
+        });
+    };
+}
 

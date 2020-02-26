@@ -76,10 +76,18 @@
                                 <div class="col-auto">
                                     <button id="button_other_actions" type="btn-group" class="btn btn-link btn-smenu dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{trads[120]}}</button>
                                     <div class="dropdown-menu" aria-labelledby="button_other_actions">
-                                        <!-- delete hive-->
-                                        <button class="dropdown-item" class="btn btn-link btn-smenu" name="{{hive.name}}" onclick="delete_hive({{hive.id}})">{{trads[94]}}</button>
+                                        <!-- delete hive -->
+                                        <button class="dropdown-item" class="btn btn-link btn-smenu" onclick="delete_hive({{hive.id}})">{{trads[126]}}</button>
                                         {% if apiaries|length  >= 2 %}
-                                        <button class="dropdown-item" class="btn btn-link btn-smenu" name="{{hive.name}}" onclick="show_move_hive_modal()">{{trads[121]}}</button>
+                                        <!-- move hive -->
+                                        <button class="dropdown-item" class="btn btn-link btn-smenu" onclick="show_move_hive_modal()">{{trads[121]}}</button>
+                                        {% endif %}
+                                        {% if not hive.swarm %}
+                                        <!-- add swarm -->
+                                        <button class="dropdown-item" class="btn btn-link btn-smenu" onclick="show_create_swarm_modal()">{{trads[97]}}</button>
+                                        {% else %}
+                                        <!-- delete swarm -->
+                                        <button class="dropdown-item" class="btn btn-link btn-smenu" onclick="delete_swarm({{hive.id}})">{{trads[125]}}</button>
                                         {% endif %}
                                     </div>
                                 </div>
