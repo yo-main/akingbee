@@ -3,7 +3,11 @@ import datetime
 import flask
 
 from src.database import DB
-from src.helpers.tools import login_required, create_system_comment_from_hive, get_traductions
+from src.helpers.tools import (
+    login_required,
+    create_system_comment_from_hive,
+    get_traductions,
+)
 from src.services.alerts import Error, Success
 from src.constants import alert_codes as alerts
 
@@ -28,7 +32,6 @@ def swarm_action():
         if hive is None:
             raise Error(alerts.UNKNOWN_DATA)
 
-
         if hive.swarm:
             raise Error(alerts.SWARM_ALREADY_EXISTS)
 
@@ -51,7 +54,9 @@ def swarm_action():
 
     if flask.request.method == "DELETE":
         hive_id = flask.request.form.get("hive_id")
-        hive = tuple(Hive.select(Hive, Swarm).join(Swarm).where(Hive.id == hive_id))[0]
+        hive = tuple(
+            Hive.select(Hive, Swarm).join(Swarm).where(Hive.id == hive_id)
+        )[0]
         hive.swarm, swarm = None, hive.swarm
 
         msg = get_traductions(124).format(hive_name=hive.name)
@@ -63,5 +68,3 @@ def swarm_action():
             comment.save()
 
         return Success(alerts.DELETION_SUCCESS)
-
-

@@ -159,6 +159,7 @@ def test_move_hive_fail(client):
     answer = client.post("/api/hive/1/move/3")
     assert answer.status_code == 404
 
+
 def test_add_swarm_success(client):
     logged_in(client)
     data = {"hive_id": 1, "swarm_health": 1}
@@ -167,15 +168,15 @@ def test_add_swarm_success(client):
     answer = client.post("/api/swarm", data=data)
     assert answer.status_code == 200
 
-@pytest.mark.parametrize("swarm_health, hive_id", (
-    (9, 1), (1, 8)
-))
+
+@pytest.mark.parametrize("swarm_health, hive_id", ((9, 1), (1, 8)))
 def test_add_swarm_fail(client, swarm_health, hive_id):
     logged_in(client)
     data = {"hive_id": hive_id, "swarm_health": swarm_health}
 
     answer = client.post("/api/swarm", data=data)
     assert answer.status_code == 500
+
 
 def test_delete_swarm_success(client):
     logged_in(client)
@@ -184,8 +185,3 @@ def test_delete_swarm_success(client):
     assert Hive.get_by_id(1).swarm_id == 1
     answer = client.delete("/api/swarm", data=data)
     assert answer.status_code == 200
-
-
-
-
-

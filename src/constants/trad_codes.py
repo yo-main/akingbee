@@ -140,11 +140,11 @@ traductions = {
     },
     123: {
         FRENCH: "Essaim créé sur la ruche {hive_name}",
-        ENGLISH: "Swarm created on hive {hive_name}"
+        ENGLISH: "Swarm created on hive {hive_name}",
     },
     124: {
         FRENCH: "Essaim supprimé de la ruche {hive_name}",
-        ENGLISH: "Swarm deleted from hive {hive_name}"
+        ENGLISH: "Swarm deleted from hive {hive_name}",
     },
     125: {FRENCH: "Supprimer l'essaim", ENGLISH: "Delete the swarm"},
     126: {FRENCH: "Supprimer la ruche", ENGLISH: "Delete the hive"},
