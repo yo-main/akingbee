@@ -62,7 +62,7 @@ function del_comment(comment_id){
 
     if (confirmation){
         $.ajax({
-            type: "DEL",
+            type: "DELETE",
             url: my_url,
             error: function(answer, code){
                 showError(answer);
@@ -421,7 +421,7 @@ function delete_hive(hive_id){
 
     if (confirmation){
         $.ajax({
-            type: "DEL",
+            type: "DELETE",
             url: url,
             error: function(answer, code){
                 showError(answer);
@@ -505,7 +505,7 @@ function delete_swarm(hive_id){
 
     if (confirmation){
         $.ajax({
-            type: "DEL",
+            type: "DELETE",
             url: url,
             data: {hive_id: hive_id},
             error: function(answer, code){

@@ -36,7 +36,7 @@ def setupPage():
 
 @api.route(
     "/setup/<string:entity>/<string:data_name>",
-    methods=["GET", "POST", "PUT", "DEL"],
+    methods=["GET", "POST", "PUT", "DELETE"],
 )
 @login_required
 def submit_new_data(entity, data_name):
@@ -77,7 +77,7 @@ def submit_new_data(entity, data_name):
 
         return Success(alerts.MODIFICATION_SUCCESS)
 
-    elif flask.request.method == "DEL":
+    elif flask.request.method == "DELETE":
         data_id = flask.request.form.get("id")
         obj = class_.get_by_id(data_id)
         obj.delete_instance()

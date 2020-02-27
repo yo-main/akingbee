@@ -13,7 +13,7 @@ from src.models import Swarm, Hive
 api = flask.Blueprint("Swarm", __name__)
 
 
-@api.route("/api/swarm", methods=["POST", "DEL"])
+@api.route("/api/swarm", methods=["POST", "DELETE"])
 @login_required
 def swarm_action():
 
@@ -49,7 +49,7 @@ def swarm_action():
 
         return Success(alerts.SWARM_ATTACH_WITH_SUCCESS)
 
-    if flask.request.method == "DEL":
+    if flask.request.method == "DELETE":
         hive_id = flask.request.form.get("hive_id")
         hive = tuple(Hive.select(Hive, Swarm).join(Swarm).where(Hive.id == hive_id))[0]
         hive.swarm, swarm = None, hive.swarm

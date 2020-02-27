@@ -70,7 +70,7 @@ def hive_create():
     )
 
 
-@api.route("/api/hive/<int:hive_id>", methods=["GET", "PUT", "DEL"])
+@api.route("/api/hive/<int:hive_id>", methods=["GET", "PUT", "DELETE"])
 @login_required
 def hive_details(hive_id):
     try:
@@ -98,7 +98,7 @@ def hive_details(hive_id):
 
         return Success(alerts.MODIFICATION_SUCCESS)
 
-    elif flask.request.method == "DEL":
+    elif flask.request.method == "DELETE":
         hive.delete_instance()
         return Success(alerts.DELETION_SUCCESS)
 
@@ -300,7 +300,7 @@ def select_hive(hive_id, way):
     return flask.jsonify(f"/hive/{new_id}")
 
 
-@api.route("/api/comment/<int:comment_id>", methods=["DEL", "PUT"])
+@api.route("/api/comment/<int:comment_id>", methods=["DELETE", "PUT"])
 @login_required
 def operate_comment(comment_id):
     if flask.request.method == "PUT":
@@ -317,7 +317,7 @@ def operate_comment(comment_id):
 
         return Success(alerts.MODIFICATION_SUCCESS)
 
-    elif flask.request.method == "DEL":
+    elif flask.request.method == "DELETE":
         comment = Comment.get_by_id(comment_id)
 
         if comment.type.id == constants.COMMENT_TYPE_EVENT:

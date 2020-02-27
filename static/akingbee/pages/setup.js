@@ -22,7 +22,7 @@ function show_delete_data(data_id){
     if (confirm){
         $.ajax({
             url: my_url,
-            type: "DEL",
+            type: "DELETE",
             data: {id: data_id},
             error: function(answer, code){
                 showError(answer);
