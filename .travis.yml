@@ -3,13 +3,25 @@ language: python
 python:
     - "3.7"
 
-install:
-    - pip install poetry
-    - poetry install
+branches:
+  only:
+    - master
+
+services:
+  - docker
 
 env:
   - ENV=TEST
 
+install:
+  - pip install poetry
+  - poetry install
+
 script: 
-    - poetry run coverage run -m pytest -v
-    - poetry run coverage report
+  - poetry run coverage run -m pytest -v
+  - poetry run coverage report
+
+after_success:
+  - docker build -t $DOCKERHUB_USERNAME/akingbee .
+  - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+  - docker push $DOCKERHUB_USERNAME/akingbee
