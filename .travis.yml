@@ -7,6 +7,9 @@ install:
     - pip install poetry
     - poetry install
 
+env:
+  - ENV=TEST
+
 script: 
-    - ENV=TEST poetry run coverage run -m pytest -v
+    - poetry run coverage run -m pytest -v
     - poetry run coverage report
