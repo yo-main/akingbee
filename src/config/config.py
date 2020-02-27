@@ -19,7 +19,7 @@ class Config:
 
     URL_PREFIX = ""
 
-    ENV = "SIMU"
+    ENV = os.environ.get("ENV", "SIMU")
     SECRET_KEY = "DEV"
     PASSWORD_REQUESTED = True
 
