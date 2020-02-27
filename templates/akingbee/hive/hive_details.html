@@ -164,7 +164,11 @@
                                             {% else %}
                                             <td><button type="button" class="btn btn-link" disabled>{{trads[70]}}</button></td>
                                             {% endif %}
+                                            {% if comments[n].type.id == 2 %} <!-- system comment (cannot be deleted) -->
+                                            <td><button type="button" class="btn btn-link" disabled>{{trads[64]}}</button></td>
+                                            {% else %}
                                             <td><button type="button" class="btn btn-link" onclick="del_comment({{comments[n].id}});">{{trads[64]}}</button></td>
+                                            {% endif %}
                                         </tr>
                                     {% endfor %}
                                 </body>

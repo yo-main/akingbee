@@ -88,9 +88,10 @@ def hive_details(hive_id):
         if not name or not owner:
             raise Error(alerts.EMPTY_FIELD)
 
+        hive.name = name
+        hive.owner = owner
+
         try:
-            hive.name = name
-            hive.owner = owner
             hive.save()
         except IntegrityError:
             raise Error(alerts.INCONSISTANT_DATA)
@@ -255,7 +256,7 @@ def hive_profil(hive_id):
         .switch(Comment)
         .join(CommentType)
         .where(Comment.hive_id == hive_id)
-        .order_by(Comment.date.desc())
+        .order_by(Comment.date_creation.desc(), Comment.date.desc())
     )
 
     comment_types = tuple(set(comment.type for comment in comments))
