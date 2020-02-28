@@ -1,6 +1,8 @@
 FROM yomain/akingbee:engine
 
-COPY . /app
-WORKDIR /app
+ENV PYTHONPATH /app/src
 
-RUN ~/.poetry/bin/poetry install --no-dev
+WORKDIR /app
+COPY . /app
+
+RUN poetry install --no-dev

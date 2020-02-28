@@ -12,12 +12,12 @@ services:
             - 8080
         env_file:
             - .env
-        command: uwsgi --ini ./config_docker/uwsgi.ini
+        command: uwsgi --ini ./conf/uwsgi.ini
     nginx:
         image: nginx:latest
         container_name: nginx
         volumes:
-            - ./config_docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
             - ./templates/akingbee/images:/images/akingbee/
         ports:
             - 80:80
