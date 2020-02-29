@@ -2,14 +2,12 @@ version: "3"
 
 services:
     akingbee:
-        image: yomain/akingbee:latest
+        image: yomain/akingbee:prod
         container_name: akingbee
         expose:
             - 8080
         env_file:
             - ./.env
-        volumes:
-            - .:/app
         command: uwsgi --ini ./conf/uwsgi.ini
         restart: "always"
         networks:

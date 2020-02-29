@@ -23,6 +23,8 @@ script:
   - poetry run coverage report
 
 after_success:
-  - docker build -t $DOCKERHUB_USERNAME/akingbee .
   - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-  - docker push $DOCKERHUB_USERNAME/akingbee
+  - docker tag $DOCKERHUB_USERNAME/akingbee:prod $DOCKERHUB_USERNAME/akingbee:previous
+  - docker push $DOCKERHUB_USERNAME:akingbee:previous
+  - docker build -t $DOCKERHUB_USERNAME/akingbee:prod .
+  - docker push $DOCKERHUB_USERNAME/akingbee:prod
