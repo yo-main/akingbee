@@ -7,10 +7,10 @@ from flask import Blueprint
 from src.helpers.tools import render, redirect
 from src.helpers.checkers import validate_email, validate_password
 from src import constants
-from src.constants import alert_codes as alerts
+from src.errors import errors
+from src.success import success
 from src.config import CONFIG
 from src.log.logger import logger
-from src.services.alerts import Error, Success
 from src.helpers.users import (
     get_user_from_username,
     verify_password,
@@ -66,7 +66,7 @@ def login():
     # this variable should only be set to false in test
     if CONFIG.PASSWORD_REQUESTED:
         if not verify_password(user.pwd, password):
-            raise Error(alerts.INCORRECT_PASSWORD_ERROR)
+            raise errors.IncorrectPassword()
 
         # All good ! We can log in the user
         user.date_last_connection = datetime.datetime.now()
@@ -74,7 +74,7 @@ def login():
 
     flask.session["user_id"] = user.id
     flask.session["username"] = user.username
-    return Success(alerts.LOGIN_SUCCESS)
+    return success.LoginSuccess()
 
 
 @api.route("/logout", methods=["GET"])
@@ -116,25 +116,25 @@ def registerCheck():
     }
 
     if not validate_email(data["email"]):
-        raise Error(alerts.INCORRECT_EMAIL_FORMAT)
+        raise errors.IncorrectEmailFormat()
 
     if not validate_password(data["pwd"]):
-        raise Error(alerts.INCORRECT_PASSWORD_FORMAT)
+        raise errors.IncorrectPasswordFormat()
 
     if not data["email"] or not data["username"]:
-        raise Error(alerts.MISSING_INFORMATION_REGISTER)
+        raise errors.MissingInformation()
 
     user = User.select().where(User.username == data["username"]).count()
     if user:
-        raise Error(alerts.USER_ALREADY_EXISTS_ERROR)
+        raise errors.UserAlreadyExists()
 
     email = User.select().where(User.email == data["email"]).count()
     if email:
-        raise Error(alerts.EMAIL_ALREADY_EXISTS_ERROR)
+        raise errors.UserAlreadyExists()
 
     create_new_user(data)
 
-    return Success(alerts.REGISTER_SUCCESS)
+    return success.RegisterSuccess()
 
 
 @api.route("/reset_password", methods=["GET", "POST"])
@@ -150,7 +150,7 @@ def reset_pwd():
         username = flask.request.form.get("username")
 
         if not validate_password(pwd):
-            raise Error(alerts.INCORRECT_PASSWORD_FORMAT)
+            raise errors.IncorrectPasswordFormat()
 
         hashed_pwd = create_password_hash(pwd)
 
@@ -158,4 +158,4 @@ def reset_pwd():
         user.pwd = hashed_pwd
         user.save()
 
-        return Success(alerts.PASSWORD_RESET_SUCCESS)
+        return success.PasswordResetSuccess()

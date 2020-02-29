@@ -2,8 +2,7 @@ import flask
 from peewee import Model
 
 from src.database import DB
-from src.services.alerts import Error
-from src.constants import alert_codes as alerts
+from src.errors import errors
 
 
 class BaseModel(Model):
@@ -44,7 +43,7 @@ class BaseModel(Model):
             if user_id_kwargs:
                 setattr(self, "user_id", user_id_kwargs)
             else:
-                raise Error(alerts.USER_COULD_NOT_BE_IDENTIFIED)
+                raise errors.UserCouldNotBeIdentified()
 
     def serialize(self):
         data = {column: getattr(self, column) for column in self.columns}

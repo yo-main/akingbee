@@ -1,8 +1,9 @@
 import flask
+import peewee
 
 from src.helpers.tools import login_required, render, get_all
-from src.services.alerts import Error, Success
-from src.constants import alert_codes as alerts
+from src.errors import errors
+from src.success import success
 
 from src.models import (
     Owner,
@@ -48,7 +49,7 @@ def submit_new_data(entity, data_name):
         data = flask.request.form.get("data")
 
         if not data:
-            raise Error(alerts.EMPTY_FIELD)
+            raise errors.MissingInformation()
 
         if class_ == Owner:
             obj = class_(**{"name": data})
@@ -57,7 +58,7 @@ def submit_new_data(entity, data_name):
 
         obj.save()
 
-        return Success(alerts.NEW_PARAMETER_SUCCESS)
+        return success.NewParameterSuccess()
 
     elif flask.request.method == "PUT":
         data_id = flask.request.form.get("id")
@@ -65,7 +66,7 @@ def submit_new_data(entity, data_name):
         obj = class_.get_by_id(data_id)
 
         if not data:
-            raise Error(alerts.EMPTY_FIELD)
+            raise errors.MissingInformation()
 
         if class_ == Owner:
             obj.name = data
@@ -75,14 +76,17 @@ def submit_new_data(entity, data_name):
 
         obj.save()
 
-        return Success(alerts.MODIFICATION_SUCCESS)
+        return success.ModificationSuccess()
 
     elif flask.request.method == "DELETE":
         data_id = flask.request.form.get("id")
         obj = class_.get_by_id(data_id)
-        obj.delete_instance()
+        try:
+            obj.delete_instance()
+        except peewee.IntegrityError:
+            raise errors.DeleteIntegrityError()
 
-        return Success(alerts.DELETION_SUCCESS)
+        return success.DeletionSuccess()
 
     elif flask.request.method == "GET":
         return render(

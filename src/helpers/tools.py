@@ -7,8 +7,7 @@ from peewee import DoesNotExist
 from src.helpers.users import get_user_id
 from src import constants
 from src.constants import trad_codes as trads
-from src.constants import alert_codes as alerts
-from src.services.alerts import Error
+from src.errors import errors
 from src.models.comment import Comment
 from src.models.swarm import Swarm
 
@@ -45,7 +44,7 @@ def _get_trads(language, index):
     elif index in trads.traductions:
         out = trads.traductions[index][language]
     else:
-        raise Error(alerts.TRANSLATION_ID_DOES_NOT_EXISTS)
+        raise errors.TranslationIdDoesNotExists()
 
     return out
 

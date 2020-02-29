@@ -14,8 +14,7 @@ from src.models import (
 )
 
 from src import constants
-from src.constants import alert_codes as alerts
-from src.services.alerts import Error
+from src.errors import errors
 from src.log.logger import logger
 
 from src.database import DB
@@ -48,7 +47,7 @@ def get_user_from_username(username):
     try:
         result = User.get(User.username == username)
     except DoesNotExist:
-        raise Error(alerts.USER_NOT_FOUND_ERROR)
+        raise errors.UserNotFound()
     return result
 
 

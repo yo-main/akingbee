@@ -1,7 +1,6 @@
 import datetime
 
-from src.constants import alert_codes as alerts
-from src.services.alerts import Error
+from src.errors import errors
 
 
 def jinja_date_formatting(value, length="short"):
@@ -24,6 +23,6 @@ def convert_to_date_object(arg):
     try:
         date = datetime.datetime.strptime(arg, "%d/%m/%Y")
     except ValueError:
-        raise Error(alerts.STRING_CANNOT_BE_CONVERTED_TO_DATE)
+        raise errors.NotDateFormat()
 
     return date

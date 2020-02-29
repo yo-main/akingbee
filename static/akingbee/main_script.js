@@ -70,12 +70,10 @@ function get_full_url(path) {
 
 
 function display_alerts() {
-    let msg = window.sessionStorage.getItem("msgSuccessBody");
-    let title = window.sessionStorage.getItem("msgSuccessTitle");
+    let msg = window.sessionStorage.getItem("message_success");
     if (msg){
-        createSuccess(msg, title);
-        window.sessionStorage.removeItem("msgSuccessBody");
-        window.sessionStorage.removeItem("msgSuccessTitle");
+        createSuccess(msg);
+        window.sessionStorage.removeItem("message_success");
     }
 }
 
@@ -86,9 +84,9 @@ function createError(msg, title){
 }
 
 
-function createSuccess(msg, title){
+function createSuccess(msg){
     toastr.options = toastrOptions;
-    toastr["success"](msg, title);
+    toastr["success"](msg);
 }
 
 
@@ -97,10 +95,10 @@ function showError(response){
     if (answer == null) {
         answer = {
             'fr': {
-                'message': "Une erreur interne s'est produite. Désolé :("
+                'message': "Une erreur inattendue s'est produite. Désolé :("
             },
             'en': {
-                'message': "An internal error happened. Sorry :("
+                'message': "An unexpected error happened. Sorry :("
             }
         }
     };
@@ -112,8 +110,7 @@ function showError(response){
 
 function showSuccess(response){
     let content = response[LANGUAGE];
-    window.sessionStorage.setItem("msgSuccessBody", content.message);
-    window.sessionStorage.setItem("msgSuccessTitle", content.title);
+    window.sessionStorage.setItem("message_success", content);
 }
 
 

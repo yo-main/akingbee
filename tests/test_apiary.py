@@ -17,12 +17,12 @@ def create_a_user(fake_database):
 @pytest.mark.parametrize(
     "name,location,honey,status,expected",
     [
-        ("", "Location", "1", "1", alert_codes.MISSING_INFORMATION_APIARY),
-        ("Name", "", "1", "1", alert_codes.MISSING_INFORMATION_APIARY),
-        ("Name", "Location", "", "1", alert_codes.MISSING_INFORMATION_APIARY),
-        ("Name", "Location", "1", "", alert_codes.MISSING_INFORMATION_APIARY),
-        ("Name", "Location", "9", "1", alert_codes.INCONSISTANT_DATA),
-        ("Name", "Location", "1", "5", alert_codes.INCONSISTANT_DATA),
+        ("", "Location", "1", "1", 400),
+        ("Name", "", "1", "1", 400),
+        ("Name", "Location", "", "1", 400),
+        ("Name", "Location", "1", "", 400),
+        ("Name", "Location", "9", "1", 500),
+        ("Name", "Location", "1", "5", 500),
     ],
 )
 def test_create_apiary_fail(name, location, honey, status, expected, client):
@@ -36,8 +36,7 @@ def test_create_apiary_fail(name, location, honey, status, expected, client):
         "birthday": "01/01/2019",
     }
     answer = client.post("/api/apiary", data=data)
-    assert answer.status_code == 500
-    assert answer.json["code"] == expected
+    assert answer.status_code == expected
 
 
 def test_create_apiary_success(client):
@@ -52,7 +51,6 @@ def test_create_apiary_success(client):
     }
     answer = client.post("/api/apiary", data=data)
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.NEW_APIARY_SUCCESS
 
 
 def test_create_new_apiary_status_fail(client):
@@ -60,8 +58,7 @@ def test_create_new_apiary_status_fail(client):
 
     data = {"value": ""}
     answer = client.post("/api/apiary_status", data=data)
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.INCONSISTANT_DATA
+    assert answer.status_code == 400
 
 
 def test_create_new_apiary_status_success(client):
@@ -70,7 +67,6 @@ def test_create_new_apiary_status_success(client):
     data = {"value": "test"}
     answer = client.post("/api/apiary_status", data=data)
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
 
 def test_create_new_honey_type_fail(client):
@@ -78,8 +74,7 @@ def test_create_new_honey_type_fail(client):
 
     data = {"value": ""}
     answer = client.post("/api/honey_type", data=data)
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.INCONSISTANT_DATA
+    assert answer.status_code == 400
 
 
 def test_create_new_honey_type_success(client):
@@ -88,7 +83,6 @@ def test_create_new_honey_type_success(client):
     data = {"value": "test"}
     answer = client.post("/api/honey_type", data=data)
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.NEW_PARAMETER_SUCCESS
 
 
 def test_get_apiary_info_fail(client):
@@ -134,7 +128,6 @@ def test_modify_apiary_success(client):
     data = {"name": "wesh", "location": "vazy", "status": 2, "honey": 3}
     answer = client.put("/api/apiary/1", data=data)
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.MODIFICATION_SUCCESS
 
 
 def test_modify_delete_apiary_fail(client):
@@ -148,4 +141,3 @@ def test_modify_delete_apiary_success(client):
 
     answer = client.delete("/api/apiary/1")
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.DELETION_SUCCESS

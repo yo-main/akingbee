@@ -6,8 +6,7 @@ import yaml
 from src import views
 from src import database as db
 
-from src.services.alerts import Error
-from src.constants import alert_codes as alerts
+from src.errors.base import BaseError
 from src.helpers.date import jinja_date_formatting
 from src.config import CONFIG
 
@@ -57,10 +56,9 @@ def register_decorators(app):
             db.DB.close()
         return f
 
-    @app.errorhandler(Error)
+    @app.errorhandler(BaseError)
     def handle_error(error):
-        response = flask.jsonify(error.to_dict())
-        return response, 500
+        return error.to_dict(), error.code
 
 
 def register_blueprint(app):

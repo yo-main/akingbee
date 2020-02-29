@@ -3,12 +3,12 @@ import datetime
 
 from src.constants import alert_codes
 from src.helpers.date import convert_to_date_object, jinja_date_formatting
-from src.services.alerts import Error
+from src.errors import errors
 
 
 @pytest.mark.parametrize("date", ["12", "12/01", "12/15/19"])
 def test_convert_date_fail(date):
-    with pytest.raises(Error):  # it's ugly - to refacto
+    with pytest.raises(errors.NotDateFormat):  # it's ugly - to refacto
         convert_to_date_object(date)
 
 

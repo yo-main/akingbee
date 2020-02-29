@@ -4,8 +4,8 @@ from peewee import IntegrityError, DoesNotExist
 
 from src.helpers.tools import get_all, render, login_required
 from src.helpers.date import convert_to_date_object
-from src.services.alerts import Error, Success
-from src.constants import alert_codes as alerts
+from src.errors import errors
+from src.success import success
 from src.database import DB
 
 from src.models import Apiary, StatusApiary, HoneyType
@@ -52,12 +52,12 @@ def apiary_create_honey():
     value = flask.request.form.get("value")
 
     if not value:
-        raise Error(alerts.INCONSISTANT_DATA)
+        raise errors.MissingInformation()
 
     honey = HoneyType(fr=value, en=value)
     honey.save()
 
-    return Success(alerts.NEW_PARAMETER_SUCCESS)
+    return success.NewParameterSuccess()
 
 
 @api.route("/api/apiary_status", methods=["POST"])
@@ -66,12 +66,12 @@ def apiary_status_create():
     value = flask.request.form.get("value")
 
     if not value:
-        raise Error(alerts.INCONSISTANT_DATA)
+        raise errors.MissingInformation()
 
     status_apiary = StatusApiary(fr=value, en=value)
     status_apiary.save()
 
-    return Success(alerts.NEW_PARAMETER_SUCCESS)
+    return success.NewParameterSuccess()
 
 
 @api.route("/api/apiary", methods=["POST"])
@@ -86,15 +86,15 @@ def create_apiary_api():
     }
 
     if not all(x for x in data.values()):
-        raise Error(alerts.MISSING_INFORMATION_APIARY)
+        raise errors.MissingInformation()
 
     try:
         apiary = Apiary(**data)
         apiary.save()
     except IntegrityError as e:
-        raise Error(alerts.INCONSISTANT_DATA)
+        raise errors.SqlProcessingError
 
-    return Success(alerts.NEW_APIARY_SUCCESS)
+    return success.NewApiarySuccess()
 
 
 @api.route("/api/apiary/<path:apiary_id>", methods=["GET", "PUT", "DELETE"])
@@ -127,10 +127,10 @@ def apiary_details(apiary_id):
             count += 1
 
         if not count:
-            raise Error(alerts.INCONSISTANT_DATA)
+            raise errors.MissingInformation()
 
         apiary.save()
-        return Success(alerts.MODIFICATION_SUCCESS)
+        return success.ModificationSuccess()
 
     elif flask.request.method == "DELETE":
         with DB.atomic():
@@ -141,6 +141,6 @@ def apiary_details(apiary_id):
             try:
                 apiary.delete_instance()
             except IntegrityError:
-                raise Error(alerts.SQL_FOREIGN_KEY_ERROR)
+                raise errors.DeleteIntegrityError()
 
-        return Success(alerts.DELETION_SUCCESS)
+        return success.DeletionSuccess()

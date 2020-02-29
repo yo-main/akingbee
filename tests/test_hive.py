@@ -66,17 +66,17 @@ def test_get_create_hive_page(client):
 
 
 @pytest.mark.parametrize(
-    "name,birthday,apiary,owner,condition",
+    "name,birthday,apiary,owner,condition,expected",
     [
-        ("", "19/12/2019", 1, 1, 1),
-        ("name", "12/19/2019", 1, 1, 1),
-        ("name", "19/12/2019", 9, 1, 1),
-        ("name", "19/12/2019", 1, 9, 1),
-        ("name", "19/12/2019", 1, 1, 9),
+        ("", "19/12/2019", 1, 1, 1, 500),
+        ("name", "12/19/2019", 1, 1, 1, 400),
+        ("name", "19/12/2019", 9, 1, 1, 500),
+        ("name", "19/12/2019", 1, 9, 1, 500),
+        ("name", "19/12/2019", 1, 1, 9, 500),
     ],
 )
 def test_create_new_hive_fail(
-    name, birthday, apiary, owner, condition, client
+    name, birthday, apiary, owner, condition, client, expected
 ):
     logged_in(client)
 
@@ -88,7 +88,7 @@ def test_create_new_hive_fail(
         "hive_condition": condition,
     }
     answer = client.post("/api/hive", data=data)
-    assert answer.status_code == 500
+    assert answer.status_code == expected
 
 
 def test_create_new_hive_success(client):
@@ -103,7 +103,6 @@ def test_create_new_hive_success(client):
     }
     answer = client.post("/api/hive", data=data)
     assert answer.status_code == 200
-    assert answer.json["code"] == alerts.NEW_HIVE_SUCCESS
 
 
 def test_get_hive_info_fail(client):
@@ -121,7 +120,7 @@ def test_get_hive_info_success(client):
 
 @pytest.mark.parametrize(
     "hive_id,name,owner,expected",
-    [(1, "", 1, 500), (1, 1, 10, 500), (10, 1, 1, 404)],
+    [(1, "", 1, 400), (1, 1, 10, 500), (10, 1, 1, 404)],
 )
 def test_modify_hive_fail(hive_id, name, owner, expected, client):
     logged_in(client)
@@ -137,7 +136,6 @@ def test_modify_hive_success(client):
     data = {"hive": "test_hive_modification", "apiary": 1, "owner": 1}
     answer = client.put("/api/hive/1", data=data)
     assert answer.status_code == 200
-    assert answer.json["code"] == alerts.MODIFICATION_SUCCESS
 
 
 def test_move_hive_success(client):
@@ -146,7 +144,6 @@ def test_move_hive_success(client):
     assert Hive.get_by_id(1).apiary_id == 1
     answer = client.post("/api/hive/1/move/2")
     assert answer.status_code == 200
-    assert answer.json["code"] == alerts.HIVE_MOVE_SUCCESS
     assert Hive.get_by_id(1).apiary_id == 2
     answer = client.post("/api/hive/1/move/1")
     assert Hive.get_by_id(1).apiary_id == 1
@@ -175,7 +172,7 @@ def test_add_swarm_fail(client, swarm_health, hive_id):
     data = {"hive_id": hive_id, "swarm_health": swarm_health}
 
     answer = client.post("/api/swarm", data=data)
-    assert answer.status_code == 500
+    assert answer.status_code == 400
 
 
 def test_delete_swarm_success(client):

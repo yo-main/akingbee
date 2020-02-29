@@ -1,4 +1,5 @@
 import datetime
+import peewee
 
 import flask
 from peewee import IntegrityError, DoesNotExist, JOIN
@@ -15,8 +16,8 @@ from src.helpers.tools import (
 from src.helpers.date import convert_to_date_object
 from src.helpers.users import get_user_id
 from src import constants
-from src.constants import alert_codes as alerts
-from src.services.alerts import Error, Success
+from src.errors import errors
+from src.success import success
 
 from src.models import (
     Hive,
@@ -86,7 +87,7 @@ def hive_details(hive_id):
         owner = flask.request.form.get("owner")
 
         if not name or not owner:
-            raise Error(alerts.EMPTY_FIELD)
+            raise errors.MissingInformation()
 
         hive.name = name
         hive.owner = owner
@@ -94,13 +95,17 @@ def hive_details(hive_id):
         try:
             hive.save()
         except IntegrityError:
-            raise Error(alerts.INCONSISTANT_DATA)
+            raise errors.SqlProcessingError(hive=hive)
 
-        return Success(alerts.MODIFICATION_SUCCESS)
+        return success.ModificationSuccess()
 
     elif flask.request.method == "DELETE":
-        hive.delete_instance()
-        return Success(alerts.DELETION_SUCCESS)
+        try:
+            hive.delete_instance()
+        except peewee.IntegrityError:
+            raise errors.DeleteIntegrityError()
+
+        return success.DeletionSuccess()
 
 
 @api.route("/api/hive/<int:hive_id>/move/<int:apiary_id>", methods=["POST"])
@@ -112,14 +117,14 @@ def move_hive(hive_id, apiary_id):
         flask.abort(404)
 
     if hive.apiary_id == apiary.id:
-        raise Error(alerts.HIVE_ALREADY_IN_APIARY)
+        raise errors.HiveAlreadyInApiary()
 
     user_id = get_user_id()
     if not user_id:
-        raise Error(alerts.USER_COULD_NOT_BE_IDENTIFIED)
+        raise errors.UserCouldNotBeIdentified()
 
     if user_id != hive.user_id or hive.user != apiary.user:
-        raise Error(alerts.INCONSISTANT_DATA)
+        raise errors.NotAuthorizedAccess()
 
     msg = get_traductions(122).format(old=hive.apiary.name, new=apiary.name)
     new_comment = create_system_comment_from_hive(msg, hive)
@@ -130,7 +135,7 @@ def move_hive(hive_id, apiary_id):
         hive.save()
         new_comment.save()
 
-    return Success(alerts.HIVE_MOVE_SUCCESS)
+    return success.HiveMoveSuccess()
 
 
 @api.route("/api/hive", methods=["POST"])
@@ -157,9 +162,9 @@ def create_hive_api():
             hive = Hive(**hive_data)
             hive.save()
     except IntegrityError:
-        raise Error(alerts.INCONSISTANT_DATA)
+        raise errors.SqlProcessingError(hive=hive_data)
 
-    return Success(alerts.NEW_HIVE_SUCCESS)
+    return success.NewHiveSuccess()
 
 
 @api.route("/api/comment", methods=["POST"])
@@ -184,7 +189,7 @@ def create_a_comment():
 
     update_hive_history(hive)
 
-    return Success(alerts.MODIFICATION_SUCCESS)
+    return success.ModificationSuccess()
 
 
 @api.route("/api/event", methods=["POST"])
@@ -202,7 +207,7 @@ def create_event():
     event = Event(**data)
     event.save()
 
-    return Success(alerts.EVENT_PLANIFICATION_SUCCESS)
+    return success.EventPlanificationSuccess()
 
 
 @api.route("/api/event/<int:event_id>", methods=["PUT"])
@@ -231,7 +236,7 @@ def update_event(event_id):
     event.status = constants.STATUS_DONE
     event.save()
 
-    return Success(alerts.EVENT_SOLVED_SUCCESS)
+    return success.EventSolvedSuccess()
 
 
 @api.route("/hive/<int:hive_id>", methods=["GET"])
@@ -315,7 +320,7 @@ def operate_comment(comment_id):
         hive = Hive.get_by_id(comment.hive)
         update_hive_history(hive)
 
-        return Success(alerts.MODIFICATION_SUCCESS)
+        return success.ModificationSuccess()
 
     elif flask.request.method == "DELETE":
         comment = Comment.get_by_id(comment_id)
@@ -327,8 +332,11 @@ def operate_comment(comment_id):
             event.save()
 
         hive = Hive.get_by_id(comment.hive)
-        comment.delete_instance()
+        try:
+            comment.delete_instance()
+        except peewee.IntegrityError():
+            raise errors.DeleteIntegrityError()
 
         update_hive_history(hive)
 
-        return Success(alerts.DELETION_SUCCESS)
+        return success.DeletionSuccess()

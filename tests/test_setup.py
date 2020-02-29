@@ -41,7 +41,7 @@ def test_get_setup_page_success(client):
 def test_create_elements_fail(entity, data_name, client):
     logged_in(client)
     answer = client.post(f"/setup/{entity}/{data_name}", data={"data": ""})
-    assert answer.status_code == 500
+    assert answer.status_code == 400
 
 
 @pytest.mark.parametrize(

@@ -1,4 +1,5 @@
 import datetime
+import peewee
 
 import flask
 
@@ -8,8 +9,8 @@ from src.helpers.tools import (
     create_system_comment_from_hive,
     get_traductions,
 )
-from src.services.alerts import Error, Success
-from src.constants import alert_codes as alerts
+from src.errors import errors
+from src.success import success
 
 from src.models import Swarm, Hive
 
@@ -30,10 +31,10 @@ def swarm_action():
 
         hive = Hive.get_or_none(id=hive_id)
         if hive is None:
-            raise Error(alerts.UNKNOWN_DATA)
+            raise errors.UnknownData()
 
         if hive.swarm:
-            raise Error(alerts.SWARM_ALREADY_EXISTS)
+            raise errors.SwarmAlreadyExists()
 
         swarm = Swarm()
         swarm.user = flask.session["user_id"]
@@ -50,7 +51,7 @@ def swarm_action():
             hive.save()
             comment.save()
 
-        return Success(alerts.SWARM_ATTACH_WITH_SUCCESS)
+        return success.SwarmAttachSuccess()
 
     if flask.request.method == "DELETE":
         hive_id = flask.request.form.get("hive_id")
@@ -63,8 +64,12 @@ def swarm_action():
         comment = create_system_comment_from_hive(msg, hive)
 
         with DB.atomic():
-            hive.save()
-            swarm.delete_instance()
-            comment.save()
+            try:
+                hive.save()
+                swarm.delete_instance()
+                comment.save()
+            except peewee.IntegrityError:
+                raise errors.SqlProcessingError()
 
+        return success.DeletionSuccess()
         return Success(alerts.DELETION_SUCCESS)

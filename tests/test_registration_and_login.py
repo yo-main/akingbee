@@ -30,9 +30,7 @@ def test_register_user_wrong_email(email, client):
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.INCORRECT_EMAIL_FORMAT
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 @pytest.mark.parametrize(
@@ -43,9 +41,7 @@ def test_register_user_wrong_password(password, client):
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.INCORRECT_PASSWORD_FORMAT
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 def test_register_user_success(client):
@@ -58,8 +54,6 @@ def test_register_user_success(client):
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.REGISTER_SUCCESS
-    assert answer.json["status"] == "success"
 
 
 def test_register_user_username_taken(client):
@@ -71,9 +65,7 @@ def test_register_user_username_taken(client):
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.USER_ALREADY_EXISTS_ERROR
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 def test_register_user_email_taken(client):
@@ -85,27 +77,21 @@ def test_register_user_email_taken(client):
 
     answer = client.post("/registercheck", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.EMAIL_ALREADY_EXISTS_ERROR
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 def test_user_login_wrong_password(client):
     form = {"username": "user_test", "password": "1234"}
     answer = client.post("/login", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.INCORRECT_PASSWORD_ERROR
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 def test_login_unknown_username(client):
     form = {"username": "user_testing", "password": "azeAZE123!!"}
     answer = client.post("/login", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.USER_NOT_FOUND_ERROR
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 def test_user_login_success(client):
@@ -113,8 +99,6 @@ def test_user_login_success(client):
     answer = client.post("/login", data=form, follow_redirects=True)
 
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.LOGIN_SUCCESS
-    assert answer.json["status"] == "success"
 
 
 def test_index_page_logged_in(client):
@@ -133,9 +117,7 @@ def test_reset_password_fail(password, client):
 
     answer = client.post("/reset_password", data=form, follow_redirects=True)
 
-    assert answer.status_code == 500
-    assert answer.json["code"] == alert_codes.INCORRECT_PASSWORD_FORMAT
-    assert answer.json["status"] == "error"
+    assert answer.status_code == 400
 
 
 def test_reset_password_success(client):
@@ -144,5 +126,3 @@ def test_reset_password_success(client):
     answer = client.post("/reset_password", data=form, follow_redirects=True)
 
     assert answer.status_code == 200
-    assert answer.json["code"] == alert_codes.PASSWORD_RESET_SUCCESS
-    assert answer.json["status"] == "success"
