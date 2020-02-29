@@ -19,9 +19,16 @@ class BaseError(Exception):
             logger.error(kwargs)
 
     def to_dict(self):
-        return flask.jsonify({
-            "code": self.code,
-            FRENCH: {"title": f"Erreur {self.reference:05d}", "message": self.fr},
-            ENGLISH: {"title": f"Error {self.reference:05d}", "message": self.en},
-        })
-
+        return flask.jsonify(
+            {
+                "code": self.code,
+                FRENCH: {
+                    "title": f"Erreur {self.reference:05d}",
+                    "message": self.fr,
+                },
+                ENGLISH: {
+                    "title": f"Error {self.reference:05d}",
+                    "message": self.en,
+                },
+            }
+        )
