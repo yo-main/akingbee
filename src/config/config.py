@@ -26,9 +26,9 @@ class Config:
     FLASK_DEBUG = False
 
     DATABASE = {}
-    DATABASE_HOST = None
-    DATABASE_USER = None
-    DATABASE_PASSWORD = None
+    DATABASE_HOST = os.environ.get("DATABASE_HOST")
+    DATABASE_USER = os.environ.get("DATABASE_USER")
+    DATABASE_PASSWORD = os.environ.get("DATABASE_PASSWORD")
     DATABASE_SIMU = "akb_test"
     DATABASE_PROD = "akb"
 
@@ -56,7 +56,8 @@ class Config:
                     elif var_value == "false":
                         var_value = False
 
-                    setattr(self, var_name, var_value)
+                    if getattr(self, var_name) is None:
+                        setattr(self, var_name, var_value)
 
     def create_missing_folders(self):
         paths = (self.PATH_LOGS, self.PATH_FLASK_SESSIONS)
