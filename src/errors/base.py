@@ -8,6 +8,7 @@ from src.log.logger import logger
 
 class BaseError(Exception):
     code = 400
+    reference = 0
     fr = "Non traduit"
     en = "Not translated"
 
@@ -20,7 +21,7 @@ class BaseError(Exception):
     def to_dict(self):
         return flask.jsonify({
             "code": self.code,
-            FRENCH: {"title": f"Erreur {self.code}", "message": self.fr},
-            ENGLISH: {"title": f"Error {self.code}", "message": self.en},
+            FRENCH: {"title": f"Erreur {self.reference:05d}", "message": self.fr},
+            ENGLISH: {"title": f"Error {self.reference:05d}", "message": self.en},
         })
 

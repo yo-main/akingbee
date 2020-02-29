@@ -139,7 +139,7 @@ function modal_apiary_edit(apiary_id){
 
 function delete_apiary(apiary_id){
     let confirm;
-    let my_url = get_full_url("/apiary/" + apiary_id);
+    let my_url = get_full_url("/api/apiary/" + apiary_id);
 
     if (LANGUAGE == "fr"){
         confirm = window.confirm("Supprimer ce rucher ?");
