@@ -24,7 +24,8 @@ script:
 
 after_success:
   - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+  - docker pull $DOCKERHUB_USERNAME/akingbee:prod
   - docker tag $DOCKERHUB_USERNAME/akingbee:prod $DOCKERHUB_USERNAME/akingbee:previous
-  - docker push $DOCKERHUB_USERNAME:akingbee:previous
+  - docker push $DOCKERHUB_USERNAME/akingbee:previous
   - docker build -t $DOCKERHUB_USERNAME/akingbee:prod .
   - docker push $DOCKERHUB_USERNAME/akingbee:prod
