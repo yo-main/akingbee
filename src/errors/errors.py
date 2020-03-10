@@ -113,6 +113,7 @@ class HiveAlreadyInApiary(BaseError):
     en = "This hive already belongs to an apiary"
     fr = "Cette ruche appartient déjà à un rucher"
 
+
 class UnknownLanguage(BaseError):
     reference = 19
 

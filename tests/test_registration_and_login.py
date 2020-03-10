@@ -144,7 +144,3 @@ def test_change_language_fail(language, client):
     answer = client.post("/language", data=form, follow_redirects=True)
 
     assert answer.status_code == 400
-
-
-
-
