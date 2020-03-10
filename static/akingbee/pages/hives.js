@@ -258,10 +258,12 @@ function show_modal_new_comment(){
 $("#new-comment-form").submit( function(event) {
     event.preventDefault();
 
+    let quill = init_quill("#new_comment_text");
+
     let data = {
         date: $("#new_comment_date").val(),
         health: $("#new_comment_health").val(),
-        comment: $("#new_comment_text").val(),
+        comment: quill.root.innerHTML,
         hive_id: $("#new_comment_hive_id").val(),
         condition: $("#new_comment_condition").val(),
     }
@@ -284,13 +286,17 @@ $("#new-comment-form").submit( function(event) {
 
 
 function show_modal_edit_comment(comment_id, button){
+    let quill = init_quill("#edit_comment_text");
+
     let date = $(button).closest("tr").children("td.date_cm").text();
     let health = $(button).closest("tr").children("td.health_cm").attr("health_id");
     let condition = $(button).closest("tr").children("td.condition_cm").attr("condition_id");
     let comment = $(button).closest("tr").children("td.comm_cm").text();
+    let html_content = $(button).closest("tr").children("td.comm_cm").html();
+
+    quill.clipboard.dangerouslyPasteHTML(html_content);
 
     $("#edit_comment_date").val(date);
-    $("#edit_comment_text").val(comment);
     $("#edit_comment_health").val(health).change();
     $("#edit_comment_condition").val(condition).change();
 
@@ -301,12 +307,13 @@ function show_modal_edit_comment(comment_id, button){
 
 $("#edit-comment-form").submit( function(event) {
     event.preventDefault();
+    let quill = init_quill("#edit_comment_text");
 
     let comment_id = $("#modal_edit_comment").attr("comment_id");
 
     let data = {
         date: $("#edit_comment_date").val(),
-        comment: $("#edit_comment_text").val(),
+        comment: quill.root.innerHTML,
         health: $("#edit_comment_health").val(),
         condition: $("#edit_comment_condition").val(),
     }

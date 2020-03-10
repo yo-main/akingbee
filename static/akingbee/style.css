@@ -231,4 +231,6 @@ main img
 }
 
 
-
+.quill-editor-container {
+  height: 100px;
+}

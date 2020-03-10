@@ -17,12 +17,17 @@ const toastrOptions = {
 
 var ROOT_PATH = ""
 var LANGUAGE = $("html").attr("lang");
+var QUILLS = {};
 
 $(document).ready(function() {
     set_active_language();
     menu_highlight();
     display_alerts();
     set_date_picker();
+
+    if ($("#new_comment_text").length) {
+        init_quill("#new_comment_text");
+    }
 });
 
 
@@ -180,3 +185,22 @@ Date.prototype.toDateInputValue = (function() {
 
     return dateString;
 });
+
+
+function init_quill(element_id) {
+    if (!(element_id in QUILLS)) {
+        QUILLS[element_id] = new Quill(element_id, {
+          modules: {
+            toolbar: [
+              [{ header: [1, 2, false] }, {font: []}],
+              ['bold', 'italic', 'underline'],
+              [{color: []}]
+            ]
+          },
+          placeholder: 'Enter your comment here...',
+          theme: 'snow'  // or 'bubble'
+        });
+    };
+
+    return QUILLS[element_id];
+}

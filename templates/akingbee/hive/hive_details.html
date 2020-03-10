@@ -166,7 +166,7 @@
                                             <td class="apiary_cm">{{comments[n].apiary.name}} - {{comments[n].apiary.location}}</td>
                                             <td class="condition_cm" condition_id="{{comments[n].condition.id}}">{{comments[n].condition[lang]}}</td>
                                             <td class="health_cm" health_id="{{comments[n].health.id}}">{{comments[n].health[lang]}}</td>
-                                            <td class="comm_cm col-4">{{comments[n].comment}}</td>
+                                            <td class="comm_cm col-4">{{comments[n].comment.replace("<p>", "").replace("</p>", "<br>")|safe}}</td>
                                             {% if comments[n].type.id == 1 %}  <!-- if it's a "user" comment, it can be edited, otherwise no -->
                                             <td><button type="button" class="btn btn-link" onclick="show_modal_edit_comment('{{comments[n].id}}', this);">{{trads[70]}}</button></td>
                                             {% else %}
