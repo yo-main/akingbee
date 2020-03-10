@@ -188,17 +188,25 @@ Date.prototype.toDateInputValue = (function() {
 
 
 function init_quill(element_id) {
+
+    let text = "Enter your comment here...";
+
+    if (LANGUAGE == "fr") {
+        text = "Saisir votre commentaire...";
+    }
+
     if (!(element_id in QUILLS)) {
         QUILLS[element_id] = new Quill(element_id, {
-          modules: {
-            toolbar: [
-              [{ header: [1, 2, false] }, {font: []}],
-              ['bold', 'italic', 'underline'],
-              [{color: []}]
-            ]
-          },
-          placeholder: 'Enter your comment here...',
-          theme: 'snow'  // or 'bubble'
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, false]}],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{color: []}],
+                    ['clean'],
+                ]
+            },
+            placeholder: text,
+            theme: 'snow'  // or 'bubble'
         });
     };
 
