@@ -112,3 +112,11 @@ class HiveAlreadyInApiary(BaseError):
     reference = 18
     en = "This hive already belongs to an apiary"
     fr = "Cette ruche appartient déjà à un rucher"
+
+class UnknownLanguage(BaseError):
+    reference = 19
+
+    def __init__(self, language):
+        self.en = f"Unknown language: {language}"
+        self.fr = f"Language inconnu: {language}"
+        super().__init__()

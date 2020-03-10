@@ -126,3 +126,25 @@ def test_reset_password_success(client):
     answer = client.post("/reset_password", data=form, follow_redirects=True)
 
     assert answer.status_code == 200
+
+
+@pytest.mark.parametrize("language", ("en", "fr"))
+def test_change_language_success(language, client):
+    form = {"language": language}
+
+    answer = client.post("/language", data=form, follow_redirects=True)
+
+    assert answer.status_code == 200
+
+
+@pytest.mark.parametrize("language", ("gr", "us"))
+def test_change_language_fail(language, client):
+    form = {"language": language}
+
+    answer = client.post("/language", data=form, follow_redirects=True)
+
+    assert answer.status_code == 400
+
+
+
+

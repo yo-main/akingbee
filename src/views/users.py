@@ -91,10 +91,10 @@ def updateLanguage():
     newLanguage = flask.request.form.get("language")
 
     if newLanguage not in constants.LANGUAGES:
-        newLanguage = constants.ENGLISH
+        raise errors.UnknownLanguage(newLanguage)
 
     flask.session["language"] = newLanguage
-    return Success()
+    return success.LanguageChanged()
 
 
 @api.route("/register", methods=["GET"])

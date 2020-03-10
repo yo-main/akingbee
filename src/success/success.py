@@ -6,6 +6,11 @@ class LoginSuccess(BaseSuccess):
     fr = "Vous êtes connecté !"
 
 
+class LanguageChanged(BaseSuccess):
+    en = "Language changed successfully !"
+    fr = "Langage changé avec succés !"
+
+
 class RegisterSuccess(BaseSuccess):
     en = "Inscription succesful !"
     fr = "Inscription réussie !"
