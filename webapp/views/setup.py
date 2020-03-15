@@ -1,11 +1,7 @@
 import flask
 import peewee
 
-from src.helpers.tools import login_required, render, get_all
-from src.errors import errors
-from src.success import success
-
-from src.models import (
+from common.models import (
     Owner,
     HiveCondition,
     HoneyType,
@@ -13,6 +9,10 @@ from src.models import (
     SwarmHealth,
     StatusApiary,
 )
+
+from webapp.helpers.tools import login_required, render, get_all
+from webapp.errors import errors
+from webapp.success import success
 
 
 api = flask.Blueprint("Setup", __name__)

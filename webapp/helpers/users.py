@@ -1,10 +1,11 @@
 import flask
 from peewee import DoesNotExist
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from src.models import User
-from src.models import (
+from common.log.logger import logger
+from common.database import DB
+from common.models import User
+from common.models import (
     HiveCondition,
     HoneyType,
     EventType,
@@ -13,11 +14,8 @@ from src.models import (
     Owner,
 )
 
-from src import constants
-from src.errors import errors
-from src.log.logger import logger
-
-from src.database import DB
+from webapp import constants
+from webapp.errors import errors
 
 
 def get_user_id():

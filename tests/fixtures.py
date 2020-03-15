@@ -1,8 +1,9 @@
 import pytest
 
 from app import create_app
-from src.models import MODELS
-from src.database import DB, init
+
+from common.models import MODELS
+from common.database import DB, init
 
 
 @pytest.fixture

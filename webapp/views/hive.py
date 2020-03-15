@@ -4,22 +4,8 @@ import peewee
 import flask
 from peewee import IntegrityError, DoesNotExist, JOIN
 
-from src.database import DB
-from src.helpers.tools import (
-    render,
-    get_all,
-    get_traductions,
-    login_required,
-    update_hive_history,
-    create_system_comment_from_hive,
-)
-from src.helpers.date import convert_to_date_object
-from src.helpers.users import get_user_id
-from src import constants
-from src.errors import errors
-from src.success import success
-
-from src.models import (
+from common.database import DB
+from common.models import (
     Hive,
     Apiary,
     Owner,
@@ -31,6 +17,20 @@ from src.models import (
     Event,
     EventType,
 )
+
+from webapp.helpers.tools import (
+    render,
+    get_all,
+    get_traductions,
+    login_required,
+    update_hive_history,
+    create_system_comment_from_hive,
+)
+from webapp.helpers.date import convert_to_date_object
+from webapp.helpers.users import get_user_id
+from webapp import constants
+from webapp.errors import errors
+from webapp.success import success
 
 
 api = flask.Blueprint("Hive", __name__)

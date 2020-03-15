@@ -2,13 +2,14 @@ import flask
 
 from peewee import IntegrityError, DoesNotExist
 
-from src.helpers.tools import get_all, render, login_required
-from src.helpers.date import convert_to_date_object
-from src.errors import errors
-from src.success import success
-from src.database import DB
+from common.database import DB
+from common.models import Apiary, StatusApiary, HoneyType
 
-from src.models import Apiary, StatusApiary, HoneyType
+from webapp.helpers.tools import get_all, render, login_required
+from webapp.helpers.date import convert_to_date_object
+from webapp.errors import errors
+from webapp.success import success
+
 
 api = flask.Blueprint("Apiary", __name__)
 

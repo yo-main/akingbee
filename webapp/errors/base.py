@@ -2,8 +2,9 @@ import json
 
 import flask
 
-from src.constants import FRENCH, ENGLISH
-from src.log.logger import logger
+from webapp.constants import FRENCH, ENGLISH
+
+from common.log.logger import logger
 
 
 class BaseError(Exception):

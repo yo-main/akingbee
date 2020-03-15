@@ -16,6 +16,7 @@ uwsgi = "^2.0"
 flask-session = "^0.3.1"
 jinja2 = "^2.10"
 msgpack = "^1.0.0"
+redis = "^3.4.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

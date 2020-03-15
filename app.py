@@ -3,12 +3,13 @@ import flask_session
 
 import yaml
 
-from src import views
-from src import database as db
+from common import database as db
+from common.config import CONFIG
 
-from src.errors.base import BaseError
-from src.helpers.date import jinja_date_formatting
-from src.config import CONFIG
+from webapp import views
+from webapp.errors.base import BaseError
+from webapp.helpers.date import jinja_date_formatting
+
 
 
 def create_app():

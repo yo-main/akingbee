@@ -1,7 +1,8 @@
 import flask
 
-from src.constants import FRENCH, ENGLISH
-from src.log.logger import logger
+from common.log.logger import logger
+
+from webapp.constants import FRENCH, ENGLISH
 
 
 class BaseSuccess:

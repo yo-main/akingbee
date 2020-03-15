@@ -4,7 +4,7 @@ from logging.handlers import RotatingFileHandler
 
 import flask
 
-from src.config import CONFIG
+from common.config import CONFIG
 
 
 class ContextFilter(logging.Filter):

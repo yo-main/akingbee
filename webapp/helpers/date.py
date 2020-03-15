@@ -1,6 +1,6 @@
 import datetime
 
-from src.errors import errors
+from webapp.errors import errors
 
 
 def jinja_date_formatting(value, length="short"):

@@ -1,7 +1,7 @@
 import datetime
 import functools
 
-from src.models import Comment, Swarm
+from common.models import Comment, Swarm
 
 
 def update_swarm_health(hive_id, swarm_id):

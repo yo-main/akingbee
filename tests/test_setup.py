@@ -1,8 +1,9 @@
 import pytest
 
-from src.helpers.users import create_new_user
-from src.models.users import User
-from src.helpers.tools import _get_trads
+from common.models.users import User
+
+from webapp.helpers.users import create_new_user
+from webapp.helpers.tools import _get_trads
 
 from tests.fixtures import client, fake_database, logged_in
 

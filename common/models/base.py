@@ -1,8 +1,9 @@
 import flask
 from peewee import Model
 
-from src.database import DB
-from src.errors import errors
+from common.database import DB
+
+from webapp.errors import errors
 
 
 class BaseModel(Model):

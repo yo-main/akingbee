@@ -2,7 +2,8 @@ import flask
 
 import pytest
 
-from src.constants import alert_codes
+from webapp.constants import alert_codes
+
 from tests.fixtures import client, fake_database
 
 

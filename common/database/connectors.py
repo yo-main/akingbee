@@ -1,6 +1,6 @@
 from peewee import MySQLDatabase, SqliteDatabase, DatabaseProxy
 
-from src.config import CONFIG
+from common.config import CONFIG
 
 DB = DatabaseProxy()
 
@@ -14,6 +14,6 @@ def init():
     DB.initialize(database)
 
     if CONFIG.ENV == "TEST":
-        from src.models import MODELS, User
+        from common.models import MODELS, User
 
         DB.create_tables(MODELS)

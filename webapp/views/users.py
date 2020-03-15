@@ -4,22 +4,23 @@ import os
 import flask
 from flask import Blueprint
 
-from src.helpers.tools import render, redirect
-from src.helpers.checkers import validate_email, validate_password
-from src import constants
-from src.errors import errors
-from src.success import success
-from src.config import CONFIG
-from src.log.logger import logger
-from src.helpers.users import (
+from common.models import User
+from common.config import CONFIG
+from common.log.logger import logger
+
+from webapp.helpers.tools import render, redirect
+from webapp.helpers.checkers import validate_email, validate_password
+from webapp import constants
+from webapp.errors import errors
+from webapp.success import success
+from webapp.helpers.users import (
     get_user_from_username,
     verify_password,
     create_password_hash,
     create_new_user,
 )
-from src.helpers.tools import login_required
+from webapp.helpers.tools import login_required
 
-from src.models import User
 
 api = Blueprint("Users", __name__)
 

@@ -1,4 +1,4 @@
-from src.constants import FRENCH, ENGLISH
+from webapp.constants import FRENCH, ENGLISH
 
 traductions = {
     1: {

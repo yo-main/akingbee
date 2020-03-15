@@ -3,16 +3,16 @@ import peewee
 
 import flask
 
-from src.database import DB
-from src.helpers.tools import (
+from common.database import DB
+from common.models import Swarm, Hive
+
+from webapp.helpers.tools import (
     login_required,
     create_system_comment_from_hive,
     get_traductions,
 )
-from src.errors import errors
-from src.success import success
-
-from src.models import Swarm, Hive
+from webapp.errors import errors
+from webapp.success import success
 
 
 api = flask.Blueprint("Swarm", __name__)

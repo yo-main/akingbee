@@ -4,12 +4,12 @@ import datetime
 import flask
 from peewee import DoesNotExist
 
-from src.helpers.users import get_user_id
-from src import constants
-from src.constants import trad_codes as trads
-from src.errors import errors
-from src.models.comment import Comment
-from src.models.swarm import Swarm
+from common.models import Comment, Swarm
+
+from webapp.constants import FRENCH, COMMENT_TYPE_SYSTEM
+from webapp.constants.trad_codes import traductions
+from webapp.helpers.users import get_user_id
+from webapp.errors import errors
 
 
 def redirect(url):
@@ -40,9 +40,9 @@ def get_traductions(index=None):
 
 def _get_trads(language, index):
     if index is None:
-        out = {key: item[language] for key, item in trads.traductions.items()}
-    elif index in trads.traductions:
-        out = trads.traductions[index][language]
+        out = {key: item[language] for key, item in traductions.items()}
+    elif index in traductions:
+        out = traductions[index][language]
     else:
         raise errors.TranslationIdDoesNotExists()
 
@@ -51,7 +51,7 @@ def _get_trads(language, index):
 
 def render(url, **kwargs):
     if "language" not in flask.session:
-        flask.session["language"] = constants.FRENCH
+        flask.session["language"] = FRENCH
 
     return flask.render_template(
         url, lang=flask.session["language"], trads=get_traductions(), **kwargs
@@ -108,7 +108,7 @@ def create_system_comment_from_hive(msg, hive):
         user=hive.user_id,
         hive=hive.id,
         swarm=hive.swarm_id,
-        type=constants.COMMENT_TYPE_SYSTEM,
+        type=COMMENT_TYPE_SYSTEM,
         apiary=hive.apiary_id,
         condition=hive.condition,
     )
