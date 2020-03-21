@@ -16,6 +16,11 @@ class RegisterSuccess(BaseSuccess):
     fr = "Inscription réussie !"
 
 
+class PasswordResetRequestSuccess(BaseSuccess):
+    en = "An email will be sent to you shortly."
+    fr = "Un email va vous être envoyé très bientôt."
+
+
 class PasswordResetSuccess(BaseSuccess):
     en = "Your password have successful reset"
     fr = "Votre mot de passe a bien été réinitialisé"

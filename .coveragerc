@@ -1,7 +1,9 @@
 [run]
 
 source =
-    src/
+    webapp/
+    common/
+    messaging_bee/
 omit = 
     tests/
     static/

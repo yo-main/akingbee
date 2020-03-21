@@ -1,5 +1,6 @@
-import datetime
 import os
+import uuid
+import datetime
 
 import flask
 from flask import Blueprint
@@ -19,6 +20,7 @@ from webapp.helpers.users import (
     create_password_hash,
     create_new_user,
 )
+from webapp.messaging.emails import send_reset_email
 from webapp.helpers.tools import login_required
 
 
@@ -139,24 +141,59 @@ def registerCheck():
 
 
 @api.route("/reset_password", methods=["GET", "POST"])
-def reset_pwd():
+def reset_pwd_request():
     if flask.session.get("user_id") is not None:
         return redirect("/")
+
+    if flask.request.method == "GET":
+        return render("akingbee/reset_pwd_request.html")
+
+    if flask.request.method == "POST":
+        logger.info(flask.request.form)
+        username = flask.request.form.get("username")
+
+        user = tuple(
+            User.select().where(
+                (User.username == username) | (User.email == username)
+            )
+        )
+
+        if not user:
+            logger.exception(f"User doesn't exist: {username} - {user}")
+            raise errors.UserNotFound()
+
+        user = user[0]
+        user.reset_pwd_id = uuid.uuid4()
+        user.save()
+
+        send_reset_email(user, flask.session.get("language", constants.FRENCH))
+
+        return success.PasswordResetRequestSuccess()
+
+
+@api.route("/reset_password/<uuid:reset_id>", methods=["GET", "POST"])
+def reset_pwd_action(reset_id):
+    user = tuple(User.select().where(User.reset_pwd_id == reset_id))
+
+    if not user:
+        flask.abort(404)
+
+    user = user[0]
 
     if flask.request.method == "GET":
         return render("akingbee/reset_pwd.html")
 
     if flask.request.method == "POST":
-        pwd = flask.request.form.get("pwd")
-        username = flask.request.form.get("username")
+        password = flask.request.form.get("password")
 
-        if not validate_password(pwd):
+        logger.info(password)
+        if not validate_password(password):
             raise errors.IncorrectPasswordFormat()
 
-        hashed_pwd = create_password_hash(pwd)
+        hashed_pwd = create_password_hash(password)
 
-        user = get_user_from_username(username)
         user.pwd = hashed_pwd
+        user.reset_pwd_id = None
         user.save()
 
         return success.PasswordResetSuccess()

@@ -1,32 +1,22 @@
 import email
+from .constants import *
 
-FIELDS = {
-    "Subject": True,
-    "From": True,
-    "Sender": True,
-    "Cc": False,
-    "Bcc": False}
 
 class Email:
-
     def __init__(self, headers, body):
-        self.msg = email.message.EmailMessage()
+        self.email = email.message.EmailMessage()
 
         self.parse_headers(headers)
-        self.msg.set_content(body)
+        self.email.set_content(body)
 
     def parse_headers(self, headers):
-        if not all(f in headers for f in FIELDS if FIELDS[f]):
+        if any(f not in headers for f in MANDATORY_EMAIL_FIELDS):
             raise ValueError(
                 f"One or more mandatory fields is missing: {headers}"
             )
 
         for field, value in headers.items():
-            if field not in FIELDS:
-                raise ValueError(
-                    f"{field} is not a correct in email header"
-                )
+            if field not in EMAIL_FIELDS:
+                raise ValueError(f"{field} is not a correct in email header")
 
-            self.msg[field] = value
-
-
+            self.email[field] = value

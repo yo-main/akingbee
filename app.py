@@ -11,7 +11,6 @@ from webapp.errors.base import BaseError
 from webapp.helpers.date import jinja_date_formatting
 
 
-
 def create_app():
 
     app = flask.Flask(__name__)

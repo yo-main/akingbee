@@ -18,7 +18,7 @@ install:
   - poetry install
 
 script: 
-  - poetry run black src/ tests/ --check
+  - poetry run black . --check
   - poetry run coverage run -m pytest -v
   - poetry run coverage report
 

@@ -1,3 +1,4 @@
+import os
 import redis
 
 from common.log.logger import logger
@@ -11,7 +12,7 @@ class RedisClient:
         self.pubsub = self.client.pubsub()
 
     def get_client(self):
-        return redis.Redis(unix_socket_path="/tmp/redis.sock")
+        return redis.Redis(host=os.environ.get("REDIS_HOST", "localhost"))
 
     def publish(self, channel, message):
         if not check_channel(channel):

@@ -3,37 +3,58 @@ version: "3.7"
 services:
   akingbee:
     image: yomain/akingbee:prod
-      container_name: akingbee
-      expose:
-        - 8080
-      volumes:
-        - .env:/app/.env
-        - ./log:/app/log
-      command: uwsgi --ini ./conf/uwsgi.ini
-      restart: "always"
-      networks:
-        - akingbee_nw
+    container_name: akingbee
+    expose:
+      - 8080
+    volumes:
+      - .:/app
+      - .env:/app/.env
+      - ./log:/app/log
+    environment:
+      - REDIS_HOST=redis
+    command: uwsgi --ini ./conf/uwsgi.ini
+    restart: "always"
+    depends_on:
+      - redis
+    networks:
+      - akingbee_nw
+
+  messaging_bee:
+    image: yomain/akingbee:prod
+    container_name: messaging_bee
+    volumes:
+      - .:/app
+    environment:
+      - REDIS_HOST=redis
+    command: python listener.py
+    restart: "always"
+    depends_on:
+      - redis
+    networks:
+      - akingbee_nw
 
   nginx:
-      image: nginx:latest
-      container_name: nginx
-      restart: "always"
-      environment:
-        TZ: Europe/Paris
-      volumes:
-        - /etc/letsencrypt:/certs
-        - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      ports:
-        - 80:80
-        - 443:443
-      depends_on:
-        - akingbee
-      networks:
-        - akingbee_nw
+    image: nginx:latest
+    container_name: nginx
+    restart: "always"
+    environment:
+      TZ: Europe/Paris
+    volumes:
+      - /etc/letsencrypt:/certs
+      - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - akingbee
+    networks:
+      - akingbee_nw
 
   redis:
     image: redis:rc-alpine
     container_name: redis
+    expose:
+      - 6379
     restart: always
     networks:
       - akingbee_nw

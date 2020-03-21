@@ -5,7 +5,7 @@ traductions = {
         FRENCH: "Nom d'utilisateur ou mot de passe incorrect",
         ENGLISH: "Wrong username or password",
     },
-    2: {FRENCH: "Nom d'utilisateur", ENGLISH: "Username"},
+    2: {FRENCH: "Nom d'utilisateur ou email", ENGLISH: "Username or email"},
     3: {FRENCH: "Mot de passe", ENGLISH: "Password"},
     4: {FRENCH: "Se connecter", ENGLISH: "Log in"},
     5: {FRENCH: "Ruches", ENGLISH: "Hives"},

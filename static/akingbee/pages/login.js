@@ -28,21 +28,33 @@ function forgot_password() {
     window.location = myUrl;
 }
 
+$("#reset-form-request").submit( function(event) {
+    event.preventDefault();
+
+    let data = {"username": $("#username").val()}
+
+    $.ajax({
+        type: "POST",
+        data: data,
+        error: function(answer, code){
+            showError(answer);
+        },
+        success: function(answer, code){
+            showSuccess(answer);
+            window.location.href = get_full_url("/");
+        }
+    });
+})
 
 $("#reset-form").submit( function(event) {
     event.preventDefault();
 
-    let username = $("#username").val();
     let pwd1 = $("#password").val();
     let pwd2 = $("#passwordConfirmation").val();
 
-    if (username == '' || pwd1 == '' || pwd2 == ''){
-        return false;
-    }
-
     if (pwd1 != pwd2){
         if (LANGUAGE == "fr"){
-            createError("Les mots de passes ne sont pas identique");
+            createError("Les mots de passes ne sont pas identiques");
         }
         else{
             createError("The passwords are not matching");
@@ -51,12 +63,10 @@ $("#reset-form").submit( function(event) {
         return false;
     }
 
-    url = get_full_url("/reset_password");
-    data = {username: username, pwd: pwd1}
+    data = {password: pwd1}
 
     $.ajax({
         type: "POST",
-        url: url,
         data: data,
         error: function(answer, code){
             showError(answer);

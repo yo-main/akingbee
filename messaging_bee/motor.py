@@ -2,36 +2,47 @@ import os
 import ssl
 import smtplib
 
-EMAIL_SERVER_HOST = "smtp.zoho.eu"
-EMAIL_SERVER_PORT = 465
+from common.log.logger import logger
+from common.config import CONFIG
+
+from .constants import *
+
 
 class EmailEngine:
     def __init__(self):
         self.ssl_context = ssl.SSLContext()
         self.client = self.get_email_client()
+        self.logged = False
 
     def close(self):
         self.client.close()
+        self.logged = False
 
     def get_email_client(self):
         return smtplib.SMTP_SSL(
             host=EMAIL_SERVER_HOST,
             port=EMAIL_SERVER_PORT,
-            context=self.ssl_context
+            context=self.ssl_context,
         )
 
     def login(self, email_address):
-        password = os.environ.get(
-            "{name.upper()}_EMAIL_ADDRESS"
-            .format(name=email_address.split("@")[0])
+        password_attr = "{name}_EMAIL_PASSWORD".format(
+            name=email_address.split("@")[0].upper()
         )
 
-        if password is None:
+        if not hasattr(CONFIG, password_attr):
             raise ValueError(f"{email_address} is unknown")
 
+        password = getattr(CONFIG, password_attr)
+
+        print(email_address, password)
         self.client.login(email_address, password)
+        self.logged = True
 
     def send(self, message):
-        self.client.send_message(message)
-
-
+        if not self.logged:
+            self.login(message.email[SENDER])
+            self.client.send_message(message.email)
+            self.close()
+        else:
+            self.client.send_message(message.email)
