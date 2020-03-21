@@ -21,8 +21,6 @@ services:
   messaging_bee:
     image: yomain/akingbee:prod
     container_name: messaging_bee
-    volumes:
-      - .:/app
     environment:
       - REDIS_HOST=redis
     command: python listener.py

@@ -17,9 +17,11 @@ class RegisterSuccess(BaseSuccess):
 
 
 class PasswordResetRequestSuccess(BaseSuccess):
-    def __init__(self, email):
-        self.en = "An email has been sent to {email}"
-        self.fr = "Un email a été envoyé à {email}"
+    def __new__(self, email):
+        self.en = f"An email has been sent to {email}"
+        self.fr = f"Un email a été envoyé à {email}"
+
+        return super().__new__(self)
 
 
 class PasswordResetSuccess(BaseSuccess):
