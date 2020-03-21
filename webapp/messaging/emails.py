@@ -31,7 +31,7 @@ def send_reset_email(user, language):
         channel=QUEUE_EMAIL_RESET,
         message=json.dumps(
             {
-                "headers": {"To": user.email, "Subject": "Password reset"},
+                "headers": {"To": user.email, "Subject": "Akingbee - Password reset"},
                 "body": EMAIL_RESET_BODY[language].format(
                     uuid=user.reset_pwd_id
                 ),
