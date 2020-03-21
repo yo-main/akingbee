@@ -21,7 +21,7 @@ from webapp.helpers.users import (
     create_new_user,
 )
 from webapp.messaging.emails import send_reset_email
-from webapp.helpers.tools import login_required
+from webapp.helpers.tools import login_required, anonymize_email
 
 
 api = Blueprint("Users", __name__)
@@ -168,7 +168,7 @@ def reset_pwd_request():
 
         send_reset_email(user, flask.session.get("language", constants.FRENCH))
 
-        return success.PasswordResetRequestSuccess()
+        return success.PasswordResetRequestSuccess(anonymize_email(user.email))
 
 
 @api.route("/reset_password/<uuid:reset_id>", methods=["GET", "POST"])

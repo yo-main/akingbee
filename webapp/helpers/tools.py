@@ -117,3 +117,15 @@ def create_system_comment_from_hive(msg, hive):
         comment.health = hive.swarm.health_id
 
     return comment
+
+
+def anonymize_email(email):
+    hidden = ["*"] * len(email)
+    hidden[0] = email[0]
+
+    index_at = email.index("@")
+
+    for i in range(index_at - 1, len(email)):
+        hidden[i] = email[i]
+
+    return "".join(hidden)

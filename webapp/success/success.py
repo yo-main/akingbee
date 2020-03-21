@@ -17,8 +17,9 @@ class RegisterSuccess(BaseSuccess):
 
 
 class PasswordResetRequestSuccess(BaseSuccess):
-    en = "An email will be sent to you shortly."
-    fr = "Un email va vous être envoyé très bientôt."
+    def __init__(self, email):
+        self.en = "An email has been sent to {email}"
+        self.fr = "Un email a été envoyé à {email}"
 
 
 class PasswordResetSuccess(BaseSuccess):
