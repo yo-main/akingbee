@@ -20,6 +20,7 @@ services:
       - ./log:/app/log
     environment:
       - REDIS_HOST=redis
+      - SERVICE_NAME=webapp
     command: uwsgi --ini ./conf/uwsgi.ini
     restart: "always"
     depends_on:
@@ -37,6 +38,7 @@ services:
       - ./log:/app/log
     environment:
       - REDIS_HOST=redis
+      - SERVICE_NAME=messaging
     command: python listener.py
     restart: "always"
     depends_on:

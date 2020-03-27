@@ -1,3 +1,5 @@
+import time
+
 import flask
 import flask_session
 
@@ -5,6 +7,7 @@ import yaml
 
 from common import database as db
 from common.config import CONFIG
+from common.log.logger import logger, init_logging_filter
 
 from webapp import views
 from webapp.errors.base import BaseError
@@ -32,33 +35,69 @@ def create_app():
     # JINJA
     app.jinja_env.filters["datetime"] = jinja_date_formatting
 
+    # LOG SETUP
+    init_logging_filter()
+    app.before_request(do_stuff_before_request)
+    app.after_request(do_stuff_after_request)
+
+    # ERROR HANDLER
+    app.errorhandler(BaseError)(handle_error)
+
     # COOKIES
     flask_session.Session(app)
 
     register_blueprint(app)
-    register_decorators(app)
 
     return app
 
 
-def register_decorators(app):
+def do_stuff_before_request():
+    log_before_request()
 
-    # @app.before_first_request
-    # def session_configuration():
-    #     # db.DB.init()
-    #     # make cookies expires once the browser has been closed
-    #     flask.session.permanent = False
 
-    @app.after_request
-    def after_request_func(f):
-        # doing this in DEV will close the :memory: database - which we don't really want
-        if not db.DB.is_closed() and not db.DB.database != ":memory":
-            db.DB.close()
-        return f
+def do_stuff_after_request(response):
+    log_after_request(response)
+    close_database()
+    return response
 
-    @app.errorhandler(BaseError)
-    def handle_error(error):
-        return error.to_dict(), error.code
+
+def can_log_request_info():
+    url = flask.request.url
+    return not url.endswith(
+        (".ico", ".js", ".css", ".json", ".html", "_/status")
+    )
+
+
+def log_before_request():
+    if can_log_request_info():
+        flask.g.starting_time = time.time()
+        logger.info("Request received")
+
+
+def log_after_request(response):
+    if can_log_request_info():
+        logger.info(
+            "Response sent",
+            status_code=response.status_code,
+            duration=round(time.time() - flask.g.starting_time, 3),
+        )
+
+
+# @app.before_first_request
+# def session_configuration():
+#     # db.DB.init()
+#     # make cookies expires once the browser has been closed
+#     flask.session.permanent = False
+
+
+def close_database():
+    # doing this in DEV will close the :memory: database - which we don't really want
+    if not db.DB.is_closed() and not db.DB.database != ":memory":
+        db.DB.close()
+
+
+def handle_error(error):
+    return error.to_dict(), error.code
 
 
 def register_blueprint(app):

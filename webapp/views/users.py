@@ -33,6 +33,11 @@ def home():
     return render("akingbee/index_akb.html")
 
 
+@api.route("/_/status", methods=["GET"])
+def healthcheck():
+    return "OK", 200
+
+
 @api.route("/images/<path:filename>", methods=["GET"])
 def get_image(filename):
     filepath = os.path.join(CONFIG.PATH_IMAGES, filename)

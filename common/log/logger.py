@@ -1,4 +1,7 @@
 import os
+import time
+import json
+import uuid
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -9,24 +12,76 @@ from common.config import CONFIG
 
 class ContextFilter(logging.Filter):
     def filter(self, record):
-        user_id = "guest"
-        if flask.request:
-            user_id = flask.session.get("user_id") or "guest"
-        record.user_id = user_id
+        if flask.has_request_context():
+            record.user_id = flask.session.get("user_id") or "guest"
+            record.request_id = uuid.uuid4()
+            record.request_url = flask.request.base_url
+            record.request_method = flask.request.method
+            record.request_user_agent = flask.request.user_agent
+            record.request_ip_address = flask.request.remote_addr
         return True
 
 
-logger = logging.getLogger(__name__)
+class CustomLogger(logging.Logger):
+    """Custom logger"""
+
+    def debug(self, msg, *args, **kwargs):
+        self._log(logging.DEBUG, msg, args, extra=kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        self._log(logging.INFO, msg, args, extra=kwargs)
+
+    def warning(self, msg, *args, **kwargs):
+        self._log(logging.WARNING, msg, args, extra=kwargs)
+
+    def critical(self, msg, *args, **kwargs):
+        self._log(logging.CRITICAL, msg, args, extra=kwargs)
+
+    def error(self, msg, *args, exc_info=None, **kwargs):
+        self._log(logging.ERROR, msg, args, exc_info=exc_info, extra=kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        self._log(logging.ERROR, msg, args, exc_info=True, extra=kwargs)
+
+
+EXCLUDED_FIELDS = (
+    "msg",
+    "args",
+    "filename",
+    "module",
+    "created",
+    "msecs",
+    "relativeCreated",
+    "thread",
+    "threadName",
+    "processName",
+    "process",
+    "levelno",
+)
+
+
+class CustomFormatter(logging.Formatter):
+    converter = time.gmtime
+
+    def format(self, record):
+        record.message = record.getMessage()
+        record.asctime = self.formatTime(record, self.datefmt)
+
+        log_data = {
+            key: item
+            for key, item in record.__dict__.items()
+            if item is not None and key not in EXCLUDED_FIELDS
+        }
+
+        return json.dumps(log_data, default=str)
+
+
+logger = CustomLogger(os.environ.get("SERVICE_NAME"))
 logger.setLevel(logging.DEBUG)
 
-log_format = (
-    "{asctime:25} :: {levelname:>5} :: {filename:>15} :: "
-    "{funcName:>15} :: {user_id:>4} :: {message}"
-)
-formatter = logging.Formatter(log_format, style="{")
 
-context_filter = ContextFilter()
-logger.addFilter(context_filter)
+formatter = CustomFormatter()
+
 
 if CONFIG.ENV != "TEST":
     log_path = os.path.join(CONFIG.PATH_LOGS, CONFIG.LOGS_FILE_NAME)
@@ -35,6 +90,19 @@ if CONFIG.ENV != "TEST":
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
+
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(logging.DEBUG)
+stream_handler.setFormatter(
+    logging.Formatter(
+        fmt="{asctime} | {levelname:8s} | {message}",
+        datefmt="%Y-%m-%dT%H:%M:%S",
+        style="{",
+    )
+)
 logger.addHandler(stream_handler)
+
+
+def init_logging_filter():
+    context_filter = ContextFilter()
+    logger.addFilter(context_filter)
