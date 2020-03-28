@@ -18,9 +18,14 @@ class ContextFilter(logging.Filter):
             if not hasattr(record, "user_id"):
                 record.user_id = flask.session.get("user_id") or "guest"
 
+            record.request_form = {
+                key: item
+                for key, item in flask.request.form.items()
+                if key not in ("password", "pwd")
+            }
+
             record.request_id = uuid.uuid4()
             record.request_path = flask.request.path
-            record.request_form = flask.request.form
             record.request_method = flask.request.method
             record.request_user_agent = flask.request.user_agent
             record.request_ip_address = flask.request.remote_addr
