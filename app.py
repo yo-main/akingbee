@@ -61,10 +61,14 @@ def do_stuff_after_request(response):
     return response
 
 
-def can_log_request_info():
+EXCLUDED_PATHS = (".svg", ".ico", ".js", ".css", ".json", ".html", "_/status")
+EXCLUDED_CODES = (301, 302)
+
+def can_log_request_info(response):
     url = flask.request.url
-    return not url.endswith(
-        (".svg", ".ico", ".js", ".css", ".json", ".html", "_/status")
+    return (
+        not url.endswith(EXCLUDED_PATHS)
+        or response.status_code not in EXCLUDED_CODES
     )
 
 
@@ -73,7 +77,7 @@ def log_before_request():
 
 
 def log_after_request(response):
-    if can_log_request_info():
+    if can_log_request_info(response):
         logger.info(
             "Response sent",
             status_code=response.status_code,
