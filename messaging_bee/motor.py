@@ -17,6 +17,7 @@ class EmailEngine:
     def close(self):
         self.client.close()
         self.logged = False
+        logger.info("Closed connection to {self.client.user}")
 
     def get_email_client(self):
         return smtplib.SMTP_SSL(
@@ -31,13 +32,16 @@ class EmailEngine:
         )
 
         if not hasattr(CONFIG, password_attr):
+            logger.error(
+                f"Trying to connect to an unknown email: {email_address}"
+            )
             raise ValueError(f"{email_address} is unknown")
 
         password = getattr(CONFIG, password_attr)
 
-        print(email_address, password)
         self.client.login(email_address, password)
         self.logged = True
+        logger.info(f"Connected to {email_address}")
 
     def send(self, message):
         if not self.logged:
@@ -46,3 +50,5 @@ class EmailEngine:
             self.close()
         else:
             self.client.send_message(message.email)
+
+        logger.info(f"Email sent to {message.email[TO]}", email=message.email)

@@ -1,6 +1,7 @@
 from peewee import MySQLDatabase, SqliteDatabase, DatabaseProxy
 
 from common.config import CONFIG
+from common.log.logger import logger
 
 DB = DatabaseProxy()
 
@@ -11,6 +12,7 @@ def init():
     else:
         database = MySQLDatabase(**CONFIG.DATABASE)
 
+    logger.info("Initializing database...")
     DB.initialize(database)
 
     if CONFIG.ENV == "TEST":

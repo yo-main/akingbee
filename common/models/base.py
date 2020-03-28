@@ -4,6 +4,7 @@ from peewee import Model
 from common.database import DB
 
 from webapp.errors import errors
+import json
 
 
 class BaseModel(Model):
@@ -31,21 +32,23 @@ class BaseModel(Model):
         if "user_id" in self.columns and self.user_id is None:
             self._create_user_id(kwargs.get("user_id"))
 
-    def _create_user_id(self, user_id_kwargs):
+    def _create_user_id(self, user_id_kwargs=None):
         """
         Add the user id to the newly created object
         we look in the flask session objects first
         and check in the kwargs provided in case we haven't found it
         an error is raised if no user id is found anywhere
         """
-        try:
-            setattr(self, "user_id", flask.session["user_id"])
-        except KeyError:
-            if user_id_kwargs:
-                setattr(self, "user_id", user_id_kwargs)
-            else:
-                raise errors.UserCouldNotBeIdentified()
+        user_id = flask.session.get("user_id") or user_id_kwargs
+
+        if not user_id:
+            raise errors.UserCouldNotBeIdentified()
+
+        self.user_id = user_id
 
     def serialize(self):
-        data = {column: getattr(self, column) for column in self.columns}
-        return data
+        return {
+            column: getattr(self, column)
+            for column in self.columns
+            if column not in ("pwd",)
+        }

@@ -69,9 +69,7 @@ def can_log_request_info():
 
 
 def log_before_request():
-    if can_log_request_info():
-        flask.g.starting_time = time.time()
-        logger.info("Request received")
+    flask.g.starting_time = time.time()
 
 
 def log_after_request(response):
@@ -83,16 +81,10 @@ def log_after_request(response):
         )
 
 
-# @app.before_first_request
-# def session_configuration():
-#     # db.DB.init()
-#     # make cookies expires once the browser has been closed
-#     flask.session.permanent = False
-
-
 def close_database():
     # doing this in DEV will close the :memory: database - which we don't really want
     if not db.DB.is_closed() and not db.DB.database != ":memory":
+        logger.info("Closing database connection")
         db.DB.close()
 
 

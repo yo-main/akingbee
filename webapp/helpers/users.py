@@ -45,7 +45,8 @@ def get_user_from_username(username):
     try:
         result = User.get(User.username == username)
     except DoesNotExist:
-        raise errors.UserNotFound()
+        logger.exception(f"Login failed - unknown user: {username}")
+        raise errors.UserNotFound(log=False)
     return result
 
 

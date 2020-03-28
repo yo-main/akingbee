@@ -83,13 +83,15 @@ services:
 
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
-    container_name: es01
+    container_name: elastic
     restart: always
     environment:
-      - node.name=es01
+      - node.name=elastic
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./conf/elk/cache/elastic:/usr/share/elasticsearch/data
     ulimits:
       memlock:
         soft: -1
@@ -109,6 +111,8 @@ services:
     environment:
       ELASTICSEARCH_URL: http://elastic:9200
       ELASTICSEARCH_HOSTS: http://elastic:9200
+    volumes:
+      - ./conf/elk/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     networks:
       - akingbee_nw
 

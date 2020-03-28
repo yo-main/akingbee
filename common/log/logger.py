@@ -14,9 +14,13 @@ from common.config import CONFIG
 class ContextFilter(logging.Filter):
     def filter(self, record):
         if flask.has_request_context():
-            record.user_id = flask.session.get("user_id") or "guest"
+            # when logging out, the user_id is already set
+            if not hasattr(record, "user_id"):
+                record.user_id = flask.session.get("user_id") or "guest"
+
             record.request_id = uuid.uuid4()
-            record.request_url = flask.request.base_url
+            record.request_path = flask.request.path
+            record.request_form = flask.request.form
             record.request_method = flask.request.method
             record.request_user_agent = flask.request.user_agent
             record.request_ip_address = flask.request.remote_addr

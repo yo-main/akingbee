@@ -82,14 +82,17 @@ def login():
 
     flask.session["user_id"] = user.id
     flask.session["username"] = user.username
+
+    logger.info(f"Login success for {username}")
     return success.LoginSuccess()
 
 
 @api.route("/logout", methods=["GET"])
 def logout():
-    logger.info("Logout")
-    flask.session["user_id"] = None
-    flask.session.pop("username", None)
+    user_id = flask.session.pop("user_id", None)
+    username = flask.session.pop("username", None)
+
+    logger.info(f"Logout from {username}", user_id=user_id)
     return redirect("/")
 
 
@@ -142,6 +145,7 @@ def registerCheck():
 
     create_new_user(data)
 
+    logger.info("New user registered", user=user)
     return success.RegisterSuccess()
 
 
