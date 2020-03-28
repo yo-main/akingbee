@@ -1,4 +1,5 @@
 import time
+import uuid
 
 import flask
 import flask_session
@@ -75,6 +76,7 @@ def can_log_request_info(response):
 
 def log_before_request():
     flask.g.starting_time = time.time()
+    flask.g.request_uuid = uuid.uuid4()
 
 
 def log_after_request(response):

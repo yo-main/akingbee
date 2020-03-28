@@ -1,7 +1,6 @@
 import os
 import time
 import json
-import uuid
 import datetime
 import logging
 from logging.handlers import RotatingFileHandler
@@ -24,7 +23,7 @@ class ContextFilter(logging.Filter):
                 if key not in ("password", "pwd")
             }
 
-            record.request_id = uuid.uuid4()
+            record.request_id = flask.g.request_uuid
             record.request_path = flask.request.path
             record.request_method = flask.request.method
             record.request_user_agent = flask.request.user_agent
