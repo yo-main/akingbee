@@ -2,6 +2,7 @@ import os
 import time
 import json
 import uuid
+import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -64,6 +65,11 @@ EXCLUDED_FIELDS = (
 class CustomFormatter(logging.Formatter):
     converter = time.gmtime
 
+    def formatTime(self, record, datefmt):
+        return datetime.datetime.fromtimestamp(
+            record.created, tz=datetime.timezone.utc
+        ).isoformat()
+
     def format(self, record):
         record.message = record.getMessage()
         setattr(record, "@timestamp", self.formatTime(record, self.datefmt))
@@ -81,7 +87,7 @@ logger = CustomLogger(os.environ.get("SERVICE_NAME"))
 logger.setLevel(logging.DEBUG)
 
 
-formatter = CustomFormatter()
+formatter = CustomFormatter(datefmt="%Y-%m-%dT%H:%M:%S")
 
 
 if CONFIG.ENV != "TEST":
