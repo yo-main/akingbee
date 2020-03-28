@@ -46,6 +46,7 @@ class CustomLogger(logging.Logger):
 
 EXCLUDED_FIELDS = (
     "msg",
+    "asctime",
     "args",
     "filename",
     "module",
@@ -65,7 +66,7 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, record):
         record.message = record.getMessage()
-        record.asctime = self.formatTime(record, self.datefmt)
+        setattr(record, "@timestamp", self.formatTime(record, self.datefmt))
 
         log_data = {
             key: item
