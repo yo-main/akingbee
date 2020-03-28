@@ -69,7 +69,7 @@ def can_log_request_info(response):
     url = flask.request.url
     return (
         not url.endswith(EXCLUDED_PATHS)
-        or response.status_code not in EXCLUDED_CODES
+        and response.status_code not in EXCLUDED_CODES
     )
 
 
