@@ -7,9 +7,11 @@ filebeat.inputs:
   - type: log
     encoding: utf-8
     fields_under_root: true
-    json.keys_under_root: true
-    json.overwrite_keys: true
-    json.add_error_key: true
+    json:
+      keys_under_root: true
+      overwrite_keys: true
+      add_error_key: true
+    tail_files: true
     paths:
       - /var/log/*.log
 
@@ -18,3 +20,4 @@ output.elasticsearch:
 
 processors:
 - add_cloud_metadata: ~
+
