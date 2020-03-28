@@ -64,7 +64,7 @@ def do_stuff_after_request(response):
 def can_log_request_info():
     url = flask.request.url
     return not url.endswith(
-        (".ico", ".js", ".css", ".json", ".html", "_/status")
+        (".svg", ".ico", ".js", ".css", ".json", ".html", "_/status")
     )
 
 
