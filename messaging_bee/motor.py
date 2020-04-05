@@ -17,7 +17,7 @@ class EmailEngine:
     def close(self):
         self.client.close()
         self.logged = False
-        logger.info("Closed connection to {self.client.user}")
+        logger.info(f"Closed connection to {self.client.user}")
 
     def get_email_client(self):
         return smtplib.SMTP_SSL(

@@ -6,6 +6,7 @@ import flask
 from flask import Blueprint
 
 from common.models import User
+from common.database import DB
 from common.config import CONFIG
 from common.log.logger import logger
 
@@ -35,6 +36,12 @@ def home():
 
 @api.route("/_/status", methods=["GET"])
 def healthcheck():
+    try:
+        DB.execute_sql("SELECT 1").fetchall()
+    except Exception:
+        logger.exception("Health check failed")
+        return "DB Issue", 400
+
     return "OK", 200
 
 

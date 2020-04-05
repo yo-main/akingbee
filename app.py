@@ -81,7 +81,11 @@ def log_before_request():
 
 def log_after_request(response):
     if can_log_request_info(response):
-        logger.info(
+        method = logger.info
+        if response.status_code >= 400:
+            method = logger.exception
+
+        method(
             "Response sent",
             status_code=response.status_code,
             duration=round(time.time() - flask.g.starting_time, 3),
