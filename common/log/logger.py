@@ -15,7 +15,7 @@ class ContextFilter(logging.Filter):
         if flask.has_request_context():
             # when logging out, the user_id is already set
             if not hasattr(record, "user_id"):
-                record.user_id = flask.session.get("user_id") or "guest"
+                record.user_id = flask.session.get("user_id") or 0
 
             record.request_form = {
                 key: item
