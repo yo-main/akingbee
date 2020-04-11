@@ -1,2 +1,7 @@
 tests/
 scripts/
+__pycache__
+tags
+flask_session
+docker-compose*
+\.*
