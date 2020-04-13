@@ -8,7 +8,6 @@ from common.models import Comment, Swarm
 
 from webapp.constants import FRENCH, COMMENT_TYPE_SYSTEM
 from webapp.constants.trad_codes import traductions
-from webapp.helpers.users import get_user_id
 from webapp.errors import errors
 
 
@@ -25,9 +24,9 @@ def login_required(f):
 
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        user_id = get_user_id()
+        user_id = flask.session.get("user_id")
         if user_id is None:
-            return redirect("/login")
+            return redirect("/")
         return f(*args, **kwargs)
 
     return decorated_function

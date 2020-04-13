@@ -29,8 +29,12 @@ api = Blueprint("Users", __name__)
 
 
 @api.route("/", methods=["GET"])
-@login_required
 def home():
+    user_id = flask.session.get("user_id")
+
+    if user_id is None:
+        return render("akingbee/login.html")
+
     return render("akingbee/index_akb.html")
 
 
@@ -61,15 +65,10 @@ def get_favicon():
     return flask.abort(404)
 
 
-@api.route("/login", methods=["GET", "POST"])
+@api.route("/login", methods=["POST"])
 def login():
-
-    # We remove the user credentials if any in the cookie
+    # We remove the user id from the cookie (just in case)
     flask.session["user_id"] = None
-    flask.session.pop("username", None)
-
-    if flask.request.method == "GET":
-        return render("akingbee/login.html")
 
     logger.info("Login attempt")
 
@@ -88,7 +87,6 @@ def login():
         user.save()
 
     flask.session["user_id"] = user.id
-    flask.session["username"] = user.username
 
     logger.info(f"Login success for {username}")
     return success.LoginSuccess()

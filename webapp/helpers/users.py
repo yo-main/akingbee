@@ -18,13 +18,6 @@ from webapp import constants
 from webapp.errors import errors
 
 
-def get_user_id():
-    user_id = flask.session.get("user_id")
-    if user_id is None:
-        return None
-    return user_id
-
-
 def create_password_hash(password):
     return generate_password_hash(
         password, method="pbkdf2:sha256", salt_length=8

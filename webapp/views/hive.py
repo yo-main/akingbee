@@ -27,7 +27,6 @@ from webapp.helpers.tools import (
     create_system_comment_from_hive,
 )
 from webapp.helpers.date import convert_to_date_object
-from webapp.helpers.users import get_user_id
 from webapp import constants
 from webapp.errors import errors
 from webapp.success import success
@@ -119,8 +118,8 @@ def move_hive(hive_id, apiary_id):
     if hive.apiary_id == apiary.id:
         raise errors.HiveAlreadyInApiary()
 
-    user_id = get_user_id()
-    if not user_id:
+    user_id = flask.session.get("user_id")
+    if user_id is None:
         raise errors.UserCouldNotBeIdentified()
 
     if user_id != hive.user_id or hive.user != apiary.user:
