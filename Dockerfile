@@ -30,4 +30,9 @@ WORKDIR /app
 COPY --from=build $VENV_PATH $VENV_PATH
 COPY . ./
 
+RUN chown -R 1000:1000 /app
+USER 1000:1000
+
+RUN mkdir flask_session && mkdir log
+
 EXPOSE 8080
