@@ -91,7 +91,7 @@ class CustomFormatter(logging.Formatter):
         return json.dumps(log_data, default=str)
 
 
-logger = CustomLogger(os.environ.get("SERVICE_NAME"))
+logger = CustomLogger(CONFIG.SERVICE_NAME)
 logger.setLevel(logging.DEBUG)
 
 
