@@ -10,9 +10,6 @@ branches:
 services:
   - docker
 
-env:
-  - AKB_ENV=TEST
-
 install:
   - pip install poetry
   - poetry install
