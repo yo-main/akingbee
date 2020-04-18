@@ -16,7 +16,7 @@ class Config:
 
     URL_PREFIX = ""
 
-    ENV = os.environ.get("ENV", "SIMU")
+    ENV = os.environ.get("ENV", "TEST")
     SECRET_KEY = "DEV"
     PASSWORD_REQUESTED = True
 
@@ -25,7 +25,6 @@ class Config:
     DATABASE_HOST = None
     DATABASE_USER = None
     DATABASE_PASSWORD = None
-    DATABASE_SCHEMA = None
 
     def __init__(self):
         self.load_env_variables()
@@ -80,5 +79,5 @@ class Config:
             "host": self.DATABASE_HOST,
             "user": self.DATABASE_USER,
             "password": self.DATABASE_PASSWORD,
-            "database": self.DATABASE_SCHEMA,
+            "database": f"{self.SERVICE_NAME}_{self.ENV}".lower(),
         }
