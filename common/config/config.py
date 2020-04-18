@@ -1,7 +1,4 @@
-import sys
 import os
-from dataclasses import dataclass
-from yaml import load, Loader
 
 
 class Config:
@@ -25,38 +22,47 @@ class Config:
 
     FLASK_DEBUG = False
 
-    DATABASE = {}
     DATABASE_HOST = None
     DATABASE_USER = None
     DATABASE_PASSWORD = None
-    DATABASE_SIMU = "akb_test"
-    DATABASE_PROD = "akb"
+    DATABASE_SCHEMA = None
 
     def __init__(self):
-        self.load_env_file()
-        self.validate()
+        self.load_env_variables()
         self.create_missing_folders()
-        self.load_database_conf()
+        self.validate()
 
     def validate(self):
         assert self.ENV in ("TEST", "PROD", "SIMU")
 
-    def load_env_file(self):
+    @staticmethod
+    def load_env_file(filename):
+        for line in open(filename):
+            data = line.strip().split("=")
+            if len(data) != 2:
+                continue
+            if data[0] not in os.environ:
+                os.environ[data[0]] = data[1]
+
+    def load_env_variables(self):
         if os.path.exists(".env"):
-            for row in open(".env"):
-                row = row.strip()  # get rid of empty lines
-                if row:
-                    var_name, var_value = row.split("=")
+            self.load_env_file(".env")
 
-                    if var_name in os.environ:
-                        var_value = os.environ[var_name]
+        self.SERVICE_NAME = os.environ.get("SERVICE_NAME")
+        if self.SERVICE_NAME is None:
+            return
 
-                    if var_value == "true":
-                        var_value = True
-                    elif var_value == "false":
-                        var_value = False
+        identifier = f"{self.SERVICE_NAME}_"
 
-                    setattr(self, var_name, var_value)
+        for key, value in os.environ.items():
+            if not key.startswith(identifier):
+                continue
+
+            key = key.replace(identifier, "")
+            value = True if value == "true" else value
+            value = False if value == "false" else value
+
+            setattr(self, key, value)
 
     def create_missing_folders(self):
         paths = (self.PATH_LOGS, self.PATH_FLASK_SESSIONS)
@@ -65,13 +71,14 @@ class Config:
             if not os.path.exists(path):
                 os.mkdir(path)
 
-    def load_database_conf(self):
+    @property
+    def DATABASE(self):
         if self.ENV not in ("SIMU", "PROD"):
-            return
+            return {}
 
-        self.DATABASE = {
+        return {
             "host": self.DATABASE_HOST,
             "user": self.DATABASE_USER,
             "password": self.DATABASE_PASSWORD,
-            "database": getattr(self, f"DATABASE_{self.ENV}"),
+            "database": self.DATABASE_SCHEMA,
         }
