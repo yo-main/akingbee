@@ -17,6 +17,9 @@ class Config:
     URL_PREFIX = ""
 
     ENV = os.environ.get("ENV", "TEST")
+    IDENTIFIER = os.environ.get("IDENTIFIER", "")
+    SERVICE_NAME = os.environ.get("SERVICE_NAME", "Unidentified")
+
     SECRET_KEY = "DEV"
     PASSWORD_REQUESTED = True
 
@@ -47,11 +50,7 @@ class Config:
         if os.path.exists(".env"):
             self.load_env_file(".env")
 
-        self.SERVICE_NAME = os.environ.get("SERVICE_NAME")
-        if self.SERVICE_NAME is None:
-            return
-
-        identifier = f"{self.SERVICE_NAME}_"
+        identifier = f"{self.IDENTIFIER}_"
 
         for key, value in os.environ.items():
             if not key.startswith(identifier):
