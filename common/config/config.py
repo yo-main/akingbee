@@ -78,5 +78,5 @@ class Config:
             "host": self.DATABASE_HOST,
             "user": self.DATABASE_USER,
             "password": self.DATABASE_PASSWORD,
-            "database": f"{self.SERVICE_NAME}_{self.ENV}".lower(),
+            "database": f"{self.IDENTIFIER}_{self.ENV}".lower(),
         }
