@@ -11,6 +11,17 @@ spec:
   selector:
     app: elastic
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elastic-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,24 +37,38 @@ spec:
       labels:
         app: elastic
     spec:
+      securityContext:
+        fsGroup: 1000
       volumes:
       - name: elastic-cache
-        hostPath:
-          path: /data
-          type: DirectoryOrCreate
+        persistentVolumeClaim:
+          claimName: elastic-cache
       containers:
+      - name: elastic
         image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
-        name: elastic
         env:
           - name: node.name
             value: elastic
           - name: discovery.type
             value: single-node
           - name: bootstrap.memory_lock
-            value: true
+            value: 'true'
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: elastic-cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  ports:
+  - port: 5601
+    targetPort: 5601
+  selector:
+    app: kibana
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -55,12 +80,24 @@ spec:
   selector:
     matchLabels:
       app: kibana
-  containers:
-    image: docker.elastic.co/kibana/kibana:7.6.1
-    name: kibana
-    env:
-      - name: ELASTICSEARCH_URL
-        value: http://elastic:9200
-      - name: ELASTICSEARCH_HOSTS
-        value: http://elastic:9200
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      volumes:
+        - name: kibana-config
+          configMap:
+            name: kibana-config
+      containers:
+      - name: kibana
+        image: docker.elastic.co/kibana/kibana:7.6.1
+        volumeMounts:
+          - name: kibana-config
+            mountPath: /usr/share/kibana/config
+        env:
+          - name: ELASTICSEARCH_URL
+            value: http://elastic:9200
+          - name: ELASTICSEARCH_HOSTS
+            value: http://elastic:9200
 

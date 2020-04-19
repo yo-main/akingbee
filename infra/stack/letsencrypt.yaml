@@ -4,7 +4,7 @@ metadata:
   name: letsencrypt
 spec:
   acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org/directory
     email: hostingroa@gmail.com
     privateKeySecretRef:
       name: letsencrypt
@@ -17,16 +17,14 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: akingbee.com
+  name: yo-main.com
   namespace: default
 spec:
-  secretName: akingbee.com-tls
+  secretName: yo-main.com-tls
   issuerRef:
     name: letsencrypt
-  commonName: akingbee.com
+  commonName: yo-main.com
   dnsNames:
-  - akingbee.com
-  - www.akingbee.com
-  - log.akingbee.com
-  - test.akingbee.com
+  - yo-main.com
+  - log.yo-main.com
 

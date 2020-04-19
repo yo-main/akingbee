@@ -5,9 +5,20 @@ metadata:
 spec:
   tls:
   - hosts:
-    - akingbee.com
-    - www.akingbee.com
-    secretName: akingbee.com-tls
-  backend:
-    serviceName: akingbee
-    servicePort: 8080
+    - yo-main.com
+    - log.yo-main.com
+    secretName: yo-main.com-tls
+  rules:
+  - host: log.yo-main.com
+    http:
+      paths:
+        - backend:
+            serviceName: kibana
+            servicePort: 5601
+  - host: yo-main.com
+    http:
+      paths:
+        - backend:
+            serviceName: akingbee
+            servicePort: 8080
+
