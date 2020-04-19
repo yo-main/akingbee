@@ -1,0 +1,32 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: hostingroa@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - selector: {}
+      http01:
+        ingress:
+          class: nginx
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: akingbee.com
+  namespace: default
+spec:
+  secretName: akingbee.com-tls
+  issuerRef:
+    name: letsencrypt
+  commonName: akingbee.com
+  dnsNames:
+  - akingbee.com
+  - www.akingbee.com
+  - log.akingbee.com
+  - test.akingbee.com
+

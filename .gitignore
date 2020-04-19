@@ -9,7 +9,6 @@ database.db
 environment.yaml
 *.log
 !*log/
-*.yaml
 *.pyc
 *.swp
 .ycm_extra_conf.py

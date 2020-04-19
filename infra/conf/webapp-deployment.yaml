@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: akingbee
+  labels:
+    app: akingbee
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: akingbee
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akingbee
+  labels:
+    app: akingbee
+spec:
+  selector:
+    matchLabels:
+      app: akingbee
+  template:
+    metadata:
+      labels:
+        app: akingbee
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - image: yomain/akingbee:prod
+        imagePullPolicy: Always
+        name: akingbee
+        env:
+          - name: SERVICE_NAME
+            value: webapp
+          - name: ENV
+            value: SIMU
+          - name: IDENTIFIER
+            value: AKB
+          - name: AKB_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: akingbee-application-cookie
+                key: secret_key
+          - name: AKB_DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: db-digitalocean
+                key: host
+          - name: AKB_DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: db-digitalocean
+                key: username
+          - name: AKB_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-digitalocean
+                key: password
+          - name: AKB_RABBITMQ_ERLANG_COOKIE
+            valueFrom:
+              secretKeyRef:
+                name: rbmq-erlang-cookie
+                key: secret_key
+        ports:
+        - containerPort: 8080
+        command: ["uwsgi", "--ini", "./conf/uwsgi.ini"]
+        volumeMounts:
+          - mountPath: /app/log
+            name: akingbee-log
+
+      volumes:
+      - name: akingbee-log
+        emptyDir: {}
+
+
+
