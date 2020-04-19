@@ -19,3 +19,4 @@ tags
 .venv
 docker-compose.override.yml
 **/cache
+**/secrets.yaml
