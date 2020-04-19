@@ -71,7 +71,7 @@ spec:
                 key: secret_key
         ports:
         - containerPort: 8080
-        command: ["uwsgi", "--ini", "./conf/uwsgi.ini"]
+        command: ["uwsgi", "--ini", "./uwsgi.ini"]
         volumeMounts:
           - mountPath: /app/log
             name: akingbee-log
