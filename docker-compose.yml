@@ -26,6 +26,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - SERVICE_NAME=webapp
+      - IDENTIFIER=AKB
     command: uwsgi --ini ./conf/uwsgi.ini
     restart: "always"
     depends_on:
@@ -44,6 +45,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - SERVICE_NAME=messaging
+      - IDENTIFIER=AKB
     command: python listener.py
     restart: "always"
     depends_on:
