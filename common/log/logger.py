@@ -80,7 +80,7 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, record):
         record.message = record.getMessage()
-        setattr(record, "@timestamp", self.formatTime(record, self.datefmt))
+        setattr(record, "timestamp", self.formatTime(record, self.datefmt))
 
         log_data = {
             key: item
