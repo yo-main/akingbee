@@ -17,14 +17,14 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: yo-main.com
+  name: akingbee.com
   namespace: default
 spec:
-  secretName: yo-main.com-tls
+  secretName: akingbee.com-tls
   issuerRef:
     name: letsencrypt
-  commonName: yo-main.com
+  commonName: akingbee.com
   dnsNames:
-  - yo-main.com
-  - log.yo-main.com
+  - test.akingbee.com
+  - test.log.akingbee.com
 
