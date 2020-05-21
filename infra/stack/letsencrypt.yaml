@@ -2,6 +2,8 @@ apiVersion: cert-manager.io/v1alpha2
 kind: Issuer
 metadata:
   name: letsencrypt
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "akb-entrypoint"
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
@@ -25,6 +27,6 @@ spec:
     name: letsencrypt
   commonName: akingbee.com
   dnsNames:
-  - test.akingbee.com
-  - test.log.akingbee.com
-
+  - akingbee.com
+  - www.akingbee.com
+  - grafana.akingbee.com

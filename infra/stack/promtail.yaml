@@ -17,6 +17,9 @@ spec:
       - name: promtail-config
         configMap:
           name: promtail-config
+      - name: logs
+        hostPath:
+          path: /var/log
       containers:
       - name: promtail-daemon
         image: grafana/promtail
@@ -25,6 +28,8 @@ spec:
         volumeMounts:
         - name: promtail-config
           mountPath: /etc/promtail
+        - name: logs
+          mountPath: /var/log
 
 ---
 

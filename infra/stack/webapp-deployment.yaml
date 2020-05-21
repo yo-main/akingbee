@@ -36,7 +36,7 @@ spec:
         - name: SERVICE_NAME
           value: akb
         - name: ENV
-          value: SIMU
+          value: PROD
         - name: IDENTIFIER
           value: AKB
         - name: REDIS_HOST
@@ -68,6 +68,10 @@ spec:
               key: secret_key
         ports:
         - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /_/status
+            port: 8080
         command: ["uwsgi", "--ini", "./uwsgi.ini"]
         volumeMounts:
         - mountPath: /app/log

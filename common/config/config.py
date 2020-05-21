@@ -2,7 +2,7 @@ import os
 
 
 class Config:
-    LOGS_FOLDER_NAME = "log"
+    LOGS_FOLDER_NAME = "/var/log/akingbee"
     LOGS_FILE_NAME = "akb.log"
     IMAGES_FOLDER_NAME = "images"
     FLASK_SESSIONS_FOLDER_NAME = "flask_session"

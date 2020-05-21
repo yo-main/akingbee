@@ -1,39 +1,37 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: test-ingress
+  name: akb-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "akb-entrypoint"
 spec:
-  # tls:
-  # - hosts:
-  #   - test.akingbee.com
-  #   - test.log.akingbee.com
-  #   secretName: akingbee.com-tls
-  # rules:
-  # - host: test.log.akingbee.com
-  #   http:
-  #     paths:
-  #       - backend:
-  #           serviceName: grafana
-  #           servicePort: 3000
-  # - host: test.akingbee.com
-  #   http:
-  #     paths:
-  #       - backend:
-  #           serviceName: akingbee
-  #           servicePort: 8080
-  # backend:
-  #   serviceName: akingbee
-  #   servicePort: 8080
+  tls:
+  - hosts:
+    - akingbee.com
+    - www.akingbee.com
+    - grafana.akingbee.com
+    secretName: akingbee.com-tls
 
   rules:
-  - http:
-      paths: 
-      - path: /grafana
-        backend:
-          serviceName: grafana
-          servicePort: http
+  - host: akingbee.com
+    http:
+      paths:
+        - backend:
+            serviceName: akingbee
+            servicePort: 8080
 
-  backend:
-    serviceName: akingbee
-    servicePort: http
+  - host: grafana.akingbee.com
+    http:
+      paths:
+        - backend:
+            serviceName: grafana
+            servicePort: 3000
+
+  - http:
+      paths:
+        - backend:
+            serviceName: akingbee
+            servicePort: 8080
+
+
 
