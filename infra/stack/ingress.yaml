@@ -3,25 +3,37 @@ kind: Ingress
 metadata:
   name: test-ingress
 spec:
-  tls:
-  - hosts:
-    - test.akingbee.com
-    - test.log.akingbee.com
-    secretName: akingbee.com-tls
+  # tls:
+  # - hosts:
+  #   - test.akingbee.com
+  #   - test.log.akingbee.com
+  #   secretName: akingbee.com-tls
+  # rules:
+  # - host: test.log.akingbee.com
+  #   http:
+  #     paths:
+  #       - backend:
+  #           serviceName: grafana
+  #           servicePort: 3000
+  # - host: test.akingbee.com
+  #   http:
+  #     paths:
+  #       - backend:
+  #           serviceName: akingbee
+  #           servicePort: 8080
+  # backend:
+  #   serviceName: akingbee
+  #   servicePort: 8080
+
   rules:
-  - host: test.log.akingbee.com
-    http:
-      paths:
-        - backend:
-            serviceName: grafana
-            servicePort: 3000
-  - host: test.akingbee.com
-    http:
-      paths:
-        - backend:
-            serviceName: akingbee
-            servicePort: 8080
+  - http:
+      paths: 
+      - path: /grafana
+        backend:
+          serviceName: grafana
+          servicePort: http
+
   backend:
     serviceName: akingbee
-    servicePort: 8080
+    servicePort: http
 

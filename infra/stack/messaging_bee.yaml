@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messaging-bee
+  labels:
+    app: messaging-bee
+spec:
+  selector:
+    matchLabels:
+      app: messaging-bee
+  template:
+    metadata:
+      labels:
+        app: messaging-bee
+    spec:
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log
+
+      containers:
+      - image: yomain/akingbee:prod
+        imagePullPolicy: Always
+        name: messaging-bee
+        env:
+        - name: REDIS_HOST
+          value: redis
+        - name: SERVICE_NAME
+          value: messaging-bee
+        - name: IDENTIFIER
+          value: AKB
+        - name: AKB_NOREPLY_EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: email-akingbee-noreply
+              key: password
+        command: ["python", "listener.py"]
+        volumeMounts:
+        - mountPath: /app/log
+          name: logs
+
+

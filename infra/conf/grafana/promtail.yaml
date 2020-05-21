@@ -8,6 +8,7 @@ scrape_configs:
     pipeline_stages:
       - json:
           expressions:
+            job: name
             user_id: user_id
             message: message
             duration: duration
@@ -29,6 +30,7 @@ scrape_configs:
           source: timestamp
           format: RFC3339Nano
       - labels:
+          job:
           user_id:
           message:
           duration:
@@ -47,6 +49,5 @@ scrape_configs:
     static_configs:
       - targets: [localhost]
         labels:
-          job: akingbee
           __path__: /var/log/*.log
 

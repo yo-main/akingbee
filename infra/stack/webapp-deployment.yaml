@@ -7,16 +7,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
-      nodePort: 32080
-      protocol: TCP
-    - name: loki
-      port: 3200
-      targetPort: 3200
-      nodePort: 32020
-      protocol: TCP
+  - name: http
+    port: 8080
+    targetPort: 8080
   selector:
     app: akingbee
 ---
@@ -35,69 +28,56 @@ spec:
       labels:
         app: akingbee
     spec:
-      # securityContext:
-      #   runAsUser: 1000
-      #   runAsGroup: 1000
-      #   fsGroup: 1000
       containers:
-        - image: yomain/akingbee:prod
-          imagePullPolicy: Always
-          name: akingbee
-          env:
-            - name: SERVICE_NAME
-              value: webapp
-            - name: ENV
-              value: SIMU
-            - name: IDENTIFIER
-              value: AKB
-            - name: AKB_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: akingbee-application-cookie
-                  key: secret_key
-            - name: AKB_DATABASE_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: db-digitalocean
-                  key: host
-            - name: AKB_DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: db-digitalocean
-                  key: username
-            - name: AKB_DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-digitalocean
-                  key: password
-            - name: AKB_RABBITMQ_ERLANG_COOKIE
-              valueFrom:
-                secretKeyRef:
-                  name: rbmq-erlang-cookie
-                  key: secret_key
-          ports:
-            - containerPort: 8080
-          command: ["uwsgi", "--ini", "./uwsgi.ini"]
-          volumeMounts:
-            - mountPath: /app/log
-              name: logs
-
-        - image: grafana/promtail
-          name: promtail-webapp
-          args:
-            - -config.file=/etc/promtail/promtail.yml
-          volumeMounts:
-            - mountPath: /var/log
-              name: logs
-            - mountPath: /etc/promtail
-              name: promtail-config
+      - image: yomain/akingbee:prod
+        imagePullPolicy: Always
+        name: akingbee
+        env:
+        - name: SERVICE_NAME
+          value: akb
+        - name: ENV
+          value: SIMU
+        - name: IDENTIFIER
+          value: AKB
+        - name: REDIS_HOST
+          value: redis
+        - name: AKB_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: akingbee-application-cookie
+              key: secret_key
+        - name: AKB_DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: db-digitalocean
+              key: host
+        - name: AKB_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-digitalocean
+              key: username
+        - name: AKB_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-digitalocean
+              key: password
+        - name: AKB_RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: rbmq-erlang-cookie
+              key: secret_key
+        ports:
+        - containerPort: 8080
+        command: ["uwsgi", "--ini", "./uwsgi.ini"]
+        volumeMounts:
+        - mountPath: /app/log
+          name: logs
 
       volumes:
-        - name: logs
-          emptyDir: {}
-        - name: promtail-config
-          configMap:
-            name: promtail-config
+      - name: logs
+        hostPath:
+          type: DirectoryOrCreate
+          path: /var/log
 
 
 
