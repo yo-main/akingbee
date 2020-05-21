@@ -19,7 +19,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-
 FROM python:3.7.7-slim-buster as runtime
 ENV PYTHONPATH=/app \
     VENV_PATH=/opt/venv
@@ -29,9 +28,6 @@ WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
 COPY . ./
-
-RUN chown -R 1000:1000 /app
-USER 1000:1000
 
 RUN mkdir flask_session && mkdir log
 
