@@ -81,7 +81,7 @@ spec:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
-          path: /var/log
+          path: /var/log/akingbee
 
 
 

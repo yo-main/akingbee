@@ -6,7 +6,7 @@ scrape_configs:
     entry_parser: raw
 
     static_configs:
-      - target: [localhost]
+      - targets: [localhost]
         labels:
           __path__: /var/log/*.log
 
