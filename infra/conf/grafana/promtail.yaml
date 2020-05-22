@@ -16,7 +16,7 @@ scrape_configs:
     static_configs:
       - targets: [localhost]
         labels:
-          __path__: /var/log/akingbee/akb.log
+          __path__: /var/log/akingbee/*.log
 
     pipeline_stages:
       - json:

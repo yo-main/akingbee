@@ -99,8 +99,9 @@ formatter = CustomFormatter(datefmt="%Y-%m-%dT%H:%M:%S")
 
 
 if CONFIG.ENV != "TEST":
-    log_path = os.path.join(CONFIG.PATH_LOGS, CONFIG.LOGS_FILE_NAME)
-    file_handler = RotatingFileHandler(log_path, "a", 1000000, 1)
+    log_file_name = f"{CONFIG.SERVICE_NAME}.log"
+    log_path = os.path.join(CONFIG.PATH_LOGS, log_file_name)
+    file_handler = RotatingFileHandler(log_path, "a", 1_000_000, 1)
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)

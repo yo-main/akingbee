@@ -16,7 +16,7 @@ spec:
       volumes:
       - name: logs
         hostPath:
-          path: /var/log
+          path: /var/log/akingbee
 
       containers:
       - image: yomain/akingbee:prod
@@ -29,6 +29,8 @@ spec:
           value: messaging-bee
         - name: IDENTIFIER
           value: AKB
+        - name: ENV
+          value: PROD
         - name: AKB_NOREPLY_EMAIL_PASSWORD
           valueFrom:
             secretKeyRef:
