@@ -38,7 +38,7 @@ scrape_configs:
             request_user_agent: request_user_agent
       - template:
           source: log_message
-          template: '{{ .levelname }} - {{ .user_id }} - {{ .request_ip_address }} - {{ .request_path }} - {{ .message }}'
+          template: '{{ or .levelname "    " }}{{ print "\t" }}{{or .status_code "   " }}{{print "\t"}}{{ if .user_id }}{{ if ne .user_id "0" }}user {{ .user_id }}{{end}}{{end}}{{print "\t\t"}}{{or .request_ip_address "            " }}{{print "\t"}}{{ .message }}'
       - timestamp:
           source: timestamp
           format: RFC3339Nano
@@ -49,12 +49,13 @@ scrape_configs:
           duration:
           levelname:
           status_code:
-          request_method:
           pathname:
           lineno:
           funcName:
-          request_ip_address:
+          request_path:
           request_form:
+          request_method:
+          request_ip_address:
           request_user_agent:
       - output:
           source: log_message
