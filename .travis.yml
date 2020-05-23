@@ -3,26 +3,27 @@ language: python
 python:
     - "3.7"
 
-branches:
-  only:
-    - master
-
 services:
   - docker
 
-install:
-  - pip install poetry
-  - poetry install
+stages:
+  - test
+  - publish
 
-script: 
-  - poetry run black . --check
-  - poetry run coverage run -m pytest -v
-  - poetry run coverage report
+jobs:
+  include:
 
-after_success:
-  - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-  - docker pull $DOCKERHUB_USERNAME/akingbee:prod
-  - docker tag $DOCKERHUB_USERNAME/akingbee:prod $DOCKERHUB_USERNAME/akingbee:previous
-  - docker push $DOCKERHUB_USERNAME/akingbee:previous
-  - docker build -t $DOCKERHUB_USERNAME/akingbee:prod .
-  - docker push $DOCKERHUB_USERNAME/akingbee:prod
+    - stage: test
+      script: |
+        pip install poetry
+        poetry install
+        poetry run black . --check
+        poetry run coverage run -m pytest -v
+        poetry run coverage report
+
+    - stage: publish
+      script: |
+        docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+        docker build -t $DOCKERHUB_USERNAME/akingbee:$TRAVIS_TAG .
+        docker push $DOCKERHUB_USERNAME/akingbee:$TRAVIS_TAG
+      if: tag IS present
