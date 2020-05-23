@@ -49,17 +49,17 @@ spec:
         - name: AKB_DATABASE_HOST
           valueFrom:
             secretKeyRef:
-              name: db-digitalocean
+              name: database-europe-west-1c
               key: host
         - name: AKB_DATABASE_USER
           valueFrom:
             secretKeyRef:
-              name: db-digitalocean
+              name: database-europe-west-1c
               key: username
         - name: AKB_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-digitalocean
+              name: database-europe-west-1c
               key: password
         - name: AKB_RABBITMQ_ERLANG_COOKIE
           valueFrom:
