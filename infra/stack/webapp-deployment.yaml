@@ -29,8 +29,7 @@ spec:
         app: akingbee
     spec:
       containers:
-      - image: yomain/akingbee:prod
-        imagePullPolicy: Always
+      - image: yomain/akingbee:v1.1.1
         name: akingbee
         env:
         - name: SERVICE_NAME
