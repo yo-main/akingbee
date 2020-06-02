@@ -11,10 +11,11 @@ spec:
     privateKeySecretRef:
       name: letsencrypt
     solvers:
-    - selector: {}
-      http01:
-        ingress:
-          class: nginx
+    - dns01:
+        digitalocean:
+          tokenSecretRef:
+            name: digitalocean-dns
+            key: access-token
 ---
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
