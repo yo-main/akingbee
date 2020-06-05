@@ -16,8 +16,10 @@ class RedisClient:
 
     def publish(self, channel, message):
         if not check_channel(channel):
-            logger.error(f"Channel `{channel}` is unknown")
-        self.client.publish(channel, message)
+            logger.error(f"Unknown channel: {channel}")
+        else:
+            self.client.publish(channel, message)
+            logger.info("Message published in redis: {channel} - {message}")
 
     def listen(self, channel, callback):
         self.pubsub.subscribe(channel)

@@ -98,6 +98,7 @@ logger.setLevel(logging.DEBUG)
 formatter = CustomFormatter(datefmt="%Y-%m-%dT%H:%M:%S")
 
 
+# log to file (if not in testing environment)
 if CONFIG.ENV != "TEST":
     log_file_name = f"{CONFIG.SERVICE_NAME}.log"
     log_path = os.path.join(CONFIG.PATH_LOGS, log_file_name)
@@ -119,6 +120,7 @@ stream_handler.setFormatter(
 logger.addHandler(stream_handler)
 
 
+# add context within flask.request context
 def init_logging_filter():
     context_filter = ContextFilter()
     logger.addFilter(context_filter)
