@@ -1,7 +1,7 @@
 import flask
 from peewee import Model
 
-from common.database import DB
+from common.database.connectors import DB
 
 from webapp.errors import errors
 import json
