@@ -86,7 +86,7 @@ def log_after_request(response):
             method = logger.exception
 
         method(
-            "Response sent",
+            f"Response sent - {flask.request.url}",
             status_code=response.status_code,
             duration=round(time.time() - flask.g.starting_time, 3),
         )
