@@ -19,7 +19,7 @@ spec:
           path: /var/log/akingbee
 
       containers:
-      - image: yomain/akingbee:v1.1.1
+      - image: yomain/akingbee:v1.1.3
         name: messaging-bee
         env:
         - name: REDIS_HOST

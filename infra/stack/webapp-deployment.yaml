@@ -29,7 +29,7 @@ spec:
         app: akingbee
     spec:
       containers:
-      - image: yomain/akingbee:v1.1.1
+      - image: yomain/akingbee:v1.1.3
         name: akingbee
         env:
         - name: SERVICE_NAME
