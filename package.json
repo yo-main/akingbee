@@ -1,0 +1,33 @@
+{
+  "name": "akingbee",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://travis-ci.com/yo-main/akingbee.svg?branch=master)](https://travis-ci.com/yo-main/akingbee) # akingbee.com A website for beekeepers !",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+      "start": "react-scripts start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yo-main/akingbee.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yo-main/akingbee/issues"
+  },
+  "homepage": "https://github.com/yo-main/akingbee#readme",
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1"
+  }
+}

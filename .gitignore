@@ -19,3 +19,4 @@ tags
 docker-compose.override.yml
 **/cache
 **/secrets.yaml
+node_modules
