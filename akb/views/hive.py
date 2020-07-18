@@ -18,7 +18,7 @@ from common.models import (
     EventType,
 )
 
-from webapp.helpers.tools import (
+from akb.helpers.tools import (
     render,
     get_all,
     get_traductions,
@@ -26,10 +26,10 @@ from webapp.helpers.tools import (
     update_hive_history,
     create_system_comment_from_hive,
 )
-from webapp.helpers.date import convert_to_date_object
-from webapp import constants
-from webapp.errors import errors
-from webapp.success import success
+from akb.helpers.date import convert_to_date_object
+from akb import constants
+from akb.errors import errors
+from akb.success import success
 
 
 api = flask.Blueprint("Hive", __name__)

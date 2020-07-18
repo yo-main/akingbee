@@ -6,13 +6,13 @@ import flask
 from common.database import DB
 from common.models import Swarm, Hive
 
-from webapp.helpers.tools import (
+from akb.helpers.tools import (
     login_required,
     create_system_comment_from_hive,
     get_traductions,
 )
-from webapp.errors import errors
-from webapp.success import success
+from akb.errors import errors
+from akb.success import success
 
 
 api = flask.Blueprint("Swarm", __name__)

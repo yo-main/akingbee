@@ -6,8 +6,8 @@ from tests.fixtures import client, fake_database, logged_in
 
 from common.models import Apiary, Hive, CommentType
 
-from webapp.constants import alert_codes as alerts
-from webapp.helpers.users import create_new_user
+from akb.constants import alert_codes as alerts
+from akb.helpers.users import create_new_user
 
 
 @pytest.fixture(scope="module", autouse=True)

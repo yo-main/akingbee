@@ -2,7 +2,7 @@ import flask
 
 import pytest
 
-from webapp.constants import alert_codes
+from akb.constants import alert_codes
 from common.models import User
 
 from tests.fixtures import client, fake_database

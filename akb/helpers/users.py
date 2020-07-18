@@ -14,8 +14,8 @@ from common.models import (
     Owner,
 )
 
-from webapp import constants
-from webapp.errors import errors
+from akb import constants
+from akb.errors import errors
 
 
 def create_password_hash(password):

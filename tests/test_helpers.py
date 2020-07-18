@@ -1,9 +1,9 @@
 import pytest
 import datetime
 
-from webapp.constants import alert_codes
-from webapp.helpers.date import convert_to_date_object, jinja_date_formatting
-from webapp.errors import errors
+from akb.constants import alert_codes
+from akb.helpers.date import convert_to_date_object, jinja_date_formatting
+from akb.errors import errors
 
 
 @pytest.mark.parametrize("date", ["12", "12/01", "12/15/19"])

@@ -3,8 +3,8 @@ import pytest
 
 from tests.fixtures import client, fake_database, logged_in
 
-from webapp.constants import alert_codes
-from webapp.helpers.users import create_new_user
+from akb.constants import alert_codes
+from akb.helpers.users import create_new_user
 
 
 @pytest.fixture(scope="module", autouse=True)

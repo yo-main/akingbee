@@ -3,7 +3,7 @@ from peewee import Model
 
 from common.database.connectors import DB
 
-from webapp.errors import errors
+from akb.errors import errors
 import json
 
 

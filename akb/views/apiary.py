@@ -5,10 +5,10 @@ from peewee import IntegrityError, DoesNotExist
 from common.database import DB
 from common.models import Apiary, StatusApiary, HoneyType
 
-from webapp.helpers.tools import get_all, render, login_required
-from webapp.helpers.date import convert_to_date_object
-from webapp.errors import errors
-from webapp.success import success
+from akb.helpers.tools import get_all, render, login_required
+from akb.helpers.date import convert_to_date_object
+from akb.errors import errors
+from akb.success import success
 
 
 api = flask.Blueprint("Apiary", __name__)

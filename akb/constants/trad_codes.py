@@ -1,4 +1,4 @@
-from webapp.constants import FRENCH, ENGLISH
+from akb.constants import FRENCH, ENGLISH
 
 traductions = {
     1: {

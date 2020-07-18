@@ -2,7 +2,7 @@ import flask
 
 from common.log.logger import logger
 
-from webapp.constants import FRENCH, ENGLISH
+from akb.constants import FRENCH, ENGLISH
 
 
 class BaseSuccess:

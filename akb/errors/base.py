@@ -2,7 +2,7 @@ import json
 
 import flask
 
-from webapp.constants import FRENCH, ENGLISH
+from akb.constants import FRENCH, ENGLISH
 
 from common.log.logger import logger
 

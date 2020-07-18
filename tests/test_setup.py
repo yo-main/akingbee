@@ -2,8 +2,8 @@ import pytest
 
 from common.models.users import User
 
-from webapp.helpers.users import create_new_user
-from webapp.helpers.tools import _get_trads
+from akb.helpers.users import create_new_user
+from akb.helpers.tools import _get_trads
 
 from tests.fixtures import client, fake_database, logged_in
 

@@ -10,9 +10,9 @@ from common import database as db
 from common.config import CONFIG
 from common.log.logger import logger, init_logging_filter
 
-from webapp import views
-from webapp.errors.base import BaseError
-from webapp.helpers.date import jinja_date_formatting
+from akb import views
+from akb.errors.base import BaseError
+from akb.helpers.date import jinja_date_formatting
 
 
 def create_app():

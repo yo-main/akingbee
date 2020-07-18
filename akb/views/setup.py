@@ -10,9 +10,9 @@ from common.models import (
     StatusApiary,
 )
 
-from webapp.helpers.tools import login_required, render, get_all
-from webapp.errors import errors
-from webapp.success import success
+from akb.helpers.tools import login_required, render, get_all
+from akb.errors import errors
+from akb.success import success
 
 
 api = flask.Blueprint("Setup", __name__)

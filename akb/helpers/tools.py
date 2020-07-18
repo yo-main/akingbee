@@ -6,9 +6,9 @@ from peewee import DoesNotExist
 
 from common.models import Comment, Swarm
 
-from webapp.constants import FRENCH, COMMENT_TYPE_SYSTEM
-from webapp.constants.trad_codes import traductions
-from webapp.errors import errors
+from akb.constants import FRENCH, COMMENT_TYPE_SYSTEM
+from akb.constants.trad_codes import traductions
+from akb.errors import errors
 
 
 def redirect(url):

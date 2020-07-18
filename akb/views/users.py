@@ -10,19 +10,19 @@ from common.database import DB
 from common.config import CONFIG
 from common.log.logger import logger
 
-from webapp.helpers.tools import render, redirect
-from webapp.helpers.checkers import validate_email, validate_password
-from webapp import constants
-from webapp.errors import errors
-from webapp.success import success
-from webapp.helpers.users import (
+from akb.helpers.tools import render, redirect
+from akb.helpers.checkers import validate_email, validate_password
+from akb import constants
+from akb.errors import errors
+from akb.success import success
+from akb.helpers.users import (
     get_user_from_username,
     verify_password,
     create_password_hash,
     create_new_user,
 )
-from webapp.messaging.emails import send_reset_email
-from webapp.helpers.tools import login_required, anonymize_email
+from akb.messaging.emails import send_reset_email
+from akb.helpers.tools import login_required, anonymize_email
 
 
 api = Blueprint("Users", __name__)
