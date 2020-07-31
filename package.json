@@ -2,12 +2,10 @@
   "name": "akingbee",
   "version": "1.0.0",
   "description": "[![Build Status](https://travis-ci.com/yo-main/akingbee.svg?branch=master)](https://travis-ci.com/yo-main/akingbee) # akingbee.com A website for beekeepers !",
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
   "scripts": {
-      "start": "react-scripts start"
+    "dev": "next dev webapp",
+    "build": "next build webapp",
+    "start": "next start webapp"
   },
   "repository": {
     "type": "git",
@@ -21,13 +19,19 @@
   },
   "homepage": "https://github.com/yo-main/akingbee#readme",
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "babel-cli": "^6.26.0",
-    "babel-preset-react-app": "^3.1.2",
+    "@ant-design/icons": "^4.2.1",
+    "antd": "^4.5.1",
+    "next": "^9.5.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.5.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react-hooks": "^4.0.8"
   }
 }
