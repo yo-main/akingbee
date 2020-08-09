@@ -1,66 +1,104 @@
 import Head from 'next/head';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
+import Link from 'next/link';
+import { Layout, Menu, Breadcrumb, Row, Col, Dropdown, Button } from 'antd';
+import getSideMenu from './sidemenu';
+import * as constants from '../constants';
 
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer } = Layout;
 
-export default function Frame() {
+
+function changeLanguage({ item, key, keyPath, domEvent }) {
+  let path = window.location.pathname.split("/");
+  let base = window.location.origin;
+  path[1] = key;
+
+  let newUrl = `${base}${path.join("/")}`;
+
+  window.location = newUrl;
+}
+
+
+function languageMenu(locales) {
+  const items = Object.values(constants.languages).map((country) => (
+    <Menu.Item key={country}>{country}</Menu.Item>
+  ));
+
+  return (
+    <Menu theme="dark" mode="horizontal">
+      <Menu.SubMenu key="language_menu" title={locales.Language} onClick={changeLanguage}>
+        {items}
+      </Menu.SubMenu>
+    </Menu>
+  );
+}
+
+export default function Frame({ lang, locales, section }) {
+  const headData = (
+    <Head>
+      <title>aKingBee</title>
+      <meta charSet="UTF-8" />
+      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      <meta name="description" content="A website dedicated to bees and beekeepers" />
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
+  );
+
+  const mainMenu = (
+    <Row gutter="10" justify="space-between">
+      <Col>
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[section]}>
+          <Menu.Item key={constants.ids.section_manage}><Link href={`/${lang}/manage`}><a>{locales.Manage}</a></Link></Menu.Item>
+          <Menu.Item key={constants.ids.section_setup}><Link href={`/${lang}/setup`}><a>{locales.Setup}</a></Link></Menu.Item>
+          <Menu.Item key={constants.ids.section_profil}><Link href={`/${lang}/profil`}><a>{locales.Profil}</a></Link></Menu.Item>
+        </Menu>
+      </Col>
+      <Col>
+        <Row>
+          <Col>
+            {languageMenu(locales)}
+          </Col>
+          <Col>
+          <Menu theme="dark" mode="horizontal">
+          <Menu.Item>Logout</Menu.Item>
+          </Menu>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
+  );
+
+  const headerData = (
+    <Header className="header">
+      <div className="logo" />
+      {mainMenu}
+    </Header>
+  );
+
+  const breadcrumbData = (
+    <Breadcrumb style={{ margin: '16px 0' }}>
+      <Breadcrumb.Item>Home</Breadcrumb.Item>
+      <Breadcrumb.Item>List</Breadcrumb.Item>
+      <Breadcrumb.Item>App</Breadcrumb.Item>
+    </Breadcrumb>
+  );
+
+  const sideMenu = getSideMenu({ section, locales, lang });
+
+  const footerData = (
+    <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+  );
+
   return (
     <Layout>
-      <Head>
-        <title>aKingBee</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta charSet="UTF-8" />
-        <meta name="description" content="A website dedicated to bees and beekeepers" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Header className="header">
-        <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-          <Menu.Item key="1">nav 1</Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
-        </Menu>
-      </Header>
+      {headData}
+      {headerData}
       <Content style={{ padding: '0 50px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>List</Breadcrumb.Item>
-          <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
         <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
-          <Sider className="site-layout-background" width={200}>
-            <Menu
-              mode="inline"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
-              style={{ height: '100%' }}
-            >
-              <SubMenu key="sub1" icon={<UserOutlined />} title="subnav 1">
-                <Menu.Item key="1">option1</Menu.Item>
-                <Menu.Item key="2">option2</Menu.Item>
-                <Menu.Item key="3">option3</Menu.Item>
-                <Menu.Item key="4">option4</Menu.Item>
-              </SubMenu>
-              <SubMenu key="sub2" icon={<LaptopOutlined />} title="subnav 2">
-                <Menu.Item key="5">option5</Menu.Item>
-                <Menu.Item key="6">option6</Menu.Item>
-                <Menu.Item key="7">option7</Menu.Item>
-                <Menu.Item key="8">option8</Menu.Item>
-              </SubMenu>
-              <SubMenu key="sub3" icon={<NotificationOutlined />} title="subnav 3">
-                <Menu.Item key="9">option9</Menu.Item>
-                <Menu.Item key="10">option10</Menu.Item>
-                <Menu.Item key="11">option11</Menu.Item>
-                <Menu.Item key="12">option12</Menu.Item>
-              </SubMenu>
-            </Menu>
-          </Sider>
+          {sideMenu}
           <Content style={{ padding: '0 24px', minHeight: 280 }}>Content</Content>
         </Layout>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+      {footerData}
     </Layout>
   );
 }

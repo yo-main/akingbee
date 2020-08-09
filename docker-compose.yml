@@ -63,6 +63,20 @@ services:
     networks:
       - akingbee_nw
 
+  mysql:
+    image: mysql
+    container_name: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=akb_dev
+      - MYSQL_USER=akingbee
+      - MYSQL_PASSWORD=password
+
+
+
   redis:
     image: redis:rc-alpine
     container_name: redis

@@ -1,11 +1,15 @@
 [tool.poetry]
-name = "akingbee"
+name = "cerbes"
 version = "0.1.0"
 description = ""
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pyjwt = "^1.7.1"
+fastapi = "^0.60.1"
+uvicorn = "^0.11.8"
+meltingpot = {path = "../meltingpot"}
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.5.3"
