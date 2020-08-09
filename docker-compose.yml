@@ -21,7 +21,7 @@ services:
       - redis
       - messaging_bee
     networks:
-      - akingbee_nw
+      - akb-nw
 
   messaging_bee:
     image: yomain/akingbee:prod
@@ -40,7 +40,7 @@ services:
     depends_on:
       - redis
     networks:
-      - akingbee_nw
+      - akb-nw
 
   nginx:
     image: nginx:alpine
@@ -61,7 +61,7 @@ services:
     depends_on:
       - akingbee
     networks:
-      - akingbee_nw
+      - akb-nw
 
   mysql:
     image: mysql
@@ -74,7 +74,8 @@ services:
       - MYSQL_DATABASE=akb_dev
       - MYSQL_USER=akingbee
       - MYSQL_PASSWORD=password
-
+    networks:
+      - akb-nw
 
 
   redis:
@@ -84,8 +85,8 @@ services:
       - 6379
     restart: always
     networks:
-      - akingbee_nw
+      - akb-nw
 
 networks:
-    akingbee_nw:
+    akb-nw:
 

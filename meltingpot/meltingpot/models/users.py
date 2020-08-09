@@ -12,8 +12,8 @@ class Users(Base):
     __tablename__ = "users"
     id = Column(UUID(), primary_key=True, unique=True, default=uuid.uuid4)
     username = Column(VARCHAR(256), unique=True)
-    pwd = Column(VARCHAR(512))
-    email = Column(VARCHAR(1024), unique=True)
+    pwd = Column(VARCHAR(256))
+    email = Column(VARCHAR(256), unique=True)
     created_at = Column(DATETIME, default=datetime.datetime.utcnow)
     updated_at = Column(DATETIME, default=datetime.datetime.utcnow)
 
