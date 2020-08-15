@@ -10,9 +10,11 @@ pyjwt = "^1.7.1"
 fastapi = "^0.60.1"
 uvicorn = "^0.11.8"
 meltingpot = {path = "../meltingpot"}
+pydantic = "^1.6.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.5.3"
+ipython = "^7.17.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -6,7 +6,7 @@ from alembic import context
 
 from meltingpot.models.base import Base
 from meltingpot.models import *
-from meltingpot.database.connectors import get_engine
+from meltingpot.database.main import get_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

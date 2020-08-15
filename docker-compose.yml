@@ -63,17 +63,17 @@ services:
     networks:
       - akb-nw
 
-  mysql:
-    image: mysql
-    container_name: mysql
+  db:
+    image: postgres:10-alpine
+    container_name: db
     restart: always
     ports:
-      - 3306:3306
+      - 5432:5432
     environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=akb_dev
-      - MYSQL_USER=akingbee
-      - MYSQL_PASSWORD=password
+      POSTGRES_DB: akb_dev
+      POSTGRES_USER: akingbee
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
     networks:
       - akb-nw
 

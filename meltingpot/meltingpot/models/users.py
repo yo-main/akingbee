@@ -1,27 +1,42 @@
 import datetime
 import uuid
 
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.mysql import DATETIME, VARCHAR
+from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
-from .base import Base, UUID
+from .base import Base
 
 
 class Users(Base):
     __tablename__ = "users"
-    id = Column(UUID(), primary_key=True, unique=True, default=uuid.uuid4)
-    username = Column(VARCHAR(256), unique=True)
-    pwd = Column(VARCHAR(256))
-    email = Column(VARCHAR(256), unique=True)
-    created_at = Column(DATETIME, default=datetime.datetime.utcnow)
-    updated_at = Column(DATETIME, default=datetime.datetime.utcnow)
+    id = Column(UUID(), primary_key=True, default=uuid.uuid4)
+    email = Column(TEXT(), unique=True, nullable=False)
 
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
+    updated_at = Column(TIMESTAMP(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+class Credentials(Base):
+    __tablename__ = "credentials"
+    id = Column(UUID(), primary_key=True)
+    user_id = Column(UUID(), ForeignKey(Users.id), nullable=False)
+    username = Column(TEXT(), unique=True, nullable=False)
+    password = Column(BYTEA(), nullable=False)
+    last_seen = Column(TIMESTAMP())
+
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.now)
+    updated_at = Column(TIMESTAMP(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+    user = relationship(Users, backref="credentials")
 
 class Owners(Base):
     __tablename__ = "owners"
-    id = Column(UUID(), primary_key=True, unique=True, default=uuid.uuid4)
-    name = Column(VARCHAR(256))
-    user = relationship(Users, back_populates="owners")
-    date_creation = Column(DATETIME, default=datetime.datetime.now)
-    date_modification = Column(DATETIME, default=datetime.datetime.now)
+    id = Column(UUID(), primary_key=True)
+    user_id = Column(UUID(), ForeignKey(Users.id), nullable=False)
+    surname = Column(TEXT(), nullable=False)
+
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.now)
+    updated_at = Column(TIMESTAMP(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
+
+    user = relationship(Users, backref="owners")
+

@@ -5,30 +5,28 @@ import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 
-import flask
-
-from common.config import CONFIG
+from meltingpot.config import CONFIG
 
 
-class ContextFilter(logging.Filter):
-    def filter(self, record):
-        if flask.has_request_context():
-            # when logging out, the user_id is already set
-            if not hasattr(record, "user_id"):
-                record.user_id = flask.session.get("user_id") or 0
+# class ContextFilter(logging.Filter):
+#     def filter(self, record):
+#         if flask.has_request_context():
+#             # when logging out, the user_id is already set
+#             if not hasattr(record, "user_id"):
+#                 record.user_id = flask.session.get("user_id") or 0
 
-            record.request_form = {
-                key: item
-                for key, item in flask.request.form.items()
-                if key not in ("password", "pwd")
-            }
+#             record.request_form = {
+#                 key: item
+#                 for key, item in flask.request.form.items()
+#                 if key not in ("password", "pwd")
+#             }
 
-            record.request_id = flask.g.request_uuid
-            record.request_path = flask.request.path
-            record.request_method = flask.request.method
-            record.request_user_agent = flask.request.user_agent
-            record.request_ip_address = flask.request.remote_addr
-        return True
+#             record.request_id = flask.g.request_uuid
+#             record.request_path = flask.request.path
+#             record.request_method = flask.request.method
+#             record.request_user_agent = flask.request.user_agent
+#             record.request_ip_address = flask.request.remote_addr
+#         return True
 
 
 class CustomLogger(logging.Logger):
@@ -91,25 +89,25 @@ class CustomFormatter(logging.Formatter):
         return json.dumps(log_data, default=str)
 
 
+LOG_LEVEL = CONFIG.get("LOG_LEVEL", logging.INFO)
 logger = CustomLogger(CONFIG.SERVICE_NAME)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(LOG_LEVEL)
 
 
 formatter = CustomFormatter(datefmt="%Y-%m-%dT%H:%M:%S")
 
 
-# log to file (if not in testing environment)
-if CONFIG.ENV != "TEST":
+if CONFIG.get("LOG_TO_FILE"):
     log_file_name = f"{CONFIG.SERVICE_NAME}.log"
     log_path = os.path.join(CONFIG.PATH_LOGS, log_file_name)
     file_handler = RotatingFileHandler(log_path, "a", 1_000_000, 100)
-    file_handler.setLevel(logging.DEBUG)
+    file_handler.setLevel(LOG_LEVEL)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
 
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(LOG_LEVEL)
 stream_handler.setFormatter(
     logging.Formatter(
         fmt="{asctime} | {levelname:8s} | {message}",
@@ -121,6 +119,6 @@ logger.addHandler(stream_handler)
 
 
 # add context within flask.request context
-def init_logging_filter():
-    context_filter = ContextFilter()
-    logger.addFilter(context_filter)
+# def init_logging_filter():
+#     context_filter = ContextFilter()
+#     logger.addFilter(context_filter)

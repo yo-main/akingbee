@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from meltingpot.config import CONFIG
 
@@ -21,7 +22,8 @@ def get_database_url():
     if any(val is None for val in (user, pswd, host, port, dbnm)):
         return None
 
-    return f"mysql+mysqldb://{user}:{pswd}@{host}:{port}/{dbnm}"
+    return f"postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbnm}"
 
+session_factory = sessionmaker(bind=get_engine())
 
-
+Session = scoped_session(session_factory)
