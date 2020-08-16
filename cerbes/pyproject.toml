@@ -9,8 +9,8 @@ python = "^3.8"
 pyjwt = "^1.7.1"
 fastapi = "^0.60.1"
 uvicorn = "^0.11.8"
-meltingpot = {path = "../meltingpot"}
 pydantic = "^1.6.1"
+meltingpot = {path = "../meltingpot"}
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.5.3"

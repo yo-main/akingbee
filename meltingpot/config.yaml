@@ -1,4 +1,7 @@
 DEFAULT:
+  LOG_LEVEL: 20
+  SERVICE_NAME: "meltingpot"
+  LOG_FORMAT: "pretty"
 
 
 DEVELOPMENT:
@@ -9,3 +12,4 @@ DEVELOPMENT:
   DATABASE_USER: "akingbee"
   DATABASE_PASSWORD: ""
   DATABASE_DATABASE: "akb_dev"
+

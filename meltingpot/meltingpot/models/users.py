@@ -10,7 +10,7 @@ from .base import Base
 
 class Users(Base):
     __tablename__ = "users"
-    id = Column(UUID(), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(TEXT(), unique=True, nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
@@ -18,8 +18,8 @@ class Users(Base):
 
 class Credentials(Base):
     __tablename__ = "credentials"
-    id = Column(UUID(), primary_key=True)
-    user_id = Column(UUID(), ForeignKey(Users.id), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
     username = Column(TEXT(), unique=True, nullable=False)
     password = Column(BYTEA(), nullable=False)
     last_seen = Column(TIMESTAMP())
@@ -27,12 +27,12 @@ class Credentials(Base):
     created_at = Column(TIMESTAMP(), default=datetime.datetime.now)
     updated_at = Column(TIMESTAMP(), default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
-    user = relationship(Users, backref="credentials")
+    user = relationship(Users, backref="credentials", uselist=False)
 
 class Owners(Base):
     __tablename__ = "owners"
-    id = Column(UUID(), primary_key=True)
-    user_id = Column(UUID(), ForeignKey(Users.id), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
     surname = Column(TEXT(), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.now)

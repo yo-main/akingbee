@@ -4,6 +4,7 @@ import json
 import datetime
 import logging
 from logging.handlers import RotatingFileHandler
+import pprint
 
 from meltingpot.config import CONFIG
 
@@ -68,7 +69,7 @@ EXCLUDED_FIELDS = (
 )
 
 
-class CustomFormatter(logging.Formatter):
+class BaseFormatter(logging.Formatter):
     converter = time.gmtime
 
     def formatTime(self, record, datefmt):
@@ -80,41 +81,55 @@ class CustomFormatter(logging.Formatter):
         record.message = record.getMessage()
         setattr(record, "timestamp", self.formatTime(record, self.datefmt))
 
-        log_data = {
+        return {
             key: item
             for key, item in record.__dict__.items()
             if item is not None and key not in EXCLUDED_FIELDS
         }
 
+class JSONFormatter(BaseFormatter):
+    def format(self, record):
+        log_data = super().format(record)
         return json.dumps(log_data, default=str)
 
+class PrettyJSONFormatter(BaseFormatter):
+    def format(self, record):
+        log_data = super().format(record)
+        return pprint.pformat(log_data)
 
 LOG_LEVEL = CONFIG.get("LOG_LEVEL", logging.INFO)
 logger = CustomLogger(CONFIG.SERVICE_NAME)
 logger.setLevel(LOG_LEVEL)
 
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
-formatter = CustomFormatter(datefmt="%Y-%m-%dT%H:%M:%S")
+json_formatter = JSONFormatter(datefmt=DATE_FORMAT)
+pretty_json_formatter = PrettyJSONFormatter(datefmt=DATE_FORMAT)
+normal_formatter = logging.Formatter(
+    fmt="{asctime} | {levelname:8s} | {message}",
+    datefmt=DATE_FORMAT,
+    style="{",
+)
 
 
 if CONFIG.get("LOG_TO_FILE"):
     log_file_name = f"{CONFIG.SERVICE_NAME}.log"
-    log_path = os.path.join(CONFIG.PATH_LOGS, log_file_name)
+    log_path = os.path.join(CONFIG.LOGS_FOLDER_NAME, log_file_name)
     file_handler = RotatingFileHandler(log_path, "a", 1_000_000, 100)
     file_handler.setLevel(LOG_LEVEL)
-    file_handler.setFormatter(formatter)
+    file_handler.setFormatter(json_formatter)
     logger.addHandler(file_handler)
 
 
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(LOG_LEVEL)
-stream_handler.setFormatter(
-    logging.Formatter(
-        fmt="{asctime} | {levelname:8s} | {message}",
-        datefmt="%Y-%m-%dT%H:%M:%S",
-        style="{",
-    )
-)
+
+if CONFIG.LOG_FORMAT == "pretty":
+    stream_log_format = pretty_json_formatter
+else:
+    stream_log_format = normal_formatter
+
+stream_handler.setFormatter(stream_log_format)
 logger.addHandler(stream_handler)
 
 
