@@ -3,9 +3,12 @@ import fastapi
 from meltingpot.database import db
 
 
+def get_session(request: fastapi.Request):
+    return request.state.session
+
 class MiddleWare:
-    def __init__(self, db_enabled=False):
-        self.db_enabled = db_enabled
+    def __init__(self, db_client=None):
+        self.db = db_client
 
     async def before_request(self, *args, **kwargs):
         pass
@@ -19,8 +22,9 @@ class MiddleWare:
     async def __call__(self, request: fastapi.Request, call_next):
         await self.before_request()
 
-        if self.db_enabled:
-            db.init()
+        if self.db:
+            session = self.db.get_session()
+            request.state.session = session
 
         try:
             response = await call_next(request)
@@ -31,10 +35,8 @@ class MiddleWare:
 
         finally:
 
-            if self.db_enabled:
-                connection = db.session.connection()
-                if connection.in_transaction():
-                    db.session.rollback()
+            if self.db:
+                session.close()
 
             await self.after_request()
 

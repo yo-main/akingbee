@@ -14,14 +14,13 @@ def get_password_hash(password):
     return sha256.digest()
 
 
-def parse_authorization_header(authorization, kind):
-    rgx = re.search(f"{kind} (.*)$", authorization)
+def parse_base_authorization_header(authorization):
+    rgx = re.search("Base (.*)$", authorization)
 
-    if rgx is None:
+    if rgx is None or len(rgx.groups()) > 1:
         return
 
     token = rgx.group(1)
-    print(base64.b64decode(token).decode())
 
     try:
         username, password = base64.b64decode(token).decode().split(":")
@@ -30,9 +29,9 @@ def parse_authorization_header(authorization, kind):
 
     return CREDENTIALS(username.strip(), get_password_hash(password.strip()))
 
-def generate_jwt(user_credentials):
+def generate_jwt(user_id):
     data = {
-        "user_id": str(user_credentials.user_id),
+        "user_id": user_id,
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
         "iss": CONFIG.SERVICE_NAME
     }
@@ -47,7 +46,7 @@ def validate_jwt(token):
     try:
         jwt.decode(
             jwt=token,
-            ket=CONFIG.APP_SECRET,
+            key=CONFIG.APP_SECRET,
             algorithm="HS256"
         )
         return True

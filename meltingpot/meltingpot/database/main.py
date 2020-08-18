@@ -26,38 +26,25 @@ def get_database_url(dbname=None):
     return f"postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbnm}"
 
 class db:
-    session = Box()
-    engine = Box()
-    url = None
 
-    @classmethod
-    def init(cls, url=None):
-        url = url or get_database_url()
+    def __init__(self, url=None):
+        self.url = url or get_database_url()
+        self.engine = get_engine(self.url)
+        self.session_factory = sessionmaker(autoflush=False, bind=self.engine)
+        self._sessions = []
 
-        if cls.url is not None:
-            if cls.url == url:
-                return
-            raise AlreadyInitialized()
+    def get_session(self):
+        return self.session_factory()
 
-        cls.url = url
+    def clear(self):
+        self.engine.dispose()
 
-        self = cls()
-        self.engine = get_engine(cls.url)
-        self.session = scoped_session(sessionmaker(autoflush=False, bind=self.engine))
+    def __enter__(self):
+        session = self.get_session()
+        self._sessions.append(session)
+        return session
 
-    @classmethod
-    def clear(cls):
-        cls.url = None
-        self = cls()
-        if self.session:
-            self.session.remove()
-            del self.session
-        if self.engine:
-            self.engine.dispose()
-            del self.engine
-
-    @classmethod
-    def reset(cls):
-        cls.clear()
-        cls.init()
-
+    def __exit__(self, tp, vl, tb):
+        session = self._sessions.pop(-1)
+        session.rollback()
+        session.close()

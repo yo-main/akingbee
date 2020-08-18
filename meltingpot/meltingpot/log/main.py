@@ -124,10 +124,10 @@ if CONFIG.get("LOG_TO_FILE"):
 stream_handler = logging.StreamHandler()
 stream_handler.setLevel(LOG_LEVEL)
 
-if CONFIG.LOG_FORMAT == "pretty":
-    stream_log_format = pretty_json_formatter
-else:
+if CONFIG.get("LOG_FORMAT") == "minimize":
     stream_log_format = normal_formatter
+else:
+    stream_log_format = pretty_json_formatter
 
 stream_handler.setFormatter(stream_log_format)
 logger.addHandler(stream_handler)
