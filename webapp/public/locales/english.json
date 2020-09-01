@@ -18,5 +18,13 @@
   "Beekeeper": "Beekeeper",
   "Honey_type": "Honey type",
   "Add_an_entry": "Add an entry",
-  "Language": "Language"
+  "Language": "Language",
+  "Logout": "Logout",
+  "Login": "Login",
+  "LoginSubmit": "Connect",
+  "InsertUsernameMessage": "Insert your username",
+  "InsertPasswordMessage": "Insert your password",
+  "Username": "Username",
+  "Password": "Password"
+
 }

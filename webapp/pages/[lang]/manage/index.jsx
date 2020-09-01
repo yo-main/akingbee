@@ -7,7 +7,7 @@ export default function Home({ locales, lang }) {
 }
 
 export async function getStaticProps({ params }) {
-  const { lang } = params;
+  const lang = params.lang;
   const locales = getLocales(lang);
   return {
     props: { locales, lang },

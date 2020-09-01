@@ -1,3 +1,6 @@
+
+export const AUTH_COOKIE_NAME = "AKB_JWT";
+
 export const languages = {
   fr: 'fr',
   en: 'en',

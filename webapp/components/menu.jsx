@@ -1,6 +1,9 @@
-import { Layout, Menu } from 'antd';
+import { Component } from 'react';
+import { Layout, Menu, Row, Col } from 'antd';
+import Link from 'next/link';
 import Icon from '@ant-design/icons';
-import { ids } from '../constants';
+import * as constants from '../public/constants';
+import { ids } from '../public/constants';
 import hiveIcon from '../public/images/beehouse.svg';
 import apiaryIcon from '../public/images/location.svg';
 import swarmIcon from '../public/images/bee.svg';
@@ -9,8 +12,88 @@ const { SubMenu } = Menu;
 const { Sider } = Layout;
 
 
+class LanguageMenu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      current: props.current,
+      locales: props.locales,
+    };
+  }
 
-export default function getSideMenu({ section, locales, lang }) {
+  changeLanguage({ key }) {
+    let path = window.location.pathname.split("/");
+    let base = window.location.origin;
+    path[1] = key;
+
+    let newUrl = `${base}${path.join("/")}`;
+
+    window.location = newUrl;
+  }
+
+  render() {
+    const items = Object.values(constants.languages).map((country) => (
+      <Menu.Item key={country}>{country}</Menu.Item>
+    ));
+
+    return (
+      <Menu theme="dark" mode="horizontal">
+        <Menu.SubMenu key="language_menu" title={this.state.locales.Language} onClick={this.changeLanguage}>
+          {items}
+        </Menu.SubMenu>
+      </Menu>
+    );
+  }
+}
+
+export function getMainMenu({locales, lang, hideMenu, section}) {
+  if (hideMenu) {
+    return (
+      <Row gutter="10" justify="end">
+        <Col>
+          <Row>
+            <Col>
+              <LanguageMenu locales={locales} />
+            </Col>
+            <Col>
+            <Menu theme="dark" mode="horizontal">
+            <Menu.Item><Link href={`/${lang}/login`}><a>{locales.Login}</a></Link></Menu.Item>
+            </Menu>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    );
+  }
+
+  return (
+    <Row gutter="10" justify="space-between">
+      <Col>
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[section]}>
+          <Menu.Item key={constants.ids.section_manage}><Link href={`/${lang}/manage`}><a>{locales.Manage}</a></Link></Menu.Item>
+          <Menu.Item key={constants.ids.section_setup}><Link href={`/${lang}/setup`}><a>{locales.Setup}</a></Link></Menu.Item>
+          <Menu.Item key={constants.ids.section_profil}><Link href={`/${lang}/profil`}><a>{locales.Profil}</a></Link></Menu.Item>
+        </Menu>
+      </Col>
+      <Col>
+        <Row>
+          <Col>
+            <LanguageMenu locales={locales} />
+          </Col>
+          <Col>
+          <Menu theme="dark" mode="horizontal">
+          <Menu.Item>{locales.Logout}</Menu.Item>
+          </Menu>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
+  );
+}
+
+
+
+export function getSideMenu({ section, locales }) {
   const hiveMenuIcon = <Icon component={hiveIcon} />;
   const apiaryMenuIcon = <Icon component={apiaryIcon} />;
   const swarmMenuIcon = <Icon component={swarmIcon} />;
