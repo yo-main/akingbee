@@ -1,4 +1,4 @@
-FROM python:3.7.7-slim-buster as build
+FROM python:3.8.5-slim-buster as build
 ENV PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     TZ=Europe/Paris \
@@ -19,7 +19,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-FROM python:3.7.7-slim-buster as runtime
+
+FROM python:3.8.5-slim-buster as runtime
 ENV PYTHONPATH=/app \
     VENV_PATH=/opt/venv
 ENV PATH="$VENV_PATH/bin:$PATH"
@@ -27,6 +28,9 @@ ENV PATH="$VENV_PATH/bin:$PATH"
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY ./cerbes ./
+COPY ./cerbes ./cerbes
+COPY config.yaml ./
 
 EXPOSE 9001
+
+CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "9001"]

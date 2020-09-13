@@ -5,7 +5,7 @@ import hashlib
 import jwt
 import re
 
-from meltingpot.config import CONFIG
+from gaea.config import CONFIG
 
 CREDENTIALS = namedtuple("credentials", "username, password")
 
@@ -14,16 +14,9 @@ def get_password_hash(password):
     return sha256.digest()
 
 
-def parse_base_authorization_header(authorization):
-    rgx = re.search("Base (.*)$", authorization)
-
-    if rgx is None or len(rgx.groups()) > 1:
-        return
-
-    token = rgx.group(1)
-
+def parse_access_token(access_token):
     try:
-        username, password = base64.b64decode(token).decode().split(":")
+        username, password = base64.b64decode(access_token).decode().split(":")
     except Exception: # pylint: disable=broad-except
         return
 

@@ -5,25 +5,25 @@ import hashlib
 from sqlalchemy.orm import joinedload, Session
 import re
 
-from fastapi import APIRouter, Header, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Cookie
 from pydantic import BaseModel
 import jwt
 
-from meltingpot.models import Users, Credentials, Owners
-from meltingpot.log import logger
-from meltingpot.config import CONFIG
-from meltingpot.webapp.utils import get_session
+from gaea.models import Users, Credentials, Owners
+from gaea.log import logger
+from gaea.config import CONFIG
+from gaea.webapp.utils import get_session
 
-from cerbes.helpers import get_password_hash, parse_base_authorization_header, generate_jwt, validate_jwt
+from cerbes.helpers import get_password_hash, parse_access_token, generate_jwt, validate_jwt
 
 
 router = APIRouter()
 
 
 class UserModel(BaseModel):
+    email: str
     username: str
     password: str
-    email: str
 
 
 
@@ -36,19 +36,19 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session)):
     try:
         session.add_all((user, credentials, owner))
         session.commit()
-    except Exception:
+    except Exception as exc:
         logger.exception(f"Could not create user {user_data.email}")
-        raise HTTPException(400, "Registration failed")
+        raise HTTPException(400, "Database error when creating the user") from exc
 
 
 @router.post("/login", status_code=200)
-def authenticate_user(authorization: str = Header(None), session: Session = Depends(get_session)):
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Missing authorization header")
+def authenticate_user(access_token: str = Cookie(None), session: Session = Depends(get_session)):
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Missing access_token")
 
-    credentials = parse_base_authorization_header(authorization)
+    credentials = parse_access_token(access_token)
     if credentials is None:
-        raise HTTPException(status_code=401, detail="Could not parse authorization header")
+        raise HTTPException(status_code=401, detail="Could not parse access_token")
 
     user_credentials = session.query(Credentials).filter(Credentials.username == credentials.username).one_or_none()
     if user_credentials is None:
@@ -62,15 +62,10 @@ def authenticate_user(authorization: str = Header(None), session: Session = Depe
 
 
 @router.get("/check", status_code=204)
-def check_jwt(authorization: str = Header(None)):
-    if not authorization:
+def check_jwt(access_token: str = Cookie(None)):
+    if not access_token:
         raise HTTPException(status_code=401)
 
-    rgx = re.search("Bearer (.*)$", authorization)
-    if rgx is None or len(rgx.groups()) > 1:
-        raise HTTPException(status_code=401)
-
-    token = rgx.group(1)
-    if not validate_jwt(token):
+    if not validate_jwt(access_token):
         raise HTTPException(status_code=401)
 
