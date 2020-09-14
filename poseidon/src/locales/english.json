@@ -21,11 +21,19 @@
     "word.language": "Language",
     "word.logout": "Logout",
     "word.login": "Login",
+    "word.register": "Register",
+    "word.error": "Error",
+    "word.success": "Success",
     "form.loginSubmit": "Connect",
     "form.insertUsernameMessage": "Insert your username",
     "form.insertEmailMessage": "Insert your email",
     "form.insertPasswordMessage": "Insert your password",
     "word.username": "Username",
     "word.email": "Email",
-    "word.password": "Password"
+    "word.password": "Password",
+    "word.password_bis": "Confirm your password",
+    "success.registrationSuccessful": "User successfully created !\nYou can now login",
+    "success.loginSuccessful": "Welcome !",
+    "error.passwordsNotIdentical": "Passwords are not identical",
+    "error.unknwownError": "An unexpected error happened"
   }

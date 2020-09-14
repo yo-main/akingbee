@@ -2,6 +2,7 @@ import base64
 from collections import namedtuple
 import datetime
 import hashlib
+from sqlalchemy import exists
 from sqlalchemy.orm import joinedload, Session
 import re
 
@@ -14,7 +15,7 @@ from gaea.log import logger
 from gaea.config import CONFIG
 from gaea.webapp.utils import get_session
 
-from cerbes.helpers import get_password_hash, parse_access_token, generate_jwt, validate_jwt
+from cerbes import helpers
 
 
 router = APIRouter()
@@ -29,8 +30,19 @@ class UserModel(BaseModel):
 
 @router.post("/user", status_code=204)
 def create_user(user_data: UserModel, session: Session = Depends(get_session)):
+    # validate data
+    if not helpers.validate_email(user_data.email):
+        raise HTTPException(400, "Invalid email address")
+    if not helpers.validate_password(user_data.password):
+        raise HTTPException(400, "Invalid password")
+    if session.query(exists().where(Users.email == user_data.email)).scalar():
+        raise HTTPException(400, "Email already exists")
+    if session.query(exists().where(Credentials.username == user_data.username)).scalar():
+        raise HTTPException(400, "Username already exists")
+
+    # create all objects
     user = Users(email=user_data.email)
-    credentials = Credentials(user=user, username=user_data.username, password=get_password_hash(user_data.password))
+    credentials = Credentials(user=user, username=user_data.username, password=helpers.get_password_hash(user_data.password))
     owner = Owners(user=user, surname=user_data.username)
 
     try:
@@ -46,19 +58,16 @@ def authenticate_user(access_token: str = Cookie(None), session: Session = Depen
     if not access_token:
         raise HTTPException(status_code=401, detail="Missing access_token")
 
-    credentials = parse_access_token(access_token)
+    credentials = helpers.parse_access_token(access_token)
     if credentials is None:
         raise HTTPException(status_code=401, detail="Could not parse access_token")
 
     user_credentials = session.query(Credentials).filter(Credentials.username == credentials.username).one_or_none()
-    if user_credentials is None:
-        raise HTTPException(status_code=401, detail="Wrong credentials")
-
-    if credentials.password != user_credentials.password:
+    if user_credentials is None or user_credentials.password != credentials.password:
         raise HTTPException(status_code=401, detail="Wrong credentials")
 
     user_id = str(user_credentials.user_id)
-    return {"access_right": generate_jwt(user_id)}
+    return {"access_token": helpers.generate_jwt(user_id)}
 
 
 @router.get("/check", status_code=204)
@@ -66,6 +75,6 @@ def check_jwt(access_token: str = Cookie(None)):
     if not access_token:
         raise HTTPException(status_code=401)
 
-    if not validate_jwt(access_token):
+    if not helpers.validate_jwt(access_token):
         raise HTTPException(status_code=401)
 

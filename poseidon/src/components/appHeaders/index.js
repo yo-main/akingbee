@@ -32,6 +32,7 @@ function MainMenu({ isLoggedIn, languageCallback, path }) {
           <Col>
           <Menu theme="dark" mode="horizontal">
           <Menu.Item><Link to={`/login`}>{window.i18n("word.login")}</Link></Menu.Item>
+          <Menu.Item><Link to={`/register`}>{window.i18n("word.register")}</Link></Menu.Item>
           </Menu>
           </Col>
         </Row>

@@ -42,6 +42,21 @@ services:
     networks:
       - akb-nw
 
+  cerbes:
+    image: yomain/cerbes:latest
+    container_name: cerbes
+    environment:
+      - SERVICE_NAME=cerbes
+      - AKB_DATABASE_HOST=db
+      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_PASSWORD=123
+      - AKB_DATABASE_DATABASE=akb_dev
+    ports:
+      - 9001:9001
+    networks:
+      - akb-nw
+
+
   nginx:
     image: nginx:alpine
     container_name: nginx

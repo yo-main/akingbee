@@ -1,4 +1,5 @@
-import { getCookie } from '../lib/common';
+import { navigate } from '@reach/router';
+import { getCookie, dealWithError } from '../lib/common';
 import { AUTH_COOKIE_NAME } from '../constants';
 import { cerbesApi, notificate } from '../lib/common';
 
@@ -21,15 +22,35 @@ export function clearJWT() {
   document.cookie = `${AUTH_COOKIE_NAME}="";max-age=0`;
 }
 
-export async function loginRequest({email, username, password}) {
+export async function registrationRequest({email, username, password, password_bis}) {
+  // checks
+  if (password != password_bis){
+    notificate("error", window.i18n("error.passwordsNotIdentical"))
+    return;
+  }
+
+  // request server to register user
   const data = {email, username, password}
   await cerbesApi.post("/user", data)
     .then((response) => {
-      console.log(response)
+      notificate("success", window.i18n("success.registrationSuccessful"))
+      navigate("/login")
     })
     .catch((error) => {
-      const response = error.response;
-      const detail = response.data.detail;
-      notificate("error", "Error", detail);
+      dealWithError(error);
+    });
+}
+
+export async function loginRequest({username, password}) {
+  const data = {username, password}
+  await cerbesApi.post("/login", data)
+    .then((response) => {
+      const token = response.data.access_token;
+      storeJWT(token);
+      notificate("success", window.i18n("success.loginSuccessful"))
+      navigate("/")
+    })
+    .catch((error) => {
+      dealWithError(error);
     });
 }

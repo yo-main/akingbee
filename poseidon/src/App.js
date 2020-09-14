@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import { Router } from '@reach/router';
 import './services/localization';
 
-import { PublicFrame, PrivateFrame, LoginPage } from './pages';
+import { PublicFrame, PrivateFrame, LoginPage, RegistrationPage } from './pages';
 
 class App extends React.Component {
   changeLanguage = ({ key }) => {
@@ -21,6 +21,9 @@ class App extends React.Component {
 
         <PublicFrame path="/login" languageCallback={this.changeLanguage}>
           <LoginPage path="/" />
+        </PublicFrame>
+        <PublicFrame path="/register" languageCallback={this.changeLanguage}>
+          <RegistrationPage path="/" />
         </PublicFrame>
       </Router>
     );

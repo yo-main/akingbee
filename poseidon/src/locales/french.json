@@ -21,11 +21,19 @@
     "word.language": "Langage",
     "word.logout": "Déconnexion",
     "word.login": "Connexion",
+    "word.register": "Inscription",
+    "word.error": "Erreur",
+    "word.success": "Succès",
     "form.loginSubmit": "Se connecter",
     "form.insertUsernameMessage": "Inserer votre identifiant",
     "form.insertEmailMessage": "Inserer votre email",
     "form.insertPasswordMessage": "Inserer votre mot de passe",
     "word.username": "Identifiant",
     "word.email": "Email",
-    "word.password": "Mot de passe"
+    "word.password": "Mot de passe",
+    "word.password_bis": "Confirmer votre mot de passe",
+    "success.registrationSuccessful": "Utilisateur créé avec succès !\nVous pouvez maintenant vous connecter",
+    "success.loginSuccessful": "Bienvenue !",
+    "error.passwordsNotIdentical": "Les mots de passes ne sont pas identiques",
+    "error.unknwownError": "Une erreur inconnue est survenue"
   }

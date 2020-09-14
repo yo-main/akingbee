@@ -15,9 +15,10 @@ export function getCookie(name, cookies) {
   return null;
 }
 
-export function notificate(type, title, description) {
+export function notificate(type, description) {
+
   notification[type]({
-    message: title,
+    message: window.i18n(`word.${type}`),
     description: description,
   });
 }
@@ -28,3 +29,13 @@ axios.defaults.headers.common["Content-Type"] = "application/json"
 export const cerbesApi = axios.create({
   baseURL: 'http://127.0.0.1:9001'
 })
+
+
+export function dealWithError(error) {
+  const response = error.response;
+  if (!response) {
+    notificate("error", error.message);
+  } else {
+    notificate("error", response)
+  }
+}
