@@ -16,7 +16,7 @@ def validate_email(string):
 
 def validate_password(string):
     """Validate password. Minimum length of 8 and should include at least 1 digit and 1 letter"""
-    pattern = re.compile(r"^(?=.*[a-z])(?=.*[0-9])[a-zA-Z0-9_!@*%&$-]{8,}$")
+    pattern = re.compile(r"^(?=.*[a-z])(?=.*[0-9]).{8,}$")
     return bool(pattern.match(string))
 
 def get_password_hash(password):
