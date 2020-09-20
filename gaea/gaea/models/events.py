@@ -1,37 +1,57 @@
 import datetime
+import uuid
 
-from peewee import CharField, DateTimeField, TextField, ForeignKeyField
-from .base import BaseModel
-from .users import User
-from .swarm import Swarm
-from .apiary import Apiary
-from .hive import Hive
+from sqlalchemy import Column, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
-
-class EventType(BaseModel):
-    fr = CharField()
-    en = CharField()
-    user = ForeignKeyField(User, backref="event_types")
-    date_creation = DateTimeField(default=datetime.datetime.now)
-    date_modification = DateTimeField(default=datetime.datetime.now)
+from .base import Base
+from .users import Users
+from .apiaries import Apiaries
+from .hives import Hives
 
 
-class StatusEvent(BaseModel):
-    fr = CharField()
-    en = CharField()
-    date_creation = DateTimeField(default=datetime.datetime.now)
-    date_modification = DateTimeField(default=datetime.datetime.now)
+class EventTypes(Base):
+    __tablename__ = "event_types"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(TEXT(), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
+
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
+    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship(Users, backref="event_types")
+
+class EventStatuses(Base):
+    __tablename__ = "event_statuses"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(TEXT(), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
+
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
+    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship(Users, backref="event_statuses")
 
 
-class Event(BaseModel):
-    date = DateTimeField()
-    user = ForeignKeyField(User, backref="events")
-    swarm = ForeignKeyField(Swarm, backref="events", null=True)
-    type = ForeignKeyField(EventType, backref="events")
-    apiary = ForeignKeyField(Apiary, backref="events", null=True)
-    status = ForeignKeyField(StatusEvent, backref="events")
-    hive = ForeignKeyField(Hive, backref="events", null=True)
-    deadline = DateTimeField(null=True)
-    note = TextField()
-    date_creation = DateTimeField(default=datetime.datetime.now)
-    date_modification = DateTimeField(default=datetime.datetime.now)
+
+class Events(Base):
+    __tablename__ = "events"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(TEXT(), nullable=False)
+    description = Column(TEXT(), nullable=True)
+    due_date = Column(TIMESTAMP(), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
+    type_id = Column(UUID(as_uuid=True), ForeignKey(EventTypes.id), nullable=False)
+    status_id = Column(UUID(as_uuid=True), ForeignKey(EventStatuses.id), nullable=False)
+    hive_id = Column(UUID(as_uuid=True), ForeignKey(Hives.id), nullable=True)
+    apiary_id = Column(UUID(as_uuid=True), ForeignKey(Apiaries.id), nullable=True)
+
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
+    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    user = relationship(Users, backref="events")
+    type = relationship(EventTypes)
+    status = relationship(EventStatuses)
+    hive = relationship(Hives, backref="events")
+    apiary = relationship(Apiaries, backref="events")

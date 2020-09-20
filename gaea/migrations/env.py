@@ -6,7 +6,7 @@ from alembic import context
 
 from gaea.models.base import Base
 from gaea.models import *
-from gaea.database.main import get_engine
+from gaea.database.main import get_engine, get_database_url
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -59,7 +59,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = get_engine()
+    connectable = get_engine(get_database_url())
 
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)

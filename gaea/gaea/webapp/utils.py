@@ -1,6 +1,9 @@
 import fastapi
 
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
 from gaea.database import db
+from gaea.log import logger
 
 
 def get_session(request: fastapi.Request):
@@ -29,9 +32,14 @@ class MiddleWare:
         try:
             response = await call_next(request)
 
+        except fastapi.HTTPException:
+            await self.exception_handler()
+            logger.exception("Managed exception happened")
+            raise
         except:
             await self.exception_handler()
-            raise
+            logger.exception("Unexpected exception happened")
+            raise fastapi.HTTPException(500, "Internal server error")
 
         finally:
 
