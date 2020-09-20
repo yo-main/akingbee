@@ -6,7 +6,7 @@ from sqlalchemy import exists
 from sqlalchemy.orm import joinedload, Session
 import re
 
-from fastapi import APIRouter, HTTPException, Depends, Cookie
+from fastapi import APIRouter, HTTPException, Depends, Cookie, Header
 from pydantic import BaseModel
 import jwt
 
@@ -54,11 +54,11 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session)):
 
 
 @router.post("/login", status_code=200)
-def authenticate_user(access_token: str = Cookie(None), session: Session = Depends(get_session)):
-    if not access_token:
-        raise HTTPException(status_code=401, detail="Missing access_token")
+def authenticate_user(authorization: str = Header(None), session: Session = Depends(get_session)):
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Missing authorization header")
 
-    credentials = helpers.parse_access_token(access_token)
+    credentials = helpers.parse_authorization_header(authorization)
     if credentials is None:
         raise HTTPException(status_code=401, detail="Could not parse access_token")
 
@@ -77,4 +77,3 @@ def check_jwt(access_token: str = Cookie(None)):
 
     if not helpers.validate_jwt(access_token):
         raise HTTPException(status_code=401)
-

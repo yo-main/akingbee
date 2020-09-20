@@ -6,6 +6,7 @@ import jwt
 import re
 
 from gaea.config import CONFIG
+from gaea.log import logger
 
 CREDENTIALS = namedtuple("credentials", "username, password")
 
@@ -23,9 +24,11 @@ def get_password_hash(password):
     sha256 = hashlib.sha256(password.encode())
     return sha256.digest()
 
-def parse_access_token(access_token):
+def parse_authorization_header(auth_header):
     try:
-        username, password = base64.b64decode(access_token).decode().split(":")
+        pattern = re.match(r"Basic (.*)", auth_header)
+        creds = pattern.group(1)
+        username, password = base64.b64decode(creds).decode().split(":")
     except Exception: # pylint: disable=broad-except
         return
 

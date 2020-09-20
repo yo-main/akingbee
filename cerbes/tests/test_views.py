@@ -33,7 +33,7 @@ def test_register_user(test_app, username, password, email, expected_code, expec
 
 
 @pytest.mark.parametrize("creds,expected_code,expected_content", (
-    (None, 401, "Missing access_token"),
+    (None, 401, "Missing authorization header"),
     ("testtest", 401, "Could not parse access_token"),
     ("::testtest", 401, "Could not parse access_token"),
     ("te:s:ttest", 401, "Could not parse access_token"),
@@ -46,13 +46,13 @@ def test_register_user(test_app, username, password, email, expected_code, expec
     ("Maya:ILoveYouHoney1", 200, None),
 ))
 def test_login(test_app, creds, expected_code, expected_content):
-    cookies = {}
+    headers = {}
 
     if creds is not None:
         creds = base64.b64encode(creds.encode()).decode()
-        cookies["access_token"] = creds
+        headers["Authorization"] = f"Basic {creds}"
 
-    response = test_app.post("/login", cookies=cookies)
+    response = test_app.post("/login", headers=headers)
     assert response.status_code == expected_code
     if expected_content:
         assert response.json() == {"detail": expected_content}
@@ -65,7 +65,7 @@ def test_login(test_app, creds, expected_code, expected_content):
 
 def test_check_jwt(test_app):
     creds = base64.b64encode("Maya:ILoveYouHoney1".encode()).decode()
-    response = test_app.post("/login", cookies={"access_token": creds})
+    response = test_app.post("/login", headers={"Authorization": f"Basic {creds}"})
     jwt = response.json()["access_token"]
 
     response = test_app.get("/check")
@@ -74,7 +74,7 @@ def test_check_jwt(test_app):
     response = test_app.get("/check", cookies={"access_token": ""})
     assert response.status_code == 401
 
-    response = test_app.get("/check", cookies={"access_token": f"Base {jwt}"})
+    response = test_app.get("/check", cookies={"access_token": f"Basic {jwt}"})
     assert response.status_code == 401
 
     response = test_app.get("/check", cookies={"access_token": jwt})
