@@ -6,13 +6,15 @@ export function getCookie(name, cookies) {
     cookies = document.cookie;
   }
   cookies = document.cookie.split(";");
-  cookies.forEach(cookie => {
+  let access_token = null;
+  cookies.forEach((cookie) => {
     const data = cookie.split("=");
     if (data[0].trim() === name) {
-      return data[1].trim();
+      access_token = data[1].trim();
+      return;
     }
   })
-  return null;
+  return access_token;
 }
 
 export function notificate(type, description) {
@@ -36,6 +38,6 @@ export function dealWithError(error) {
   if (!response) {
     notificate("error", error.message);
   } else {
-    notificate("error", response)
+    notificate("error", response.data.detail)
   }
 }

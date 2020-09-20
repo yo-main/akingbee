@@ -1,2 +1,2 @@
-export { default as MainMenu } from './appHeaders';
-export { default as SideMenu } from './appSideMenu';
+export { LoggedInMenu, LoggedOutMenu } from './appHeaders';
+export { ManageSideMenu, SetupSideMenu } from './appSideMenu';

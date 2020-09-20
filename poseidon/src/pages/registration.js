@@ -6,7 +6,7 @@ import { registrationRequest } from '../services/authentication';
 export function RegistrationPage(props) {
   return (
     <Row justify="center" style={{ paddingTop: "150px"}}>
-      <Form labelCol={{span: 11}} onFinish={registrationRequest}>
+      <Form labelCol={{span: 12}} onFinish={registrationRequest}>
         <Form.Item label={window.i18n('word.username')} name="username" rules={[{ required: true, message: window.i18n('form.insertUsernameMessage')}]}>
           <Input />
         </Form.Item>
@@ -19,7 +19,7 @@ export function RegistrationPage(props) {
         <Form.Item label={window.i18n('word.password_bis')} name="password_bis" rules={[{ required: true, message: window.i18n('form.insertPasswordMessage')}]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item wrapperCol={{offset: 11, span: 3}}>
+        <Form.Item wrapperCol={{offset: 12, span: 3}}>
           <Button type="primary" htmlType="submit">
             {window.i18n('form.loginSubmit')}
           </Button>

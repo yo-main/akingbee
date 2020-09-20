@@ -14,12 +14,17 @@ export function isLogged() {
   return false;
 }
 
-export function storeJWT({ jwt }) {
+export function storeJWT(jwt) {
   document.cookie = `${AUTH_COOKIE_NAME}=${jwt};path='/';samesite`;
 }
 
 export function clearJWT() {
   document.cookie = `${AUTH_COOKIE_NAME}="";max-age=0`;
+}
+
+export function logOff() {
+  clearJWT();
+  navigate("/login")
 }
 
 export async function registrationRequest({email, username, password, password_bis}) {
@@ -42,8 +47,11 @@ export async function registrationRequest({email, username, password, password_b
 }
 
 export async function loginRequest({username, password}) {
-  const data = {username, password}
-  await cerbesApi.post("/login", data)
+  const config = {
+    auth: {username: username, password: password}
+  };
+
+  await cerbesApi.post("/login", null, config)
     .then((response) => {
       const token = response.data.access_token;
       storeJWT(token);

@@ -3,6 +3,7 @@ import { Link } from '@reach/router';
 import { Menu, Row, Col } from 'antd';
 
 import * as constants from '../../constants';
+import { logOff } from '../../services/authentication';
 
 class LanguageMenu extends React.Component {
   render() {
@@ -20,9 +21,8 @@ class LanguageMenu extends React.Component {
   }
 }
 
-
-function MainMenu({ isLoggedIn, languageCallback, path }) {
-  const loggedOutMenu = (
+export function LoggedOutMenu({ languageCallback }) {
+  return (
     <Row gutter="10" justify="end">
       <Col>
         <Row>
@@ -39,9 +39,10 @@ function MainMenu({ isLoggedIn, languageCallback, path }) {
       </Col>
     </Row>
   )
+}
 
-  const section = path.split("/")[1];
-  const loggedInMenu = (
+export function LoggedInMenu({ languageCallback, section }) {
+  return (
     <Row gutter="10" justify="space-between">
       <Col>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[section]}>
@@ -57,15 +58,12 @@ function MainMenu({ isLoggedIn, languageCallback, path }) {
           </Col>
           <Col>
             <Menu theme="dark" mode="horizontal">
-              <Menu.Item>{window.i18n("word.logout")}</Menu.Item>
+              <Menu.Item onClick={logOff}>{window.i18n("word.logout")}</Menu.Item>
             </Menu>
           </Col>
         </Row>
       </Col>
     </Row>
   )
-
-  return isLoggedIn ? loggedInMenu : loggedOutMenu;
 }
 
-export default MainMenu;
