@@ -1,8 +1,8 @@
 """create models
 
-Revision ID: e455a66e218c
+Revision ID: 86c8de259097
 Revises: 
-Create Date: 2020-09-20 18:05:58.304811
+Create Date: 2020-09-21 23:09:46.933033
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ import gaea
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'e455a66e218c'
+revision = '86c8de259097'
 down_revision = None
 branch_labels = None
 depends_on = None

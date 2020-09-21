@@ -29,5 +29,5 @@ class Swarms(Base):
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
     updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-    user = relationship(Users, backref="swarms")
+    user = relationship(Users, backref="swarms_healths")
     health = relationship(SwarmHealthStatuses)
