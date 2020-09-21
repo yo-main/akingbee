@@ -16,9 +16,12 @@ class ApiaryStatuses(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="apiary_statuses")
+
 
 class HoneyTypes(Base):
     __tablename__ = "honey_types"
@@ -27,9 +30,12 @@ class HoneyTypes(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="honey_types")
+
 
 class Apiaries(Base):
     __tablename__ = "apiaries"
@@ -37,11 +43,17 @@ class Apiaries(Base):
     name = Column(TEXT(), nullable=False)
     location = Column(TEXT(), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
-    status_id = Column(UUID(as_uuid=True), ForeignKey(ApiaryStatuses.id), nullable=False)
-    honey_type_id = Column(UUID(as_uuid=True), ForeignKey(HoneyTypes.id), nullable=False)
+    status_id = Column(
+        UUID(as_uuid=True), ForeignKey(ApiaryStatuses.id), nullable=False
+    )
+    honey_type_id = Column(
+        UUID(as_uuid=True), ForeignKey(HoneyTypes.id), nullable=False
+    )
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="apiaries")
     status = relationship(ApiaryStatuses)

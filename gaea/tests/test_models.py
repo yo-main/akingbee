@@ -37,4 +37,3 @@ def test_models(test_db):
         apiary_status = session.query(ApiaryStatuses).get(IDS["Apiary_statuses"][0])
         with pytest.raises(AttributeError):
             assert apiary_status.apiary
-

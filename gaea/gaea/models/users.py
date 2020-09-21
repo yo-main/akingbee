@@ -14,7 +14,10 @@ class Users(Base):
     email = Column(TEXT(), unique=True, nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
+
 
 class Credentials(Base):
     __tablename__ = "credentials"
@@ -25,9 +28,12 @@ class Credentials(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="credentials", uselist=False)
+
 
 class Owners(Base):
     __tablename__ = "owners"
@@ -36,7 +42,8 @@ class Owners(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="owners", uselist=False)
-

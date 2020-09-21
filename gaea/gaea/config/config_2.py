@@ -1,5 +1,6 @@
 import os
 
+
 class Config:
     LOGS_FOLDER_NAME = "log"
     IMAGES_FOLDER_NAME = "images"
@@ -8,9 +9,7 @@ class Config:
     PATH_PROJECT = os.getcwd()
     PATH_LOGS = os.path.join(PATH_PROJECT, LOGS_FOLDER_NAME)
     PATH_IMAGES = os.path.join(PATH_PROJECT, IMAGES_FOLDER_NAME)
-    PATH_FLASK_SESSIONS = os.path.join(
-        PATH_PROJECT, FLASK_SESSIONS_FOLDER_NAME
-    )
+    PATH_FLASK_SESSIONS = os.path.join(PATH_PROJECT, FLASK_SESSIONS_FOLDER_NAME)
 
     URL_PREFIX = ""
 

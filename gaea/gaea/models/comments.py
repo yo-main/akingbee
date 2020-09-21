@@ -19,7 +19,9 @@ class CommentTypes(Base):
     name = Column(TEXT(), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
 
 class Comments(Base):
@@ -33,11 +35,17 @@ class Comments(Base):
     hive_id = Column(UUID(as_uuid=True), ForeignKey(Hives.id), nullable=True)
     apiary_id = Column(UUID(as_uuid=True), ForeignKey(Apiaries.id), nullable=True)
     event_id = Column(UUID(as_uuid=True), ForeignKey(Events.id), nullable=True)
-    swarm_health_status_id = Column(UUID(as_uuid=True), ForeignKey(SwarmHealthStatuses.id), nullable=True)
-    hive_condition_id = Column(UUID(as_uuid=True), ForeignKey(HiveConditions.id), nullable=True)
+    swarm_health_status_id = Column(
+        UUID(as_uuid=True), ForeignKey(SwarmHealthStatuses.id), nullable=True
+    )
+    hive_condition_id = Column(
+        UUID(as_uuid=True), ForeignKey(HiveConditions.id), nullable=True
+    )
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="comments")
     type = relationship(CommentTypes)

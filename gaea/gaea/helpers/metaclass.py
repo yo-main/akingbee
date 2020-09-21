@@ -1,5 +1,6 @@
 from gaea.errors import NotInitialized, AlreadyInitialized
 
+
 class SingletonMeta(type):
     _instances = {}
 
@@ -9,7 +10,8 @@ class SingletonMeta(type):
             cls.instances[cls] = instance
         return cls._instances[cls]
 
-class Box():
+
+class Box:
     def __init__(self):
         self.store = None
 

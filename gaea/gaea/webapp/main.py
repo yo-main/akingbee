@@ -1,6 +1,7 @@
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 
+
 class AppClient:
     def __init__(self, router, middleware=None):
         self.app = fastapi.FastAPI()
@@ -12,7 +13,13 @@ class AppClient:
         if self.middleware:
             self.app.middleware("http")(self.middleware)
 
-    def add_cors_middleware(self, allow_origins=None, allow_methods=None, allow_headers=None, allow_credentials=False):
+    def add_cors_middleware(
+        self,
+        allow_origins=None,
+        allow_methods=None,
+        allow_headers=None,
+        allow_credentials=False,
+    ):
         self.app.add_middleware(
             CORSMiddleware,
             allow_origins=allow_origins or ["*"],

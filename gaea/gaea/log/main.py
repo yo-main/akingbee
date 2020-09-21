@@ -87,15 +87,18 @@ class BaseFormatter(logging.Formatter):
             if item is not None and key not in EXCLUDED_FIELDS
         }
 
+
 class JSONFormatter(BaseFormatter):
     def format(self, record):
         log_data = super().format(record)
         return json.dumps(log_data, default=str)
 
+
 class PrettyJSONFormatter(BaseFormatter):
     def format(self, record):
         log_data = super().format(record)
         return pprint.pformat(log_data)
+
 
 LOG_LEVEL = CONFIG.get("LOG_LEVEL", logging.INFO)
 logger = CustomLogger(CONFIG.SERVICE_NAME)
@@ -106,9 +109,7 @@ DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 json_formatter = JSONFormatter(datefmt=DATE_FORMAT)
 pretty_json_formatter = PrettyJSONFormatter(datefmt=DATE_FORMAT)
 normal_formatter = logging.Formatter(
-    fmt="{asctime} | {levelname:8s} | {message}",
-    datefmt=DATE_FORMAT,
-    style="{",
+    fmt="{asctime} | {levelname:8s} | {message}", datefmt=DATE_FORMAT, style="{",
 )
 
 

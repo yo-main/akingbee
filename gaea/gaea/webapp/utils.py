@@ -9,6 +9,7 @@ from gaea.log import logger
 def get_session(request: fastapi.Request):
     return request.state.session
 
+
 class MiddleWare:
     def __init__(self, db_client=None):
         self.db = db_client

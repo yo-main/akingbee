@@ -13,6 +13,7 @@ def get_engine(url):
     engine = create_engine(url, echo=echo_query, pool_size=5, pool_recycle=3600)
     return engine
 
+
 def get_database_url(dbname=None):
     user = CONFIG.DATABASE_USER
     pswd = CONFIG.DATABASE_PASSWORD
@@ -25,8 +26,8 @@ def get_database_url(dbname=None):
 
     return f"postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbnm}"
 
-class db:
 
+class db:
     def __init__(self, url=None):
         self.url = url or get_database_url()
         self.engine = get_engine(self.url)

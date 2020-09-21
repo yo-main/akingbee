@@ -4,6 +4,7 @@ from gaea.errors import AlreadyInitialized, NotInitialized
 
 from gaea.database import db
 
+
 def test_db_client():
     db_client = db(url="sqlite://")
 

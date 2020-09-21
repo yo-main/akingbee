@@ -18,9 +18,12 @@ class EventTypes(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="event_types")
+
 
 class EventStatuses(Base):
     __tablename__ = "event_statuses"
@@ -29,10 +32,11 @@ class EventStatuses(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="event_statuses")
-
 
 
 class Events(Base):
@@ -48,7 +52,9 @@ class Events(Base):
     apiary_id = Column(UUID(as_uuid=True), ForeignKey(Apiaries.id), nullable=True)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
 
     user = relationship(Users, backref="events")
     type = relationship(EventTypes)

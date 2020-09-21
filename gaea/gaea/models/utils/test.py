@@ -170,12 +170,27 @@ DATASET = (
         swarm_id=IDS["Swarms"][2],
         apiary_id=IDS["Apiaries"][2],
     ),
-
-    EventTypes(id=IDS["Event_types"][0], name=EVENT_TYPE_BURN_BEES, user_id=IDS["Users"][0]),
-    EventTypes(id=IDS["Event_types"][1], name=EVENT_TYPE_WATER_BEEHOUSE, user_id=IDS["Users"][0]),
-    EventTypes(id=IDS["Event_types"][2], name=EVENT_TYPE_FIND_NEW_BEEHOUSE, user_id=IDS["Users"][0]),
-    EventStatuses(id=IDS["Event_statuses"][0], name=EVENT_STATUS_PLANIFIED, user_id=IDS["Users"][0]),
-    EventStatuses(id=IDS["Event_statuses"][1], name=EVENT_STATUS_DONE, user_id=IDS["Users"][0]),
+    EventTypes(
+        id=IDS["Event_types"][0], name=EVENT_TYPE_BURN_BEES, user_id=IDS["Users"][0]
+    ),
+    EventTypes(
+        id=IDS["Event_types"][1],
+        name=EVENT_TYPE_WATER_BEEHOUSE,
+        user_id=IDS["Users"][0],
+    ),
+    EventTypes(
+        id=IDS["Event_types"][2],
+        name=EVENT_TYPE_FIND_NEW_BEEHOUSE,
+        user_id=IDS["Users"][0],
+    ),
+    EventStatuses(
+        id=IDS["Event_statuses"][0],
+        name=EVENT_STATUS_PLANIFIED,
+        user_id=IDS["Users"][0],
+    ),
+    EventStatuses(
+        id=IDS["Event_statuses"][1], name=EVENT_STATUS_DONE, user_id=IDS["Users"][0]
+    ),
     Events(
         id=IDS["Events"][0],
         title="title1",
@@ -186,7 +201,7 @@ DATASET = (
         status_id=IDS["Event_statuses"][1],
         hive_id=IDS["Hives"][0],
     ),
-        Events(
+    Events(
         id=IDS["Events"][1],
         title="title2",
         description="description2",
