@@ -63,7 +63,7 @@ description = "The dynamic configurator for your Python Project"
 name = "dynaconf"
 optional = false
 python-versions = "*"
-version = "3.1.0"
+version = "3.1.1"
 
 [package.extras]
 all = ["redis", "ruamel.yaml", "configobj", "hvac"]
@@ -98,7 +98,7 @@ description = ""
 name = "gaea"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "0.1.5"
+version = "0.1.6"
 
 [package.dependencies]
 alembic = ">=1.4.2,<2.0.0"
@@ -122,7 +122,7 @@ description = "A Python utility / library to sort Python imports."
 name = "isort"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "5.5.2"
+version = "5.5.3"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
@@ -386,24 +386,24 @@ colorama = [
     {file = "colorama-0.4.3.tar.gz", hash = "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"},
 ]
 dynaconf = [
-    {file = "dynaconf-3.1.0-py2.py3-none-any.whl", hash = "sha256:c5866c43fa9073f342a2b0b840e44247b5363426dff4c4ab9bdd668448a28bd6"},
-    {file = "dynaconf-3.1.0.tar.gz", hash = "sha256:9914ada84c209479b7235548c846bb3c6d82a72e57b833c0cff0178f52f2d229"},
+    {file = "dynaconf-3.1.1-py2.py3-none-any.whl", hash = "sha256:94d7cf183ab98dc30a2b2ae64ebe6d35621db975555eeb939997ddc134f6d65c"},
+    {file = "dynaconf-3.1.1.tar.gz", hash = "sha256:8bb72cbcd8f2d495665ea24000ba61160b82610e30b6afdd27893af7bdb80c6b"},
 ]
 fastapi = [
     {file = "fastapi-0.61.1-py3-none-any.whl", hash = "sha256:6cc31bb555dd8ca956d1d227477d661e4ac012337242a41d36214ffbda78bfe9"},
     {file = "fastapi-0.61.1.tar.gz", hash = "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2"},
 ]
 gaea = [
-    {file = "gaea-0.1.5-py3-none-any.whl", hash = "sha256:e8871a7457f638f9197f790ee662aa863e05ee2210410a43f656352f07b069a8"},
-    {file = "gaea-0.1.5.tar.gz", hash = "sha256:f6b7c48002782e2a48360934ab347918ce9d1bad0b550299516da0c6be50246e"},
+    {file = "gaea-0.1.6-py3-none-any.whl", hash = "sha256:3e40fafc8a94be299feda3c41b3e3820dec719eb717cbde71ef2a9ab89d949c2"},
+    {file = "gaea-0.1.6.tar.gz", hash = "sha256:5d51f9ed492a4d335ca84897987e523af09cd4372980c57696882cfa2419b0e3"},
 ]
 iniconfig = [
     {file = "iniconfig-1.0.1-py3-none-any.whl", hash = "sha256:80cf40c597eb564e86346103f609d74efce0f6b4d4f30ec8ce9e2c26411ba437"},
     {file = "iniconfig-1.0.1.tar.gz", hash = "sha256:e5f92f89355a67de0595932a6c6c02ab4afddc6fcdc0bfc5becd0d60884d3f69"},
 ]
 isort = [
-    {file = "isort-5.5.2-py3-none-any.whl", hash = "sha256:ba91218eee31f1e300ecc079ef0c524cea3fc41bfbb979cbdf5fd3a889e3cfed"},
-    {file = "isort-5.5.2.tar.gz", hash = "sha256:171c5f365791073426b5ed3a156c2081a47f88c329161fd28228ff2da4c97ddb"},
+    {file = "isort-5.5.3-py3-none-any.whl", hash = "sha256:c16eaa7432a1c004c585d79b12ad080c6c421dd18fe27982ca11f95e6898e432"},
+    {file = "isort-5.5.3.tar.gz", hash = "sha256:6187a9f1ce8784cbc6d1b88790a43e6083a6302f03e9ae482acc0f232a98c843"},
 ]
 lazy-object-proxy = [
     {file = "lazy-object-proxy-1.4.3.tar.gz", hash = "sha256:f3900e8a5de27447acbf900b4750b0ddfd7ec1ea7fbaf11dfa911141bc522af0"},
