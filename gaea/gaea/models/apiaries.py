@@ -19,6 +19,7 @@ class ApiaryStatuses(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="apiary_statuses")
 
@@ -33,6 +34,7 @@ class HoneyTypes(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="honey_types")
 
@@ -54,6 +56,7 @@ class Apiaries(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="apiaries")
     status = relationship(ApiaryStatuses)

@@ -21,6 +21,7 @@ class HiveConditions(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="hive_conditions")
 
@@ -42,6 +43,7 @@ class Hives(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="hives")
     owner = relationship(Owners, backref="hives")

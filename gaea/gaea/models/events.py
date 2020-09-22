@@ -21,6 +21,7 @@ class EventTypes(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="event_types")
 
@@ -35,6 +36,7 @@ class EventStatuses(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="event_statuses")
 
@@ -55,6 +57,7 @@ class Events(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="events")
     type = relationship(EventTypes)

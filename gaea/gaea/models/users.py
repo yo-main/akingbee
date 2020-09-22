@@ -17,6 +17,7 @@ class Users(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
 
 class Credentials(Base):
@@ -45,5 +46,6 @@ class Owners(Base):
     updated_at = Column(
         TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="owners", uselist=False)
