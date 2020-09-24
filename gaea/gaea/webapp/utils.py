@@ -37,10 +37,10 @@ class MiddleWare:
             await self.exception_handler()
             logger.exception("Managed exception happened")
             raise
-        except:
+        except Exception as exc:
             await self.exception_handler()
             logger.exception("Unexpected exception happened")
-            raise fastapi.HTTPException(500, "Internal server error")
+            raise fastapi.HTTPException(500, "Internal server error") from exc
 
         finally:
 
