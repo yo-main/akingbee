@@ -49,7 +49,7 @@ class CustomLogger(logging.Logger):
     def error(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
         self._log(logging.ERROR, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
 
-    def exception(self, msg, *args, stack_info=True, exc_info=True, **kwargs):
+    def exception(self, msg, *args, stack_info=False, exc_info=True, **kwargs):
         self._log(logging.ERROR, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
 
 
