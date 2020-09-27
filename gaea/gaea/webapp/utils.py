@@ -33,13 +33,13 @@ class MiddleWare:
         try:
             response = await call_next(request)
 
-        except fastapi.HTTPException:
+        except fastapi.HTTPException as exc:
             await self.exception_handler()
             logger.exception("Managed exception happened")
             raise
         except Exception as exc:
             await self.exception_handler()
-            logger.exception("Unexpected exception happened", exception=exc)
+            logger.exception("Unexpected exception happened")
             raise
 
         finally:
