@@ -11,3 +11,11 @@ DEVELOPMENT:
   DATABASE_USER: "akingbee"
   DATABASE_PASSWORD: "password"
   DATABASE_DATABASE: "akb_dev"
+
+  RBMQ_PORT: 5672
+  RBMQ_HOST: "127.0.0.1"
+  RBMQ_USER: "akingbee"
+  RBMQ_PASSWORD: "password"
+  RBMQ_VHOST: "/"
+
+  CERBES_ENDPOINT: "http://127.0.0.1:9001"
