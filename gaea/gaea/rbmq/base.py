@@ -1,6 +1,7 @@
 import pika
 
 from gaea.config import CONFIG
+from gaea.errors import AlreadyInitialized
 from gaea.log import logger
 
 RBMQ_DEFAULT_EXCHANGE = "akingbee.main_exchange"
@@ -8,21 +9,57 @@ RBMQ_DEFAULT_EXCHANGE = "akingbee.main_exchange"
 class RBMQClient:
     exchange = None
 
+    def __init__(self, exchange=None, connection_manager=None):
+        if not connection_manager:
+            connection_manager = RBMQConnectionManager()
+        self.connection_manager = connection_manager
+
+        self.exchange = exchange or RBMQ_DEFAULT_EXCHANGE
+
+        with self.connection_manager as channel:
+            self.declare_exchange(channel=channel)
+
     def declare_exchange(self, channel):
-        self.exchange = self.exchange or RBMQ_DEFAULT_EXCHANGE
         channel.exchange_declare(
             exchange=self.exchange,
             exchange_type="topic",
             durable=True,
         )
 
-    def get_connection(self):
-        params = self.get_connection_parameters()
-        connection = pika.BlockingConnection(parameters=params)
-        return connection
+class RBMQConnectionManager:
+    def __init__(self):
+        self.connection = self._get_connection()
+        self._channel = None
+
+    def __enter__(self):
+        if self._channel is not None:
+            raise AlreadyInitialized("A rabbitmq channel is already in use")
+        self._channel = self.get_channel()
+        return self._channel
+
+    def __exit__(self, tp, vl, tb):
+        self._clear_channel()
+
+    def get_channel(self):
+        return self.connection.channel()
+
+    def _clear_channel(self):
+        if self._channel:
+            self._channel.close()
+            self._channel = None
+        else:
+            logger.warning("RBMQ channel was already cleared")
+
+    def close(self):
+        self._clear_channel()
+        self.connection.close()
+
+    def _get_connection(self):
+        params = self._get_connection_parameters()
+        return pika.BlockingConnection(parameters=params)
 
     @staticmethod
-    def get_connection_parameters():
+    def _get_connection_parameters():
         creds = pika.PlainCredentials(CONFIG.RBMQ_USER, CONFIG.RBMQ_PASSWORD)
         return pika.ConnectionParameters(
             host=CONFIG.RBMQ_HOST,

@@ -5,16 +5,13 @@ from gaea.log import logger
 from .base import RBMQClient
 
 class RBMQConsumer(RBMQClient):
-    def __init__(self, handlers, queue, exchange=None):
+    def __init__(self, handlers, queue, exchange=None, connection_manager=None):
+        super().__init__(exchange=exchange, connection_manager=connection_manager)
         self.handlers = handlers
         self.queue = queue
-        self.exchange = exchange
-
-        self.connection = self.get_connection()
 
     def setup(self, channel):
         self.declare_queue(channel=channel)
-        self.declare_exchange(channel=channel)
         self.bind_queues(channel=channel)
 
     def declare_queue(self, channel):
@@ -28,28 +25,38 @@ class RBMQConsumer(RBMQClient):
         while True:
             logger.info("Starting consuming...", queue=self.queue)
             try:
-                channel = self.connection.channel()
-                self.setup(channel)
-                channel.basic_consume(queue=self.queue, on_message_callback=self.process)
-                channel.start_consuming()
+                with self.connection_manager as channel:
+                    self.setup(channel)
+                    channel.basic_consume(queue=self.queue, on_message_callback=self.process)
+                    channel.start_consuming()
             except KeyboardInterrupt:
-                channel.stop_consuming()
-                self.connection.close()
                 logger.info("Goodbye")
+                self.connection_manager.close()
                 return
             except pika.exceptions.StreamLostError:
                 logger.warning("RBMQ connection stream has been lost. Trying to reconnect")
                 continue
             except:
                 logger.exception("Critical error on consumer")
+                self.connection_manager.close()
                 raise
 
     def process(self, channel, method, properties, body):
-        logger.info("New message received", properties=properties, body=body, routing_key=method.routing_key)
-        handler = self.handlers[method.routing_key]
-        success = handler(properties, body)
-        if success:
-            channel.basic_ack(method.delivery_tag)
-        else:
-            channel.basic_nack(method.delivery_tag)
+        log_details = dict(properties=properties, body=body, routing_key=method.routing_key)
+        logger.info("New message received", **log_details)
 
+        handler = self.handlers.get(method.routing_key)
+        if handler is None:
+            logger.warning("Unknown routing key", **log_details)
+            channel.basic_nack(method.delivery_tag, requeue=False)
+            return
+
+        try:
+            success = handler(properties, body)
+            if success:
+                channel.basic_ack(method.delivery_tag)
+            else:
+                channel.basic_nack(method.delivery_tag)
+        except: # pylint: disable=bare-except
+            logger.exception("Critical error when handling rbmq message", **log_details)
+            channel.basic_nack(method.delivery_tag, requeue=False)

@@ -40,7 +40,7 @@ class CustomLogger(logging.Logger):
     def info(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
         self._log(logging.INFO, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
 
-    def wraning(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
+    def warning(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
         self._log(logging.WARNING, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
 
     def critical(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
