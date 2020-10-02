@@ -11,7 +11,7 @@ def create_apiary(data, session):
         location=data["location"],
         status_id=data["status_id"],
         honey_type_id=data["honey_type_id"],
-        user_id=data["user_id"]
+        user_id=data["user_id"],
     )
 
     session.add(apiary)

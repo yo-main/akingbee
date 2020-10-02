@@ -1,4 +1,3 @@
-
 FRENCH = "fr"
 ENGLISH = "en"
 
@@ -42,4 +41,3 @@ DEFAULT_EVENT_STATUSES = (
     {FRENCH: "Retard", ENGLISH: "Late"},
     {FRENCH: "Effectué", ENGLISH: "Done"},
 )
-

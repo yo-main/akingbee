@@ -12,6 +12,7 @@ async def validate_access_token(access_token):
         async with session.get(url, cookies={"access_token": access_token}) as resp:
             return await resp.json() if resp.status == 200 else None
 
+
 async def get_logged_in_user(access_token):
     if not access_token:
         raise HTTPException(status_code=401)
