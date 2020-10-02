@@ -21,6 +21,7 @@ from cerbes import helpers
 
 router = APIRouter()
 
+
 class UserModel(BaseModel):
     email: str
     username: str
@@ -39,12 +40,18 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session)):
         raise HTTPException(400, "Invalid password")
     if session.query(exists().where(Users.email == user_data.email)).scalar():
         raise HTTPException(400, "Email already exists")
-    if session.query(exists().where(Credentials.username == user_data.username)).scalar():
+    if session.query(
+        exists().where(Credentials.username == user_data.username)
+    ).scalar():
         raise HTTPException(400, "Username already exists")
 
     # create all objects
     user = Users(email=user_data.email)
-    credentials = Credentials(user=user, username=user_data.username, password=helpers.get_password_hash(user_data.password))
+    credentials = Credentials(
+        user=user,
+        username=user_data.username,
+        password=helpers.get_password_hash(user_data.password),
+    )
     owner = Owners(user=user, surname=user_data.username)
 
     try:
@@ -58,7 +65,9 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session)):
 
 
 @router.post("/login", status_code=200)
-def authenticate_user(authorization: str = Header(None), session: Session = Depends(get_session)):
+def authenticate_user(
+    authorization: str = Header(None), session: Session = Depends(get_session)
+):
     if not authorization:
         raise HTTPException(status_code=401, detail="Missing authorization header")
 
@@ -66,7 +75,11 @@ def authenticate_user(authorization: str = Header(None), session: Session = Depe
     if credentials is None:
         raise HTTPException(status_code=401, detail="Could not parse access_token")
 
-    user_credentials = session.query(Credentials).filter(Credentials.username == credentials.username).one_or_none()
+    user_credentials = (
+        session.query(Credentials)
+        .filter(Credentials.username == credentials.username)
+        .one_or_none()
+    )
     if user_credentials is None or user_credentials.password != credentials.password:
         raise HTTPException(status_code=401, detail="Wrong credentials")
 
@@ -84,5 +97,3 @@ def check_jwt(access_token: str = Cookie(None)):
         raise HTTPException(status_code=401)
 
     return {"user_id": data["user_id"]}
-
-
