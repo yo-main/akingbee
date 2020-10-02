@@ -5,7 +5,11 @@ import uuid
 
 import pytest
 
+from gaea.rbmq import RBMQPublisher
+from gaea.rbmq.utils.tests import MockRBMQConnectionManager
+
 from cerbes.helpers import generate_jwt
+
 
 
 @pytest.mark.parametrize(
@@ -25,13 +29,14 @@ from cerbes.helpers import generate_jwt
     ),
 )
 def test_register_user(
-    test_app, username, password, email, expected_code, expected_msg
+    test_app, username, password, email, expected_code, expected_msg, mock_rbmq_channel
 ):
-    data = {"username": username, "password": password, "email": email}
+    data = {"username": username, "password": password, "email": email, "language": "fr"}
     response = test_app.post("/user", json=data)
     assert response.status_code == expected_code
     content = response.json()
     assert expected_msg == (content["detail"] if expected_code != 204 else None)
+    assert mock_rbmq_channel.basic_publish.call_count == (1 if expected_code == 204 else 0)
 
 
 @pytest.mark.parametrize(
@@ -83,4 +88,5 @@ def test_check_jwt(test_app):
     assert response.status_code == 401
 
     response = test_app.get("/check", cookies={"access_token": jwt})
-    assert response.status_code == 204
+    assert response.status_code == 200
+    assert "user_id" in response.json()

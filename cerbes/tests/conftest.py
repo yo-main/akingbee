@@ -1,8 +1,11 @@
 import pytest
+from mock import Mock, MagicMock
 
 from fastapi.testclient import TestClient
 from gaea.database import db
 from gaea.database.utils.test import get_temporary_database
+from gaea.rbmq.base import RBMQConnectionManager
+from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 from gaea.models.base import Base
 from gaea.webapp import MiddleWare
 
@@ -24,3 +27,12 @@ def test_app(test_db):  # pylint: disable=redefined-outer-name
     middleware = MiddleWare(db_client=test_db)
     client = AppClient(router=router, middleware=middleware)
     yield TestClient(client.get_app())
+
+@pytest.fixture()
+def mock_rbmq_channel(monkeypatch):
+    mocked_channel = Mock()
+    mocked_conn = Mock()
+    monkeypatch.setattr(mocked_conn, "channel", MagicMock(return_value=mocked_channel))
+    monkeypatch.setattr(RBMQConnectionManager, "_get_connection", MagicMock(return_value=mocked_conn))
+    return mocked_channel
+

@@ -188,7 +188,7 @@ description = ""
 name = "gaea"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "0.1.11"
+version = "0.1.13"
 
 [package.dependencies]
 alembic = ">=1.4.2,<2.0.0"
@@ -342,6 +342,19 @@ name = "mccabe"
 optional = false
 python-versions = "*"
 version = "0.6.1"
+
+[[package]]
+category = "dev"
+description = "Rolling backport of unittest.mock for all Pythons"
+name = "mock"
+optional = false
+python-versions = ">=3.6"
+version = "4.0.2"
+
+[package.extras]
+build = ["twine", "wheel", "blurb"]
+docs = ["sphinx"]
+test = ["pytest", "pytest-cov"]
 
 [[package]]
 category = "dev"
@@ -738,7 +751,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "07c1daf6575b9b64fc739351623446892b76fd059a3bc910a89cdd56c51894bc"
+content-hash = "648ae52f8b919d0b852350b0438c67c36df96b5576b5a0d2fb2d4b9a13af046b"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -839,8 +852,8 @@ fastapi = [
     {file = "fastapi-0.61.1.tar.gz", hash = "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2"},
 ]
 gaea = [
-    {file = "gaea-0.1.11-py3-none-any.whl", hash = "sha256:1306e00ccd3e165d3c80ccceeb651c5facace15c7efac2fec0760e125043c979"},
-    {file = "gaea-0.1.11.tar.gz", hash = "sha256:26f5719dee8e64ad7d604198cb07fffa6782aa46971bc78a598339e3201ebdd5"},
+    {file = "gaea-0.1.13-py3-none-any.whl", hash = "sha256:d6069b1dbf19f9c8a7b8dbb704d50f9c7eb8561e4b7bc06fd208e558340be58d"},
+    {file = "gaea-0.1.13.tar.gz", hash = "sha256:8de689b4b6fd72a0a7c72a1d77613d61e9fe50ce63b423149913ba0683305403"},
 ]
 h11 = [
     {file = "h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1"},
@@ -949,6 +962,10 @@ markupsafe = [
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
     {file = "mccabe-0.6.1.tar.gz", hash = "sha256:dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"},
+]
+mock = [
+    {file = "mock-4.0.2-py3-none-any.whl", hash = "sha256:3f9b2c0196c60d21838f307f5825a7b86b678cedc58ab9e50a8988187b4d81e0"},
+    {file = "mock-4.0.2.tar.gz", hash = "sha256:dd33eb70232b6118298d516bbcecd26704689c386594f0f3c4f13867b2c56f72"},
 ]
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
