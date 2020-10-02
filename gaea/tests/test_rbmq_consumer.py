@@ -3,8 +3,7 @@ from mock import Mock, call
 import pika
 
 from gaea.rbmq import RBMQConsumer
-
-from tests.fixtures import MockRBMQConnectionManager
+from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 
 
 method = namedtuple("method", "delivery_tag, routing_key")

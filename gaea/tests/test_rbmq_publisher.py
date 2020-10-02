@@ -3,8 +3,7 @@ from mock import Mock, call
 import pika
 
 from gaea.rbmq import RBMQPublisher
-
-from tests.fixtures import MockRBMQConnectionManager
+from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 
 
 def raise_err(ex):
