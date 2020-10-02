@@ -7,6 +7,7 @@ import re
 
 from gaea.config import CONFIG
 from gaea.log import logger
+from gaea.rbmq import RBMQPublisher
 
 CREDENTIALS = namedtuple("credentials", "username, password")
 
@@ -49,13 +50,17 @@ def generate_jwt(user_id):
 
 def validate_jwt(token):
     try:
-        jwt.decode(
+        return jwt.decode(
             jwt=token,
             key=CONFIG.APP_SECRET,
             algorithm="HS256"
         )
-        return True
     except jwt.exceptions.InvalidTokenError:
-        return False
+        return None
 
-
+def send_event_user_created(user_id, language):
+    with RBMQPublisher() as rbmq:
+        rbmq.publish(
+            routing_key="users.created",
+            content={"user_id": user_id, "language": language}
+        )

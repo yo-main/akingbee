@@ -10,7 +10,7 @@ pyjwt = "^1.7.1"
 uvicorn = "^0.11.8"
 pydantic = "^1.6.1"
 fastapi = "^0.61.0"
-gaea = "^0.1.4"
+gaea = "^0.1.11"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.5.3"

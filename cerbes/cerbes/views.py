@@ -1,6 +1,7 @@
 import base64
 from collections import namedtuple
 import datetime
+from enum import Enum
 import hashlib
 from sqlalchemy import exists
 from sqlalchemy.orm import joinedload, Session
@@ -20,17 +21,18 @@ from cerbes import helpers
 
 router = APIRouter()
 
-
 class UserModel(BaseModel):
     email: str
     username: str
     password: str
-
+    language: str
 
 
 @router.post("/user", status_code=204)
 def create_user(user_data: UserModel, session: Session = Depends(get_session)):
     # validate data
+    if user_data.language not in ("fr", "en"):
+        user_data.language = "fr"
     if not helpers.validate_email(user_data.email):
         raise HTTPException(400, "Invalid email address")
     if not helpers.validate_password(user_data.password):
@@ -52,6 +54,8 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session)):
         logger.exception(f"Could not create user {user_data.email}")
         raise HTTPException(400, "Database error when creating the user") from exc
 
+    helpers.send_event_user_created(user_id=user.id, language=user_data.language)
+
 
 @router.post("/login", status_code=200)
 def authenticate_user(authorization: str = Header(None), session: Session = Depends(get_session)):
@@ -70,10 +74,15 @@ def authenticate_user(authorization: str = Header(None), session: Session = Depe
     return {"access_token": helpers.generate_jwt(user_id)}
 
 
-@router.get("/check", status_code=204)
+@router.get("/check", status_code=200)
 def check_jwt(access_token: str = Cookie(None)):
     if not access_token:
         raise HTTPException(status_code=401)
 
-    if not helpers.validate_jwt(access_token):
+    data = helpers.validate_jwt(access_token)
+    if data is None:
         raise HTTPException(status_code=401)
+
+    return {"user_id": data["user_id"]}
+
+
