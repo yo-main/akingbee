@@ -7,6 +7,7 @@ from gaea.log import logger
 
 from .base import RBMQClient
 
+
 class RBMQPublisher(RBMQClient):
     @staticmethod
     def _get_default_headers():
@@ -31,6 +32,10 @@ class RBMQPublisher(RBMQClient):
                     properties=properties,
                 )
         except:
-            logger.exception("Fail to publish message in rbmq", body=body, properties=properties, routing_key=routing_key)
+            logger.exception(
+                "Fail to publish message in rbmq",
+                body=body,
+                properties=properties,
+                routing_key=routing_key,
+            )
             raise
-

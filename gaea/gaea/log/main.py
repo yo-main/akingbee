@@ -32,25 +32,68 @@ from gaea.config import CONFIG
 
 class CustomLogger(logging.Logger):
     """Custom logger"""
+
     # pylint: disable=arguments-differ
 
     def debug(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
-        self._log(logging.DEBUG, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
+        self._log(
+            logging.DEBUG,
+            msg,
+            args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            extra=kwargs,
+        )
 
     def info(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
-        self._log(logging.INFO, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
+        self._log(
+            logging.INFO,
+            msg,
+            args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            extra=kwargs,
+        )
 
     def warning(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
-        self._log(logging.WARNING, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
+        self._log(
+            logging.WARNING,
+            msg,
+            args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            extra=kwargs,
+        )
 
     def critical(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
-        self._log(logging.CRITICAL, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
+        self._log(
+            logging.CRITICAL,
+            msg,
+            args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            extra=kwargs,
+        )
 
     def error(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
-        self._log(logging.ERROR, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
+        self._log(
+            logging.ERROR,
+            msg,
+            args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            extra=kwargs,
+        )
 
     def exception(self, msg, *args, stack_info=False, exc_info=True, **kwargs):
-        self._log(logging.ERROR, msg, args, exc_info=exc_info, stack_info=stack_info, extra=kwargs)
+        self._log(
+            logging.ERROR,
+            msg,
+            args,
+            exc_info=exc_info,
+            stack_info=stack_info,
+            extra=kwargs,
+        )
 
 
 EXCLUDED_FIELDS = (

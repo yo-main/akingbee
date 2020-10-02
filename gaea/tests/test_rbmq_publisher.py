@@ -10,6 +10,7 @@ from tests.fixtures import MockRBMQConnectionManager
 def raise_err(ex):
     raise ex
 
+
 def test_rbmq_publisher():
 
     mocked_channel = Mock()
