@@ -50,8 +50,6 @@ services:
       - RBMQ_PORT=5672
       - RBMQ_VHOST=/
       - CERBES_ENDPOINT=cerbes
-    ports:
-      - 5672:5672
     networks:
       - akb
 
