@@ -185,20 +185,26 @@ test = ["pytest (5.4.3)", "pytest-cov (2.10.0)", "pytest-asyncio (>=0.14.0,<0.15
 [[package]]
 category = "main"
 description = ""
+develop = true
 name = "gaea"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = "^3.8"
 version = "0.1.13"
 
 [package.dependencies]
-alembic = ">=1.4.2,<2.0.0"
-dynaconf = ">=3.0.0,<4.0.0"
-fastapi = ">=0.61.0,<0.62.0"
-pika = ">=1.1.0,<2.0.0"
-psycopg2-binary = ">=2.8.5,<3.0.0"
-redis = ">=3.5.3,<4.0.0"
-sqlalchemy = ">=1.3.18,<2.0.0"
-uvicorn = ">=0.11.8,<0.12.0"
+alembic = "^1.4.2"
+dynaconf = "^3.0.0"
+fastapi = "^0.61.0"
+pika = "^1.1.0"
+psycopg2-binary = "^2.8.5"
+redis = "^3.5.3"
+sqlalchemy = "^1.3.18"
+uvicorn = "^0.11.8"
+
+[package.source]
+reference = ""
+type = "directory"
+url = "../gaea"
 
 [[package]]
 category = "main"
@@ -751,7 +757,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "648ae52f8b919d0b852350b0438c67c36df96b5576b5a0d2fb2d4b9a13af046b"
+content-hash = "40321ebdc03eecbebe6b29a668f34701d0131977e6a938124cb9d6ff2069ab0e"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -851,10 +857,7 @@ fastapi = [
     {file = "fastapi-0.61.1-py3-none-any.whl", hash = "sha256:6cc31bb555dd8ca956d1d227477d661e4ac012337242a41d36214ffbda78bfe9"},
     {file = "fastapi-0.61.1.tar.gz", hash = "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2"},
 ]
-gaea = [
-    {file = "gaea-0.1.13-py3-none-any.whl", hash = "sha256:d6069b1dbf19f9c8a7b8dbb704d50f9c7eb8561e4b7bc06fd208e558340be58d"},
-    {file = "gaea-0.1.13.tar.gz", hash = "sha256:8de689b4b6fd72a0a7c72a1d77613d61e9fe50ce63b423149913ba0683305403"},
-]
+gaea = []
 h11 = [
     {file = "h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1"},
     {file = "h11-0.9.0.tar.gz", hash = "sha256:33d4bca7be0fa039f4e84d50ab00531047e53d6ee8ffbc83501ea602c169cae1"},

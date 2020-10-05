@@ -31,8 +31,8 @@ from cerbes.helpers import generate_jwt
 def test_register_user(
     test_app, username, password, email, expected_code, expected_msg, mock_rbmq_channel
 ):
-    data = {"username": username, "password": password, "email": email, "language": "fr"}
-    response = test_app.post("/user", json=data)
+    data = {"username": username, "password": password, "email": email}
+    response = test_app.post("/user", json=data, cookies={"language": "en"})
     assert response.status_code == expected_code
     content = response.json()
     assert expected_msg == (content["detail"] if expected_code != 204 else None)

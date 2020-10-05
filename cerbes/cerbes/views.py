@@ -26,14 +26,13 @@ class UserModel(BaseModel):
     email: str
     username: str
     password: str
-    language: str
 
 
 @router.post("/user", status_code=204)
-def create_user(user_data: UserModel, session: Session = Depends(get_session)):
+def create_user(user_data: UserModel, session: Session = Depends(get_session), language: str = Cookie(None)):
     # validate data
-    if user_data.language not in ("fr", "en"):
-        user_data.language = "fr"
+    if language not in ("fr", "en"):
+        language = "fr"
     if not helpers.validate_email(user_data.email):
         raise HTTPException(400, "Invalid email address")
     if not helpers.validate_password(user_data.password):
@@ -61,7 +60,10 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session)):
         logger.exception(f"Could not create user {user_data.email}")
         raise HTTPException(400, "Database error when creating the user") from exc
 
-    helpers.send_event_user_created(user_id=user.id, language=user_data.language)
+    try:
+        helpers.send_event_user_created(user_id=user.id, language=language)
+    except: # pylint: disable=bare-except
+        logger.exception("Could not insert message about user creation", user_id=user.id)
 
 
 @router.post("/login", status_code=200)

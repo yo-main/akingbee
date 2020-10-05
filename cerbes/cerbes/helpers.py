@@ -63,3 +63,4 @@ def send_event_user_created(user_id, language):
             routing_key="users.created",
             content={"user_id": user_id, "language": language},
         )
+    rbmq_client.close()
