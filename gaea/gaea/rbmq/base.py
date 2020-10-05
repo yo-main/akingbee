@@ -25,6 +25,9 @@ class RBMQClient:
             exchange=self.exchange, exchange_type="topic", durable=True,
         )
 
+    def close(self):
+        self.connection_manager.close()
+
 
 class RBMQConnectionManager:
     def __init__(self):
@@ -47,8 +50,6 @@ class RBMQConnectionManager:
         if self._channel:
             self._channel.close()
             self._channel = None
-        else:
-            logger.warning("RBMQ channel was already cleared")
 
     def close(self):
         self._clear_channel()
