@@ -3,9 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 class AppClient:
-    def __init__(self, router, middleware=None):
+    def __init__(self, routers, middleware=None):
         self.app = fastapi.FastAPI()
-        self.app.include_router(router)
+
+        if not isinstance(routers, (list, tuple)):
+            routers = [routers]
+
+        for router in routers:
+            self.app.include_router(router)
 
         self.middleware = middleware
 
