@@ -18,8 +18,20 @@ export const sections = {
   submenu_setup_hive: 'submenu_setup_hive',
   submenu_setup_hive_beekeeper: 'submenu_setup_hive_beekeeper',
   submenu_setup_hive_condition: 'submenu_setup_hive_condition',
-  submenu_setup_hive_action: 'submenu_setup_hive_action',
-  submenu_setup_hive_honey_type: 'submenu_setup_hive_honey_type',
   submenu_setup_apiary: 'submenu_setup_apiary',
-  submenu_setup_apiary_health: 'submenu_setup_apiary_health',
+  submenu_setup_apiary_status: 'submenu_setup_apiary_status',
+  submenu_setup_apiary_honey_type: 'submenu_setup_apiary_honey_type',
+  submenu_setup_event: 'submenu_setup_event',
+  submenu_setup_event_type: 'submenu_setup_event_type',
+  submenu_setup_event_status: 'submenu_setup_event_status',
 };
+
+export const setupData = {
+  swarm_health_status: "swarm_health_status",
+  hive_beekeeper: "hive_beekeeper",
+  hive_condition: "hive_condition",
+  apiary_status: "apiary_status",
+  apiary_honey_type: "apiary_honey_type",
+  event_type: "event_type",
+  event_status: "event_status",
+}

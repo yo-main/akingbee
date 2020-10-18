@@ -6,32 +6,44 @@ export function getCookie(name, cookies) {
     cookies = document.cookie;
   }
   cookies = document.cookie.split(";");
-  let access_token = null;
+  let value = null;
   cookies.forEach((cookie) => {
     const data = cookie.split("=");
     if (data[0].trim() === name) {
-      access_token = data[1].trim();
+      value = data[1].trim();
       return;
     }
   })
-  return access_token;
+  return value;
+}
+
+export function setCookie(key, value, conf) {
+  let cookie = `${key}=${value};`
+  let cookieConf = {path: '/', samesite: 'strict'}
+  Object.assign(cookieConf, conf)
+  cookie += Object.keys(cookieConf).map((key) => {
+    return [key, cookieConf[key]].join("=")
+  }).join(";");
+  document.cookie = cookie
 }
 
 export function notificate(type, description) {
-
   notification[type]({
-    message: window.i18n(`word.${type}`),
-    description: description,
+    message: description,
   });
 }
 
-axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*"
 axios.defaults.headers.common["Content-Type"] = "application/json"
 
 export const cerbesApi = axios.create({
-  baseURL: 'http://127.0.0.1:9001'
+  baseURL: 'http://localhost:9001',
+  withCredentials: true,
 })
 
+export const aristaeusApi = axios.create({
+  baseURL: 'http://localhost:9002',
+  withCredentials: true,
+})
 
 export function dealWithError(error) {
   const response = error.response;

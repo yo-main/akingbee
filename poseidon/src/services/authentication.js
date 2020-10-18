@@ -1,7 +1,7 @@
 import { navigate } from '@reach/router';
 import { getCookie, dealWithError } from '../lib/common';
 import { AUTH_COOKIE_NAME } from '../constants';
-import { cerbesApi, notificate } from '../lib/common';
+import { cerbesApi, notificate, setCookie } from '../lib/common';
 
 export function getJWT() {
   return getCookie(AUTH_COOKIE_NAME);
@@ -15,11 +15,11 @@ export function isLogged() {
 }
 
 export function storeJWT(jwt) {
-  document.cookie = `${AUTH_COOKIE_NAME}=${jwt};path='/';samesite`;
+  setCookie(AUTH_COOKIE_NAME, jwt);
 }
 
 export function clearJWT() {
-  document.cookie = `${AUTH_COOKIE_NAME}="";max-age=0`;
+  setCookie(AUTH_COOKIE_NAME, '', {'max-age': 0});
 }
 
 export function logOff() {
@@ -33,9 +33,10 @@ export async function registrationRequest({email, username, password, password_b
     notificate("error", window.i18n("error.passwordsNotIdentical"))
     return;
   }
+  const language = window.currentLanguage;
 
   // request server to register user
-  const data = {email, username, password}
+  const data = {email, username, password, language}
   await cerbesApi.post("/user", data)
     .then((response) => {
       notificate("success", window.i18n("success.registrationSuccessful"))

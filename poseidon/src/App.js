@@ -3,7 +3,8 @@ import 'antd/dist/antd.css';
 import { Router } from '@reach/router';
 import './services/localization';
 
-import { PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage } from './pages';
+import { PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage } from './pages';
+import { setupData } from './constants';
 
 class App extends React.Component {
   changeLanguage = ({ key }) => {
@@ -18,7 +19,15 @@ class App extends React.Component {
           <WelcomePage path="/" />
         </PrivateFrame>
         <PrivateFrame path="/manage" languageCallback={this.changeLanguage} />
-        <PrivateFrame path="/setup" languageCallback={this.changeLanguage} />
+        <PrivateFrame path="/setup" languageCallback={this.changeLanguage} >
+          <SetupPage path="/swarm/health" dataType={setupData.swarm_health_status} />
+          <SetupPage path="/hive/beekeeper" dataType={setupData.hive_beekeeper} />
+          <SetupPage path="/hive/condition" dataType={setupData.hive_condition} />
+          <SetupPage path="/apiary/status" dataType={setupData.apiary_status} />
+          <SetupPage path="/apiary/honey_type" dataType={setupData.apiary_honey_type} />
+          <SetupPage path="/event/type" dataType={setupData.event_type} />
+          <SetupPage path="/event/status" dataType={setupData.event_status} />
+        </PrivateFrame>
         <PrivateFrame path="/profil" languageCallback={this.changeLanguage} />
 
         <PublicFrame path="/login" languageCallback={this.changeLanguage}>

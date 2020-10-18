@@ -27,12 +27,14 @@ class Frame extends React.Component {
       <Layout style={{ height: '100%' }}>
         <Header className="header">
             <div className="logo" />
-            <MainMenu section={section} />
+            <MainMenu section={section} languageCallback={this.props.languageCallback}/>
         </Header>
         <Content style={{ padding: '0 50px' }}>
           <Layout className="site-layout-background" style={{ padding: '24px 0', height: '100vh' }}>
             <SideMenu />
-            {this.props.children}
+            <Content>
+              {this.props.children}
+            </Content>
           </Layout>
         </Content>
       </Layout>
