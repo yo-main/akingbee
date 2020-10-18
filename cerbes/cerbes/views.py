@@ -51,7 +51,7 @@ def create_user(user_data: UserModel, session: Session = Depends(get_session), l
         username=user_data.username,
         password=helpers.get_password_hash(user_data.password),
     )
-    owner = Owners(user=user, surname=user_data.username)
+    owner = Owners(user=user, name=user_data.username)
 
     try:
         session.add_all((user, credentials, owner))
