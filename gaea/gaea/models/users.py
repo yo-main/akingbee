@@ -39,7 +39,7 @@ class Credentials(Base):
 class Owners(Base):
     __tablename__ = "owners"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    surname = Column(TEXT(), nullable=False)
+    name = Column(TEXT(), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)

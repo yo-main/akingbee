@@ -100,7 +100,7 @@ def upgrade():
     )
     op.create_table('owners',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('surname', sa.TEXT(), nullable=False),
+    sa.Column('name', sa.TEXT(), nullable=False),
     sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('created_at', postgresql.TIMESTAMP(), nullable=True),
     sa.Column('updated_at', postgresql.TIMESTAMP(), nullable=True),
