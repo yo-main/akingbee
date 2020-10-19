@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gaea"
-version = "0.1.14"
+version = "0.1.15"
 description = ""
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
