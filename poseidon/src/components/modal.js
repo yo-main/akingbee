@@ -18,8 +18,8 @@ class BaseModal extends React.Component {
     return ""
   }
 
-  render() {
-    const footer = (
+  getFooter() {
+    return (
       this.props.formId ?
       [
         <Button type="primary" onClick={this.closeModal}>{window.i18n("word.cancel")}</Button>,
@@ -31,7 +31,9 @@ class BaseModal extends React.Component {
         <Button type="secondary" onClick={this.closeModal}>{window.i18n("word.submit")}</Button>,
       ]
     )
+  }
 
+  render() {
     return (
       <>
         {this.entrypoint()}
@@ -40,7 +42,7 @@ class BaseModal extends React.Component {
           visible={this.state.visible}
           onCancel={this.closeModal}
           onOk={this.closeModal}
-          footer={footer}
+          footer={this.getFooter()}
         >
           {this.props.children}
         </Modal>
