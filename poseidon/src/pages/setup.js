@@ -1,32 +1,36 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 
-import { Modal, AddNewData } from '../components';
+import { FormButtonModal, FormLinkModal } from '../components';
+import { notificate } from '../lib/common';
 import { getData, postNewData } from '../services/aristaeus/setup';
 
+
+function onFailed(err) {
+  notificate("error", "Failed")
+}
+
+export function AddNewData(props) {
+  return (
+    <Form id="addNewDataFormId" name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
+      <Form.Item label={window.i18n("form.newEntry")} name="newEntry"
+        rules={[{ required: true}]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item name="dataType" initialValue={props.dataType} hidden={true}/>
+    </Form>
+  )
+}
+
+
 export class SetupPage extends React.Component {
-  state = { visible: false, tableData: []}
-
-  showModal = () => {
-    this.setState((state) => ({
-      visible: true,
-      tableData: state.tableData,
-    }))
-  };
-
-  closeModal = e => {
-    this.setState((state) => ({
-      visible: false,
-      tableData: state.tableData,
-    }))
-  };
+  state = { tableData: []}
 
   dataCallback = (data) => {
-    this.setState((state) => ({
-      visible: state.visible, tableData: data
-    }));
+    this.setState((state) => ({tableData: data}));
   }
 
   componentDidMount() {
@@ -48,8 +52,8 @@ export class SetupPage extends React.Component {
       key: 'action',
       render: (text, record) => (
         <Space size='middle'>
-          <a>{window.i18n('word.edit')}</a>
-          <a>{window.i18n('word.delete')}</a>
+          <FormLinkModal linkContent={window.i18n('word.edit')}></FormLinkModal>
+          <FormLinkModal linkContent={window.i18n('word.delete')}></FormLinkModal>
         </Space>
       )
     })
@@ -61,14 +65,11 @@ export class SetupPage extends React.Component {
             <Table dataSource={this.state.tableData} columns={columns} pagination={false} bordered />
           </Col>
           <Col style={{ paddingLeft: '20px'}}>
-            <Button onClick={this.showModal}>
-              <PlusOutlined />
-            </Button>
+            <FormButtonModal title={window.i18n("title.addNewEntry")} formId='addNewDataFormId' buttonContent={<PlusOutlined />}>
+              <AddNewData dataType={this.props.dataType} onFinish={postNewData} />
+            </FormButtonModal>
           </Col>
         </Row>
-        <Modal title='Test' visible={this.state.visible} closeModal={this.closeModal} formId='addNewDataFormId'>
-          <AddNewData dataType={this.props.dataType} onFinish={postNewData} />
-        </Modal>
       </>
     )
   }
