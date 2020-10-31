@@ -23,7 +23,7 @@ class LanguageMenu extends React.Component {
 
 export function LoggedOutMenu({ languageCallback }) {
   return (
-    <Row gutter="10" justify="end">
+    <Row justify="end">
       <Col>
         <Row>
           <Col>
@@ -43,7 +43,7 @@ export function LoggedOutMenu({ languageCallback }) {
 
 export function LoggedInMenu({ languageCallback, section }) {
   return (
-    <Row gutter="10" justify="space-between">
+    <Row justify="space-between">
       <Col>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[section]}>
           <Menu.Item key={constants.sections.menu_manage}><Link to={`/manage`}>{window.i18n("word.manage")}</Link></Menu.Item>

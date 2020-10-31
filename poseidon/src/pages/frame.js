@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout } from 'antd';
+import { Layout, Affix } from 'antd';
 import { Redirect } from '@reach/router';
 
 import { LoggedInMenu, LoggedOutMenu, ManageSideMenu, SetupSideMenu } from '../components';
@@ -24,13 +24,15 @@ class Frame extends React.Component {
     }
 
     return (
-      <Layout style={{ height: '100%' }}>
-        <Header className="header">
+      <Layout style={{ 'min-height': '100vh' }}>
+        <Affix offsetTop='0'>
+          <Header className="header">
             <div className="logo" />
             <MainMenu section={section} languageCallback={this.props.languageCallback}/>
-        </Header>
-        <Content style={{ padding: '0 50px' }}>
-          <Layout className="site-layout-background" style={{ padding: '24px 0', height: '100vh' }}>
+          </Header>
+        </Affix>
+        <Content style={{ padding: '0 50px'}}>
+          <Layout className="site-layout-background" style={{ padding: '24px 0', 'min-height': '93vh'}}>
             <SideMenu />
             <Content>
               {this.props.children}

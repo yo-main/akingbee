@@ -29,12 +29,21 @@ export function AddNewData(props) {
 export class SetupPage extends React.Component {
   state = { tableData: []}
 
-  dataCallback = (data) => {
+  refreshState = (data) => {
     this.setState((state) => ({tableData: data}));
   }
 
+  refreshData = () => {
+    getData(this.props.dataType, this.refreshState);
+  }
+
   componentDidMount() {
-    getData(this.props.dataType, this.dataCallback);
+    this.refreshData();
+  }
+
+  postData = (form) => {
+    const value = form.newEntry;
+    postNewData(this.props.dataType, value, this.refreshData);
   }
 
   render() {
@@ -44,6 +53,8 @@ export class SetupPage extends React.Component {
         title: window.i18n(`title.${this.props.dataType}`),
         dataIndex: 'name',
         key: 'name',
+        defaultSortOrder: 'ascend',
+        sorter: (a, b) => a.name >= b.name,
       },
     ];
 
@@ -66,7 +77,7 @@ export class SetupPage extends React.Component {
           </Col>
           <Col style={{ paddingLeft: '20px'}}>
             <FormButtonModal title={window.i18n("title.addNewEntry")} formId='addNewDataFormId' buttonContent={<PlusOutlined />}>
-              <AddNewData dataType={this.props.dataType} onFinish={postNewData} />
+              <AddNewData dataType={this.props.dataType} onFinish={this.postData} />
             </FormButtonModal>
           </Col>
         </Row>

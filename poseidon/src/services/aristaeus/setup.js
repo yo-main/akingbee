@@ -39,6 +39,20 @@ export function getData(type, callback) {
     });
 }
 
-export function postNewData(form) {
-  console.log(form);
+export async function postNewData(type, value, callback) {
+  await aristaeusApi.post(`/setup/${type}`, {value})
+    .then((response) => {
+      callback();
+    })
+    .catch((error) => {
+      console.log(error)
+      const response = error.response;
+      if (!response) {
+        notificate("error", error.message);
+      } else if (error.response.status === 401) {
+        navigate("/login");
+      } else {
+        dealWithError(error);
+      }
+    });
 }
