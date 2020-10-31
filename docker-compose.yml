@@ -17,6 +17,8 @@ services:
       - AKB_RBMQ_VHOST=/
     ports:
       - 9001:9001
+    depends_on: [db, rbmq]
+    restart: always
     networks:
       - akb
 
@@ -29,9 +31,11 @@ services:
       - AKB_DATABASE_USER=akingbee
       - AKB_DATABASE_PASSWORD=123
       - AKB_DATABASE_DATABASE=akb_dev
-      - CERBES_ENDPOINT=cerbes
+      - AKB_CERBES_ENDPOINT=http://cerbes:9001
     ports:
       - 9002:9002
+    depends_on: [db, rbmq, cerbes]
+    restart: always
     networks:
       - akb
 
@@ -49,8 +53,9 @@ services:
       - AKB_RBMQ_HOST=rbmq
       - AKB_RBMQ_PORT=5672
       - AKB_RBMQ_VHOST=/
-      - CERBES_ENDPOINT=cerbes
     command: python ./aristaeus/listener.py
+    depends_on: [db, rbmq]
+    restart: always
     networks:
       - akb
 
@@ -63,8 +68,7 @@ services:
       - AKB_DATABASE_USER=akingbee
       - AKB_DATABASE_PASSWORD=123
       - AKB_DATABASE_DATABASE=akb_dev
-    depends_on:
-      - db
+    depends_on: [db, rbmq]
     networks:
       - akb
 
