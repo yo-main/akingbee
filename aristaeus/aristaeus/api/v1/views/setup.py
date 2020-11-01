@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 from gaea.log import logger
 from gaea.models import SwarmHealthStatuses, ApiaryStatuses, HiveConditions, HoneyTypes, EventStatuses, Owners, EventTypes
@@ -6,6 +7,7 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import List
+import uuid
 
 
 from aristaeus.helpers.common import validate_uuid
@@ -39,6 +41,22 @@ class SetupDataType(str, Enum):
 class NewDataValue(BaseModel):
     value: str
 
+@router.get("/setup/{data_type}", status_code=200)
+async def get_setup_data(
+    data_type: SetupDataType,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    Get a setup object and return it as json
+    """
+    user_id = await get_logged_in_user(access_token)
+    model = MAPPING[data_type]
+
+    objects = session.query(model).filter(model.user_id == user_id, model.deleted_at.is_(None)).all()
+
+    return objects
+
 @router.post("/setup/{data_type}", status_code=200)
 async def create_setup_data(
     body: NewDataValue,
@@ -64,18 +82,53 @@ async def create_setup_data(
     session.refresh(obj)
     return obj
 
-@router.get("/setup/{data_type}", status_code=200)
-async def get_setup_data(
+@router.put("/setup/{data_type}/{obj_id}", status_code=204)
+async def update_setup_data(
+    body: NewDataValue,
     data_type: SetupDataType,
+    obj_id: uuid.UUID,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
 ):
     """
-    Get a setup object and return it as json
+    Update a setup object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
     model = MAPPING[data_type]
 
-    objects = session.query(model).filter(model.user_id == user_id and model.deleted_at.is_(None)).all()
+    obj = session.query(model).get(obj_id)
 
-    return objects
+    if obj.user_id != user_id:
+        raise HTTPException(status_code=401)
+
+    try:
+        obj.name = body.value
+        session.commit()
+    except Exception as exc:
+        logger.exception("Something went wrong when saving the object")
+        raise HTTPException(status_code=400, detail="Database error") from exc
+
+@router.delete("/setup/{data_type}/{obj_id}", status_code=204)
+async def delete_setup_data(
+    data_type: SetupDataType,
+    obj_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    Update a setup object and return it as json
+    """
+    user_id = await get_logged_in_user(access_token)
+    model = MAPPING[data_type]
+
+    obj = session.query(model).get(obj_id)
+
+    if obj.user_id != user_id:
+        raise HTTPException(status_code=401)
+
+    try:
+        obj.deleted_at = datetime.datetime.utcnow()
+        session.commit()
+    except Exception as exc:
+        logger.exception("Something went wrong when saving the object")
+        raise HTTPException(status_code=400, detail="Database error") from exc

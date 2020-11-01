@@ -7,7 +7,7 @@ authors = ["rarnal <arnal.romain@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 aiohttp = "^3.6.2"
-gaea = "^0.1.15"
+gaea = "^0.1.17"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.6.0"
