@@ -99,7 +99,7 @@ async def update_setup_data(
     obj = session.query(model).get(obj_id)
 
     if obj.user_id != user_id:
-        raise HTTPException(status_code=401)
+        raise HTTPException(status_code=403)
 
     try:
         obj.name = body.value
@@ -124,7 +124,7 @@ async def delete_setup_data(
     obj = session.query(model).get(obj_id)
 
     if obj.user_id != user_id:
-        raise HTTPException(status_code=401)
+        raise HTTPException(status_code=403)
 
     try:
         obj.deleted_at = datetime.datetime.utcnow()

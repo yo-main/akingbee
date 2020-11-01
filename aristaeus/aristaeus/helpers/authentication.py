@@ -1,4 +1,5 @@
 from functools import wraps
+import uuid
 
 from fastapi import Cookie, HTTPException
 import aiohttp
@@ -22,4 +23,4 @@ async def get_logged_in_user(access_token):
     if data is None:
         raise HTTPException(status_code=401, detail="Invalid access token")
 
-    return data["user_id"]
+    return uuid.UUID(data["user_id"])
