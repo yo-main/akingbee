@@ -45,32 +45,40 @@ HONEY_TYPE_ALL_FLOWERS = "All flowers"
 HONEY_TYPE_SUNFLOWER = "Sunflower"
 
 IDS = {
-    "Users": generate_uuid(1),
-    "Credentials": generate_uuid(1),
-    "Owners": generate_uuid(2),
-    "Swarms": generate_uuid(3),
-    "Hives": generate_uuid(3),
-    "Apiaries": generate_uuid(3),
-    "Swarm_health_statuses": generate_uuid(2),
-    "Apiary_statuses": generate_uuid(2),
-    "Honey_types": generate_uuid(3),
-    "Hive_conditions": generate_uuid(2),
-    "Comment_types": generate_uuid(2),
-    "Event_types": generate_uuid(3),
-    "Event_statuses": generate_uuid(2),
-    "Events": generate_uuid(2),
+    "Users": generate_uuid(2),
+    "Credentials": generate_uuid(2),
+    "Owners": generate_uuid(3),
+    "Swarms": generate_uuid(4),
+    "Hives": generate_uuid(4),
+    "Apiaries": generate_uuid(4),
+    "Swarm_health_statuses": generate_uuid(3),
+    "Apiary_statuses": generate_uuid(3),
+    "Honey_types": generate_uuid(4),
+    "Hive_conditions": generate_uuid(3),
+    "Comment_types": generate_uuid(3),
+    "Event_types": generate_uuid(4),
+    "Event_statuses": generate_uuid(3),
+    "Events": generate_uuid(3),
 }
 
 DATASET = (
     Users(id=IDS["Users"][0], email=USER_EMAIL),
+    Users(id=IDS["Users"][-1], email="unknown_user@gmail.com"),
     Credentials(
-        id=uuid.uuid4(),
+        id=IDS["Credentials"][0],
         username=USER_USERNAME,
         password=b"password",
         user_id=IDS["Users"][0],
     ),
-    Owners(id=IDS["Owners"][0], surname="owner1", user_id=IDS["Users"][0]),
-    Owners(id=IDS["Owners"][1], surname="owner2", user_id=IDS["Users"][0]),
+    Credentials(
+        id=IDS["Credentials"][-1],
+        username="unknown_user",
+        password=b"password",
+        user_id=IDS["Users"][-1],
+    ),
+    Owners(id=IDS["Owners"][0], name="owner1", user_id=IDS["Users"][0]),
+    Owners(id=IDS["Owners"][1], name="owner2", user_id=IDS["Users"][0]),
+    Owners(id=IDS["Owners"][-1], name="unknown_owner", user_id=IDS["Users"][-1]),
     SwarmHealthStatuses(
         id=IDS["Swarm_health_statuses"][0],
         name=SWARM_HEALTH_STATUS_GOOD,
@@ -80,6 +88,11 @@ DATASET = (
         id=IDS["Swarm_health_statuses"][1],
         name=SWARM_HEALTH_STATUS_BAD,
         user_id=IDS["Users"][0],
+    ),
+    SwarmHealthStatuses(
+        id=IDS["Swarm_health_statuses"][-1],
+        name="unknown",
+        user_id=IDS["Users"][-1],
     ),
     Swarms(
         id=IDS["Swarms"][0],
@@ -96,6 +109,11 @@ DATASET = (
         health_status_id=IDS["Swarm_health_statuses"][1],
         user_id=IDS["Users"][0],
     ),
+    Swarms(
+        id=IDS["Swarms"][-1],
+        health_status_id=IDS["Swarm_health_statuses"][-1],
+        user_id=IDS["Users"][-1],
+    ),
     ApiaryStatuses(
         id=IDS["Apiary_statuses"][0], name=APIARY_STATUS_ACTIVE, user_id=IDS["Users"][0]
     ),
@@ -103,6 +121,11 @@ DATASET = (
         id=IDS["Apiary_statuses"][1],
         name=APIARY_STATUS_INACTIVE,
         user_id=IDS["Users"][0],
+    ),
+    ApiaryStatuses(
+        id=IDS["Apiary_statuses"][-1],
+        name="unknown",
+        user_id=IDS["Users"][-1],
     ),
     HoneyTypes(
         id=IDS["Honey_types"][0], name=HONEY_TYPE_ALL_FLOWERS, user_id=IDS["Users"][0]
@@ -112,6 +135,9 @@ DATASET = (
     ),
     HoneyTypes(
         id=IDS["Honey_types"][2], name=HONEY_TYPE_SUNFLOWER, user_id=IDS["Users"][0]
+    ),
+    HoneyTypes(
+        id=IDS["Honey_types"][-1], name="unknown", user_id=IDS["Users"][-1]
     ),
     Apiaries(
         id=IDS["Apiaries"][0],
@@ -137,11 +163,22 @@ DATASET = (
         status_id=IDS["Apiary_statuses"][1],
         honey_type_id=IDS["Honey_types"][2],
     ),
+    Apiaries(
+        id=IDS["Apiaries"][-1],
+        name="unknown",
+        location="unknown",
+        user_id=IDS["Users"][-1],
+        status_id=IDS["Apiary_statuses"][-1],
+        honey_type_id=IDS["Honey_types"][-1],
+    ),
     HiveConditions(
         id=IDS["Hive_conditions"][0], name=HIVES_CONDITION_NEW, user_id=IDS["Users"][0]
     ),
     HiveConditions(
         id=IDS["Hive_conditions"][1], name=HIVES_CONDITION_OLD, user_id=IDS["Users"][0]
+    ),
+    HiveConditions(
+        id=IDS["Hive_conditions"][-1], name="unknown", user_id=IDS["Users"][-1]
     ),
     Hives(
         id=IDS["Hives"][0],
@@ -170,6 +207,15 @@ DATASET = (
         swarm_id=IDS["Swarms"][2],
         apiary_id=IDS["Apiaries"][2],
     ),
+    Hives(
+        id=IDS["Hives"][-1],
+        name="unknown",
+        user_id=IDS["Users"][-1],
+        condition_id=IDS["Hive_conditions"][-1],
+        owner_id=IDS["Owners"][-1],
+        swarm_id=IDS["Swarms"][-1],
+        apiary_id=IDS["Apiaries"][-1],
+    ),
     EventTypes(
         id=IDS["Event_types"][0], name=EVENT_TYPE_BURN_BEES, user_id=IDS["Users"][0]
     ),
@@ -183,6 +229,11 @@ DATASET = (
         name=EVENT_TYPE_FIND_NEW_BEEHOUSE,
         user_id=IDS["Users"][0],
     ),
+    EventTypes(
+        id=IDS["Event_types"][-1],
+        name="unknown",
+        user_id=IDS["Users"][-1],
+    ),
     EventStatuses(
         id=IDS["Event_statuses"][0],
         name=EVENT_STATUS_PLANIFIED,
@@ -190,6 +241,9 @@ DATASET = (
     ),
     EventStatuses(
         id=IDS["Event_statuses"][1], name=EVENT_STATUS_DONE, user_id=IDS["Users"][0]
+    ),
+    EventStatuses(
+        id=IDS["Event_statuses"][-1], name="unknown", user_id=IDS["Users"][-1]
     ),
     Events(
         id=IDS["Events"][0],
@@ -211,8 +265,19 @@ DATASET = (
         status_id=IDS["Event_statuses"][0],
         hive_id=IDS["Hives"][0],
     ),
+    Events(
+        id=IDS["Events"][-1],
+        title="unknown",
+        description="unknown",
+        due_date=datetime.datetime.utcnow() + datetime.timedelta(days=1),
+        user_id=IDS["Users"][-1],
+        type_id=IDS["Event_types"][-1],
+        status_id=IDS["Event_statuses"][-1],
+        hive_id=IDS["Hives"][-1],
+    ),
     CommentTypes(id=IDS["Comment_types"][0], name=COMMENT_TYPE_USER),
     CommentTypes(id=IDS["Comment_types"][1], name=COMMENT_TYPE_SYSTEM),
+    CommentTypes(id=IDS["Comment_types"][-1], name="unknown"),
     Comments(
         id=uuid.uuid4(),
         comment="comment1",
@@ -251,5 +316,15 @@ DATASET = (
         swarm_id=IDS["Swarms"][0],
         hive_id=IDS["Hives"][0],
         apiary_id=IDS["Apiaries"][0],
+    ),
+    Comments(
+        id=uuid.uuid4(),
+        comment="unknown",
+        date=datetime.datetime.utcnow(),
+        user_id=IDS["Users"][-1],
+        type_id=IDS["Comment_types"][-1],
+        swarm_id=IDS["Swarms"][-1],
+        hive_id=IDS["Hives"][-1],
+        apiary_id=IDS["Apiaries"][-1],
     ),
 )
