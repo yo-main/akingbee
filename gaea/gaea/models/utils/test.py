@@ -39,10 +39,8 @@ EVENT_STATUS_PLANIFIED = "Planified"
 EVENT_STATUS_DONE = "Done"
 EVENT_TYPE_BURN_BEES = "Burn them all"
 EVENT_TYPE_WATER_BEEHOUSE = "Water it"
-EVENT_TYPE_FIND_NEW_BEEHOUSE = "Find new beehouse"
 HONEY_TYPE_CHESTNUT = "Chestnut"
 HONEY_TYPE_ALL_FLOWERS = "All flowers"
-HONEY_TYPE_SUNFLOWER = "Sunflower"
 
 IDS = {
     "Users": generate_uuid(2),
@@ -53,10 +51,10 @@ IDS = {
     "Apiaries": generate_uuid(4),
     "Swarm_health_statuses": generate_uuid(3),
     "Apiary_statuses": generate_uuid(3),
-    "Honey_types": generate_uuid(4),
+    "Honey_types": generate_uuid(3),
     "Hive_conditions": generate_uuid(3),
     "Comment_types": generate_uuid(3),
-    "Event_types": generate_uuid(4),
+    "Event_types": generate_uuid(3),
     "Event_statuses": generate_uuid(3),
     "Events": generate_uuid(3),
 }
@@ -132,9 +130,6 @@ DATASET = (
     ),
     HoneyTypes(
         id=IDS["Honey_types"][1], name=HONEY_TYPE_CHESTNUT, user_id=IDS["Users"][0]
-    ),
-    HoneyTypes(
-        id=IDS["Honey_types"][2], name=HONEY_TYPE_SUNFLOWER, user_id=IDS["Users"][0]
     ),
     HoneyTypes(
         id=IDS["Honey_types"][-1], name="unknown", user_id=IDS["Users"][-1]
@@ -222,11 +217,6 @@ DATASET = (
     EventTypes(
         id=IDS["Event_types"][1],
         name=EVENT_TYPE_WATER_BEEHOUSE,
-        user_id=IDS["Users"][0],
-    ),
-    EventTypes(
-        id=IDS["Event_types"][2],
-        name=EVENT_TYPE_FIND_NEW_BEEHOUSE,
         user_id=IDS["Users"][0],
     ),
     EventTypes(
