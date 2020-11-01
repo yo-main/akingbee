@@ -54,7 +54,7 @@ export class SetupPage extends React.Component {
         dataIndex: 'name',
         key: 'name',
         defaultSortOrder: 'ascend',
-        sorter: (a, b) => a.name >= b.name,
+        sorter: (a, b) => a.name.localeCompare(b.name),
       },
     ];
 

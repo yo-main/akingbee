@@ -1,18 +1,6 @@
 import { navigate } from '@reach/router';
 import { aristaeusApi, dealWithError, notificate } from '../../lib/common';
 
-const data1 = [
-  {
-    key: '1',
-    name: 'name1',
-  },
-  {
-    key: '2',
-    name: 'name2',
-  },
-];
-
-
 export function getData(type, callback) {
   aristaeusApi.get(`/setup/${type}`)
     .then((response) => {
