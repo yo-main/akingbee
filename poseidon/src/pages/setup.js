@@ -1,26 +1,51 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 
 import { FormButtonModal, FormLinkModal } from '../components';
 import { notificate } from '../lib/common';
-import { getData, postNewData } from '../services/aristaeus/setup';
+import { getSetupData, postSetupData, updateSetupData, deleteSetupData } from '../services/aristaeus/setup';
 
 
 function onFailed(err) {
   notificate("error", "Failed")
 }
 
-export function AddNewData(props) {
+export function AddNewDataForm(props) {
+  const [form] = Form.useForm();
+
+  form.setFieldsValue({
+    "dataType": props.dataType,
+  })
+
   return (
-    <Form id="addNewDataFormId" name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
-      <Form.Item label={window.i18n("form.newEntry")} name="newEntry"
-        rules={[{ required: true}]}
-      >
+    <Form id="addNewDataFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
+      <Form.Item label={window.i18n("form.newEntry")} name="newEntry">
         <Input />
       </Form.Item>
-      <Form.Item name="dataType" initialValue={props.dataType} hidden={true}/>
+      <Form.Item name="dataType" hidden={true}/>
+    </Form>
+  )
+}
+
+export function UpdateDataForm(props) {
+  const [form] = Form.useForm();
+
+  form.setFieldsValue({
+    "dataType": props.dataType,
+    "oldValue": props.currentValue,
+    "objectId": props.objectId,
+  })
+
+  return (
+    <Form id="updateDataFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
+      <Form.Item label={window.i18n("form.updateEntry")} name="updateEntry">
+        <Input defaultValue={props.currentValue} />
+      </Form.Item>
+      <Form.Item name="dataType" hidden={true} />
+      <Form.Item name="oldValue" hidden={true} />
+      <Form.Item name="objectId" hidden={true} />
     </Form>
   )
 }
@@ -34,7 +59,7 @@ export class SetupPage extends React.Component {
   }
 
   refreshData = () => {
-    getData(this.props.dataType, this.refreshState);
+    getSetupData(this.props.dataType, this.refreshState);
   }
 
   componentDidMount() {
@@ -43,7 +68,37 @@ export class SetupPage extends React.Component {
 
   postData = (form) => {
     const value = form.newEntry;
-    postNewData(this.props.dataType, value, this.refreshData);
+
+    if (!value) {
+      notificate('error', window.i18n('error.incorrectEntry'))
+      return;
+    }
+
+    postSetupData(this.props.dataType, value, this.refreshData);
+  }
+
+  updateData = (form) => {
+    const objectId = form.objectId;
+    const newValue = form.updateEntry;
+    const oldValue = form.oldValue;
+
+    console.log("onFinish", newValue, oldValue, form)
+
+    if (newValue === undefined || newValue === oldValue) {
+      notificate('error', window.i18n('error.sameEntry'))
+      return;
+    }
+
+    if (!newValue) {
+      notificate('error', window.i18n('error.incorrectEntry'))
+      return;
+    }
+
+    updateSetupData(this.props.dataType, newValue, objectId, this.refreshData);
+  }
+
+  deleteData = (objectId) => {
+    deleteSetupData(this.props.dataType, objectId, this.refreshData);
   }
 
   render() {
@@ -63,8 +118,12 @@ export class SetupPage extends React.Component {
       key: 'action',
       render: (text, record) => (
         <Space size='middle'>
-          <FormLinkModal linkContent={window.i18n('word.edit')}></FormLinkModal>
-          <FormLinkModal linkContent={window.i18n('word.delete')}></FormLinkModal>
+          <FormLinkModal title={window.i18n('title.updateEntry')} formId='updateDataFormId' linkContent={window.i18n('word.edit')}>
+            <UpdateDataForm objectId={record.id} currentValue={record.name} dataType={this.props.dataType} onFinish={this.updateData} />
+          </FormLinkModal>
+          <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteData")}>
+            <a href='#'>{window.i18n('word.delete')}</a>
+          </Popconfirm>
         </Space>
       )
     })
@@ -77,7 +136,7 @@ export class SetupPage extends React.Component {
           </Col>
           <Col style={{ paddingLeft: '20px'}}>
             <FormButtonModal title={window.i18n("title.addNewEntry")} formId='addNewDataFormId' buttonContent={<PlusOutlined />}>
-              <AddNewData dataType={this.props.dataType} onFinish={this.postData} />
+              <AddNewDataForm dataType={this.props.dataType} onFinish={this.postData} />
             </FormButtonModal>
           </Col>
         </Row>

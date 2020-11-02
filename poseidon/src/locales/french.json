@@ -31,7 +31,9 @@
     "form.insertEmailMessage": "Inserer votre email",
     "form.insertPasswordMessage": "Inserer votre mot de passe",
     "title.addNewEntry": "Ajouter une entrée",
+    "title.updateEntry": "Modifier une entrée",
     "form.newEntry": "Nouvelle entrée",
+    "form.updateEntry": "Modifier l'entrée",
     "title.swarm_health_status": "Santés essaim",
     "title.hive_beekeeper": "Apiculteurs",
     "title.hive_condition": "États de ruche",
@@ -49,7 +51,10 @@
     "success.loginSuccessful": "Bienvenue !",
     "error.passwordsNotIdentical": "Les mots de passes ne sont pas identiques",
     "error.unknwownError": "Une erreur inconnue est survenue",
+    "error.sameEntry": "La valeur n'a pas changé",
+    "error.incorrectEntry": "La valeur est incorrecte",
     "word.edit": "Modifier",
     "word.delete": "Supprimer",
-    "word.actions": "Actions"
+    "word.actions": "Actions",
+    "confirm.deleteData": "Supprimer cette donnée ?"
   }

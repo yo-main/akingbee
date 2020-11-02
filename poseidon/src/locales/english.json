@@ -31,7 +31,9 @@
     "form.insertEmailMessage": "Insert your email",
     "form.insertPasswordMessage": "Insert your password",
     "title.addNewEntry": "Add a new entry",
+    "title.updateEntry": "Update an entry",
     "form.newEntry": "New entry",
+    "form.updateEntry": "Update entry",
     "title.swarm_health_status": "Swarm healths",
     "title.hive_beekeeper": "Beekeepers",
     "title.hive_condition": "Hive conditions",
@@ -49,7 +51,10 @@
     "success.loginSuccessful": "Welcome !",
     "error.passwordsNotIdentical": "Passwords are not identical",
     "error.unknwownError": "An unexpected error happened",
+    "error.sameEntry": "The value didn't change",
+    "error.incorrectEntry": "The value is incorrect",
     "word.edit": "Edit",
     "word.delete": "Delete",
-    "word.actions": "Actions"
+    "word.actions": "Actions",
+    "confirm.deleteData": "Delete that entry ?"
   }
