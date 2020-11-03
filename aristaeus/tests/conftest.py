@@ -36,7 +36,7 @@ def test_app(test_db):  # pylint: disable=redefined-outer-name
 
 @pytest.fixture
 def auth_token(monkeypatch):
-    mocked_results = {"user_id": IDS["Users"][0]}
+    mocked_results = {"user_id": str(IDS["Users"][0])}
     monkeypatch.setattr(authentication, "validate_access_token", AsyncMock(return_value=mocked_results))
     return "token"
 

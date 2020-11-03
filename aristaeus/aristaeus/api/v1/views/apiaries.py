@@ -1,7 +1,9 @@
+import uuid
+
 from gaea.models import Apiaries
 from gaea.webapp.utils import get_session
 from fastapi import APIRouter, Depends, Cookie, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 from sqlalchemy.orm import Session
 
 
@@ -9,19 +11,30 @@ from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
 from aristaeus.helpers.models import create_apiary
 
-
 router = APIRouter()
 
-
 class ApiaryPostModel(BaseModel):
-    name: str
-    location: str
-    status: str
-    honey_type: str
+    name: constr(min_length=1)
+    location: constr(min_length=1)
+    status: uuid.UUID
+    honey_type: uuid.UUID
+
+
+@router.get("/apiary", status_code=200)
+async def get_apiaries(
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    Create an Apiary object and return it as json
+    """
+    user_id = await get_logged_in_user(access_token)
+    apiaries = session.query(Apiaries).filter(Apiaries.user_id == user_id, Apiaries.deleted_at.is_(None)).all()
+    return apiaries
 
 
 @router.post("/apiary", status_code=200)
-async def create_apiary_request(
+async def post_apiary(
     data: ApiaryPostModel,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
@@ -44,7 +57,7 @@ async def create_apiary_request(
         "name": data.name,
         "location": data.location,
         "status_id": data.status,
-        "honey_type_id": data.status,
+        "honey_type_id": data.honey,
         "user_id": user_id,
     }
 
