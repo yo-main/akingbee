@@ -38,10 +38,19 @@ class SetupDataType(str, Enum):
     event_type = "event_type"
     event_status = "event_status"
 
-class NewDataValue(BaseModel):
+class NewDataPostModel(BaseModel):
     value: str
 
-@router.get("/setup/{data_type}", status_code=200)
+class DataModel(BaseModel):
+    id: uuid.UUID
+    name: str
+    user_id: uuid.UUID
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    deleted_at: datetime.datetime
+
+
+@router.get("/setup/{data_type}", status_code=200, response_model=List[DataModel])
 async def get_setup_data(
     data_type: SetupDataType,
     access_token: str = Cookie(None),
@@ -57,9 +66,9 @@ async def get_setup_data(
 
     return objects
 
-@router.post("/setup/{data_type}", status_code=200)
+@router.post("/setup/{data_type}", status_code=200, response_model=DataModel)
 async def create_setup_data(
-    body: NewDataValue,
+    body: NewDataPostModel,
     data_type: SetupDataType,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
@@ -84,7 +93,7 @@ async def create_setup_data(
 
 @router.put("/setup/{data_type}/{obj_id}", status_code=204)
 async def update_setup_data(
-    body: NewDataValue,
+    body: NewDataPostModel,
     data_type: SetupDataType,
     obj_id: uuid.UUID,
     access_token: str = Cookie(None),
