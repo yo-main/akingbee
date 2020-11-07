@@ -19,13 +19,24 @@ const swarmMenuIcon = <Icon component={swarmIcon} />;
 const eventMenuIcon = <Icon component={eventIcon} />;
 
 
+const MANAGE_SECTIONS = {
+  "/manage": [],
+  "/manage/hive": [sections.submenu_hive, sections.submenu_hive_list],
+  "/manage/hive/create": [sections.submenu_hive, sections.submenu_hive_create],
+  "/manage/apiary": [sections.submenu_apiary, sections.submenu_apiary_list],
+  "/manage/apiary/create": [sections.submenu_apiary, sections.submenu_apiary_create],
+}
+
 export function ManageSideMenu(props) {
+  const url = window.location.pathname;
+  const defaultSections = MANAGE_SECTIONS[url];
+
   return (
     <Sider className="site-layout-background" width={200}>
       <Menu
         mode="inline"
-        defaultSelectedKeys={[sections.submenu_hive_list]}
-        defaultOpenKeys={[sections.submenu_hive]}
+        defaultOpenKeys={[defaultSections[0]]}
+        defaultSelectedKeys={[defaultSections[1]]}
         style={{ height: '100%' }}
       >
         <SubMenu key={sections.submenu_hive} icon={hiveMenuIcon} title={window.i18n("word.hives")}>
@@ -33,15 +44,15 @@ export function ManageSideMenu(props) {
           <Menu.Item key={sections.submenu_hive_create}>{window.i18n("action.createHive")}</Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_apiary} icon={apiaryMenuIcon} title={window.i18n("word.apiaries")}>
-          <Menu.Item key={sections.submenu_apiary_list}>{window.i18n("action.myApiaries")}</Menu.Item>
-          <Menu.Item key={sections.submenu_apiary_create}>{window.i18n("action.createApiary")}</Menu.Item>
+          <Menu.Item key={sections.submenu_apiary_list}><Link to='/manage/apiary'>{window.i18n("action.myApiaries")}</Link></Menu.Item>
+          <Menu.Item key={sections.submenu_apiary_create}><Link to='/manage/apiary/create'>{window.i18n("action.createApiary")}</Link></Menu.Item>
         </SubMenu>
       </Menu>
     </Sider>
   );
 }
 
-const SUBMENU_SECTIONS = {
+const SETUP_SECTIONS = {
   "/setup": [],
   "/setup/swarm/health": [sections.submenu_setup_swarm, sections.submenu_setup_swarm_health],
   "/setup/hive/beekeeper": [sections.submenu_setup_hive, sections.submenu_setup_hive_beekeeper],
@@ -54,7 +65,7 @@ const SUBMENU_SECTIONS = {
 
 export function SetupSideMenu(props) {
   const url = window.location.pathname;
-  const defaultSections = SUBMENU_SECTIONS[url];
+  const defaultSections = SETUP_SECTIONS[url];
 
   return (
     <Sider className="site-layout-background" width={200}>

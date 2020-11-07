@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import { navigate } from '@reach/router';
 import axios from 'axios';
 
 export function getCookie(name, cookies) {
@@ -49,7 +50,25 @@ export function dealWithError(error) {
   const response = error.response;
   if (!response) {
     notificate("error", error.message);
-  } else {
-    notificate("error", response.data.detail)
+    return;
   }
+
+  if (response.status === 401) {
+        navigate("/login");
+        return;
+  }
+
+  let msg;
+
+  if (response.status === 422) {
+    console.log(response)
+    msg = `${window.i18n('error.missingFields')}: `
+    msg += response.data.detail.map(e => {
+      return e.loc[1]
+    }).join(", ")
+  } else {
+    msg = response.data.detail;
+  }
+
+  notificate("error", msg)
 }

@@ -52,9 +52,9 @@ export function UpdateDataForm(props) {
 
 
 export class SetupPage extends React.Component {
-  state = { tableData: []}
+  state = {tableData: []}
 
-  refreshState = (data) => {
+  refreshState = ({data}) => {
     this.setState((state) => ({tableData: data}));
   }
 
@@ -111,22 +111,21 @@ export class SetupPage extends React.Component {
         defaultSortOrder: 'ascend',
         sorter: (a, b) => a.name.localeCompare(b.name),
       },
+      {
+        title: window.i18n('word.actions'),
+        key: 'action',
+        render: (text, record) => (
+          <Space size='middle'>
+            <FormLinkModal title={window.i18n('title.updateEntry')} formId='updateDataFormId' linkContent={window.i18n('word.edit')}>
+              <UpdateDataForm objectId={record.id} currentValue={record.name} dataType={this.props.dataType} onFinish={this.updateData} />
+            </FormLinkModal>
+            <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteData")}>
+              <a href='#'>{window.i18n('word.delete')}</a>
+            </Popconfirm>
+          </Space>
+        )
+      }
     ];
-
-    columns.push({
-      title: window.i18n('word.actions'),
-      key: 'action',
-      render: (text, record) => (
-        <Space size='middle'>
-          <FormLinkModal title={window.i18n('title.updateEntry')} formId='updateDataFormId' linkContent={window.i18n('word.edit')}>
-            <UpdateDataForm objectId={record.id} currentValue={record.name} dataType={this.props.dataType} onFinish={this.updateData} />
-          </FormLinkModal>
-          <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteData")}>
-            <a href='#'>{window.i18n('word.delete')}</a>
-          </Popconfirm>
-        </Space>
-      )
-    })
 
     return (
       <>

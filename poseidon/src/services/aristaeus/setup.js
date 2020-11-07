@@ -1,4 +1,3 @@
-import { navigate } from '@reach/router';
 import { aristaeusApi, dealWithError, notificate } from '../../lib/common';
 
 export async function getSetupData(type, callback) {
@@ -12,15 +11,11 @@ export async function getSetupData(type, callback) {
         });
         return acc;
       }, []);
-      callback(data);
+      callback({type, data});
     })
     .catch((error) => {
-      console.log(error)
-      const response = error.response;
-      if (!response) {
+      if (!error.response) {
         notificate("error", error.message);
-      } else if (error.response.status === 401) {
-        navigate("/login");
       } else {
         dealWithError(error);
       }
@@ -33,11 +28,8 @@ export async function postSetupData(type, value, callback) {
       callback();
     })
     .catch((error) => {
-      const response = error.response;
-      if (!response) {
+      if (!error.response) {
         notificate("error", error.message);
-      } else if (error.response.status === 401) {
-        navigate("/login");
       } else {
         dealWithError(error);
       }
@@ -50,11 +42,8 @@ export async function updateSetupData(type, value, objectId, callback) {
       callback();
     })
     .catch((error) => {
-      const response = error.response;
-      if (!response) {
+      if (!error.response) {
         notificate("error", error.message);
-      } else if (error.response.status === 401) {
-        navigate("/login");
       } else {
         dealWithError(error);
       }
@@ -67,11 +56,8 @@ export async function deleteSetupData(type, objectId, callback) {
       callback();
     })
     .catch((error) => {
-      const response = error.response;
-      if (!response) {
+      if (!error.response) {
         notificate("error", error.message);
-      } else if (error.response.status === 401) {
-        navigate("/login");
       } else {
         dealWithError(error);
       }
