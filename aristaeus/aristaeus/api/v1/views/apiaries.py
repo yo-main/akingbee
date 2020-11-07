@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import List, Optional
 import uuid
 
 from gaea.models import Apiaries
@@ -21,6 +21,9 @@ class ApiaryPostModel(BaseModel):
     status: uuid.UUID
     honey_type: uuid.UUID
 
+    class Config:
+        orm_mode = True
+
 class ApiaryModel(BaseModel):
     id: uuid.UUID
     name: str
@@ -30,7 +33,10 @@ class ApiaryModel(BaseModel):
     honey_type_id: uuid.UUID
     created_at: datetime.datetime
     updated_at: datetime.datetime
-    deleted_at: datetime.datetime
+    deleted_at: Optional[datetime.datetime]
+
+    class Config:
+        orm_mode = True
 
 
 @router.get("/apiary", status_code=200, response_model=List[ApiaryModel])
@@ -70,7 +76,7 @@ async def post_apiary(
         "name": data.name,
         "location": data.location,
         "status_id": data.status,
-        "honey_type_id": data.honey,
+        "honey_type_id": data.honey_type,
         "user_id": user_id,
     }
 

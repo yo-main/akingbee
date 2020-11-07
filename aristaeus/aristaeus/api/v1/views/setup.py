@@ -6,7 +6,7 @@ from gaea.webapp.utils import get_session
 from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List,Optional
 import uuid
 
 
@@ -41,14 +41,19 @@ class SetupDataType(str, Enum):
 class NewDataPostModel(BaseModel):
     value: str
 
+    class Config:
+        orm_mode = True
+
 class DataModel(BaseModel):
     id: uuid.UUID
     name: str
     user_id: uuid.UUID
     created_at: datetime.datetime
     updated_at: datetime.datetime
-    deleted_at: datetime.datetime
+    deleted_at: Optional[datetime.datetime]
 
+    class Config:
+        orm_mode = True
 
 @router.get("/setup/{data_type}", status_code=200, response_model=List[DataModel])
 async def get_setup_data(
