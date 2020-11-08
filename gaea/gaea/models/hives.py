@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, DDL, event
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
@@ -50,3 +50,35 @@ class Hives(Base):
     swarm = relationship(Swarms, backref=backref("hive", uselist=False))
     apiary = relationship(Apiaries, backref="hives")
     condition = relationship(HiveConditions, backref="hives")
+
+
+func = DDL("""
+    CREATE FUNCTION check_user_hives() RETURNS trigger AS $check_user_hives$
+        BEGIN
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM owners as t WHERE t.id = NEW.owner_id) THEN
+                RAISE EXCEPTION 'Different user for owners';
+            END IF;
+
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM swarms as t WHERE t.id = NEW.swarm_id) THEN
+                RAISE EXCEPTION 'Different user for swarms';
+            END IF;
+
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM apiaries as t WHERE t.id = NEW.apiary_id) THEN
+                RAISE EXCEPTION 'Different user for apiaries';
+            END IF;
+
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM hive_conditions as t WHERE t.id = NEW.condition_id) THEN
+                RAISE EXCEPTION 'Different user for hive_conditions';
+            END IF;
+
+            RETURN NEW;
+        END; $check_user_hives$ LANGUAGE PLPGSQL
+""")
+
+trigger = DDL("""
+    CREATE TRIGGER trigger_user_hives BEFORE INSERT OR UPDATE ON hives
+        FOR EACH ROW EXECUTE PROCEDURE check_user_hives();
+""")
+
+event.listen(Hives.metadata, "after_create", func.execute_if(dialect="postgresql"))
+event.listen(Hives.metadata, "after_create", trigger.execute_if(dialect="postgresql"))

@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, DDL, event
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
@@ -40,3 +40,22 @@ class Swarms(Base):
 
     user = relationship(Users, backref="swarms_healths")
     health = relationship(SwarmHealthStatuses)
+
+func = DDL("""
+    CREATE FUNCTION check_user_swarms() RETURNS trigger AS $check_user_swarms$
+        BEGIN
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM swarm_health_statuses as t WHERE t.id = NEW.health_status_id) THEN
+                RAISE EXCEPTION 'Different user for swarm_health_statuses';
+            END IF;
+
+            RETURN NEW;
+        END; $check_user_swarms$ LANGUAGE PLPGSQL
+""")
+
+trigger = DDL("""
+    CREATE TRIGGER trigger_user_swarms BEFORE INSERT OR UPDATE ON swarms
+        FOR EACH ROW EXECUTE PROCEDURE check_user_swarms();
+""")
+
+event.listen(Swarms.metadata, "after_create", func.execute_if(dialect="postgresql"))
+event.listen(Swarms.metadata, "after_create", trigger.execute_if(dialect="postgresql"))

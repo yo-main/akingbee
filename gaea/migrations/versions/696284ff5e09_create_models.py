@@ -217,6 +217,7 @@ def upgrade():
     )
     session.add_all(comment_types)
     session.commit()
+    session.close()
 
 
 

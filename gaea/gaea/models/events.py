@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, DDL, event
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
@@ -64,3 +64,35 @@ class Events(Base):
     status = relationship(EventStatuses)
     hive = relationship(Hives, backref="events")
     apiary = relationship(Apiaries, backref="events")
+
+
+func = DDL("""
+    CREATE FUNCTION check_user_events() RETURNS trigger AS $check_user_events$
+        BEGIN
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM event_types as t WHERE t.id = NEW.type_id) THEN
+                RAISE EXCEPTION 'Different user for event_types';
+            END IF;
+
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM event_statuses as t WHERE t.id = NEW.status_id) THEN
+                RAISE EXCEPTION 'Different user for event_statuses';
+            END IF;
+
+            IF NEW.apiary_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM apiaries as t WHERE t.id = NEW.apiary_id) THEN
+                RAISE EXCEPTION 'Different user for apiaries';
+            END IF;
+
+            IF NEW.hive_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hives as t WHERE t.id = NEW.hive_id) THEN
+                RAISE EXCEPTION 'Different user for hives';
+            END IF;
+
+            RETURN NEW;
+        END; $check_user_events$ LANGUAGE PLPGSQL
+""")
+
+trigger = DDL("""
+    CREATE TRIGGER trigger_user_events BEFORE INSERT OR UPDATE ON events
+        FOR EACH ROW EXECUTE PROCEDURE check_user_events();
+""")
+
+event.listen(Events.metadata, "after_create", func.execute_if(dialect="postgresql"))
+event.listen(Events.metadata, "after_create", trigger.execute_if(dialect="postgresql"))

@@ -1,7 +1,7 @@
 import datetime
 import uuid
 
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, DDL, event
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
@@ -61,3 +61,27 @@ class Apiaries(Base):
     user = relationship(Users, backref="apiaries")
     status = relationship(ApiaryStatuses)
     honey_type = relationship(HoneyTypes)
+
+
+func = DDL("""
+    CREATE FUNCTION check_user_apiaries() RETURNS trigger AS $check_user_apiaries$
+        BEGIN
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM apiary_statuses as t WHERE t.id = NEW.status_id) THEN
+                RAISE EXCEPTION 'Different user for apiary_statuses';
+            END IF;
+
+            IF NEW.user_id NOT IN (SELECT t.user_id FROM honey_types as t WHERE t.id = NEW.honey_type_id) THEN
+                RAISE EXCEPTION 'Different user for honey_type';
+            END IF;
+
+            RETURN NEW;
+        END; $check_user_apiaries$ LANGUAGE PLPGSQL
+""")
+
+trigger = DDL("""
+    CREATE TRIGGER trigger_user_apiaries BEFORE INSERT OR UPDATE ON apiaries
+        FOR EACH ROW EXECUTE PROCEDURE check_user_apiaries();
+""")
+
+event.listen(Apiaries.metadata, "after_create", func.execute_if(dialect="postgresql"))
+event.listen(Apiaries.metadata, "after_create", trigger.execute_if(dialect="postgresql"))
