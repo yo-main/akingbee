@@ -160,7 +160,7 @@ description = "FastAPI framework, high performance, easy to learn, fast to code,
 name = "fastapi"
 optional = false
 python-versions = ">=3.6"
-version = "0.61.1"
+version = "0.61.2"
 
 [package.dependencies]
 pydantic = ">=1.0.0,<2.0.0"
@@ -178,7 +178,7 @@ description = ""
 name = "gaea"
 optional = false
 python-versions = ">=3.8,<4.0"
-version = "0.1.17"
+version = "0.1.18"
 
 [package.dependencies]
 alembic = ">=1.4.2,<2.0.0"
@@ -622,7 +622,7 @@ idna = ">=2.0"
 multidict = ">=4.0"
 
 [metadata]
-content-hash = "36a15320b7473c455ef34f92cc96e2f7ec138d4c971994f07774fb5824d856bc"
+content-hash = "06581f51b0784792a1b7377c568d6a4b9b38e2e50d0696cf40de246da40be46a"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -689,12 +689,12 @@ dynaconf = [
     {file = "dynaconf-3.1.2.tar.gz", hash = "sha256:9b34ab2f811a81755f5eb4beac77a69e1e0887528c7e37fc4bc83fed52dcf502"},
 ]
 fastapi = [
-    {file = "fastapi-0.61.1-py3-none-any.whl", hash = "sha256:6cc31bb555dd8ca956d1d227477d661e4ac012337242a41d36214ffbda78bfe9"},
-    {file = "fastapi-0.61.1.tar.gz", hash = "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2"},
+    {file = "fastapi-0.61.2-py3-none-any.whl", hash = "sha256:8c8517680a221e69eb34073adf46c503092db2f24845b7bdc7f85b54f24ff0df"},
+    {file = "fastapi-0.61.2.tar.gz", hash = "sha256:9e0494fcbba98f85b8cc9b2606bb6b625246e1b12f79ca61f508b0b00843eca6"},
 ]
 gaea = [
-    {file = "gaea-0.1.17-py3-none-any.whl", hash = "sha256:aafec4e54320c811a296d2bf5addd4ea66f15c6f1d71297f2263d58a31435d0f"},
-    {file = "gaea-0.1.17.tar.gz", hash = "sha256:7cb7007738b1faf1b2a8e7b587ca87541290d0eaf9f56da64481144785a61616"},
+    {file = "gaea-0.1.18-py3-none-any.whl", hash = "sha256:c9fb1d8604a71a094d4e38a6281e50306122679daf77f63eceaf83fb7d66d7f1"},
+    {file = "gaea-0.1.18.tar.gz", hash = "sha256:c736ebe2d48f028d7c22ec29e036de0c6020126bf806466df7b111e796fa1595"},
 ]
 h11 = [
     {file = "h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1"},

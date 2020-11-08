@@ -20,6 +20,6 @@ def create_apiary(data, session):
         session.commit()
     except Exception as exc:
         logger.exception("Something went wrong when saving the object")
-        raise HTTPException(status_code=400, detail="Database error") from exc
+        raise HTTPException(status_code=400, detail="Couldn't save the object in database") from exc
 
     return apiary

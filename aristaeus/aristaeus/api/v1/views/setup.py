@@ -41,13 +41,9 @@ class SetupDataType(str, Enum):
 class NewDataPostModel(BaseModel):
     value: str
 
-    class Config:
-        orm_mode = True
-
 class DataModel(BaseModel):
     id: uuid.UUID
     name: str
-    user_id: uuid.UUID
     created_at: datetime.datetime
     updated_at: datetime.datetime
     deleted_at: Optional[datetime.datetime]
@@ -112,6 +108,8 @@ async def update_setup_data(
 
     obj = session.query(model).get(obj_id)
 
+    if obj is None:
+        raise HTTPException(status_code=404)
     if obj.user_id != user_id:
         raise HTTPException(status_code=403)
 
@@ -137,6 +135,8 @@ async def delete_setup_data(
 
     obj = session.query(model).get(obj_id)
 
+    if obj is None:
+        raise HTTPException(status_code=404)
     if obj.user_id != user_id:
         raise HTTPException(status_code=403)
 

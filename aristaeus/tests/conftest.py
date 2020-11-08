@@ -6,7 +6,7 @@ from gaea.database import db
 from gaea.database.utils.test import get_temporary_database
 from gaea.rbmq.base import RBMQConnectionManager
 from gaea.models.base import Base
-from gaea.models.utils.test import DATASET, IDS
+from gaea.models.utils.test import DATASETS, IDS
 from gaea.webapp import MiddleWare, AppClient
 
 from aristaeus.api.v1 import router_apiary, router_setup
@@ -20,8 +20,9 @@ def test_db():
         Base.metadata.create_all(bind=db_client.engine)
 
         with db_client as session:
-            session.bulk_save_objects(DATASET)
-            session.commit()
+            for dataset in DATASETS:
+                session.bulk_save_objects(dataset)
+                session.commit()
 
         yield db_client
         db_client.clear()
