@@ -6,7 +6,7 @@ import { loginRequest } from '../services/authentication';
 export function LoginPage(props) {
   return (
     <Row justify="center" style={{ paddingTop: "150px"}}>
-      <Form labelCol={{span: 8}} onFinish={loginRequest}>
+      <Form labelCol={{span: 8}} onFinish={loginRequest} requiredMark={false}>
         <Form.Item label={window.i18n('word.username')} name="username" rules={[{ required: true, message: window.i18n('form.insertUsernameMessage')}]}>
           <Input />
         </Form.Item>

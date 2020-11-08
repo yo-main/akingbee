@@ -55,7 +55,15 @@ export class SetupPage extends React.Component {
   state = {tableData: []}
 
   refreshState = ({data}) => {
-    this.setState((state) => ({tableData: data}));
+    const tableData = data.reduce((acc, val, index) => {
+      acc.push({
+        key: index+1,
+        id: val.id,
+        name: val.name,
+      });
+      return acc;
+    }, []);
+    this.setState((state) => ({tableData}));
   }
 
   refreshData = () => {

@@ -6,7 +6,7 @@ import { registrationRequest } from '../services/authentication';
 export function RegistrationPage(props) {
   return (
     <Row justify="center" style={{ paddingTop: "150px"}}>
-      <Form labelCol={{span: 12}} onFinish={registrationRequest}>
+      <Form labelCol={{span: 12}} onFinish={registrationRequest} requiredMark={false}>
         <Form.Item label={window.i18n('word.username')} name="username" rules={[{ required: true, message: window.i18n('form.insertUsernameMessage')}]}>
           <Input />
         </Form.Item>

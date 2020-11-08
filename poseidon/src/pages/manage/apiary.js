@@ -1,14 +1,14 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 
 import { FormButtonModal, FormLinkModal } from '../../components';
 import { notificate } from '../../lib/common'
 
 import { getSetupData } from '../../services/aristaeus/setup';
-import { createApiary } from '../../services/aristaeus/apiary';
-import { navigate } from '@reach/router';
+import { createApiary, getApiaries } from '../../services/aristaeus/apiary';
+import { navigate, redirectTo } from '@reach/router';
 
 
 function onFailed(err) {
@@ -57,6 +57,31 @@ export function UpdateDataForm(props) {
 export class ApiaryPage extends React.Component {
   state = {tableData: []}
 
+  refreshState = ({data}) => {
+    const tableData = data.reduce((acc, val, index) => {
+        acc.push({
+          key: index+1,
+          id: val.id,
+          name: val.name,
+          location: val.location,
+          status: val.status.name,
+          statusId: val.status.id,
+          honeyType: val.honey_type.name,
+          honeyTypeId: val.honey_type.id,
+        });
+        return acc;
+      }, []);
+    this.setState((state) => ({tableData}));
+  }
+
+  refreshData = () => {
+    getApiaries(this.refreshState);
+  }
+
+  componentDidMount() {
+    this.refreshData();
+  }
+
   render() {
 
     const columns = [
@@ -101,7 +126,7 @@ export class ApiaryPage extends React.Component {
     return (
       <>
         <Row>
-          <Col offset={2}>
+          <Col span={22} offset={1}>
             <Table dataSource={this.state.tableData} columns={columns} pagination={false} bordered />
           </Col>
           <Col style={{ paddingLeft: '20px'}}>
@@ -171,20 +196,26 @@ export class ApiaryCreationPage extends React.Component {
     return (
       <>
         <Row>
-          <Col push={3}>
-            <h1>{window.i18n('title.apiaryCreation')}</h1><br/>
+          <Col offset={1}>
+            <h1>{window.i18n('title.apiaryCreation')}</h1>
           </Col>
         </Row>
         <Row>
-          <Col push={1}>
-            <Form {...formItemLayout} onFinish={this.postData} onFinishFailed={onFailed} requiredMark={false}>
-              <Form.Item label={window.i18n("word.name")} name="name" rules={[{required: true}]}>
+          <Col offset={1} span={23}>
+            <Divider style={{paddingLeft: '20px'}} plain/>
+            <br/>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <Form {...formItemLayout} onFinish={this.postData} requiredMark={false}>
+              <Form.Item label={window.i18n("word.name")} name="name" rules={[{required: true, message: window.i18n('form.insertApiaryName')}]}>
                 <Input />
               </Form.Item>
-              <Form.Item label={window.i18n("word.location")} name="location" rules={[{required: true}]}>
+              <Form.Item label={window.i18n("word.location")} name="location" rules={[{required: true, message: window.i18n('form.insertApiaryLocation')}]}>
                 <Input />
               </Form.Item>
-              <Form.Item label={window.i18n("word.status")} name="status" rules={[{required: true}]}>
+              <Form.Item label={window.i18n("word.status")} name="status" rules={[{required: true, message: window.i18n('form.selectApiaryStatus')}]}>
                 <Select defaultValue={window.i18n('form.selectAValue')}>
                   {
                     this.state['apiary_status'].map(data => {
@@ -195,7 +226,7 @@ export class ApiaryCreationPage extends React.Component {
                   }
                 </Select>
               </Form.Item>
-              <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{required: true}]}>
+              <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{required: true, message: window.i18n('form.selectApiaryHoneyType')}]}>
                 <Select defaultValue={window.i18n('form.selectAValue')}>
                   {
                     this.state['apiary_honey_type'].map(data => {
@@ -208,7 +239,7 @@ export class ApiaryCreationPage extends React.Component {
               </Form.Item>
               <Form.Item {... tailFormItemLayout}>
                 <Button type="primary" htmlType="submit">
-                  Register
+                  {window.i18n('word.submit')}
                 </Button>
               </Form.Item>
             </Form>
