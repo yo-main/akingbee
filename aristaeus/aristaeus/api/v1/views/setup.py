@@ -13,6 +13,7 @@ import uuid
 from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
 from aristaeus.helpers.models import create_apiary
+from aristaeus.models import SetupDataType, SetupDataPostModel, SetupDataModel
 
 
 router = APIRouter()
@@ -26,32 +27,7 @@ MAPPING = {
     "event_type": EventTypes,
     "event_status": EventStatuses,
 }
-
-data_type_enum = Enum("data_type", {v:v for v in MAPPING})
-
-class SetupDataType(str, Enum):
-    swarm_health_status = "swarm_health_status"
-    apiary_status = "apiary_status"
-    apiary_honey_type = "apiary_honey_type"
-    hive_condition = "hive_condition"
-    hive_beekeeper = "hive_beekeeper"
-    event_type = "event_type"
-    event_status = "event_status"
-
-class NewDataPostModel(BaseModel):
-    value: str
-
-class DataModel(BaseModel):
-    id: uuid.UUID
-    name: str
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
-    deleted_at: Optional[datetime.datetime]
-
-    class Config:
-        orm_mode = True
-
-@router.get("/setup/{data_type}", status_code=200, response_model=List[DataModel])
+@router.get("/setup/{data_type}", status_code=200, response_model=List[SetupDataModel])
 async def get_setup_data(
     data_type: SetupDataType,
     access_token: str = Cookie(None),
@@ -67,9 +43,9 @@ async def get_setup_data(
 
     return objects
 
-@router.post("/setup/{data_type}", status_code=200, response_model=DataModel)
+@router.post("/setup/{data_type}", status_code=200, response_model=SetupDataModel)
 async def create_setup_data(
-    body: NewDataPostModel,
+    body: SetupDataPostModel,
     data_type: SetupDataType,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
@@ -94,7 +70,7 @@ async def create_setup_data(
 
 @router.put("/setup/{data_type}/{obj_id}", status_code=204)
 async def update_setup_data(
-    body: NewDataPostModel,
+    body: SetupDataPostModel,
     data_type: SetupDataType,
     obj_id: uuid.UUID,
     access_token: str = Cookie(None),

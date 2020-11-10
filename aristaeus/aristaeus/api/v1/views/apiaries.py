@@ -9,39 +9,12 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel, constr
 from sqlalchemy.orm import Session
 
-
 from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
 from aristaeus.helpers.models import create_apiary
-from .setup import DataModel
+from aristaeus.models import ApiaryPostModel, ApiaryPutModel, ApiaryModel
 
 router = APIRouter()
-
-class ApiaryPostModel(BaseModel):
-    name: constr(min_length=1)
-    location: constr(min_length=1)
-    status: uuid.UUID
-    honey_type: uuid.UUID
-
-class ApiaryPutModel(BaseModel):
-    name: Optional[constr(min_length=1)]
-    location: Optional[constr(min_length=1)]
-    status_id: Optional[uuid.UUID]
-    honey_type_id: Optional[uuid.UUID]
-
-class ApiaryModel(BaseModel):
-    id: uuid.UUID
-    name: str
-    location: str
-    status: DataModel
-    honey_type: DataModel
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
-    deleted_at: Optional[datetime.datetime]
-
-    class Config:
-        orm_mode = True
-
 
 @router.get("/apiary", status_code=200, response_model=List[ApiaryModel])
 async def get_apiaries(
