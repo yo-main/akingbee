@@ -26,8 +26,8 @@ class ApiaryPostModel(BaseModel):
 class ApiaryPutModel(BaseModel):
     name: Optional[constr(min_length=1)]
     location: Optional[constr(min_length=1)]
-    status: Optional[uuid.UUID]
-    honey_type: Optional[uuid.UUID]
+    status_id: Optional[uuid.UUID]
+    honey_type_id: Optional[uuid.UUID]
 
 class ApiaryModel(BaseModel):
     id: uuid.UUID
