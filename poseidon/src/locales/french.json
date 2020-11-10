@@ -48,6 +48,7 @@
     "title.apiary_honey_type": "Types de miel",
     "title.apiary_status": "Status de rucher",
     "title.apiaryCreation": "Création d'un rucher",
+    "title.apiaryUpdate": "Modification du rucher",
     "word.name": "Nom",
     "word.location": "Localisation",
     "word.cancel": "Annuler",
@@ -66,5 +67,6 @@
     "word.edit": "Modifier",
     "word.delete": "Supprimer",
     "word.actions": "Actions",
-    "confirm.deleteData": "Supprimer cette donnée ?"
+    "confirm.deleteData": "Supprimer cette donnée ?",
+    "confirm.deleteApiary": "Supprimer cette ruche ?"
   }

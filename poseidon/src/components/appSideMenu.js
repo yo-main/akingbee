@@ -1,4 +1,4 @@
-import React, { ReactComponent } from 'react';
+import React, { Component, useState } from 'react';
 import Icon from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import { Link } from '@reach/router';
@@ -36,12 +36,12 @@ export function ManageSideMenu(props) {
       <Menu
         mode="inline"
         defaultOpenKeys={[defaultSections[0]]}
-        defaultSelectedKeys={[defaultSections[1]]}
+        selectedKeys={[defaultSections[1]]}
         style={{ height: '100%' }}
       >
         <SubMenu key={sections.submenu_hive} icon={hiveMenuIcon} title={window.i18n("word.hives")}>
-          <Menu.Item key={sections.submenu_hive_list}>{window.i18n("action.myHives")}</Menu.Item>
-          <Menu.Item key={sections.submenu_hive_create}>{window.i18n("action.createHive")}</Menu.Item>
+          <Menu.Item key={sections.submenu_hive_list}><Link to='/manage/hive'>{window.i18n("action.myHives")}</Link></Menu.Item>
+          <Menu.Item key={sections.submenu_hive_create}><Link to='/manage/hive/create'>{window.i18n("action.createHive")}</Link></Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_apiary} icon={apiaryMenuIcon} title={window.i18n("word.apiaries")}>
           <Menu.Item key={sections.submenu_apiary_list}><Link to='/manage/apiary'>{window.i18n("action.myApiaries")}</Link></Menu.Item>
@@ -73,7 +73,7 @@ export function SetupSideMenu(props) {
         mode="inline"
         style={{ height: '100%' }}
         defaultOpenKeys={[defaultSections[0]]}
-        defaultSelectedKeys={[defaultSections[1]]}
+        selectedKeys={[defaultSections[1]]}
       >
         <SubMenu key={sections.submenu_setup_swarm} icon={swarmMenuIcon} title={window.i18n("action.setupSwarm")}>
           <Menu.Item key={sections.submenu_setup_swarm_health}><Link to='/setup/swarm/health'>{window.i18n("word.health")}</Link></Menu.Item>

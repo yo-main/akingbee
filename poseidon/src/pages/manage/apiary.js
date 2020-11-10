@@ -7,57 +7,76 @@ import { FormButtonModal, FormLinkModal } from '../../components';
 import { notificate } from '../../lib/common'
 
 import { getSetupData } from '../../services/aristaeus/setup';
-import { createApiary, getApiaries } from '../../services/aristaeus/apiary';
-import { navigate, redirectTo } from '@reach/router';
+import { createApiary, getApiaries, updateApiary, deleteApiary } from '../../services/aristaeus/apiary';
+import { navigate } from '@reach/router';
 
 
 function onFailed(err) {
   notificate("error", "Failed")
 }
 
-export function AddNewDataForm(props) {
+export function UpdateApiaryForm(props) {
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 6 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 18 },
+    },
+  };
+
   const [form] = Form.useForm();
 
   form.setFieldsValue({
-    "dataType": props.dataType,
+    "apiaryId": props.apiaryId,
+    "name": props.record.name,
+    "location": props.record.location,
+    "status": props.record.statusId,
+    "honey_type": props.record.honeyTypeId,
   })
 
   return (
-    <Form id="addNewDataFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
-      <Form.Item label={window.i18n("form.newEntry")} name="newEntry">
-        <Input />
+    <Form {... formItemLayout} id="updateApiaryFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
+      <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 2, message: window.i18n('form.insertApiaryName')}]}>
+        <Input defaultValue={props.record.name} />
       </Form.Item>
-      <Form.Item name="dataType" hidden={true}/>
-    </Form>
-  )
-}
-
-export function UpdateDataForm(props) {
-  const [form] = Form.useForm();
-
-  form.setFieldsValue({
-    "dataType": props.dataType,
-    "oldValue": props.currentValue,
-    "objectId": props.objectId,
-  })
-
-  return (
-    <Form id="updateDataFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
-      <Form.Item label={window.i18n("form.updateEntry")} name="updateEntry">
-        <Input defaultValue={props.currentValue} />
+      <Form.Item label={window.i18n("word.location")} name="location" rules={[{type: 'string', min: 2, message: window.i18n('form.insertApiaryLocation')}]}>
+        <Input defaultValue={props.record.location} />
       </Form.Item>
-      <Form.Item name="dataType" hidden={true} />
-      <Form.Item name="oldValue" hidden={true} />
-      <Form.Item name="objectId" hidden={true} />
+      <Form.Item label={window.i18n("word.status")} name="status" rules={[{message: window.i18n('form.insertApiaryStatus')}]}>
+        <Select defaultValue={props.record.statusId}>
+          {
+            props.apiary_statuses.map(data => {
+              return (
+                <Select.Option key={data.id}>{data.name}</Select.Option>
+              )
+            })
+          }
+        </Select>
+      </Form.Item>
+      <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{message: window.i18n('form.insertApiaryHoneyType')}]}>
+        <Select defaultValue={props.record.honeyTypeId}>
+          {
+            props.honey_types.map(data => {
+              return (
+                <Select.Option key={data.id}>{data.name}</Select.Option>
+              )
+            })
+          }
+        </Select>
+      </Form.Item>
+      <Form.Item name="apiaryId" hidden={true} />
     </Form>
   )
 }
 
 
 export class ApiaryPage extends React.Component {
-  state = {tableData: []}
+  state = {tableData: [], apiary_status: [], apiary_honey_type: []}
 
-  refreshState = ({data}) => {
+  refreshApiariesState = ({data}) => {
     const tableData = data.reduce((acc, val, index) => {
         acc.push({
           key: index+1,
@@ -71,15 +90,39 @@ export class ApiaryPage extends React.Component {
         });
         return acc;
       }, []);
-    this.setState((state) => ({tableData}));
+
+    this.setState((state) => {
+      state.tableData = tableData;
+      return state;
+    });
   }
 
-  refreshData = () => {
-    getApiaries(this.refreshState);
+  refreshSetupState = ({type, data}) => {
+    this.setState((state) => {
+      state[type] = data;
+      return state;
+    })
   }
 
   componentDidMount() {
-    this.refreshData();
+    getApiaries(this.refreshApiariesState);
+    getSetupData('apiary_status', this.refreshSetupState);
+    getSetupData('apiary_honey_type', this.refreshSetupState);
+  }
+
+  deleteData = (apiaryId) => {
+    deleteApiary(apiaryId, () => getApiaries(this.refreshApiariesState));
+  }
+
+  updateData = (form) => {
+    const apiaryId = form.apiaryId
+    const data = {
+      name: form.name,
+      location: form.location,
+      status_id: form.status,
+      honey_type_id: form.honey_type
+    }
+    updateApiary(apiaryId, data, () => getApiaries(this.refreshApiariesState));
   }
 
   render() {
@@ -112,10 +155,10 @@ export class ApiaryPage extends React.Component {
         key: 'action',
         render: (text, record) => (
           <Space size='middle'>
-            <FormLinkModal title={window.i18n('title.updateEntry')} formId='updateDataFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateDataForm objectId={record.id} currentValue={record.name} dataType={this.props.dataType} onFinish={this.updateData} />
+            <FormLinkModal title={window.i18n('title.apiaryUpdate')} formId='updateApiaryFormId' linkContent={window.i18n('word.edit')}>
+              <UpdateApiaryForm apiaryId={record.id} record={record} honey_types={this.state.apiary_honey_type} apiary_statuses={this.state.apiary_status} onFinish={this.updateData} />
             </FormLinkModal>
-            <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteData")}>
+            <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteApiary")}>
               <a href='#'>{window.i18n('word.delete')}</a>
             </Popconfirm>
           </Space>
@@ -126,21 +169,14 @@ export class ApiaryPage extends React.Component {
     return (
       <>
         <Row>
-          <Col span={22} offset={1}>
+          <Col span={23} offset={1}>
             <Table dataSource={this.state.tableData} columns={columns} pagination={false} bordered />
-          </Col>
-          <Col style={{ paddingLeft: '20px'}}>
-            <FormButtonModal title={window.i18n("title.addNewEntry")} formId='addNewDataFormId' buttonContent={<PlusOutlined />}>
-              <AddNewDataForm dataType={this.props.dataType} onFinish={this.postData} />
-            </FormButtonModal>
           </Col>
         </Row>
       </>
     )
   }
 }
-
-
 
 
 
@@ -155,7 +191,6 @@ export class ApiaryCreationPage extends React.Component {
       state[type] = data;
       return state;
     })
-    console.log(this.state);
   }
 
   componentDidMount() {

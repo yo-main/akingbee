@@ -48,6 +48,7 @@
     "title.apiary_honey_type": "Honey types",
     "title.apiary_status": "Apiary statuses",
     "title.apiaryCreation": "Creation of an apiary",
+    "title.apiaryUpdate": "Update apiary",
     "word.name": "Name",
     "word.location": "Location",
     "word.cancel": "Cancel",
@@ -66,5 +67,6 @@
     "word.edit": "Edit",
     "word.delete": "Delete",
     "word.actions": "Actions",
-    "confirm.deleteData": "Delete that entry ?"
+    "confirm.deleteData": "Delete that entry ?",
+    "confirm.deleteApiary": "Delete that apiary ?"
   }
