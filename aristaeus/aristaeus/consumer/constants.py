@@ -16,11 +16,6 @@ DEFAULT_HIVE_CONDITIONS = (
     {FRENCH: "Inutilisable", ENGLISH: "Broken"},
 )
 
-DEFAULT_APIARY_STATUSES = (
-    {FRENCH: "Actif", ENGLISH: "Active"},
-    {FRENCH: "Inactif", ENGLISH: "Inactive"},
-)
-
 DEFAULT_HONEY_TYPES = (
     {FRENCH: "Toutes fleurs", ENGLISH: "All flowers"},
     {FRENCH: "Acacia", ENGLISH: "Acacia"},

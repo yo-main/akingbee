@@ -3,7 +3,6 @@ import json
 from gaea.database import db
 from gaea.log import logger
 from gaea.models import (
-    ApiaryStatuses,
     HoneyTypes,
     HiveConditions,
     SwarmHealthStatuses,
@@ -13,7 +12,6 @@ from gaea.models import (
 
 from .constants import (
     LANGUAGES,
-    DEFAULT_APIARY_STATUSES,
     DEFAULT_HIVE_CONDITIONS,
     DEFAULT_HONEY_TYPES,
     DEFAULT_SWARM_HEALTH_STATUSES,
@@ -47,10 +45,6 @@ def initialize_user(properties, body):
         return False
 
     objects = [
-        ApiaryStatuses(name=item[language], user_id=user_id)
-        for item in DEFAULT_APIARY_STATUSES
-    ]
-    objects.extend(
         HiveConditions(name=item[language], user_id=user_id)
         for item in DEFAULT_HIVE_CONDITIONS
     )

@@ -7,7 +7,6 @@ import uuid
 
 class SetupDataType(str, Enum):
     swarm_health_status = "swarm_health_status"
-    apiary_status = "apiary_status"
     apiary_honey_type = "apiary_honey_type"
     hive_condition = "hive_condition"
     hive_beekeeper = "hive_beekeeper"

@@ -14,16 +14,14 @@ def test_get_apiary(test_db, auth_token, test_app):
     assert len(response.json()) == 3
 
 
-@pytest.mark.parametrize("name, location, status_id, honey_id, expected", (
-    ("name", "location", uuid.uuid4(), uuid.uuid4(), 400),
-    ("name", "location", IDS["Apiary_statuses"][0], uuid.uuid4(), 400),
-    ("name", "location", uuid.uuid4(), IDS["Honey_types"][0], 400),
-    ("name", "location", IDS["Apiary_statuses"][-1], IDS["Honey_types"][0], 400),
-    ("name", "location", IDS["Apiary_statuses"][0], IDS["Honey_types"][-1], 400),
-    ("", "location", IDS["Apiary_statuses"][0], IDS["Honey_types"][0], 422),
-    ("name", "", IDS["Apiary_statuses"][0], IDS["Honey_types"][0], 422),
+@pytest.mark.parametrize("name, location, honey_id, expected", (
+    ("name", "location", uuid.uuid4(), 400),
+    ("name", "location", IDS["Honey_types"][0], 400),
+    ("name", "location", IDS["Honey_types"][-1], 400),
+    ("", "location", IDS["Honey_types"][0], 422),
+    ("name", "", IDS["Honey_types"][0], 422),
 ))
-def test_post_apiary_fail(test_db, auth_token, test_app, name, location, status_id, honey_id, expected):
+def test_post_apiary_fail(test_db, auth_token, test_app, name, location, honey_id, expected):
     data = {
         "name": name,
         "location": location,
@@ -42,7 +40,6 @@ def test_post_apiary_and_delete(test_db, auth_token, test_app):
     data = {
         "name": "apiary",
         "location": "ici",
-        "status": str(IDS["Apiary_statuses"][0]),
         "honey_type": str(IDS["Honey_types"][0]),
     }
 

@@ -1,7 +1,7 @@
 import datetime
 from enum import Enum
 from gaea.log import logger
-from gaea.models import SwarmHealthStatuses, ApiaryStatuses, HiveConditions, HoneyTypes, EventStatuses, Owners, EventTypes
+from gaea.models import SwarmHealthStatuses, HiveConditions, HoneyTypes, EventStatuses, Owners, EventTypes
 from gaea.webapp.utils import get_session
 from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel
@@ -19,7 +19,6 @@ router = APIRouter()
 
 MAPPING = {
     "swarm_health_status": SwarmHealthStatuses,
-    "apiary_status": ApiaryStatuses,
     "apiary_honey_type": HoneyTypes,
     "hive_condition": HiveConditions,
     "hive_beekeeper": Owners,
