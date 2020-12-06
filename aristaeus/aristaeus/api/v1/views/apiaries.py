@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
-from aristaeus.helpers.models import create_apiary
 from aristaeus.models import ApiaryPostModel, ApiaryPutModel, ApiaryModel
 
 router = APIRouter()
@@ -49,15 +48,21 @@ async def post_apiary(
             status_code=400, detail=f"Invalid uuid for honey_type: '{data.honey_type}'"
         )
 
-    data = {
-        "name": data.name,
-        "location": data.location,
-        "status_id": data.status,
-        "honey_type_id": data.honey_type,
-        "user_id": user_id,
-    }
+    apiary = Apiaries(
+        name=data.name,
+        location=data.location,
+        status_id=data.status,
+        honey_type_id=data.honey_type,
+        user_id=user_id,
+    )
 
-    apiary = create_apiary(data=data, session=session)
+    session.add(apiary)
+
+    try:
+        session.commit()
+    except Exception as exc:
+        logger.exception("Database error", apiary=apiary)
+        raise HTTPException(status_code=400, detail="Couldn't save the apiary in database") from exc
 
     return apiary
 
@@ -84,7 +89,7 @@ async def delete_apiary(
         apiary.deleted_at = datetime.datetime.utcnow()
         session.commit()
     except Exception as exc:
-        logger.exception("Something went wrong when saving the object")
+        logger.exception("Something went wrong when deleting the apiary", apiary=apiary)
         raise HTTPException(status_code=400, detail="Database error") from exc
 
 
@@ -118,5 +123,5 @@ async def update_setup_data(
     try:
         session.commit()
     except Exception as exc:
-        logger.exception("Something went wrong when saving the object")
+        logger.exception("Something went wrong when updating the apiary", apiary=apiary)
         raise HTTPException(status_code=400, detail="Database error") from exc

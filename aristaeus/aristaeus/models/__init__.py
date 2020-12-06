@@ -78,6 +78,13 @@ class HivePostModel(BaseModel):
     swarm_id: uuid.UUID
     apiary_id: uuid.UUID
 
+class HivePutModel(BaseModel):
+    name: Optional[constr(min_length=1)]
+    condition_id: Optional[uuid.UUID]
+    owner_id: Optional[uuid.UUID]
+    swarm_id: Optional[uuid.UUID]
+    apiary_id: Optional[uuid.UUID]
+
 class HiveModel(BaseModel):
     id: uuid.UUID
     name: constr(min_length=1)
