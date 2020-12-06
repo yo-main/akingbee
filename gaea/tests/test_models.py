@@ -1,6 +1,6 @@
 import pytest
 
-from gaea.models import Hives, Apiaries, Swarms, ApiaryStatuses
+from gaea.models import Hives, Apiaries, Swarms
 from gaea.models.base import Base
 from gaea.models.utils.test import DATASET, IDS
 
@@ -33,7 +33,3 @@ def test_models(test_db):
 
         with pytest.raises(IndexError):
             assert apiary.hives[1]
-
-        apiary_status = session.query(ApiaryStatuses).get(IDS["Apiary_statuses"][0])
-        with pytest.raises(AttributeError):
-            assert apiary_status.apiary

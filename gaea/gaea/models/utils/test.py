@@ -10,7 +10,6 @@ from gaea.models import (
     Hives,
     HiveConditions,
     Apiaries,
-    ApiaryStatuses,
     HoneyTypes,
     Comments,
     CommentTypes,
@@ -31,8 +30,6 @@ SWARM_HEALTH_STATUS_GOOD = "Good"
 SWARM_HEALTH_STATUS_BAD = "Bad"
 HIVES_CONDITION_NEW = "New"
 HIVES_CONDITION_OLD = "Old"
-APIARY_STATUS_ACTIVE = "Active"
-APIARY_STATUS_INACTIVE = "Active"
 COMMENT_TYPE_USER = "User"
 COMMENT_TYPE_SYSTEM = "System"
 EVENT_STATUS_PLANIFIED = "Planified"
@@ -50,7 +47,6 @@ IDS = {
     "Hives": generate_uuid(4),
     "Apiaries": generate_uuid(4),
     "Swarm_health_statuses": generate_uuid(3),
-    "Apiary_statuses": generate_uuid(3),
     "Honey_types": generate_uuid(3),
     "Hive_conditions": generate_uuid(3),
     "Comment_types": generate_uuid(3),
@@ -92,19 +88,6 @@ DATASETS = (
         ),
         SwarmHealthStatuses(
             id=IDS["Swarm_health_statuses"][-1],
-            name="unknown",
-            user_id=IDS["Users"][-1],
-        ),
-        ApiaryStatuses(
-            id=IDS["Apiary_statuses"][0], name=APIARY_STATUS_ACTIVE, user_id=IDS["Users"][0]
-        ),
-        ApiaryStatuses(
-            id=IDS["Apiary_statuses"][1],
-            name=APIARY_STATUS_INACTIVE,
-            user_id=IDS["Users"][0],
-        ),
-        ApiaryStatuses(
-            id=IDS["Apiary_statuses"][-1],
             name="unknown",
             user_id=IDS["Users"][-1],
         ),
@@ -180,7 +163,6 @@ DATASETS = (
             name="apiary1",
             location="location1",
             user_id=IDS["Users"][0],
-            status_id=IDS["Apiary_statuses"][0],
             honey_type_id=IDS["Honey_types"][0],
         ),
         Apiaries(
@@ -188,7 +170,6 @@ DATASETS = (
             name="apiary2",
             location="location2",
             user_id=IDS["Users"][0],
-            status_id=IDS["Apiary_statuses"][0],
             honey_type_id=IDS["Honey_types"][1],
         ),
         Apiaries(
@@ -196,7 +177,6 @@ DATASETS = (
             name="apiary3",
             location="location3",
             user_id=IDS["Users"][0],
-            status_id=IDS["Apiary_statuses"][1],
             honey_type_id=IDS["Honey_types"][1],
         ),
         Apiaries(
@@ -204,7 +184,6 @@ DATASETS = (
             name="unknown",
             location="unknown",
             user_id=IDS["Users"][-1],
-            status_id=IDS["Apiary_statuses"][-1],
             honey_type_id=IDS["Honey_types"][-1],
         ),
         Hives(
