@@ -38,10 +38,10 @@ export function UpdateApiaryForm(props) {
 
   return (
     <Form {... formItemLayout} id="updateApiaryFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
-      <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 2, message: window.i18n('form.insertApiaryName')}]}>
+      <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 1, message: window.i18n('form.insertApiaryName')}]}>
         <Input defaultValue={props.record.name} />
       </Form.Item>
-      <Form.Item label={window.i18n("word.location")} name="location" rules={[{type: 'string', min: 2, message: window.i18n('form.insertApiaryLocation')}]}>
+      <Form.Item label={window.i18n("word.location")} name="location" rules={[{type: 'string', min: 1, message: window.i18n('form.insertApiaryLocation')}]}>
         <Input defaultValue={props.record.location} />
       </Form.Item>
       <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{message: window.i18n('form.insertApiaryHoneyType')}]}>

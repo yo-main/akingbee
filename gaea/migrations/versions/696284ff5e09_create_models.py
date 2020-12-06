@@ -113,7 +113,6 @@ def upgrade():
     sa.Column('name', sa.TEXT(), nullable=False),
     sa.Column('location', sa.TEXT(), nullable=False),
     sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('status_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('honey_type_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('created_at', postgresql.TIMESTAMP(), nullable=True),
     sa.Column('updated_at', postgresql.TIMESTAMP(), nullable=True),
