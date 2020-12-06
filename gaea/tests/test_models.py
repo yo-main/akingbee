@@ -2,7 +2,7 @@ import pytest
 
 from gaea.models import Hives, Apiaries, Swarms
 from gaea.models.base import Base
-from gaea.models.utils.test import DATASET, IDS
+from gaea.models.utils.test import DATASETS, IDS
 
 from tests.fixtures import test_db
 
@@ -12,8 +12,9 @@ def test_models(test_db):
     meta.create_all(test_db.engine)
 
     with test_db as session:
-        session.bulk_save_objects(DATASET)
-        session.commit()
+        for dataset in DATASETS:
+            session.bulk_save_objects(dataset)
+            session.commit()
 
     with test_db as session:
         hives = session.query(Hives).all()
