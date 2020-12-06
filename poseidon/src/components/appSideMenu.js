@@ -57,7 +57,6 @@ const SETUP_SECTIONS = {
   "/setup/swarm/health": [sections.submenu_setup_swarm, sections.submenu_setup_swarm_health],
   "/setup/hive/beekeeper": [sections.submenu_setup_hive, sections.submenu_setup_hive_beekeeper],
   "/setup/hive/condition": [sections.submenu_setup_hive, sections.submenu_setup_hive_condition],
-  "/setup/apiary/status": [sections.submenu_setup_apiary, sections.submenu_setup_apiary_status],
   "/setup/apiary/honey_type": [sections.submenu_setup_apiary, sections.submenu_setup_apiary_honey_type],
   "/setup/event/type": [sections.submenu_setup_event, sections.submenu_setup_event_type],
   "/setup/event/status": [sections.submenu_setup_event, sections.submenu_setup_event_status],
@@ -83,7 +82,6 @@ export function SetupSideMenu(props) {
           <Menu.Item key={sections.submenu_setup_hive_condition}><Link to='/setup/hive/condition'>{window.i18n("word.conditions")}</Link></Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_setup_apiary} icon={apiaryMenuIcon} title={window.i18n("action.setupApiary")}>
-          <Menu.Item key={sections.submenu_setup_apiary_status}><Link to='/setup/apiary/status'>{window.i18n("word.status")}</Link></Menu.Item>
           <Menu.Item key={sections.submenu_setup_apiary_honey_type}><Link to='/setup/apiary/honey_type'>{window.i18n("word.honeyTypes")}</Link></Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_setup_event} icon={eventMenuIcon} title={window.i18n("action.setupEvent")}>

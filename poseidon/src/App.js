@@ -26,7 +26,6 @@ class App extends React.Component {
           <SetupPage path="/swarm/health" dataType={setupData.swarm_health_status}/>
           <SetupPage path="/hive/beekeeper" dataType={setupData.hive_beekeeper}/>
           <SetupPage path="/hive/condition" dataType={setupData.hive_condition}/>
-          <SetupPage path="/apiary/status" dataType={setupData.apiary_status}/>
           <SetupPage path="/apiary/honey_type" dataType={setupData.apiary_honey_type}/>
           <SetupPage path="/event/type" dataType={setupData.event_type}/>
           <SetupPage path="/event/status" dataType={setupData.event_status}/>

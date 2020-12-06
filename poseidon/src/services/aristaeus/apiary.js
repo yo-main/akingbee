@@ -15,8 +15,8 @@ export async function getApiaries(callback) {
     });
 }
 
-export async function createApiary({name, location, status, honey_type}, callback) {
-  await aristaeusApi.post(`/apiary`, {name, location, status, honey_type})
+export async function createApiary({name, location, honey_type}, callback) {
+  await aristaeusApi.post(`/apiary`, {name, location, honey_type})
     .then((response) => {
       callback();
     })
@@ -30,8 +30,8 @@ export async function createApiary({name, location, status, honey_type}, callbac
 }
 
 
-export async function updateApiary(apiary_id, {name, location, status_id, honey_type_id}, callback) {
-  await aristaeusApi.put(`/apiary/${apiary_id}`, {name, location, status_id, honey_type_id})
+export async function updateApiary(apiary_id, {name, location, honey_type_id}, callback) {
+  await aristaeusApi.put(`/apiary/${apiary_id}`, {name, location, honey_type_id})
     .then((response) => {
       callback();
     })
