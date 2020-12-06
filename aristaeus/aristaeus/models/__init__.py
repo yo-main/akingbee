@@ -31,20 +31,17 @@ class SetupDataModel(BaseModel):
 class ApiaryPostModel(BaseModel):
     name: constr(min_length=1)
     location: constr(min_length=1)
-    status: uuid.UUID
     honey_type: uuid.UUID
 
 class ApiaryPutModel(BaseModel):
     name: Optional[constr(min_length=1)]
     location: Optional[constr(min_length=1)]
-    status_id: Optional[uuid.UUID]
     honey_type_id: Optional[uuid.UUID]
 
 class ApiaryModel(BaseModel):
     id: uuid.UUID
     name: str
     location: str
-    status: SetupDataModel
     honey_type: SetupDataModel
     created_at: datetime.datetime
     updated_at: datetime.datetime

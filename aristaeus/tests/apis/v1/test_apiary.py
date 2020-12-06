@@ -16,7 +16,6 @@ def test_get_apiary(test_db, auth_token, test_app):
 
 @pytest.mark.parametrize("name, location, honey_id, expected", (
     ("name", "location", uuid.uuid4(), 400),
-    ("name", "location", IDS["Honey_types"][0], 400),
     ("name", "location", IDS["Honey_types"][-1], 400),
     ("", "location", IDS["Honey_types"][0], 422),
     ("name", "", IDS["Honey_types"][0], 422),
@@ -25,7 +24,6 @@ def test_post_apiary_fail(test_db, auth_token, test_app, name, location, honey_i
     data = {
         "name": name,
         "location": location,
-        "status": str(status_id),
         "honey_type": str(honey_id),
     }
 

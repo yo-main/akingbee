@@ -47,7 +47,7 @@ def initialize_user(properties, body):
     objects = [
         HiveConditions(name=item[language], user_id=user_id)
         for item in DEFAULT_HIVE_CONDITIONS
-    )
+    ]
     objects.extend(
         HoneyTypes(name=item[language], user_id=user_id) for item in DEFAULT_HONEY_TYPES
     )

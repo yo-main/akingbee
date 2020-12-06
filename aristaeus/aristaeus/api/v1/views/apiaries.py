@@ -39,10 +39,6 @@ async def post_apiary(
     """
     user_id = await get_logged_in_user(access_token)
 
-    if not validate_uuid(data.status):
-        raise HTTPException(
-            status_code=400, detail=f"Invalid uuid for status: '{data.status}'"
-        )
     if not validate_uuid(data.honey_type):
         raise HTTPException(
             status_code=400, detail=f"Invalid uuid for honey_type: '{data.honey_type}'"
@@ -51,7 +47,6 @@ async def post_apiary(
     apiary = Apiaries(
         name=data.name,
         location=data.location,
-        status_id=data.status,
         honey_type_id=data.honey_type,
         user_id=user_id,
     )
