@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from sqlalchemy import Column, ForeignKey, DDL, event
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, column_property
 from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
 
 from .base import Base
@@ -42,6 +42,14 @@ class Apiaries(Base):
 
     user = relationship(Users, backref="apiaries")
     honey_type = relationship(HoneyTypes)
+
+    _nb_hives = None
+
+    @property
+    def nb_hives(self):
+        if self._nb_hives is None:
+            self._nb_hives = len(self.hives) # pylint: disable=no-member
+        return self._nb_hives
 
 
 func = DDL("""

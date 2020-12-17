@@ -31,6 +31,7 @@ def test_models(test_db):
 
         apiary = session.query(Apiaries).get(IDS["Apiaries"][0])
         assert apiary.hives[0].id == hive.id
+        assert apiary.nb_hives == 1
 
         with pytest.raises(IndexError):
             assert apiary.hives[1]
