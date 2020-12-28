@@ -1,10 +1,10 @@
 import { aristaeusApi, dealWithError, notificate } from '../../lib/common';
 
-export async function getApiaries(callback) {
+export async function getApiaries(callback, type) {
   await aristaeusApi.get(`/apiary`)
     .then((response) => {
       const data = response.data;
-      callback({data});
+      callback({data, type});
     })
     .catch((error) => {
       if (!error.response) {

@@ -1,10 +1,11 @@
 import { aristaeusApi, dealWithError, notificate } from '../../lib/common';
 
-export async function getSetupData(type, callback) {
+export async function getSetupData(callback, type) {
   await aristaeusApi.get(`/setup/${type}`)
     .then((response) => {
       const data = response.data;
-      callback({type, data});
+      console.log(data);
+      callback({data, type});
     })
     .catch((error) => {
       if (!error.response) {

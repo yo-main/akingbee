@@ -67,7 +67,7 @@ export class SetupPage extends React.Component {
   }
 
   refreshData = () => {
-    getSetupData(this.props.dataType, this.refreshState);
+    getSetupData(this.refreshState, this.props.dataType);
   }
 
   componentDidMount() {

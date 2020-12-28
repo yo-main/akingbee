@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import { Router } from '@reach/router';
 import './services/localization';
 
-import { PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage } from './pages';
+import { PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage } from './pages';
 import { setupData } from './constants';
 
 class App extends React.Component {
@@ -21,6 +21,8 @@ class App extends React.Component {
         <PrivateFrame path="/manage" languageCallback={this.changeLanguage}>
           <ApiaryPage path="/apiary" />
           <ApiaryCreationPage path="/apiary/create" />
+          <HivePage path="/hive" />
+          <HiveCreationPage path="/hive/create" />
         </PrivateFrame>
         <PrivateFrame path="/setup" languageCallback={this.changeLanguage}>
           <SetupPage path="/swarm/health" dataType={setupData.swarm_health_status}/>

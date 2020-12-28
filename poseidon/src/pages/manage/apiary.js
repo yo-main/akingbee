@@ -4,7 +4,8 @@ import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divide
 import { PlusOutlined } from '@ant-design/icons'
 
 import { FormButtonModal, FormLinkModal } from '../../components';
-import { notificate } from '../../lib/common'
+import { notificate } from '../../lib/common';
+import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { createApiary, getApiaries, updateApiary, deleteApiary } from '../../services/aristaeus/apiary';
@@ -16,17 +17,6 @@ function onFailed(err) {
 }
 
 export function UpdateApiaryForm(props) {
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 6 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 18 },
-    },
-  };
-
   const [form] = Form.useForm();
 
   form.setFieldsValue({
@@ -64,7 +54,7 @@ export function UpdateApiaryForm(props) {
 export class ApiaryPage extends React.Component {
   state = {tableData: [], apiary_honey_type: []}
 
-  refreshApiariesState = ({data}) => {
+  refreshTableContent = ({data}) => {
     const tableData = data.reduce((acc, val, index) => {
         acc.push({
           key: index+1,
@@ -73,6 +63,7 @@ export class ApiaryPage extends React.Component {
           location: val.location,
           honeyType: val.honey_type.name,
           honeyTypeId: val.honey_type.id,
+          nb_hives: val.nb_hives,
         });
         return acc;
       }, []);
@@ -83,7 +74,7 @@ export class ApiaryPage extends React.Component {
     });
   }
 
-  refreshSetupState = ({type, data}) => {
+  refreshState = ({data, type}) => {
     this.setState((state) => {
       state[type] = data;
       return state;
@@ -91,12 +82,12 @@ export class ApiaryPage extends React.Component {
   }
 
   componentDidMount() {
-    getApiaries(this.refreshApiariesState);
-    getSetupData('apiary_honey_type', this.refreshSetupState);
+    getApiaries(this.refreshTableContent);
+    getSetupData(this.refreshState, 'apiary_honey_type');
   }
 
   deleteData = (apiaryId) => {
-    deleteApiary(apiaryId, () => getApiaries(this.refreshApiariesState));
+    deleteApiary(apiaryId, () => getApiaries(this.refreshTableContent));
   }
 
   updateData = (form) => {
@@ -106,7 +97,7 @@ export class ApiaryPage extends React.Component {
       location: form.location,
       honey_type_id: form.honey_type
     }
-    updateApiary(apiaryId, data, () => getApiaries(this.refreshApiariesState));
+    updateApiary(apiaryId, data, () => getApiaries(this.refreshTableContent));
   }
 
   render() {
@@ -123,6 +114,11 @@ export class ApiaryPage extends React.Component {
         title: window.i18n('word.location'),
         dataIndex: 'location',
         key: 'location',
+      },
+      {
+        title: window.i18n('word.hives'),
+        dataIndex: 'nb_hives',
+        key: 'nb_hives',
       },
       {
         title: window.i18n('word.honeyType'),
@@ -172,7 +168,7 @@ export class ApiaryCreationPage extends React.Component {
   }
 
   componentDidMount() {
-    getSetupData('apiary_honey_type', this.refreshState);
+    getSetupData(this.refreshState, 'apiary_honey_type');
   }
 
   postData(data) {
@@ -180,31 +176,6 @@ export class ApiaryCreationPage extends React.Component {
   }
 
   render() {
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 8 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-      },
-    };
-
-    const tailFormItemLayout = {
-      wrapperCol: {
-        xs: {
-          span: 24,
-          offset: 0,
-        },
-        sm: {
-          span: 16,
-          offset: 8,
-        },
-      },
-    };
-
     return (
       <>
         <Row>
