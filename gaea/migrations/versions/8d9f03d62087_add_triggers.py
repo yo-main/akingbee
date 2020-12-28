@@ -53,11 +53,11 @@ def upgrade():
                     RAISE EXCEPTION 'Different user for owners';
                 END IF;
 
-                IF NEW.user_id NOT IN (SELECT s.user_id FROM swarms as s WHERE s.id = NEW.swarm_id) THEN
+                IF NEW.swarm_id IS NOT NULL AND NEW.user_id NOT IN (SELECT s.user_id FROM swarms as s WHERE s.id = NEW.swarm_id) THEN
                     RAISE EXCEPTION 'Different user for swarms';
                 END IF;
 
-                IF NEW.user_id NOT IN (SELECT s.user_id FROM apiaries as s WHERE s.id = NEW.apiary_id) THEN
+                IF NEW.apiary_id IS NOT NULL AND NEW.user_id NOT IN (SELECT s.user_id FROM apiaries as s WHERE s.id = NEW.apiary_id) THEN
                     RAISE EXCEPTION 'Different user for apiaries';
                 END IF;
 
