@@ -43,6 +43,7 @@ class ApiaryModel(BaseModel):
     name: str
     location: str
     honey_type: SetupDataModel
+    nb_hives: int
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
@@ -55,9 +56,13 @@ class ApiaryModel(BaseModel):
 class SwarmPostModel(BaseModel):
     health_status_id: uuid.UUID
 
+class SwarmPutModel(BaseModel):
+    health_status_id: uuid.UUID
+
+
 class SwarmModel(BaseModel):
     id: uuid.UUID
-    health_status: SetupDataModel
+    health: SetupDataModel
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
@@ -71,23 +76,23 @@ class HivePostModel(BaseModel):
     name: constr(min_length=1)
     condition_id: uuid.UUID
     owner_id: uuid.UUID
-    swarm_id: uuid.UUID
-    apiary_id: uuid.UUID
+    apiary_id: Optional[uuid.UUID] = None
+    swarm_id: Optional[uuid.UUID] = None
 
 class HivePutModel(BaseModel):
-    name: Optional[constr(min_length=1)]
-    condition_id: Optional[uuid.UUID]
-    owner_id: Optional[uuid.UUID]
-    swarm_id: Optional[uuid.UUID]
-    apiary_id: Optional[uuid.UUID]
+    name: Optional[constr(min_length=1)] = None
+    condition_id: Optional[uuid.UUID] = None
+    owner_id: Optional[uuid.UUID] = None
+    swarm_id: Optional[uuid.UUID] = None
+    apiary_id: Optional[uuid.UUID] = None
 
 class HiveModel(BaseModel):
     id: uuid.UUID
     name: constr(min_length=1)
     condition: SetupDataModel
     owner: SetupDataModel
-    swarm: SwarmModel
-    apiary: ApiaryModel
+    swarm: Optional[SwarmModel]
+    apiary: Optional[ApiaryModel]
     created_at: datetime.datetime
     updated_at: datetime.datetime
 

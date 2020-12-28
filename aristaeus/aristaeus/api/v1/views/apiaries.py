@@ -62,10 +62,9 @@ async def post_apiary(
     return apiary
 
 
-
-@router.delete("/apiary/{obj_id}", status_code=204)
+@router.delete("/apiary/{apiary_id}", status_code=204)
 async def delete_apiary(
-    obj_id: uuid.UUID,
+    apiary_id: uuid.UUID,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
 ):
@@ -73,7 +72,7 @@ async def delete_apiary(
     Create an Apiary object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
-    apiary = session.query(Apiaries).get(obj_id)
+    apiary = session.query(Apiaries).get(apiary_id)
 
     if apiary is None:
         raise HTTPException(status_code=404)
@@ -88,10 +87,10 @@ async def delete_apiary(
         raise HTTPException(status_code=400, detail="Database error") from exc
 
 
-@router.put("/apiary/{obj_id}", status_code=204)
+@router.put("/apiary/{apiary_id}", status_code=204)
 async def update_setup_data(
     body: ApiaryPutModel,
-    obj_id: uuid.UUID,
+    apiary_id: uuid.UUID,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
 ):
@@ -103,7 +102,7 @@ async def update_setup_data(
     if all(v is None for v in body.dict().values()):
         raise HTTPException(400, detail="No argument provided")
 
-    apiary = session.query(Apiaries).get(obj_id)
+    apiary = session.query(Apiaries).get(apiary_id)
 
     if apiary is None:
         raise HTTPException(status_code=404)

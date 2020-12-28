@@ -25,6 +25,7 @@ MAPPING = {
     "event_type": EventTypes,
     "event_status": EventStatuses,
 }
+
 @router.get("/setup/{data_type}", status_code=200, response_model=List[SetupDataModel])
 async def get_setup_data(
     data_type: SetupDataType,

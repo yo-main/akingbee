@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, Cookie, HTTPException
-from pydantic import BaseModel, constr
-from sqlalchemy.orm import Session
+"""API endpoints for hive"""
 from typing import List
-import uuid
+
+from fastapi import APIRouter, Depends, Cookie, HTTPException
+from sqlalchemy.orm import Session
 
 from gaea.log import logger
 from gaea.models import Hives
@@ -14,9 +14,8 @@ from aristaeus.models import HiveModel, HivePostModel, HivePutModel
 
 router = APIRouter()
 
-
 @router.get("/hives", status_code=200, response_model=List[HiveModel])
-def get_hives(access_token: str = Cookie(None), session: Session = Depends(get_session)):
+async def get_hives(access_token: str = Cookie(None), session: Session = Depends(get_session)):
     """
     Get a list of hives
     """
@@ -32,14 +31,15 @@ async def post_hive(
     session: Session = Depends(get_session),
 ):
     """
-    Create an Apiary object and return it as json
+    Create an Hive object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
 
-    for attr in ("condition_id", "owner_id", "swarm_id", "apiary_id"):
-        if not validate_uuid(getattr(data, attr)):
+    for attr in ("condition_id", "owner_id", "apiary_id"):
+        value = getattr(data, attr, None)
+        if value is not None and not validate_uuid(value):
             raise HTTPException(
-                status_code=400, detail=f"Invalid uuid for {attr}: '{getattr(data, attr)}'"
+                status_code=400, detail=f"Invalid uuid for {attr}: '{value}'"
             )
 
     hive = Hives(
@@ -69,7 +69,7 @@ async def put_hive(
     session: Session = Depends(get_session),
 ):
     """
-    Create an Apiary object and return it as json
+    Create an Hive object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
 
