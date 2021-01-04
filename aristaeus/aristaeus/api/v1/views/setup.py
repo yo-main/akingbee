@@ -10,7 +10,6 @@ from typing import List,Optional
 import uuid
 
 
-from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
 from aristaeus.models import SetupDataType, SetupDataPostModel, SetupDataModel
 

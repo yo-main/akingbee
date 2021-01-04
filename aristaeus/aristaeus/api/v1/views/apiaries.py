@@ -9,7 +9,6 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel, constr
 from sqlalchemy.orm import Session
 
-from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
 from aristaeus.models import ApiaryPostModel, ApiaryPutModel, ApiaryModel
 
@@ -39,11 +38,6 @@ async def post_apiary(
     """
     user_id = await get_logged_in_user(access_token)
 
-    if not validate_uuid(data.honey_type):
-        raise HTTPException(
-            status_code=400, detail=f"Invalid uuid for honey_type: '{data.honey_type}'"
-        )
-
     apiary = Apiaries(
         name=data.name,
         location=data.location,
@@ -69,7 +63,7 @@ async def delete_apiary(
     session: Session = Depends(get_session),
 ):
     """
-    Create an Apiary object and return it as json
+    Delete apiary
     """
     user_id = await get_logged_in_user(access_token)
     apiary = session.query(Apiaries).get(apiary_id)
@@ -95,7 +89,7 @@ async def update_setup_data(
     session: Session = Depends(get_session),
 ):
     """
-    Update a setup object and return it as json
+    Update an Apiary object
     """
     user_id = await get_logged_in_user(access_token)
 

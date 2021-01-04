@@ -9,7 +9,7 @@ from gaea.models.base import Base
 from gaea.models.utils.test import DATASETS, IDS
 from gaea.webapp import MiddleWare, AppClient
 
-from aristaeus.api.v1 import router_apiary, router_setup
+from aristaeus.api.v1 import ROUTERS
 from aristaeus.helpers import authentication
 
 
@@ -30,7 +30,7 @@ def test_db():
 
 @pytest.fixture(scope="module")
 def test_app(test_db):  # pylint: disable=redefined-outer-name
-    routers = (router_apiary, router_setup)
+    routers = ROUTERS
     middleware = MiddleWare(db_client=test_db)
     client = AppClient(routers=routers, middleware=middleware)
     yield TestClient(client.get_app())

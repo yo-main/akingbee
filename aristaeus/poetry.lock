@@ -172,7 +172,7 @@ test = ["pytest (==5.4.3)", "pytest-cov (==2.10.0)", "pytest-asyncio (>=0.14.0,<
 
 [[package]]
 name = "gaea"
-version = "0.1.20"
+version = "0.1.22"
 description = ""
 category = "main"
 optional = false
@@ -620,7 +620,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "e7e50c1440654da0f73c16fe4184f50cc8d0a0720d08ea2a1c3fc6de7f06a274"
+content-hash = "22bdda9440ced2f17e8bd859109e34ab2d7f20cf72dfb1c8a6e7f15692035739"
 
 [metadata.files]
 aiohttp = [
@@ -689,8 +689,8 @@ fastapi = [
     {file = "fastapi-0.61.2.tar.gz", hash = "sha256:9e0494fcbba98f85b8cc9b2606bb6b625246e1b12f79ca61f508b0b00843eca6"},
 ]
 gaea = [
-    {file = "gaea-0.1.20-py3-none-any.whl", hash = "sha256:47f8f1047891a332bf2ddd24a4e9daa03e503cdf31ab6d1335a90691e96e86db"},
-    {file = "gaea-0.1.20.tar.gz", hash = "sha256:de28a3a8e55a89fdc90a224933e7cd051dc315e8e257805ad6c5839068ae16d3"},
+    {file = "gaea-0.1.22-py3-none-any.whl", hash = "sha256:e3945deb3cbc6b6a4c435a81e15302fb4eba74ae85a7f984c73e803bfe22d439"},
+    {file = "gaea-0.1.22.tar.gz", hash = "sha256:a0e22631362aac465e96a402292285ee299a253aef89fd550f68f99922cb9371"},
 ]
 h11 = [
     {file = "h11-0.9.0-py2.py3-none-any.whl", hash = "sha256:4bc6d6a1238b7615b266ada57e0618568066f57dd6fa967d1290ec9309b2f2f1"},
