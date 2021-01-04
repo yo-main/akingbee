@@ -22,8 +22,8 @@ export function UpdateHiveForm(props) {
   form.setFieldsValue({
     "hiveId": props.hiveId,
     "name": props.record.name,
-    "owner": props.record.owner,
-    "condition": props.record.condition,
+    "owner": props.record.ownerId,
+    "condition": props.record.conditionId,
   })
 
   return (
@@ -45,7 +45,7 @@ export function UpdateHiveForm(props) {
       <Form.Item label={window.i18n("word.condition")} name="condition" rules={[{message: window.i18n('form.selectHiveCondition')}]}>
         <Select defaultValue={props.record.conditionId}>
           {
-            props.honey_types.map(data => {
+            props.conditions.map(data => {
               return (
                 <Select.Option key={data.id}>{data.name}</Select.Option>
               )
@@ -107,8 +107,8 @@ export class HivePage extends React.Component {
     const hiveId = form.hiveId
     const data = {
       name: form.name,
-      owner: form.ownerId,
-      condition: form.conditionId
+      owner_id: form.owner,
+      condition_id: form.condition
     }
     updateHive(hiveId, data, () => getHives(this.refreshTableContent));
   }
@@ -149,7 +149,7 @@ export class HivePage extends React.Component {
         render: (text, record) => (
           <Space size='middle'>
             <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateHiveForm hiveId={record.id} record={record} owners={this.state.hive_owners} conditions={this.state.hive_conditions} onFinish={this.updateData} />
+              <UpdateHiveForm hiveId={record.id} record={record} owners={this.state.hive_beekeeper} conditions={this.state.hive_condition} onFinish={this.updateData} />
             </FormLinkModal>
             <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
               <a href='#'>{window.i18n('word.delete')}</a>

@@ -82,5 +82,6 @@
     "word.actions": "Actions",
     "word.owner": "Apiculteur",
     "confirm.deleteData": "Supprimer cette donnée ?",
-    "confirm.deleteApiary": "Supprimer cette ruche ?"
+    "confirm.deleteApiary": "Supprimer ce rucher ?",
+    "confirm.deleteHive": "Supprimer cette ruche ?"
   }

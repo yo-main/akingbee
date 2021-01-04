@@ -82,5 +82,6 @@
     "word.actions": "Actions",
     "word.owner": "Beekeeper",
     "confirm.deleteData": "Delete that entry ?",
-    "confirm.deleteApiary": "Delete that apiary ?"
+    "confirm.deleteApiary": "Delete that apiary ?",
+    "confirm.deleteHive": "Delete that hive ?"
   }

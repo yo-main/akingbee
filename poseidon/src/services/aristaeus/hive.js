@@ -2,7 +2,7 @@ import { UnderlineOutlined } from '@ant-design/icons';
 import { aristaeusApi, dealWithError, notificate } from '../../lib/common';
 
 export async function getHives(callback) {
-  await aristaeusApi.get(`/hives`)
+  await aristaeusApi.get(`/hive`)
     .then((response) => {
       const data = response.data;
       callback({data});
