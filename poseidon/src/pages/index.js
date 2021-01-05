@@ -4,4 +4,4 @@ export { RegistrationPage } from './registration';
 export { WelcomePage } from './welcome';
 export { SetupPage } from './setup';
 export { ApiaryPage, ApiaryCreationPage } from './manage/apiary';
-export { HivePage, HiveCreationPage } from './manage/hives';
+export { HivePage, HiveDetailsPage, HiveCreationPage } from './manage/hives';
