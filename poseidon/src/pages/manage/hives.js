@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 
 import { OptionalFormItem, FormLinkModal } from '../../components';
 import { notificate } from '../../lib/common';
@@ -10,7 +11,6 @@ import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
 import { createHive, getHives, updateHive, deleteHive } from '../../services/aristaeus/hive';
 import { navigate } from '@reach/router';
-
 
 function onFailed(err) {
   notificate("error", "Failed")
@@ -288,6 +288,52 @@ export class HiveCreationPage extends React.Component {
   }
 }
 
-export class HiveDetailsPage {
+export class HiveDetailsPage extends React.Component {
+  state = {
+    hive_beekeeper: [],
+    hive_condition: [],
+    apiaries: [],
+    swarm_health_status: [],
+  }
+
+  refreshState = ({data, type}) => {
+    this.setState((state) => {
+      state[type] = data;
+      return state;
+    })
+  }
+
+  componentDidMount() {
+    getSetupData(this.refreshState, 'hive_beekeeper');
+    getSetupData(this.refreshState, 'hive_condition');
+    getSetupData(this.refreshState, 'swarm_health_status');
+    getApiaries(this.refreshState, 'apiaries');
+  }
+
+  updateData = (form) => {
+    const hiveId = form.hiveId
+    const data = {
+      name: form.name,
+      owner_id: form.owner,
+      condition_id: form.condition
+    }
+    updateHive(hiveId, data, () => getHives(this.refreshTableContent));
+  }
+
+
+  render() {
+    return (
+      <>
+        <Row>
+          <Card actions={[<EditOutlined key='edit' />]} >
+            <Card.Meta
+              title="Ruche"
+              description="Coucou"
+            />
+          </Card>
+        </Row>
+      </>
+    )
+  }
 
 }

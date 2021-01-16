@@ -33,7 +33,7 @@ class Frame extends React.Component {
         </Affix>
         <Content style={{ padding: '0 50px'}}>
           <Layout className="site-layout-background" style={{ padding: '24px 0', 'min-height': '93vh'}}>
-            <SideMenu />
+            <SideMenu submenuTopic={this.props.submenuTopic} submenuItem={this.props.submenuItem} />
             <Content>
               {this.props.children}
             </Content>

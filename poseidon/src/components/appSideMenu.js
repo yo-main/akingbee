@@ -71,8 +71,8 @@ export function SetupSideMenu(props) {
       <Menu
         mode="inline"
         style={{ height: '100%' }}
-        defaultOpenKeys={[defaultSections[0]]}
-        selectedKeys={[defaultSections[1]]}
+        defaultOpenKeys={[props.submenuTopic]}
+        selectedKeys={[props.submenuItem]}
       >
         <SubMenu key={sections.submenu_setup_swarm} icon={swarmMenuIcon} title={window.i18n("action.setupSwarm")}>
           <Menu.Item key={sections.submenu_setup_swarm_health}><Link to='/setup/swarm/health'>{window.i18n("word.health")}</Link></Menu.Item>
