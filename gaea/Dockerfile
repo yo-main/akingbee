@@ -1,4 +1,4 @@
-FROM python:3.8.5-slim-buster as build
+FROM python:3.9.1-slim-buster as build
 ENV PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     TZ=Europe/Paris \
@@ -20,7 +20,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 
-FROM python:3.8.5-slim-buster as runtime
+FROM python:3.9.1-slim-buster as runtime
 ENV PYTHONPATH=/app \
     VENV_PATH=/opt/venv
 ENV PATH="$VENV_PATH/bin:$PATH"
