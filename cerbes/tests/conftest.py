@@ -23,7 +23,7 @@ def test_db():
 @pytest.fixture(scope="module")
 def test_app(test_db):  # pylint: disable=redefined-outer-name
     middleware = MiddleWare(db_client=test_db)
-    client = AppClient(router=router, middleware=middleware)
+    client = AppClient(routers=router, middleware=middleware)
     yield TestClient(client.get_app())
 
 @pytest.fixture()

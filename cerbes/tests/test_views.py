@@ -68,9 +68,9 @@ def test_login(test_app, creds, expected_code, expected_content):
         assert response.json() == {"detail": expected_content}
     else:
         data = response.json()
-        assert jwt.decode(data["access_token"], verify=False, algorithm="HS256")
+        assert jwt.decode(data["access_token"], options={"verify_signature": False}, algorithms=["HS256"])
         with pytest.raises(jwt.InvalidSignatureError):
-            jwt.decode(data["access_token"], algorithm="HS256")
+            jwt.decode(data["access_token"], algorithms=["HS256"])
 
 
 def test_check_jwt(test_app):

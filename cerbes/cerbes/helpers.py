@@ -52,7 +52,7 @@ def generate_jwt(user_id):
 
 def validate_jwt(token):
     try:
-        return jwt.decode(jwt=token, key=CONFIG.APP_SECRET, algorithm="HS256")
+        return jwt.decode(jwt=token, key=CONFIG.APP_SECRET, algorithms=["HS256"])
     except jwt.exceptions.InvalidTokenError:
         return None
 
