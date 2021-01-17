@@ -52,20 +52,7 @@ export function ManageSideMenu(props) {
   );
 }
 
-const SETUP_SECTIONS = {
-  "/setup": [],
-  "/setup/swarm/health": [sections.submenu_setup_swarm, sections.submenu_setup_swarm_health],
-  "/setup/hive/beekeeper": [sections.submenu_setup_hive, sections.submenu_setup_hive_beekeeper],
-  "/setup/hive/condition": [sections.submenu_setup_hive, sections.submenu_setup_hive_condition],
-  "/setup/apiary/honey_type": [sections.submenu_setup_apiary, sections.submenu_setup_apiary_honey_type],
-  "/setup/event/type": [sections.submenu_setup_event, sections.submenu_setup_event_type],
-  "/setup/event/status": [sections.submenu_setup_event, sections.submenu_setup_event_status],
-}
-
 export function SetupSideMenu(props) {
-  const url = window.location.pathname;
-  const defaultSections = SETUP_SECTIONS[url];
-
   return (
     <Sider className="site-layout-background" width={200}>
       <Menu
