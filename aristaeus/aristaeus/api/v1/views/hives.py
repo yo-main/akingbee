@@ -115,3 +115,15 @@ async def delete_hive(
         logger.exception("Something went wrong when deleting the hive", hive=hive)
         raise HTTPException(status_code=400, detail="Database error") from exc
 
+@router.get("/hive/{hive_id}", status_code=200, response_model=HiveModel)
+async def get_hive(hive_id: uuid.UUID, access_token: str = Cookie(None), session: Session = Depends(get_session)):
+    """
+    Get a single hive
+    """
+    user_id = await get_logged_in_user(access_token)
+    hive = session.query(Hives).get(hive_id)
+
+    if hive is None or hive.user_id != user_id:
+        raise HTTPException(status_code=404)
+
+    return hive

@@ -5,7 +5,7 @@ from gaea.rbmq import RBMQPublisher
 from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 from gaea.models.utils.test import IDS
 
-def test_get_hive(test_db, auth_token, test_app):
+def test_get_hives(test_db, auth_token, test_app):
     response = test_app.get("/hive")
     assert response.status_code == 401
 
@@ -95,4 +95,16 @@ def test_put_hive(test_db, auth_token, test_app, hive_id, data, expected):
     assert response.status_code == 401
 
     response = test_app.put(f"/hive/{str(hive_id)}", cookies={"access_token": auth_token}, json=data)
+    assert response.status_code == expected
+
+@pytest.mark.parametrize("hive_id, expected", (
+    (IDS["Hives"][0], 200),
+    (IDS["Hives"][-1], 404),
+    (uuid.uuid4(), 404),
+    ("random", 422),
+    ("123", 422),
+    (None, 422),
+))
+def test_get_hive(test_db, auth_token, test_app, hive_id, expected):
+    response = test_app.get(f"/hive/{str(hive_id)}", cookies={"access_token": auth_token})
     assert response.status_code == expected
