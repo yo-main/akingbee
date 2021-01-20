@@ -4,8 +4,9 @@ import { Row, Col, Table, Space, Button, Form, Input, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
 
 import { FormButtonModal, FormLinkModal } from '../components';
-import { notificate } from '../lib/common';
+import { dealWithError, notificate } from '../lib/common';
 import { getSetupData, postSetupData, updateSetupData, deleteSetupData } from '../services/aristaeus/setup';
+import { ERROR_STATUS, LOADING_STATUS, getGenericPage } from './generic';
 
 
 function onFailed(err) {
@@ -52,9 +53,9 @@ export function UpdateDataForm(props) {
 
 
 export class SetupPage extends React.Component {
-  state = {tableData: []}
+  state = {tableData: [], pageStatus: LOADING_STATUS}
 
-  refreshState = ({data}) => {
+  getTableData = (data) => {
     const tableData = data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,
@@ -63,18 +64,26 @@ export class SetupPage extends React.Component {
       });
       return acc;
     }, []);
-    this.setState((state) => ({tableData}));
+    return tableData;
   }
 
-  refreshData = () => {
-    getSetupData(this.refreshState, this.props.dataType);
+  async componentDidMount() {
+    try {
+      let data = await getSetupData(this.props.dataType);
+      let tableData = this.getTableData(data);
+      let pageStatus = 'OK';
+
+      this.setState({tableData, pageStatus});
+    } catch (error) {
+      dealWithError(error);
+      this.setState((state) => {
+        state['pageStatus'] = ERROR_STATUS;
+        return state;
+      })
+    }
   }
 
-  componentDidMount() {
-    this.refreshData();
-  }
-
-  postData = (form) => {
+  postData = async(form) => {
     const value = form.newEntry;
 
     if (!value) {
@@ -82,15 +91,23 @@ export class SetupPage extends React.Component {
       return;
     }
 
-    postSetupData(this.props.dataType, value, this.refreshData);
+    try {
+      await postSetupData(this.props.dataType, value);
+      let data = await getSetupData(this.props.dataType);
+      let tableData = this.getTableData(data);
+      this.setState((state) => {
+        state['tableData'] = tableData;
+        return state;
+      });
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
-  updateData = (form) => {
+  updateData = async(form) => {
     const objectId = form.objectId;
     const newValue = form.updateEntry;
     const oldValue = form.oldValue;
-
-    console.log("onFinish", newValue, oldValue, form)
 
     if (newValue === undefined || newValue === oldValue) {
       notificate('error', window.i18n('error.sameEntry'))
@@ -102,14 +119,36 @@ export class SetupPage extends React.Component {
       return;
     }
 
-    updateSetupData(this.props.dataType, newValue, objectId, this.refreshData);
+    try {
+      await updateSetupData(this.props.dataType, newValue, objectId);
+      let data = await getSetupData(this.props.dataType);
+      let tableData = this.getTableData(data);
+      this.setState((state) => {
+        state['tableData'] = tableData;
+        return state;
+      });
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
-  deleteData = (objectId) => {
-    deleteSetupData(this.props.dataType, objectId, this.refreshData);
+  deleteData = async(objectId) => {
+    try {
+      await deleteSetupData(this.props.dataType, objectId);
+      let data = await getSetupData(this.props.dataType);
+      let tableData = this.getTableData(data);
+      this.setState((state) => {
+        state['tableData'] = tableData;
+        return state;
+      });
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
   render() {
+    let genericPage = getGenericPage(this.state.pageStatus);
+    if (genericPage) { return genericPage };
 
     const columns = [
       {

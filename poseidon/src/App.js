@@ -3,7 +3,7 @@ import 'antd/dist/antd.css';
 import { Router } from '@reach/router';
 import './services/localization';
 
-import { PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage } from './pages';
+import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage } from './pages';
 import { setupData, sections } from './constants';
 
 class App extends React.Component {
@@ -13,8 +13,6 @@ class App extends React.Component {
   }
 
   render () {
-    const NotFound = () => <p>Sorry, nothing here</p>
-
     return (
       <Router >
         <PrivateFrame path="/" languageCallback={this.changeLanguage}>
@@ -40,7 +38,7 @@ class App extends React.Component {
         </PrivateFrame>
 
         <PrivateFrame path="/manage/hive/:hiveId" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_list}>
-          <HiveDetailsPage path="/hive/:hiveId" />
+          <HiveDetailsPage path="/" />
         </PrivateFrame>
 
         <PrivateFrame path="/setup" languageCallback={this.changeLanguage} />

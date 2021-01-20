@@ -2,14 +2,15 @@ import React from 'react';
 
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider } from 'antd';
 import { PlusOutlined } from '@ant-design/icons'
+import { navigate } from '@reach/router';
 
 import { FormButtonModal, FormLinkModal } from '../../components';
-import { notificate } from '../../lib/common';
+import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { createApiary, getApiaries, updateApiary, deleteApiary } from '../../services/aristaeus/apiary';
-import { navigate } from '@reach/router';
+import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
 
 function onFailed(err) {
@@ -52,9 +53,9 @@ export function UpdateApiaryForm(props) {
 
 
 export class ApiaryPage extends React.Component {
-  state = {tableData: [], apiary_honey_type: []}
+  state = {tableData: [], apiaryHoneyType: [], pageStatus: LOADING_STATUS}
 
-  refreshTableContent = ({data}) => {
+  getTableContent = (data) => {
     const tableData = data.reduce((acc, val, index) => {
         acc.push({
           key: index+1,
@@ -68,39 +69,68 @@ export class ApiaryPage extends React.Component {
         return acc;
       }, []);
 
-    this.setState((state) => {
-      state.tableData = tableData;
-      return state;
-    });
+    return tableData;
   }
 
-  refreshState = ({data, type}) => {
-    this.setState((state) => {
-      state[type] = data;
-      return state;
-    })
+  async componentDidMount() {
+    try {
+      let apiaries = await getApiaries();
+      let apiaryHoneyType = await getSetupData('apiary_honey_type');
+      let tableData = this.getTableContent(apiaries);
+      let pageStatus = 'OK';
+
+      this.setState({tableData, apiaryHoneyType, pageStatus})
+
+    } catch (error) {
+      dealWithError(error);
+      this.setState((state) => {
+        state['pageStatus'] = ERROR_STATUS;
+      })
+    }
   }
 
-  componentDidMount() {
-    getApiaries(this.refreshTableContent);
-    getSetupData(this.refreshState, 'apiary_honey_type');
+  deleteData = async(apiaryId) => {
+    try {
+      await deleteApiary(apiaryId);
+      let apiaries = await getApiaries();
+      let tableData = this.getTableContent(apiaries);
+
+      this.setState((state) => {
+        state['apiaries'] = apiaries;
+        state['tableData'] = tableData;
+        return state;
+      })
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
-  deleteData = (apiaryId) => {
-    deleteApiary(apiaryId, () => getApiaries(this.refreshTableContent));
-  }
-
-  updateData = (form) => {
+  updateData = async(form) => {
     const apiaryId = form.apiaryId
     const data = {
       name: form.name,
       location: form.location,
       honey_type_id: form.honey_type
     }
-    updateApiary(apiaryId, data, () => getApiaries(this.refreshTableContent));
+
+    try {
+      await updateApiary(apiaryId, data);
+      let apiaries = await getApiaries();
+      let tableData = this.getTableContent(apiaries);
+
+      this.setState((state) => {
+        state['apiaries'] = apiaries;
+        state['tableData'] = tableData;
+        return state;
+      })
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
   render() {
+    let genericPage = getGenericPage(this.state.pageStatus);
+    if (genericPage) { return genericPage };
 
     const columns = [
       {
@@ -131,7 +161,7 @@ export class ApiaryPage extends React.Component {
         render: (text, record) => (
           <Space size='middle'>
             <FormLinkModal title={window.i18n('title.apiaryUpdate')} formId='updateApiaryFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateApiaryForm apiaryId={record.id} record={record} honey_types={this.state.apiary_honey_type} onFinish={this.updateData} />
+              <UpdateApiaryForm apiaryId={record.id} record={record} honey_types={this.state.apiaryHoneyType} onFinish={this.updateData} />
             </FormLinkModal>
             <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteApiary")}>
               <a href='#'>{window.i18n('word.delete')}</a>
@@ -157,25 +187,38 @@ export class ApiaryPage extends React.Component {
 
 export class ApiaryCreationPage extends React.Component {
   state = {
-    apiary_honey_type: []
+    pageStatus: LOADING_STATUS,
+    apiaryHoneyType: []
   }
 
-  refreshState = ({data, type}) => {
-    this.setState((state) => {
-      state[type] = data;
-      return state;
-    })
+  async componentDidMount() {
+    try {
+      let apiaryHoneyType = await getSetupData('apiary_honey_type');
+      let pageStatus = 'OK';
+
+      this.setState({apiaryHoneyType, pageStatus})
+    } catch (error) {
+      dealWithError(error);
+      this.setState((state) => {
+        state['pageStatus'] = ERROR_STATUS;
+        return state;
+      })
+    }
   }
 
-  componentDidMount() {
-    getSetupData(this.refreshState, 'apiary_honey_type');
-  }
-
-  postData(data) {
-    createApiary(data, () => navigate('/manage/apiary'));
+  async postData(data) {
+    try {
+      await createApiary(data);
+      navigate('/manage/apiary');
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
   render() {
+    let genericPage = getGenericPage(this.state.pageStatus);
+    if (genericPage) { return genericPage };
+
     return (
       <>
         <Row>
@@ -201,7 +244,7 @@ export class ApiaryCreationPage extends React.Component {
               <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{required: true, message: window.i18n('form.selectApiaryHoneyType')}]}>
                 <Select defaultValue={window.i18n('form.selectAValue')}>
                   {
-                    this.state['apiary_honey_type'].map(data => {
+                    this.state['apiaryHoneyType'].map(data => {
                       return (
                         <Select.Option key={data.id}>{data.name}</Select.Option>
                       )

@@ -1,16 +1,17 @@
 import React from 'react';
 
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { navigate } from '@reach/router';
 
 import { OptionalFormItem, FormLinkModal } from '../../components';
-import { notificate } from '../../lib/common';
+import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { createHive, getHives, updateHive, deleteHive } from '../../services/aristaeus/hive';
-import { navigate } from '@reach/router';
+import { createHive, getHives, updateHive, deleteHive, getHive } from '../../services/aristaeus/hive';
+
+import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
 function onFailed(err) {
   notificate("error", "Failed")
@@ -119,60 +120,90 @@ function CreateHiveForm(props) {
 
 
 export class HivePage extends React.Component {
-  state = {tableData: [], hive_beekeeper: [], hive_condition: []}
+  state = {tableData: [], hiveBeekeeper: [], hiveCondition: [], pageStatus: LOADING_STATUS}
 
-  refreshTableContent = ({data}) => {
-    const tableData = data.reduce((acc, val, index) => {
-        acc.push({
-          key: index+1,
-          id: val.id,
-          name: val.name,
-          owner: val.owner.name,
-          ownerId: val.owner.id,
-          condition: val.condition.name,
-          conditionId: val.condition.id,
-          swarmHealthStatus: val.swarm ? val.swarm.health.name : null,
-          swarmHealthStatusId: val.swarm ? val.swarm.health.id : null,
-          apiary: val.apiary ? val.apiary.name : null,
-          apiaryId: val.apiary ? val.apiary.id : null,
-        });
-        return acc;
-      }, []);
-
-    this.setState((state) => {
-      state.tableData = tableData;
-      return state;
-    });
+  getTableData = (data) => {
+    return data.reduce((acc, val, index) => {
+      acc.push({
+        key: index+1,
+        id: val.id,
+        name: val.name,
+        owner: val.owner.name,
+        ownerId: val.owner.id,
+        condition: val.condition.name,
+        conditionId: val.condition.id,
+        swarmHealthStatus: val.swarm ? val.swarm.health.name : null,
+        swarmHealthStatusId: val.swarm ? val.swarm.health.id : null,
+        apiary: val.apiary ? val.apiary.name : null,
+        apiaryId: val.apiary ? val.apiary.id : null,
+      });
+      return acc;
+    }, []);
   }
 
-  refreshState = ({data, type}) => {
-    this.setState((state) => {
-      state[type] = data;
-      return state;
-    })
+  async componentDidMount() {
+    try {
+      let hives = await getHives();
+      let hiveBeekeeper = await getSetupData('hive_beekeeper');
+      let hiveCondition = await getSetupData('hive_condition');
+      let tableData = this.getTableData(hives);
+      let pageStatus = 'OK';
+
+      this.setState({hives, hiveBeekeeper, hiveCondition, pageStatus, tableData});
+
+    } catch (error) {
+      dealWithError(error);
+      this.setState((state) => {
+        state['pageStatus'] = ERROR_STATUS;
+      })
+    }
   }
 
-  componentDidMount() {
-    getHives(this.refreshTableContent);
-    getSetupData(this.refreshState, 'hive_beekeeper');
-    getSetupData(this.refreshState, 'hive_condition');
+  deleteData = async(hiveId) => {
+    try {
+      await deleteHive(hiveId);
+      let hives = await getHives();
+      let tableData = this.getTableData(hives);
+
+      this.setState((state) => {
+        state['hives'] = hives;
+        state['tableData'] = tableData;
+        return state;
+      })
+    } catch (error) {
+      dealWithError(error);
+      return
+    };
+
+
   }
 
-  deleteData = (hiveId) => {
-    deleteHive(hiveId, () => getHives(this.refreshTableContent));
-  }
-
-  updateData = (form) => {
-    const hiveId = form.hiveId
+  updateData = async(form) => {
+    const hiveId = form.hiveId;
     const data = {
       name: form.name,
       owner_id: form.owner,
       condition_id: form.condition
     }
-    updateHive(hiveId, data, () => getHives(this.refreshTableContent));
+
+    try {
+      await updateHive(hiveId, data);
+
+      let hives = await getHives();
+      let tableData = this.getTableData(hives);
+      this.setState((state) => {
+        state['hives'] = hives;
+        state['tableData'] = tableData;
+        return state;
+      })
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
   render() {
+    let genericPage = getGenericPage(this.state.pageStatus);
+    if (genericPage) { return genericPage };
 
     const columns = [
       {
@@ -208,7 +239,7 @@ export class HivePage extends React.Component {
         render: (text, record) => (
           <Space size='middle'>
             <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateHiveForm hive={record} owners={this.state.hive_beekeeper} conditions={this.state.hive_condition} onFinish={this.updateData} />
+              <UpdateHiveForm hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
             </FormLinkModal>
             <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
               <a href='#'>{window.i18n('word.delete')}</a>
@@ -234,31 +265,43 @@ export class HivePage extends React.Component {
 
 export class HiveCreationPage extends React.Component {
   state = {
-    hive_beekeeper: [],
-    hive_condition: [],
+    pageStatus: LOADING_STATUS,
+    hiveBeekeeper: [],
+    hiveCondition: [],
     apiaries: [],
-    swarm_health_status: [],
+    swarmHealthStatus: [],
   }
 
-  refreshState = ({data, type}) => {
-    this.setState((state) => {
-      state[type] = data;
-      return state;
-    })
+  async componentDidMount() {
+    try {
+      let hiveBeekeeper = await getSetupData('hive_beekeeper');
+      let hiveCondition = await getSetupData('hive_condition');
+      let swarmHealthStatus = await getSetupData('swarm_health_status');
+      let apiaries = await getApiaries();
+      let pageStatus = "OK";
+
+      this.setState({apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
+    } catch (error) {
+      dealWithError(error);
+      this.setState((state) => {
+        state['pageStatus'] = ERROR_STATUS;
+      })
+    }
   }
 
-  componentDidMount() {
-    getSetupData(this.refreshState, 'hive_beekeeper');
-    getSetupData(this.refreshState, 'hive_condition');
-    getSetupData(this.refreshState, 'swarm_health_status');
-    getApiaries(this.refreshState, 'apiaries');
-  }
-
-  postData(data) {
-    createHive(data, () => navigate('/manage/hive'));
+  async postData(data) {
+    try {
+      await createHive(data);
+      navigate('/manage/hive');
+    } catch (error) {
+      dealWithError(error);
+    }
   }
 
   render() {
+    let genericPage = getGenericPage(this.state.pageStatus);
+    if (genericPage) { return genericPage };
+
     return (
       <>
         <Row>
@@ -276,9 +319,9 @@ export class HiveCreationPage extends React.Component {
           <Col span={8}>
             <CreateHiveForm
               callback={this.postData}
-              beekeepers={this.state['hive_beekeeper']}
-              conditions={this.state['hive_condition']}
-              swarmHealths={this.state['swarm_health_status']}
+              beekeepers={this.state['hiveBeekeeper']}
+              conditions={this.state['hiveCondition']}
+              swarmHealths={this.state['swarmHealthStatus']}
               apiaries={this.state['apiaries']}
             />
           </Col>
@@ -290,49 +333,50 @@ export class HiveCreationPage extends React.Component {
 
 export class HiveDetailsPage extends React.Component {
   state = {
-    hive_beekeeper: [],
-    hive_condition: [],
+    pageStatus: LOADING_STATUS,
+    hive: [],
+    hiveBeekeeper: [],
+    hiveCondition: [],
     apiaries: [],
-    swarm_health_status: [],
+    swarmHealthStatus: [],
   }
 
-  refreshState = ({data, type}) => {
-    this.setState((state) => {
-      state[type] = data;
-      return state;
-    })
-  }
+  async componentDidMount() {
+    let hive;
 
-  componentDidMount() {
-    getSetupData(this.refreshState, 'hive_beekeeper');
-    getSetupData(this.refreshState, 'hive_condition');
-    getSetupData(this.refreshState, 'swarm_health_status');
-    getApiaries(this.refreshState, 'apiaries');
-  }
-
-  updateData = (form) => {
-    const hiveId = form.hiveId
-    const data = {
-      name: form.name,
-      owner_id: form.owner,
-      condition_id: form.condition
+    try {
+      hive = await getHive(this.props.hiveId);
+    } catch (error) {
+      this.setState((state) => {
+        state['pageStatus'] = NOT_FOUND_STATUS;
+        return state;
+      })
+      return;
     }
-    updateHive(hiveId, data, () => getHives(this.refreshTableContent));
-  }
 
+    try {
+      let apiaries = await getApiaries('apiaries');
+      let hiveBeekeeper = await getSetupData('hive_beekeeper');
+      let hiveCondition = await getSetupData('hive_condition');
+      let swarmHealthStatus = await getSetupData('swarm_health_status');
+      let pageStatus = "OK"
+      this.setState({hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
+
+    } catch (error) {
+      dealWithError(error);
+      this.setState((state) => {
+        state['pageStatus'] = ERROR_STATUS;
+      })
+    }
+  }
 
   render() {
+    let genericPage = getGenericPage(this.state.pageStatus);
+    if (genericPage) { return genericPage };
+    console.log(this.state)
+
     return (
-      <>
-        <Row>
-          <Card actions={[<EditOutlined key='edit' />]} >
-            <Card.Meta
-              title="Ruche"
-              description="Coucou"
-            />
-          </Card>
-        </Row>
-      </>
+      <p>POPOPO</p>
     )
   }
 

@@ -19,24 +19,14 @@ const swarmMenuIcon = <Icon component={swarmIcon} />;
 const eventMenuIcon = <Icon component={eventIcon} />;
 
 
-const MANAGE_SECTIONS = {
-  "/manage": [],
-  "/manage/hive": [sections.submenu_hive, sections.submenu_hive_list],
-  "/manage/hive/create": [sections.submenu_hive, sections.submenu_hive_create],
-  "/manage/apiary": [sections.submenu_apiary, sections.submenu_apiary_list],
-  "/manage/apiary/create": [sections.submenu_apiary, sections.submenu_apiary_create],
-}
-
 export function ManageSideMenu(props) {
-  const url = window.location.pathname;
-  const defaultSections = MANAGE_SECTIONS[url];
 
   return (
     <Sider className="site-layout-background" width={200}>
       <Menu
         mode="inline"
-        defaultOpenKeys={[defaultSections[0]]}
-        selectedKeys={[defaultSections[1]]}
+        defaultOpenKeys={[props.submenuTopic]}
+        selectedKeys={[props.submenuItem]}
         style={{ height: '100%' }}
       >
         <SubMenu key={sections.submenu_hive} icon={hiveMenuIcon} title={window.i18n("word.hives")}>

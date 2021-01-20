@@ -2,6 +2,8 @@ import { notification } from 'antd';
 import { navigate } from '@reach/router';
 import axios from 'axios';
 
+import { NotFound } from '../pages'
+
 export function getCookie(name, cookies) {
   if (!cookies) {
     cookies = document.cookie;
@@ -48,23 +50,22 @@ export const aristaeusApi = axios.create({
 
 export function dealWithError(error) {
   const response = error.response;
+
   if (!response) {
     notificate("error", error.message);
     return;
   }
 
   if (response.status === 401) {
-        navigate("/login");
-        return;
+    navigate("/login");
+    return;
   }
 
   let msg;
-
   if (response.status === 422) {
     console.log(response)
-    msg = `${window.i18n('error.missingFields')}: `
-    msg += response.data.detail.map(e => {
-      return e.loc[1]
+    msg = response.data.detail.map(e => {
+      return `${e.loc[1]}: ${e.msg}`
     }).join(", ")
   } else {
     msg = response.data.detail;
