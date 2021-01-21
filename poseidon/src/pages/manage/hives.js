@@ -13,10 +13,6 @@ import { createHive, getHives, updateHive, deleteHive, getHive } from '../../ser
 
 import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
-function onFailed(err) {
-  notificate("error", "Failed")
-}
-
 export function UpdateHiveForm(props) {
   const [form] = Form.useForm();
 
@@ -28,7 +24,7 @@ export function UpdateHiveForm(props) {
   })
 
   return (
-    <Form {... formItemLayout} id="updateHiveFormId" form={form} name="basic" onFinish={props.onFinish} onFinishFailed={onFailed}>
+    <Form {... formItemLayout} id="updateHiveFormId" form={form} name="basic" onFinish={props.onFinish}>
       <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 1, message: window.i18n('form.insertHiveName')}]}>
         <Input defaultValue={props.hive.name} />
       </Form.Item>
@@ -212,6 +208,10 @@ export class HivePage extends React.Component {
         key: 'name',
         defaultSortOrder: 'ascend',
         sorter: (a, b) => a.name.localeCompare(b.name),
+        render: (text, record) => {
+          let url = `${window.location.pathname}/${record.id}`
+          return <a href={url}>{text}</a>;
+        }
       },
       {
         title: window.i18n('word.owner'),
