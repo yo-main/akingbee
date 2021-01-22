@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card } from 'antd';
-import { navigate } from '@reach/router';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Descriptions } from 'antd';
+import { navigate, Link } from '@reach/router';
 
 import { OptionalFormItem, FormLinkModal } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
@@ -19,8 +19,8 @@ export function UpdateHiveForm(props) {
   form.setFieldsValue({
     "hiveId": props.hive.id,
     "name": props.hive.name,
-    "owner": props.hive.ownerId,
-    "condition": props.hive.conditionId,
+    "owner": props.hive.owner.id,
+    "condition": props.hive.condition.id,
   })
 
   return (
@@ -29,7 +29,7 @@ export function UpdateHiveForm(props) {
         <Input defaultValue={props.hive.name} />
       </Form.Item>
       <Form.Item label={window.i18n("word.owner")} name="owner" rules={[{message: window.i18n('form.selectHiveOwner')}]}>
-        <Select defaultValue={props.hive.ownerId}>
+        <Select defaultValue={props.hive.owner.id}>
           {
             props.owners.map(data => {
               return (
@@ -40,7 +40,7 @@ export function UpdateHiveForm(props) {
         </Select>
       </Form.Item>
       <Form.Item label={window.i18n("word.condition")} name="condition" rules={[{message: window.i18n('form.selectHiveCondition')}]}>
-        <Select defaultValue={props.hive.conditionId}>
+        <Select defaultValue={props.hive.condition.id}>
           {
             props.conditions.map(data => {
               return (
@@ -125,13 +125,13 @@ export class HivePage extends React.Component {
         id: val.id,
         name: val.name,
         owner: val.owner.name,
-        ownerId: val.owner.id,
+        owner: {id: val.owner.id},
         condition: val.condition.name,
-        conditionId: val.condition.id,
+        condition: {id: val.condition.id},
         swarmHealthStatus: val.swarm ? val.swarm.health.name : null,
-        swarmHealthStatusId: val.swarm ? val.swarm.health.id : null,
+        swarmHealthStatus: {id: val.swarm ? val.swarm.health.id : null},
         apiary: val.apiary ? val.apiary.name : null,
-        apiaryId: val.apiary ? val.apiary.id : null,
+        apiary: {id: val.apiary ? val.apiary.id : null},
       });
       return acc;
     }, []);
@@ -210,7 +210,7 @@ export class HivePage extends React.Component {
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record) => {
           let url = `${window.location.pathname}/${record.id}`
-          return <a href={url}>{text}</a>;
+          return <Link to={url}>{text}</Link>;
         }
       },
       {
@@ -341,16 +341,43 @@ export class HiveDetailsPage extends React.Component {
     swarmHealthStatus: [],
   }
 
+
+  updateData = async(form) => {
+    const hiveId = form.hiveId;
+    const data = {
+      name: form.name,
+      owner_id: form.owner,
+      condition_id: form.condition
+    }
+
+    try {
+      await updateHive(hiveId, data);
+
+      let hive = await getHive(hiveId);
+      this.setState((state) => {
+        state['hive'] = hive;
+        return state;
+      })
+    } catch (error) {
+      dealWithError(error);
+    }
+  }
+
   async componentDidMount() {
     let hive;
 
     try {
       hive = await getHive(this.props.hiveId);
     } catch (error) {
-      this.setState((state) => {
-        state['pageStatus'] = NOT_FOUND_STATUS;
-        return state;
-      })
+      if (error.response.status === 404) {
+        this.setState((state) => {
+          state['pageStatus'] = NOT_FOUND_STATUS;
+          return state;
+        })
+      } else {
+        dealWithError(error);
+      }
+
       return;
     }
 
@@ -373,11 +400,32 @@ export class HiveDetailsPage extends React.Component {
   render() {
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
-    console.log(this.state)
+
+    let name = this.state.hive.name;
+    let owner = this.state.hive.owner.name;
+    let condition = this.state.hive.condition.name;
+    let health = this.state.hive.swarm ? this.state.hive.swarm.health.name : "N/A";
+    let apiary = this.state.hive.apiary ? this.state.hive.apiary.name : "N/A";
+
+    let updateForm = (
+      <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
+        <UpdateHiveForm hive={this.state.hive} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
+      </FormLinkModal>
+    )
 
     return (
-      <p>POPOPO</p>
+      <>
+        <Row>
+          <Col offset={1}>
+            <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<a href="#" style={{paddingLeft: '50px'}}>{updateForm}</a>}>
+              <p> {window.i18n('word.owner')}: {owner}</p>
+              <p> {window.i18n('word.health')}: {health}</p>
+              <p> {window.i18n('word.apiary')}: {apiary}</p>
+              <p> {window.i18n('word.condition')}: {condition}</p>
+            </Card>
+          </Col>
+        </Row>
+      </>
     )
   }
-
 }
