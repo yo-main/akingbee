@@ -68,7 +68,7 @@ async def delete_apiary(
     user_id = await get_logged_in_user(access_token)
     apiary = session.query(Apiaries).get(apiary_id)
 
-    if apiary is None:
+    if apiary is None or apiary.deleted_at:
         raise HTTPException(status_code=404)
     if apiary.user_id != user_id:
         raise HTTPException(status_code=403)
@@ -82,7 +82,7 @@ async def delete_apiary(
 
 
 @router.put("/apiary/{apiary_id}", status_code=204)
-async def update_setup_data(
+async def update_apiary(
     body: ApiaryPutModel,
     apiary_id: uuid.UUID,
     access_token: str = Cookie(None),
@@ -98,7 +98,7 @@ async def update_setup_data(
 
     apiary = session.query(Apiaries).get(apiary_id)
 
-    if apiary is None:
+    if apiary is None or apiary.deleted_at:
         raise HTTPException(status_code=404)
 
     if apiary.user_id != user_id:

@@ -58,6 +58,11 @@ def test_post_apiary_and_delete(test_db, auth_token, test_app):
     assert response.status_code == 200
     assert len(response.json()) == 3
 
+    response = test_app.delete(f"/apiary/{obj_id}", cookies={"access_token": auth_token})
+    assert response.status_code == 404
+
+
+
 
 @pytest.mark.parametrize("obj_id, data, expected", (
     (IDS["Apiaries"][0], {}, 400),

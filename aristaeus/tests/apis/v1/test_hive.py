@@ -81,6 +81,12 @@ def test_post_hive_and_delete(test_db, auth_token, test_app, data):
     assert response.status_code == 200
     assert len(response.json()) == 3
 
+    response = test_app.get(f"/hive/{obj_id}", cookies={"access_token": auth_token})
+    assert response.status_code == 404
+
+    response = test_app.delete(f"/hive/{obj_id}", cookies={"access_token": auth_token})
+    assert response.status_code == 404
+
 
 @pytest.mark.parametrize("hive_id, data, expected", (
     (IDS["Hives"][0], {}, 400),
@@ -108,3 +114,4 @@ def test_put_hive(test_db, auth_token, test_app, hive_id, data, expected):
 def test_get_hive(test_db, auth_token, test_app, hive_id, expected):
     response = test_app.get(f"/hive/{str(hive_id)}", cookies={"access_token": auth_token})
     assert response.status_code == expected
+

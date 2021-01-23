@@ -74,7 +74,7 @@ async def put_hive(
 
     hive = session.query(Hives).get(hive_id)
 
-    if hive is None:
+    if hive is None or hive.deleted_at:
         raise HTTPException(status_code=404)
 
     if hive.user_id != user_id:
@@ -103,7 +103,7 @@ async def delete_hive(
     user_id = await get_logged_in_user(access_token)
     hive = session.query(Hives).get(hive_id)
 
-    if hive is None:
+    if hive is None or hive.deleted_at:
         raise HTTPException(status_code=404)
     if hive.user_id != user_id:
         raise HTTPException(status_code=403)
@@ -123,7 +123,7 @@ async def get_hive(hive_id: uuid.UUID, access_token: str = Cookie(None), session
     user_id = await get_logged_in_user(access_token)
     hive = session.query(Hives).get(hive_id)
 
-    if hive is None or hive.user_id != user_id:
+    if hive is None or hive.user_id != user_id or hive.deleted_at:
         raise HTTPException(status_code=404)
 
     return hive
