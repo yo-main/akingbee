@@ -13,7 +13,7 @@ from aristaeus.api.v1 import ROUTERS
 from aristaeus.helpers import authentication
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="module", autouse=True)
 def test_db():
     with get_temporary_database() as url:
         db_client = db(url=url)

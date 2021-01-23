@@ -5,7 +5,7 @@ from gaea.rbmq import RBMQPublisher
 from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 from gaea.models.utils.test import IDS
 
-def test_get_apiary(test_db, auth_token, test_app):
+def test_get_apiary(auth_token, test_app):
     response = test_app.get("/apiary")
     assert response.status_code == 401
 
@@ -20,7 +20,7 @@ def test_get_apiary(test_db, auth_token, test_app):
     ("", "location", IDS["Honey_types"][0], 422),
     ("name", "", IDS["Honey_types"][0], 422),
 ))
-def test_post_apiary_fail(test_db, auth_token, test_app, name, location, honey_id, expected):
+def test_post_apiary_fail(auth_token, test_app, name, location, honey_id, expected):
     data = {
         "name": name,
         "location": location,
@@ -34,7 +34,7 @@ def test_post_apiary_fail(test_db, auth_token, test_app, name, location, honey_i
     response = test_app.post("/apiary", cookies={"access_token": auth_token}, json=data)
     assert response.status_code == expected
 
-def test_post_apiary_and_delete(test_db, auth_token, test_app):
+def test_post_apiary_and_delete(auth_token, test_app):
     data = {
         "name": "apiary",
         "location": "ici",
@@ -69,7 +69,7 @@ def test_post_apiary_and_delete(test_db, auth_token, test_app):
     (IDS["Apiaries"][0], {"name": "hop"}, 204),
     (uuid.uuid4(), {"name": "hop"}, 404),
 ))
-def test_put_apiary(test_db, auth_token, test_app, obj_id, data, expected):
+def test_put_apiary(auth_token, test_app, obj_id, data, expected):
     response = test_app.put(f"/apiary/{str(obj_id)}", json=data)
     assert response.status_code == 401
 

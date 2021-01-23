@@ -5,7 +5,7 @@ from gaea.rbmq import RBMQPublisher
 from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 from gaea.models.utils.test import IDS
 
-def test_get_hives(test_db, auth_token, test_app):
+def test_get_hives(auth_token, test_app):
     response = test_app.get("/hive")
     assert response.status_code == 401
 
@@ -29,7 +29,7 @@ def test_get_hives(test_db, auth_token, test_app):
     ({"apiary_id": IDS["Apiaries"][0], "swarm_id": IDS["Swarms"][-1]}, 400),
     ({"apiary_id": IDS["Apiaries"][-1], "swarm_id": IDS["Swarms"][0]}, 400),
 ))
-def test_post_hive_fail(test_db, auth_token, test_app, data, expected):
+def test_post_hive_fail(auth_token, test_app, data, expected):
     body = {
         "name": "name",
         "condition_id": uuid.uuid4(),
@@ -53,7 +53,7 @@ def test_post_hive_fail(test_db, auth_token, test_app, data, expected):
     {"apiary_id": IDS["Apiaries"][0]},
     {"apiary_id": IDS["Apiaries"][1], "swarm_id": IDS["Swarms"][1]},
 ))
-def test_post_hive_and_delete(test_db, auth_token, test_app, data):
+def test_post_hive_and_delete(auth_token, test_app, data):
     body = {
         "name": "name",
         "condition_id": IDS["Hive_conditions"][0],
@@ -95,7 +95,7 @@ def test_post_hive_and_delete(test_db, auth_token, test_app, data):
     (IDS["Hives"][0], {"owner_id": IDS["Owners"][-1]}, 400),
     (uuid.uuid4(), {"name": "hop"}, 404),
 ))
-def test_put_hive(test_db, auth_token, test_app, hive_id, data, expected):
+def test_put_hive(auth_token, test_app, hive_id, data, expected):
     data = {k: str(v) for k, v in data.items()}
     response = test_app.put(f"/hive/{str(hive_id)}", json=data)
     assert response.status_code == 401
@@ -111,7 +111,7 @@ def test_put_hive(test_db, auth_token, test_app, hive_id, data, expected):
     ("123", 422),
     (None, 422),
 ))
-def test_get_hive(test_db, auth_token, test_app, hive_id, expected):
+def test_get_hive(auth_token, test_app, hive_id, expected):
     response = test_app.get(f"/hive/{str(hive_id)}", cookies={"access_token": auth_token})
     assert response.status_code == expected
 
@@ -124,7 +124,7 @@ def test_get_hive(test_db, auth_token, test_app, hive_id, expected):
     (uuid.uuid4(), IDS["Apiaries"][-1], 404),
     (IDS["Hives"][0], uuid.uuid4(), 404),
 ))
-def test_move_hive(test_db, auth_token, test_app, hive_id, apiary_id, expected):
+def test_move_hive(auth_token, test_app, hive_id, apiary_id, expected):
     response = test_app.put(f"/hive/{str(hive_id)}/move/{str(apiary_id)}", cookies={"access_token": auth_token})
     assert response.status_code == expected
 

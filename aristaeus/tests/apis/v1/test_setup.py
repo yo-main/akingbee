@@ -6,13 +6,13 @@ from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 from aristaeus.api.v1.views.setup import MAPPING
 
 @pytest.mark.parametrize("data_type", MAPPING.keys())
-def test_get_data(test_db, auth_token, test_app, data_type):
+def test_get_data(auth_token, test_app, data_type):
     response = test_app.get(f"/setup/{data_type}", cookies={"access_token": auth_token})
     assert response.status_code == 200
     assert len(response.json()) == 2
 
 @pytest.mark.parametrize("data_type", MAPPING.keys())
-def test_post_data(test_db, auth_token, test_app, data_type):
+def test_post_data(auth_token, test_app, data_type):
     response = test_app.post(f"/setup/{data_type}", cookies={"access_token": auth_token}, json={"value": "coucou"})
     assert response.status_code == 200
     assert response.json().get("id")
@@ -22,7 +22,7 @@ def test_post_data(test_db, auth_token, test_app, data_type):
     assert len(response.json()) == 3
 
 @pytest.mark.parametrize("data_type", MAPPING.keys())
-def test_update_data(test_db, auth_token, test_app, data_type):
+def test_update_data(auth_token, test_app, data_type):
     response = test_app.get(f"/setup/{data_type}", cookies={"access_token": auth_token})
     assert response.status_code == 200
 
@@ -34,7 +34,7 @@ def test_update_data(test_db, auth_token, test_app, data_type):
     assert response.status_code == 204
 
 @pytest.mark.parametrize("data_type", MAPPING.keys())
-def test_delete_data(test_db, auth_token, test_app, data_type):
+def test_delete_data(auth_token, test_app, data_type):
     response = test_app.get(f"/setup/{data_type}", cookies={"access_token": auth_token})
     assert response.status_code == 200
 
