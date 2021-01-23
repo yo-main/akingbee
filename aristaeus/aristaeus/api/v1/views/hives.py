@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from sqlalchemy.orm import Session
 
 from gaea.log import logger
-from gaea.models import Hives
+from gaea.models import Hives, Apiaries
 from gaea.webapp.utils import get_session
 
 from aristaeus.helpers.common import validate_uuid
@@ -127,3 +127,37 @@ async def get_hive(hive_id: uuid.UUID, access_token: str = Cookie(None), session
         raise HTTPException(status_code=404)
 
     return hive
+
+@router.put("/hive/{hive_id}/move/{apiary_id}", status_code=204)
+async def move_hive(
+    hive_id: uuid.UUID,
+    apiary_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session)
+):
+    """
+    Move hive to a new apiary
+    """
+    user_id = await get_logged_in_user(access_token)
+    hive = session.query(Hives).get(hive_id)
+
+    if hive is None or hive.user_id != user_id or hive.deleted_at:
+        raise HTTPException(status_code=404, detail="Hive not found")
+
+    apiary = session.query(Apiaries).get(apiary_id)
+
+    if apiary is None or apiary.user_id != user_id or apiary.deleted_at:
+        raise HTTPException(status_code=404, detail="Apiary not found")
+
+    try:
+        hive.apiary = apiary
+        session.commit()
+    except Exception as exc:
+        logger.exception("Something went wrong while moving a hive to a new apiary", hive=hive, apiary=apiary)
+        raise HTTPException(status_code=400, detail="Database error") from exc
+
+
+
+
+
+

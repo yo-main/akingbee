@@ -115,3 +115,16 @@ def test_get_hive(test_db, auth_token, test_app, hive_id, expected):
     response = test_app.get(f"/hive/{str(hive_id)}", cookies={"access_token": auth_token})
     assert response.status_code == expected
 
+
+@pytest.mark.parametrize("hive_id, apiary_id, expected", (
+    (IDS["Hives"][0], IDS["Apiaries"][1], 204),
+    (IDS["Hives"][0], IDS["Apiaries"][0], 204),
+    (IDS["Hives"][-1], IDS["Apiaries"][0], 404),
+    (IDS["Hives"][0], IDS["Apiaries"][-1], 404),
+    (uuid.uuid4(), IDS["Apiaries"][-1], 404),
+    (IDS["Hives"][0], uuid.uuid4(), 404),
+))
+def test_move_hive(test_db, auth_token, test_app, hive_id, apiary_id, expected):
+    response = test_app.put(f"/hive/{str(hive_id)}/move/{str(apiary_id)}", cookies={"access_token": auth_token})
+    assert response.status_code == expected
+
