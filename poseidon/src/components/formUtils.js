@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button, Form, Space, Row, Col } from 'antd';
-import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { Button, Form, Space, Row, Col, Cascader } from 'antd';
+import { PlusOutlined, MinusCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 
 import { formItemLayoutWithoutLabel } from '../constants';
 
@@ -66,6 +66,46 @@ export class OptionalFormItem extends React.Component {
           </Row>
         }
       </>
+    )
+  }
+}
+
+
+
+export class CascaderForm extends React.Component {
+  state = {selected: false}
+
+  render() {
+    const onChange = (value) => {
+      if (value.length > 0 && !this.state.selected) {
+        this.setState({selected: true})
+      } else if (value.length === 0 && this.state.selected) {
+        this.setState({selected: false})
+      }
+    }
+
+    let buttons;
+    if (this.state.selected) {
+      buttons = (
+        <Form.Item>
+          <Button htmlType='submit' icon={<CheckCircleOutlined/>} type='text' />
+        </Form.Item>
+      )
+    }
+
+    return (
+      <Form {...this.props}>
+        <Row>
+          <Col>
+            <Form.Item name="action">
+              <Cascader options={this.props.options} onChange={onChange} placeholder={this.props.title}/>
+            </Form.Item>
+          </Col>
+          <Col>
+            {buttons}
+          </Col>
+        </Row>
+      </Form>
     )
   }
 }

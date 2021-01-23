@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Descriptions } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Descriptions, Cascader } from 'antd';
 import { navigate, Link } from '@reach/router';
 
-import { OptionalFormItem, FormLinkModal } from '../../components';
+import { OptionalFormItem, FormLinkModal, CascaderForm } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { createHive, getHives, updateHive, deleteHive, getHive } from '../../services/aristaeus/hive';
+import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 
 import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
@@ -124,14 +124,10 @@ export class HivePage extends React.Component {
         key: index+1,
         id: val.id,
         name: val.name,
-        owner: val.owner.name,
-        owner: {id: val.owner.id},
-        condition: val.condition.name,
-        condition: {id: val.condition.id},
-        swarmHealthStatus: val.swarm ? val.swarm.health.name : null,
-        swarmHealthStatus: {id: val.swarm ? val.swarm.health.id : null},
-        apiary: val.apiary ? val.apiary.name : null,
-        apiary: {id: val.apiary ? val.apiary.id : null},
+        owner: val.owner,
+        condition: val.condition,
+        swarm: val.swarm,
+        apiary: val.apiary,
       });
       return acc;
     }, []);
@@ -215,23 +211,19 @@ export class HivePage extends React.Component {
       },
       {
         title: window.i18n('word.owner'),
-        dataIndex: 'owner',
-        key: 'owner',
+        dataIndex: ['owner', 'name'],
       },
       {
         title: window.i18n('word.condition'),
-        dataIndex: 'condition',
-        key: 'condition',
+        dataIndex: ['condition', 'name']
       },
       {
         title: window.i18n('word.swarmHealth'),
-        dataIndex: 'swarmHealthStatus',
-        key: 'swarmHealthStatus',
+        dataIndex: ['swarm', 'health', 'name']
       },
       {
         title: window.i18n('word.apiary'),
-        dataIndex: 'apiary',
-        key: 'apiary',
+        dataIndex: ['apiary', 'name']
       },
       {
         title: window.i18n('word.actions'),
@@ -397,15 +389,88 @@ export class HiveDetailsPage extends React.Component {
     }
   }
 
+  getCascaderOptions = () => {
+    let options = [];
+
+    let current_apiary = this.state.hive.apiary;
+    let apiaries = this.state.apiaries;
+    options.push({
+      label: window.i18n('form.moveHive'),
+      value: "newApiary",
+      children: apiaries.reduce((acc, val) => {
+        if (!current_apiary || current_apiary.id != val.id) {
+          acc.push({
+           value: val.id,
+            label: val.name,
+          });
+        }
+        return acc;
+      }, [])
+    });
+
+    options.push({
+      label: window.i18n('form.deleteHive'),
+      value: "deleteHive"
+    })
+
+    return options
+  }
+
+  onCascaderSubmit = async({action}) => {
+    console.log(action);
+
+    if (action === undefined) {
+      return;
+    }
+
+    switch (action[0]) {
+      case 'newApiary':
+        let apiary_id = action[1];
+        try {
+          await moveHive(this.state.hive.id, apiary_id);
+          let hive = await getHive(this.state.hive.id)
+          this.setState((state) => {
+            state['hive'] = hive;
+            return state;
+          })
+          notificate('success', window.i18n('form.hiveMovedSuccess'))
+        } catch (error) {
+          dealWithError(error);
+        }
+        break;
+      case 'deleteHive':
+        try {
+          await deleteHive(this.state.hive.id);
+          notificate('success', window.i18n('form.hiveDeletedSuccess'));
+          navigate("/manage/hive");
+        } catch(error) {
+          dealWithError(error);
+        }
+        break;
+      default:
+        notificate('error', 'Something went wrong with the chosen action - sorry');
+    }
+  }
+
   render() {
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
 
+    const cardItems = (label, value) => {
+      return <p> {label} : {value}</p>
+    }
+
     let name = this.state.hive.name;
-    let owner = this.state.hive.owner.name;
-    let condition = this.state.hive.condition.name;
-    let health = this.state.hive.swarm ? this.state.hive.swarm.health.name : "N/A";
-    let apiary = this.state.hive.apiary ? this.state.hive.apiary.name : "N/A";
+    let owner = cardItems(window.i18n('word.owner'), this.state.hive.owner.name);
+    let condition = cardItems(window.i18n('word.condition'), this.state.hive.condition.name);
+
+    let health, apiary;
+    if (this.state.hive.swarm) {
+      health = cardItems(window.i18n('word.health'), this.state.hive.swarm.health.name);
+    }
+    if (this.state.hive.apiary) {
+      apiary = cardItems(window.i18n('word.apiary'), this.state.hive.apiary.name);
+    }
 
     let updateForm = (
       <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
@@ -413,17 +478,24 @@ export class HiveDetailsPage extends React.Component {
       </FormLinkModal>
     )
 
+    let cascaderOptions = this.getCascaderOptions();
+
     return (
       <>
         <Row>
           <Col offset={1}>
-            <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<a href="#" style={{paddingLeft: '50px'}}>{updateForm}</a>}>
-              <p> {window.i18n('word.owner')}: {owner}</p>
-              <p> {window.i18n('word.health')}: {health}</p>
-              <p> {window.i18n('word.apiary')}: {apiary}</p>
-              <p> {window.i18n('word.condition')}: {condition}</p>
+            <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<div style={{paddingLeft: '50px'}}>{updateForm}</div>}>
+              {owner}
+              {health}
+              {apiary}
+              {condition}
             </Card>
           </Col>
+          <Col style={{paddingLeft: '10px'}}>
+            <CascaderForm title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
+          </Col>
+        </Row>
+        <Row>
         </Row>
       </>
     )

@@ -40,3 +40,8 @@ export async function deleteHive(hive_id) {
   let response = await aristaeusApi.delete(`/hive/${hive_id}`);
   return response.data;
 }
+
+export async function moveHive(hive_id, apiary_id) {
+  let response = await aristaeusApi.put(`hive/${hive_id}/move/${apiary_id}`)
+  return response.data;
+}
