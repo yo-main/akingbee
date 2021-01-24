@@ -73,7 +73,15 @@ export class OptionalFormItem extends React.Component {
 
 
 export class CascaderForm extends React.Component {
-  state = {selected: false}
+  constructor(props) {
+    super(props);
+    this.refCascader = React.createRef();
+    this.state = {selected: false}
+  }
+
+  reset() {
+    this.refCascader.current.setValue([]);
+  }
 
   render() {
     const onChange = (value) => {
@@ -98,7 +106,7 @@ export class CascaderForm extends React.Component {
         <Row>
           <Col>
             <Form.Item name="action">
-              <Cascader options={this.props.options} onChange={onChange} placeholder={this.props.title}/>
+              <Cascader ref={this.refCascader} options={this.props.options} onChange={onChange} placeholder={this.props.title}/>
             </Form.Item>
           </Col>
           <Col>

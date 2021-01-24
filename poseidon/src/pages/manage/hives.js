@@ -10,6 +10,7 @@ import { formItemLayout, tailFormItemLayout } from '../../constants';
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
+import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
 import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
@@ -324,15 +325,19 @@ export class HiveCreationPage extends React.Component {
 }
 
 export class HiveDetailsPage extends React.Component {
-  state = {
-    pageStatus: LOADING_STATUS,
-    hive: [],
-    hiveBeekeeper: [],
-    hiveCondition: [],
-    apiaries: [],
-    swarmHealthStatus: [],
-  }
+  constructor(props) {
+    super(props);
+    this.state = {
+      pageStatus: LOADING_STATUS,
+      hive: [],
+      hiveBeekeeper: [],
+      hiveCondition: [],
+      apiaries: [],
+      swarmHealthStatus: [],
+    }
 
+    this.refCascader = React.createRef();
+  }
 
   updateData = async(form) => {
     const hiveId = form.hiveId;
@@ -394,6 +399,8 @@ export class HiveDetailsPage extends React.Component {
 
     let current_apiary = this.state.hive.apiary;
     let apiaries = this.state.apiaries;
+    let health_statuses = this.state.swarmHealthStatus;
+
     options.push({
       label: window.i18n('form.moveHive'),
       value: "newApiary",
@@ -408,6 +415,25 @@ export class HiveDetailsPage extends React.Component {
       }, [])
     });
 
+    if (this.state.hive.swarm) {
+      options.push({
+        label: window.i18n('form.deleteSwarm'),
+        value: "deleteSwarm"
+      })
+    } else {
+      options.push({
+        label: window.i18n('form.addSwarm'),
+        value: "addSwarm",
+        children: health_statuses.reduce((acc, val) => {
+          acc.push({
+            value: val.id,
+            label: val.name,
+          });
+          return acc;
+        }, [])
+      })
+    }
+
     options.push({
       label: window.i18n('form.deleteHive'),
       value: "deleteHive"
@@ -417,7 +443,7 @@ export class HiveDetailsPage extends React.Component {
   }
 
   onCascaderSubmit = async({action}) => {
-    console.log(action);
+    this.refCascader.current.reset();
 
     if (action === undefined) {
       return;
@@ -447,14 +473,43 @@ export class HiveDetailsPage extends React.Component {
           dealWithError(error);
         }
         break;
+      case 'deleteSwarm':
+        try {
+          await deleteSwarm({swarm_id: this.state.hive.swarm.id});
+          let hive = await getHive(this.state.hive.id)
+          this.setState((state) => {
+            state['hive'] = hive;
+            return state;
+          })
+          notificate('success', window.i18n('form.SwarmDeletedSuccess'))
+        } catch (error) {
+          dealWithError(error);
+        }
+        break;
+      case 'addSwarm':
+        try {
+          let swarm = await createSwarm({health_status_id: action[1]});
+          await updateHive(this.state.hive.id, {swarm_id: swarm.id})
+          let hive = await getHive(this.state.hive.id)
+          this.setState((state) => {
+            state['hive'] = hive;
+            return state;
+          })
+        } catch (error) {
+          dealWithError(error);
+        }
+        break;
       default:
         notificate('error', 'Something went wrong with the chosen action - sorry');
+
     }
+
   }
 
   render() {
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
+
 
     const cardItems = (label, value) => {
       return <p> {label} : {value}</p>
@@ -492,7 +547,7 @@ export class HiveDetailsPage extends React.Component {
             </Card>
           </Col>
           <Col style={{paddingLeft: '10px'}}>
-            <CascaderForm title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
+            <CascaderForm ref={this.refCascader} title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
           </Col>
         </Row>
         <Row>
