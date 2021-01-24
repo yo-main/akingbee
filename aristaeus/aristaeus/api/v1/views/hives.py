@@ -74,11 +74,8 @@ async def put_hive(
 
     hive = session.query(Hives).get(hive_id)
 
-    if hive is None or hive.deleted_at:
+    if hive is None or hive.deleted_at or hive.user_id != user_id:
         raise HTTPException(status_code=404)
-
-    if hive.user_id != user_id:
-        raise HTTPException(status_code=403)
 
     for key, value in data.dict().items():
         if value is not None:
@@ -103,10 +100,8 @@ async def delete_hive(
     user_id = await get_logged_in_user(access_token)
     hive = session.query(Hives).get(hive_id)
 
-    if hive is None or hive.deleted_at:
+    if hive is None or hive.deleted_at or hive.user_id != user_id:
         raise HTTPException(status_code=404)
-    if hive.user_id != user_id:
-        raise HTTPException(status_code=403)
 
     try:
         hive.deleted_at = datetime.datetime.utcnow()
@@ -155,9 +150,4 @@ async def move_hive(
     except Exception as exc:
         logger.exception("Something went wrong while moving a hive to a new apiary", hive=hive, apiary=apiary)
         raise HTTPException(status_code=400, detail="Database error") from exc
-
-
-
-
-
 

@@ -68,10 +68,8 @@ async def delete_apiary(
     user_id = await get_logged_in_user(access_token)
     apiary = session.query(Apiaries).get(apiary_id)
 
-    if apiary is None or apiary.deleted_at:
+    if apiary is None or apiary.deleted_at or apiary.user_id != user_id:
         raise HTTPException(status_code=404)
-    if apiary.user_id != user_id:
-        raise HTTPException(status_code=403)
 
     try:
         apiary.deleted_at = datetime.datetime.utcnow()
@@ -98,11 +96,8 @@ async def update_apiary(
 
     apiary = session.query(Apiaries).get(apiary_id)
 
-    if apiary is None or apiary.deleted_at:
+    if apiary is None or apiary.deleted_at or apiary.user_id != user_id:
         raise HTTPException(status_code=404)
-
-    if apiary.user_id != user_id:
-        raise HTTPException(status_code=403)
 
     for key, value in body.dict().items():
         if value is not None:

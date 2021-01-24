@@ -94,6 +94,7 @@ def test_post_hive_and_delete(auth_token, test_app, data):
     (IDS["Hives"][0], {"owner_id": IDS["Owners"][1]}, 204),
     (IDS["Hives"][0], {"owner_id": IDS["Owners"][-1]}, 400),
     (uuid.uuid4(), {"name": "hop"}, 404),
+    (IDS["Hives"][-1], {"name": "hop"}, 404),
 ))
 def test_put_hive(auth_token, test_app, hive_id, data, expected):
     data = {k: str(v) for k, v in data.items()}
