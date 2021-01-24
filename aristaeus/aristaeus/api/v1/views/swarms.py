@@ -95,9 +95,28 @@ async def delete_swarm(
         raise HTTPException(status_code=403)
 
     try:
-        swarm.health_status_id = datetime.datetime.now()
+        swarm.deleted_at = datetime.datetime.now()
         swarm.hive = None
         session.commit()
     except Exception as exc:
         logger.exception("Database error", swarm=swarm)
         raise HTTPException(status_code=400, detail="Couldn't delete the swarm in database") from exc
+
+@router.get("/swarm/{swarm_id}", status_code=200, response_model=SwarmModel)
+async def get_swarm(
+    swarm_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    Get a swarm
+    """
+    user_id = await get_logged_in_user(access_token)
+
+    swarm = session.query(Swarms).get(swarm_id)
+
+    if swarm is None or swarm.deleted_at or swarm.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Swarm not found")
+
+    return swarm
+

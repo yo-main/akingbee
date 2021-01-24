@@ -104,7 +104,12 @@ async def delete_hive(
         raise HTTPException(status_code=404)
 
     try:
-        hive.deleted_at = datetime.datetime.utcnow()
+        now = datetime.datetime.now()
+        hive.deleted_at = now
+        # TODO: how to manage swarm when hive is being deleted
+        #if hive.swarm:
+            #hive.swarm.deleted_at = now
+
         session.commit()
     except Exception as exc:
         logger.exception("Something went wrong when deleting the hive", hive=hive)
