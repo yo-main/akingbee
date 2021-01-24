@@ -1,4 +1,5 @@
 """API endpoints for hive"""
+import datetime
 from typing import List
 import uuid
 
@@ -6,7 +7,7 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from sqlalchemy.orm import Session
 
 from gaea.log import logger
-from gaea.models import Swarms
+from gaea.models import Swarms, SwarmHealthStatuses
 from gaea.webapp.utils import get_session
 
 from aristaeus.helpers.common import validate_uuid
@@ -35,11 +36,6 @@ async def post_swarm(
     """
     user_id = await get_logged_in_user(access_token)
 
-    if not validate_uuid(data.health_status_id):
-        raise HTTPException(
-            status_code=400, detail=f"Invalid uuid for the swarm health status: '{data.health_status_id}'"
-        )
-
     swarm = Swarms(
         health_status_id=data.health_status_id,
         user_id=user_id,
@@ -64,16 +60,14 @@ async def put_swarm(
     session: Session = Depends(get_session),
 ):
     """
-    Create an Hive object and return it as json
+    Modify a swarm
     """
     user_id = await get_logged_in_user(access_token)
 
-    if not validate_uuid(data.health_status_id):
-        raise HTTPException(
-            status_code=400, detail=f"Invalid uuid for the swarm health status: '{data.health_status_id}'"
-        )
-
     swarm = session.query(Swarms).get(swarm_id)
+
+    if swarm is None or swarm.deleted_at or swarm.user_id != user_id:
+        raise HTTPException(status_code=404, detail="Swarm not found")
 
     try:
         swarm.health_status_id = data.health_status_id
@@ -81,3 +75,29 @@ async def put_swarm(
     except Exception as exc:
         logger.exception("Database error", swarm=swarm)
         raise HTTPException(status_code=400, detail="Couldn't update the swarm in database") from exc
+
+@router.delete("/swarm/{swarm_id}", status_code=204)
+async def delete_swarm(
+    swarm_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    delete a swarm
+    """
+    user_id = await get_logged_in_user(access_token)
+
+    swarm = session.query(Swarms).get(swarm_id)
+
+    if swarm is None or swarm.deleted_at:
+        raise HTTPException(status_code=404, detail="Swarm not found")
+    if swarm.user_id != user_id:
+        raise HTTPException(status_code=403)
+
+    try:
+        swarm.health_status_id = datetime.datetime.now()
+        swarm.hive = None
+        session.commit()
+    except Exception as exc:
+        logger.exception("Database error", swarm=swarm)
+        raise HTTPException(status_code=400, detail="Couldn't delete the swarm in database") from exc
