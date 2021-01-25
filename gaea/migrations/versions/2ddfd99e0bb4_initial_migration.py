@@ -1,17 +1,16 @@
-"""create models
+"""initial migration
 
-Revision ID: 696284ff5e09
-Revises:
-Create Date: 2020-09-23 00:07:47.722208
+Revision ID: 2ddfd99e0bb4
+Revises: 
+Create Date: 2021-01-25 22:42:56.598121
 
 """
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
-from gaea.models import CommentTypes
 
 # revision identifiers, used by Alembic.
-revision = '696284ff5e09'
+revision = '2ddfd99e0bb4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -159,11 +158,9 @@ def upgrade():
     sa.Column('type_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('status_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('hive_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('apiary_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('created_at', postgresql.TIMESTAMP(), nullable=True),
     sa.Column('updated_at', postgresql.TIMESTAMP(), nullable=True),
     sa.Column('deleted_at', postgresql.TIMESTAMP(), nullable=True),
-    sa.ForeignKeyConstraint(['apiary_id'], ['apiaries.id'], name=op.f('fk_events_apiary_id_apiaries')),
     sa.ForeignKeyConstraint(['hive_id'], ['hives.id'], name=op.f('fk_events_hive_id_hives')),
     sa.ForeignKeyConstraint(['status_id'], ['event_statuses.id'], name=op.f('fk_events_status_id_event_statuses')),
     sa.ForeignKeyConstraint(['type_id'], ['event_types.id'], name=op.f('fk_events_type_id_event_types')),
@@ -178,34 +175,18 @@ def upgrade():
     sa.Column('type_id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('swarm_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('hive_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('apiary_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('event_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('swarm_health_status_id', postgresql.UUID(as_uuid=True), nullable=True),
-    sa.Column('hive_condition_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.Column('created_at', postgresql.TIMESTAMP(), nullable=True),
     sa.Column('updated_at', postgresql.TIMESTAMP(), nullable=True),
     sa.Column('deleted_at', postgresql.TIMESTAMP(), nullable=True),
-    sa.ForeignKeyConstraint(['apiary_id'], ['apiaries.id'], name=op.f('fk_comments_apiary_id_apiaries')),
     sa.ForeignKeyConstraint(['event_id'], ['events.id'], name=op.f('fk_comments_event_id_events')),
-    sa.ForeignKeyConstraint(['hive_condition_id'], ['hive_conditions.id'], name=op.f('fk_comments_hive_condition_id_hive_conditions')),
     sa.ForeignKeyConstraint(['hive_id'], ['hives.id'], name=op.f('fk_comments_hive_id_hives')),
-    sa.ForeignKeyConstraint(['swarm_health_status_id'], ['swarm_health_statuses.id'], name=op.f('fk_comments_swarm_health_status_id_swarm_health_statuses')),
     sa.ForeignKeyConstraint(['swarm_id'], ['swarms.id'], name=op.f('fk_comments_swarm_id_swarms')),
     sa.ForeignKeyConstraint(['type_id'], ['comment_types.id'], name=op.f('fk_comments_type_id_comment_types')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_comments_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_comments'))
     )
     # ### end Alembic commands ###
-
-    session = sa.orm.Session(bind=op.get_bind())
-    comment_types = (
-        CommentTypes(name="system"),
-        CommentTypes(name="user"),
-        CommentTypes(name="events"),
-    )
-    session.add_all(comment_types)
-    session.commit()
-    session.close()
 
 
 def downgrade():

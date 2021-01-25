@@ -51,7 +51,6 @@ class Events(Base):
     type_id = Column(UUID(as_uuid=True), ForeignKey(EventTypes.id), nullable=False)
     status_id = Column(UUID(as_uuid=True), ForeignKey(EventStatuses.id), nullable=False)
     hive_id = Column(UUID(as_uuid=True), ForeignKey(Hives.id), nullable=True)
-    apiary_id = Column(UUID(as_uuid=True), ForeignKey(Apiaries.id), nullable=True)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
     updated_at = Column(
@@ -63,7 +62,6 @@ class Events(Base):
     type = relationship(EventTypes)
     status = relationship(EventStatuses)
     hive = relationship(Hives, backref="events")
-    apiary = relationship(Apiaries, backref="events")
 
 
 func = DDL("""
@@ -75,10 +73,6 @@ func = DDL("""
 
             IF NEW.user_id NOT IN (SELECT t.user_id FROM event_statuses as t WHERE t.id = NEW.status_id) THEN
                 RAISE EXCEPTION 'Different user for event_statuses';
-            END IF;
-
-            IF NEW.apiary_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM apiaries as t WHERE t.id = NEW.apiary_id) THEN
-                RAISE EXCEPTION 'Different user for apiaries';
             END IF;
 
             IF NEW.hive_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hives as t WHERE t.id = NEW.hive_id) THEN

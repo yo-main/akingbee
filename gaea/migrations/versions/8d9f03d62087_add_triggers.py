@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '8d9f03d62087'
-down_revision = '696284ff5e09'
+down_revision = '2ddfd99e0bb4'
 branch_labels = None
 depends_on = None
 
@@ -83,10 +83,6 @@ def upgrade():
                     RAISE EXCEPTION 'Different user for event_statuses';
                 END IF;
 
-                IF NEW.apiary_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM apiaries as t WHERE t.id = NEW.apiary_id) THEN
-                    RAISE EXCEPTION 'Different user for apiaries';
-                END IF;
-
                 IF NEW.hive_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hives as t WHERE t.id = NEW.hive_id) THEN
                     RAISE EXCEPTION 'Different user for hives';
                 END IF;
@@ -101,16 +97,8 @@ def upgrade():
     op.execute("""
         CREATE FUNCTION check_user_comments() RETURNS trigger AS $check_user_comments$
             BEGIN
-                IF NEW.swarm_health_status_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM swarm_health_statuses as t WHERE t.id = NEW.swarm_health_status_id) THEN
-                    RAISE EXCEPTION 'Different user for swarm_health_statuses';
-                END IF;
-
                 IF new.event_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM events as t WHERE t.id = NEW.event_id) THEN
                     RAISE EXCEPTION 'Different user for eventd';
-                END IF;
-
-                IF NEW.apiary_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM apiaries as t WHERE t.id = NEW.apiary_id) THEN
-                    RAISE EXCEPTION 'Different user for apiaries';
                 END IF;
 
                 IF NEW.swarm_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM swarms as t WHERE t.id = NEW.swarm_id) THEN
@@ -119,10 +107,6 @@ def upgrade():
 
                 IF NEW.hive_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hives as t WHERE t.id = NEW.hive_id) THEN
                     RAISE EXCEPTION 'Different user for hives';
-                END IF;
-
-                IF NEW.hive_condition_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hive_conditions as t WHERE t.id = NEW.hive_condition_id) THEN
-                    RAISE EXCEPTION 'Different user for hive_conditions';
                 END IF;
 
                 RETURN NEW;

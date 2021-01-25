@@ -260,7 +260,6 @@ DATASETS = (
             type_id=IDS["Comment_types"][0],
             swarm_id=IDS["Swarms"][0],
             hive_id=IDS["Hives"][0],
-            apiary_id=IDS["Apiaries"][0],
         ),
         Comments(
             id=uuid.uuid4(),
@@ -268,7 +267,6 @@ DATASETS = (
             date=datetime.datetime.utcnow(),
             user_id=IDS["Users"][0],
             type_id=IDS["Comment_types"][1],
-            apiary_id=IDS["Apiaries"][2],
             event_id=IDS["Events"][0],
         ),
         Comments(
@@ -279,7 +277,6 @@ DATASETS = (
             type_id=IDS["Comment_types"][0],
             swarm_id=IDS["Swarms"][1],
             hive_id=IDS["Hives"][1],
-            apiary_id=IDS["Apiaries"][1],
         ),
         Comments(
             id=uuid.uuid4(),
@@ -289,7 +286,6 @@ DATASETS = (
             type_id=IDS["Comment_types"][0],
             swarm_id=IDS["Swarms"][0],
             hive_id=IDS["Hives"][0],
-            apiary_id=IDS["Apiaries"][0],
         ),
         Comments(
             id=uuid.uuid4(),
@@ -299,7 +295,6 @@ DATASETS = (
             type_id=IDS["Comment_types"][-1],
             swarm_id=IDS["Swarms"][-1],
             hive_id=IDS["Hives"][-1],
-            apiary_id=IDS["Apiaries"][-1],
         ),
     )
 )

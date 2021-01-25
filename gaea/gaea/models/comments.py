@@ -34,14 +34,7 @@ class Comments(Base):
     type_id = Column(UUID(as_uuid=True), ForeignKey(CommentTypes.id), nullable=False)
     swarm_id = Column(UUID(as_uuid=True), ForeignKey(Swarms.id), nullable=True)
     hive_id = Column(UUID(as_uuid=True), ForeignKey(Hives.id), nullable=True)
-    apiary_id = Column(UUID(as_uuid=True), ForeignKey(Apiaries.id), nullable=True)
     event_id = Column(UUID(as_uuid=True), ForeignKey(Events.id), nullable=True)
-    swarm_health_status_id = Column(
-        UUID(as_uuid=True), ForeignKey(SwarmHealthStatuses.id), nullable=True
-    )
-    hive_condition_id = Column(
-        UUID(as_uuid=True), ForeignKey(HiveConditions.id), nullable=True
-    )
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
     updated_at = Column(
@@ -51,26 +44,15 @@ class Comments(Base):
 
     user = relationship(Users, backref="comments")
     type = relationship(CommentTypes)
-    swarm_health_status = relationship(SwarmHealthStatuses)
-    hive_condition = relationship(HiveConditions)
     swarm = relationship(Swarms, backref="comments")
     hive = relationship(Hives, backref="comments")
-    apiary = relationship(Apiaries, backref="comments")
     event = relationship(Events, backref=backref("comment", uselist=False))
 
 func = DDL("""
     CREATE FUNCTION check_user_comments() RETURNS trigger AS $check_user_comments$
         BEGIN
-            IF NEW.swarm_health_status_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM swarm_health_statuses as t WHERE t.id = NEW.swarm_health_status_id) THEN
-                RAISE EXCEPTION 'Different user for swarm_health_statuses';
-            END IF;
-
             IF new.event_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM events as t WHERE t.id = NEW.event_id) THEN
                 RAISE EXCEPTION 'Different user for eventd';
-            END IF;
-
-            IF NEW.apiary_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM apiaries as t WHERE t.id = NEW.apiary_id) THEN
-                RAISE EXCEPTION 'Different user for apiaries';
             END IF;
 
             IF NEW.swarm_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM swarms as t WHERE t.id = NEW.swarm_id) THEN
@@ -79,10 +61,6 @@ func = DDL("""
 
             IF NEW.hive_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hives as t WHERE t.id = NEW.hive_id) THEN
                 RAISE EXCEPTION 'Different user for hives';
-            END IF;
-
-            IF NEW.hive_condition_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM hive_conditions as t WHERE t.id = NEW.hive_condition_id) THEN
-                RAISE EXCEPTION 'Different user for hive_conditions';
             END IF;
 
             RETURN NEW;
