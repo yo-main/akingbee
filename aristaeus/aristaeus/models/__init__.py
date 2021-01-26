@@ -86,6 +86,7 @@ class HivePutModel(BaseModel):
     swarm_id: Optional[uuid.UUID] = None
     apiary_id: Optional[uuid.UUID] = None
 
+
 class HiveModel(BaseModel):
     id: uuid.UUID
     name: constr(min_length=1)
@@ -98,3 +99,62 @@ class HiveModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+# EVENTS
+
+class EventStatusModel(BaseModel):
+    id: uuid.UUID
+    name: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
+class EventTypeModel(BaseModel):
+    id: uuid.UUID
+    name: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
+class EventModel(BaseModel):
+    id: uuid.UUID
+    title: str
+    description: Optional[str]
+    due_date: datetime.datetime
+    type: EventTypeModel
+    status: EventStatusModel
+    hive: Optional[HiveModel]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
+
+# COMMENTS
+
+class CommentTypeModel(BaseModel):
+    id: uuid.UUID
+    name: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
+class CommentModel(BaseModel):
+    id: uuid.UUID
+    type: CommentTypeModel
+    swarm: Optional[SwarmModel]
+    hive: Optional[HiveModel]
+    event: Optional[EventModel]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
