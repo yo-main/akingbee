@@ -16,13 +16,20 @@ from aristaeus.models import HiveModel, HivePostModel, HivePutModel
 
 router = APIRouter()
 
+
 @router.get("/hive", status_code=200, response_model=List[HiveModel])
-async def get_hives(access_token: str = Cookie(None), session: Session = Depends(get_session)):
+async def get_hives(
+    access_token: str = Cookie(None), session: Session = Depends(get_session)
+):
     """
     Get a list of hives
     """
     user_id = await get_logged_in_user(access_token)
-    hives = session.query(Hives).filter(Hives.user_id == user_id, Hives.deleted_at.is_(None)).all()
+    hives = (
+        session.query(Hives)
+        .filter(Hives.user_id == user_id, Hives.deleted_at.is_(None))
+        .all()
+    )
     return hives
 
 
@@ -52,7 +59,9 @@ async def post_hive(
         session.commit()
     except Exception as exc:
         logger.exception("Database error", hive=hive)
-        raise HTTPException(status_code=400, detail="Couldn't save the hive in database") from exc
+        raise HTTPException(
+            status_code=400, detail="Couldn't save the hive in database"
+        ) from exc
 
     return hive
 
@@ -85,7 +94,9 @@ async def put_hive(
         session.commit()
     except Exception as exc:
         logger.exception("Database error", hive=hive)
-        raise HTTPException(status_code=400, detail="Couldn't update the hive in database") from exc
+        raise HTTPException(
+            status_code=400, detail="Couldn't update the hive in database"
+        ) from exc
 
 
 @router.delete("/hive/{hive_id}", status_code=204)
@@ -107,16 +118,21 @@ async def delete_hive(
         now = datetime.datetime.now()
         hive.deleted_at = now
         # TODO: how to manage swarm when hive is being deleted
-        #if hive.swarm:
-            #hive.swarm.deleted_at = now
+        # if hive.swarm:
+        # hive.swarm.deleted_at = now
 
         session.commit()
     except Exception as exc:
         logger.exception("Something went wrong when deleting the hive", hive=hive)
         raise HTTPException(status_code=400, detail="Database error") from exc
 
+
 @router.get("/hive/{hive_id}", status_code=200, response_model=HiveModel)
-async def get_hive(hive_id: uuid.UUID, access_token: str = Cookie(None), session: Session = Depends(get_session)):
+async def get_hive(
+    hive_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
     """
     Get a single hive
     """
@@ -128,12 +144,13 @@ async def get_hive(hive_id: uuid.UUID, access_token: str = Cookie(None), session
 
     return hive
 
+
 @router.put("/hive/{hive_id}/move/{apiary_id}", status_code=204)
 async def move_hive(
     hive_id: uuid.UUID,
     apiary_id: uuid.UUID,
     access_token: str = Cookie(None),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     """
     Move hive to a new apiary
@@ -153,6 +170,9 @@ async def move_hive(
         hive.apiary = apiary
         session.commit()
     except Exception as exc:
-        logger.exception("Something went wrong while moving a hive to a new apiary", hive=hive, apiary=apiary)
+        logger.exception(
+            "Something went wrong while moving a hive to a new apiary",
+            hive=hive,
+            apiary=apiary,
+        )
         raise HTTPException(status_code=400, detail="Database error") from exc
-

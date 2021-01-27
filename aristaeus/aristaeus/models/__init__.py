@@ -13,8 +13,10 @@ class SetupDataType(str, Enum):
     event_type = "event_type"
     event_status = "event_status"
 
+
 class SetupDataPostModel(BaseModel):
     value: str
+
 
 class SetupDataModel(BaseModel):
     id: uuid.UUID
@@ -28,15 +30,18 @@ class SetupDataModel(BaseModel):
 
 # APIARIES
 
+
 class ApiaryPostModel(BaseModel):
     name: constr(min_length=1)
     location: constr(min_length=1)
     honey_type: uuid.UUID
 
+
 class ApiaryPutModel(BaseModel):
     name: Optional[constr(min_length=1)]
     location: Optional[constr(min_length=1)]
     honey_type_id: Optional[uuid.UUID]
+
 
 class ApiaryModel(BaseModel):
     id: uuid.UUID
@@ -53,8 +58,10 @@ class ApiaryModel(BaseModel):
 
 # SWARMS
 
+
 class SwarmPostModel(BaseModel):
     health_status_id: uuid.UUID
+
 
 class SwarmPutModel(BaseModel):
     health_status_id: uuid.UUID
@@ -72,12 +79,14 @@ class SwarmModel(BaseModel):
 
 # HIVES
 
+
 class HivePostModel(BaseModel):
     name: constr(min_length=1)
     condition_id: uuid.UUID
     owner_id: uuid.UUID
     apiary_id: Optional[uuid.UUID] = None
     swarm_id: Optional[uuid.UUID] = None
+
 
 class HivePutModel(BaseModel):
     name: Optional[constr(min_length=1)] = None
@@ -100,7 +109,9 @@ class HiveModel(BaseModel):
     class Config:
         orm_mode = True
 
+
 # EVENTS
+
 
 class EventStatusModel(BaseModel):
     id: uuid.UUID
@@ -111,6 +122,7 @@ class EventStatusModel(BaseModel):
     class Config:
         orm_mode = True
 
+
 class EventTypeModel(BaseModel):
     id: uuid.UUID
     name: str
@@ -119,6 +131,7 @@ class EventTypeModel(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class EventModel(BaseModel):
     id: uuid.UUID
@@ -137,6 +150,7 @@ class EventModel(BaseModel):
 
 # COMMENTS
 
+
 class CommentTypeModel(BaseModel):
     id: uuid.UUID
     name: str
@@ -145,6 +159,7 @@ class CommentTypeModel(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class CommentModel(BaseModel):
     id: uuid.UUID
@@ -159,6 +174,7 @@ class CommentModel(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class PostCommentModel(BaseModel):
     comment: str

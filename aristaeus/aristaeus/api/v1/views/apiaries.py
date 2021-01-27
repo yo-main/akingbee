@@ -14,6 +14,7 @@ from aristaeus.models import ApiaryPostModel, ApiaryPutModel, ApiaryModel
 
 router = APIRouter()
 
+
 @router.get("/apiary", status_code=200, response_model=List[ApiaryModel])
 async def get_apiaries(
     access_token: str = Cookie(None),
@@ -23,7 +24,11 @@ async def get_apiaries(
     Create an Apiary object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
-    apiaries = session.query(Apiaries).filter(Apiaries.user_id == user_id, Apiaries.deleted_at.is_(None)).all()
+    apiaries = (
+        session.query(Apiaries)
+        .filter(Apiaries.user_id == user_id, Apiaries.deleted_at.is_(None))
+        .all()
+    )
     return apiaries
 
 
@@ -51,7 +56,9 @@ async def post_apiary(
         session.commit()
     except Exception as exc:
         logger.exception("Database error", apiary=apiary)
-        raise HTTPException(status_code=400, detail="Couldn't save the apiary in database") from exc
+        raise HTTPException(
+            status_code=400, detail="Couldn't save the apiary in database"
+        ) from exc
 
     return apiary
 
