@@ -148,6 +148,8 @@ class CommentTypeModel(BaseModel):
 
 class CommentModel(BaseModel):
     id: uuid.UUID
+    comment: str
+    date: datetime.datetime
     type: CommentTypeModel
     swarm: Optional[SwarmModel]
     hive: Optional[HiveModel]
@@ -158,3 +160,8 @@ class CommentModel(BaseModel):
     class Config:
         orm_mode = True
 
+class PostCommentModel(BaseModel):
+    comment: str
+    date: datetime.datetime
+    type_id: uuid.UUID
+    event_id: Optional[uuid.UUID] = None
