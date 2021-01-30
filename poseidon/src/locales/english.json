@@ -17,6 +17,7 @@
     "action.setupHive": "Hive",
     "action.setupApiary": "Apiary",
     "action.setupEvent": "Event",
+    "word.history": "Historique",
     "word.events": "Events",
     "word.types": "Types",
     "word.status": "Status",

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Descriptions, Cascader } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs } from 'antd';
 import { navigate, Link } from '@reach/router';
 
 import { OptionalFormItem, FormLinkModal, CascaderForm } from '../../components';
@@ -13,6 +13,8 @@ import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from 
 import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
 import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
+
+import '../styles.css';
 
 export function UpdateHiveForm(props) {
   const [form] = Form.useForm();
@@ -481,7 +483,7 @@ export class HiveDetailsPage extends React.Component {
             state['hive'] = hive;
             return state;
           })
-          notificate('success', window.i18n('form.SwarmDeletedSuccess'))
+          notificate('success', window.i18n('form.swarmDeletedSuccess'))
         } catch (error) {
           dealWithError(error);
         }
@@ -495,6 +497,7 @@ export class HiveDetailsPage extends React.Component {
             state['hive'] = hive;
             return state;
           })
+          notificate('success', window.i18n('form.swarmAddedSuccess'))
         } catch (error) {
           dealWithError(error);
         }
@@ -538,7 +541,7 @@ export class HiveDetailsPage extends React.Component {
     return (
       <>
         <Row>
-          <Col offset={1}>
+          <Col offset="1">
             <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<div style={{paddingLeft: '50px'}}>{updateForm}</div>}>
               {owner}
               {health}
@@ -550,7 +553,22 @@ export class HiveDetailsPage extends React.Component {
             <CascaderForm ref={this.refCascader} title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
           </Col>
         </Row>
+        <Col offset="1">
+          <Divider/>
+        </Col>
         <Row>
+          <Col offset="1" span="23">
+            <div className="card-container">
+              <Tabs defaultActiveKey="1" type="card">
+                <Tabs.TabPane tab={window.i18n("word.history")} key="1">
+                  Comments !
+                </Tabs.TabPane>
+                <Tabs.TabPane tab={window.i18n("word.events")} key="2">
+                  Events !
+                </Tabs.TabPane>
+              </Tabs>
+            </div>
+          </Col>
         </Row>
       </>
     )

@@ -56,7 +56,7 @@ export function dealWithError(error) {
     return;
   }
 
-  if (response.status === 401) {
+  if (response.status === 401 && window.location.pathname != "/login") {
     navigate("/login");
     return;
   }
