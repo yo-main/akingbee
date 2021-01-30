@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs, DatePicker } from 'antd';
 import { navigate, Link } from '@reach/router';
 
-import { OptionalFormItem, FormLinkModal, CascaderForm } from '../../components';
+import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, CommentEditor } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
@@ -114,6 +114,19 @@ function CreateHiveForm(props) {
         <Button type="primary" htmlType="submit">
           {window.i18n('word.submit')}
         </Button>
+      </Form.Item>
+    </Form>
+  )
+}
+
+function CreateComment(props) {
+  return (
+    <Form layout="vertical" requiredMark={false}>
+      <Form.Item label={window.i18n("word.date")} name="date" required>
+        <DatePicker />
+      </Form.Item>
+      <Form.Item label={window.i18n("word.comment")} name="comment" required>
+        <CommentEditor />
       </Form.Item>
     </Form>
   )
@@ -620,7 +633,9 @@ export class HiveDetailsPage extends React.Component {
                 <Tabs.TabPane tab={window.i18n("word.history")} key="1">
                   <Row justify="end" style={{marginBottom: '1%'}} >
                     <Col>
-                      <Button type="default" shape="square" icon={<PlusOutlined style={{ fontSize: '25px'}}/>}/>
+                      <FormButtonModal buttonIcon={<PlusOutlined style={{ fontSize: '20px'}}/>} title={window.i18n('title.newComment')} formId='newComment'>
+                        <CreateComment />
+                      </FormButtonModal>
                     </Col>
                   </Row>
                   <Row>

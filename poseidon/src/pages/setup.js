@@ -181,7 +181,7 @@ export class SetupPage extends React.Component {
             <Table dataSource={this.state.tableData} columns={columns} pagination={false} bordered />
           </Col>
           <Col style={{ paddingLeft: '20px'}}>
-            <FormButtonModal title={window.i18n("title.addNewEntry")} formId='addNewDataFormId' buttonContent={<PlusOutlined />}>
+            <FormButtonModal title={window.i18n("title.addNewEntry")} formId='addNewDataFormId' buttonIcon={<PlusOutlined />}>
               <AddNewDataForm dataType={this.props.dataType} onFinish={this.postData} />
             </FormButtonModal>
           </Col>

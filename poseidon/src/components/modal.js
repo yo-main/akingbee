@@ -54,9 +54,7 @@ class BaseModal extends React.Component {
 export class FormButtonModal extends BaseModal {
   entrypoint() {
     return (
-      <Button onClick={this.showModal}>
-        {this.props.buttonContent}
-      </Button>
+      <Button icon={this.props.buttonIcon} type="default" shape="square" onClick={this.showModal} />
     )
   }
 }
