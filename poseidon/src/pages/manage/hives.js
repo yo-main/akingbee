@@ -9,12 +9,14 @@ import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
+import { getCommentsByHive } from '../../services/aristaeus/comments';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
 import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
 import '../styles.css';
+import { PlusOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 export function UpdateHiveForm(props) {
   const [form] = Form.useForm();
@@ -336,6 +338,7 @@ export class HiveDetailsPage extends React.Component {
       hiveCondition: [],
       apiaries: [],
       swarmHealthStatus: [],
+      commentsTableData: [],
     }
 
     this.refCascader = React.createRef();
@@ -362,6 +365,20 @@ export class HiveDetailsPage extends React.Component {
     }
   }
 
+    getCommentsTableData = (data) => {
+    return data.reduce((acc, val, index) => {
+      acc.push({
+        key: index+1,
+        id: val.id,
+        comment: val.comment,
+        date: val.date,
+        type: val.type,
+        event: val.event
+      });
+      return acc;
+    }, []);
+  }
+
   async componentDidMount() {
     let hive;
 
@@ -385,14 +402,19 @@ export class HiveDetailsPage extends React.Component {
       let hiveBeekeeper = await getSetupData('hive_beekeeper');
       let hiveCondition = await getSetupData('hive_condition');
       let swarmHealthStatus = await getSetupData('swarm_health_status');
+      let comments = await getCommentsByHive(this.props.hiveId);
+
+      let commentsTableData = this.getCommentsTableData(comments);
+
       let pageStatus = "OK"
-      this.setState({hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
+      this.setState({hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, commentsTableData, pageStatus});
 
     } catch (error) {
       dealWithError(error);
       this.setState((state) => {
         state['pageStatus'] = ERROR_STATUS;
-      })
+      });
+      this.forceUpdate();
     }
   }
 
@@ -508,9 +530,40 @@ export class HiveDetailsPage extends React.Component {
         break;
       default:
         notificate('error', 'Something went wrong with the chosen action - sorry');
-
     }
+  }
 
+  getCommentsTableColumn() {
+    return [
+      {
+        title: window.i18n('word.date'),
+        dataIndex: 'date',
+        defaultSortOrder: 'ascend',
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
+        title: window.i18n('word.type'),
+        dataIndex: 'type'
+      },
+      {
+        title: window.i18n('word.comment'),
+        dataIndex: 'comment'
+      },
+      {
+        title: window.i18n('word.actions'),
+        key: 'action',
+        render: (text, record) => (
+          <Space size='middle'>
+            <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
+              <UpdateHiveForm hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
+            </FormLinkModal>
+            <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
+              <a href='#'>{window.i18n('word.delete')}</a>
+            </Popconfirm>
+          </Space>
+        )
+      }
+    ];
   }
 
   render() {
@@ -565,7 +618,16 @@ export class HiveDetailsPage extends React.Component {
             <div className="card-container">
               <Tabs defaultActiveKey="1" type="card">
                 <Tabs.TabPane tab={window.i18n("word.history")} key="1">
-                  Comments !
+                  <Row justify="end" style={{marginBottom: '1%'}} >
+                    <Col>
+                      <Button type="default" shape="square" icon={<PlusOutlined style={{ fontSize: '25px'}}/>}/>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span="24">
+                      <Table dataSource={this.state.commentsTableData} columns={this.getCommentsTableColumn()} pagination={false} bordered />
+                    </Col>
+                  </Row>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab={window.i18n("word.events")} key="2">
                   Events !
