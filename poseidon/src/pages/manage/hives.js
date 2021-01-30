@@ -403,7 +403,7 @@ export class HiveDetailsPage extends React.Component {
     let apiaries = this.state.apiaries;
     let health_statuses = this.state.swarmHealthStatus;
 
-    options.push({
+    let apiaryConfig = {
       label: window.i18n('form.moveHive'),
       value: "newApiary",
       children: apiaries.reduce((acc, val) => {
@@ -415,7 +415,11 @@ export class HiveDetailsPage extends React.Component {
         }
         return acc;
       }, [])
-    });
+    };
+
+    if (apiaryConfig.children.length > 0) {
+      options.push(apiaryConfig);
+    }
 
     if (this.state.hive.swarm) {
       options.push({
