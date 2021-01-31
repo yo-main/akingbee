@@ -3,7 +3,7 @@ import React from 'react';
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs, DatePicker } from 'antd';
 import { navigate, Link } from '@reach/router';
 
-import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, CommentEditor } from '../../components';
+import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, RichEditor } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
@@ -18,6 +18,10 @@ import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '
 import '../styles.css';
 import { PlusOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
+function onFailed(err) {
+  notificate("error", "Failed")
+}
+
 export function UpdateHiveForm(props) {
   const [form] = Form.useForm();
 
@@ -29,7 +33,7 @@ export function UpdateHiveForm(props) {
   })
 
   return (
-    <Form {... formItemLayout} id="updateHiveFormId" form={form} name="basic" onFinish={props.onFinish}>
+    <Form {... formItemLayout} id="updateHiveFormId" form={form} name="basic" onFinish={props.onFinish} onFailed={onFailed}>
       <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 1, message: window.i18n('form.insertHiveName')}]}>
         <Input defaultValue={props.hive.name} />
       </Form.Item>
@@ -62,7 +66,7 @@ export function UpdateHiveForm(props) {
 
 function CreateHiveForm(props) {
   return (
-    <Form {...formItemLayout} onFinish={props.callback} requiredMark={false}>
+    <Form {...formItemLayout} onFinish={props.callback} onFailed={onFailed} requiredMark={false}>
       <Form.Item label={window.i18n("word.name")} name="name" rules={[{required: true, message: window.i18n('form.insertHiveName')}]}>
         <Input />
       </Form.Item>
@@ -120,13 +124,21 @@ function CreateHiveForm(props) {
 }
 
 function CreateComment(props) {
+  const [form] = Form.useForm();
+  const [comment, setComment] = React.useState("");
+
+  const onChange = (data) => {
+    setComment(data.blocks[0].text)
+    form.setFieldsValue({ comment })
+  }
+
   return (
-    <Form layout="vertical" requiredMark={false}>
-      <Form.Item label={window.i18n("word.date")} name="date" required>
+    <Form id="newComment" form={form} layout="vertical" requiredMark={false} onFinish={props.onFinish} onFailed={onFailed}>
+      <Form.Item label={window.i18n("word.date")} name="date">
         <DatePicker />
       </Form.Item>
-      <Form.Item label={window.i18n("word.comment")} name="comment" required>
-        <CommentEditor />
+      <Form.Item label={window.i18n("word.comment")} name="comment" valuePropName="comment">
+        <RichEditor onChange={onChange} />
       </Form.Item>
     </Form>
   )
@@ -579,6 +591,14 @@ export class HiveDetailsPage extends React.Component {
     ];
   }
 
+  submitComment = async(data) => {
+    console.log(data);
+    if (!data.date) {
+      notificate('error', window.i18n('error.incorrectEntry'))
+      return;
+    }
+  }
+
   render() {
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
@@ -634,7 +654,7 @@ export class HiveDetailsPage extends React.Component {
                   <Row justify="end" style={{marginBottom: '1%'}} >
                     <Col>
                       <FormButtonModal buttonIcon={<PlusOutlined style={{ fontSize: '20px'}}/>} title={window.i18n('title.newComment')} formId='newComment'>
-                        <CreateComment />
+                        <CreateComment onFinish={this.submitComment}/>
                       </FormButtonModal>
                     </Col>
                   </Row>

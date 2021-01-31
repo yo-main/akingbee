@@ -43,6 +43,7 @@ class BaseModal extends React.Component {
           onCancel={this.closeModal}
           onOk={this.closeModal}
           footer={this.getFooter()}
+          bodyStyle={this.props.modalStyle}
         >
           {this.props.children}
         </Modal>
