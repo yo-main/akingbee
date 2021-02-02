@@ -13,25 +13,13 @@ from .hives import Hives, HiveConditions
 from .events import Events
 
 
-class CommentTypes(Base):
-    __tablename__ = "comment_types"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(TEXT(), nullable=False)
-
-    created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
-    updated_at = Column(
-        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
-    )
-    deleted_at = Column(TIMESTAMP(), nullable=True)
-
-
 class Comments(Base):
     __tablename__ = "comments"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     comment = Column(TEXT(), nullable=False)
     date = Column(TIMESTAMP(), nullable=False)
+    type = Column(TEXT(), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
-    type_id = Column(UUID(as_uuid=True), ForeignKey(CommentTypes.id), nullable=False)
     swarm_id = Column(UUID(as_uuid=True), ForeignKey(Swarms.id), nullable=True)
     hive_id = Column(UUID(as_uuid=True), ForeignKey(Hives.id), nullable=True)
     event_id = Column(UUID(as_uuid=True), ForeignKey(Events.id), nullable=True)
@@ -43,7 +31,6 @@ class Comments(Base):
     deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="comments")
-    type = relationship(CommentTypes)
     swarm = relationship(Swarms, backref="comments")
     hive = relationship(Hives, backref="comments")
     event = relationship(Events, backref=backref("comment", uselist=False))
