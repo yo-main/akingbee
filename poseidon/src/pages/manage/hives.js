@@ -3,13 +3,14 @@ import React from 'react';
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs, DatePicker } from 'antd';
 import { navigate, Link } from '@reach/router';
 
+
 import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, RichEditor } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { getCommentsByHive } from '../../services/aristaeus/comments';
+import { getCommentsForHive, postCommentForHive } from '../../services/aristaeus/comments';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
@@ -125,11 +126,9 @@ function CreateHiveForm(props) {
 
 function CreateComment(props) {
   const [form] = Form.useForm();
-  const [comment, setComment] = React.useState("");
 
   const onChange = (data) => {
-    setComment(data.blocks[0].text)
-    form.setFieldsValue({ comment })
+    form.setFieldsValue({comment: data })
   }
 
   return (
@@ -137,7 +136,7 @@ function CreateComment(props) {
       <Form.Item label={window.i18n("word.date")} name="date">
         <DatePicker />
       </Form.Item>
-      <Form.Item label={window.i18n("word.comment")} name="comment" valuePropName="comment">
+      <Form.Item label={window.i18n("word.comment")} name="comment">
         <RichEditor onChange={onChange} />
       </Form.Item>
     </Form>
@@ -592,17 +591,19 @@ export class HiveDetailsPage extends React.Component {
   }
 
   submitComment = async(data) => {
-    console.log(data);
-    if (!data.date) {
+    if (!data.date || !data.comment) {
       notificate('error', window.i18n('error.incorrectEntry'))
       return;
+    }
+
+    try {
+      postCommentForHive(hive_id)
     }
   }
 
   render() {
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
-
 
     const cardItems = (label, value) => {
       return <p> {label} : {value}</p>

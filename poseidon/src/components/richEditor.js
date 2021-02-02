@@ -25,20 +25,35 @@ export function RichEditor(props) {
 
   const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
 
-  const onEditorStateChange = (editorState) => {
-    setEditorState(editorState);
+  const onEditorStateChange = (data) => {
+    setEditorState(data);
+    props.onChange(data.getCurrentContent())
   };
 
   return (
     <Editor
       editorState={editorState}
-      onChange={props.onChange}
       toolbarClassName="toolbarClassName"
       wrapperClassName="wrapperClassName"
       editorClassName="editorClassName"
       onEditorStateChange={onEditorStateChange}
       editorStyle={{height: '200px', border: '1px solid lightgrey'}}
       toolbar={TOOLBAR}
+    />
+  )
+}
+
+export function EditorReadOnly(props) {
+  const [editorState, setEditorState] = React.useState(EditorState.createWithContent(props.content));
+
+  return (
+    <Editor
+      editorState={editorState}
+      toolbarClassName="toolbarClassName"
+      wrapperClassName="wrapperClassName"
+      editorClassName="editorClassName"
+      toolbarHidden
+      readOnly
     />
   )
 }
