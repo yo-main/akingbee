@@ -3,8 +3,7 @@ import React from 'react';
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs, DatePicker } from 'antd';
 import { navigate, Link } from '@reach/router';
 
-
-import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, RichEditor } from '../../components';
+import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, RichEditor, EditorReadOnly } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
@@ -357,7 +356,7 @@ export class HiveDetailsPage extends React.Component {
     super(props);
     this.state = {
       pageStatus: LOADING_STATUS,
-      hive: [],
+      hive: {},
       hiveBeekeeper: [],
       hiveCondition: [],
       apiaries: [],
@@ -426,7 +425,7 @@ export class HiveDetailsPage extends React.Component {
       let hiveBeekeeper = await getSetupData('hive_beekeeper');
       let hiveCondition = await getSetupData('hive_condition');
       let swarmHealthStatus = await getSetupData('swarm_health_status');
-      let comments = await getCommentsByHive(this.props.hiveId);
+      let comments = await getCommentsForHive(this.props.hiveId);
 
       let commentsTableData = this.getCommentsTableData(comments);
 
@@ -563,15 +562,21 @@ export class HiveDetailsPage extends React.Component {
         title: window.i18n('word.date'),
         dataIndex: 'date',
         defaultSortOrder: 'ascend',
-        sorter: (a, b) => a.name.localeCompare(b.name),
+        sorter: (a, b) => a.date.isBefore(b.date),
+        render: (text, record) => (
+          text.format('L')
+        )
       },
       {
         title: window.i18n('word.type'),
-        dataIndex: 'type'
+        dataIndex: 'type',
       },
       {
         title: window.i18n('word.comment'),
-        dataIndex: 'comment'
+        dataIndex: 'comment',
+        render: (text, record) => (
+          <EditorReadOnly content={JSON.parse(text)} />
+        )
       },
       {
         title: window.i18n('word.actions'),
@@ -596,9 +601,23 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
+    let date = data.date.toISOString();
+    let comment = JSON.stringify(data.comment);
+
     try {
-      postCommentForHive(hive_id)
+      await postCommentForHive(this.state.hive.id, {date, comment})
+    } catch (error) {
+      dealWithError(error);
     }
+
+    let comments = await getCommentsForHive(this.props.hiveId);
+    let commentsTableData = this.getCommentsTableData(comments);
+
+    this.setState((state) => {
+      state['commentsTableData'] = commentsTableData;
+    });
+
+    this.forceUpdate();
   }
 
   render() {

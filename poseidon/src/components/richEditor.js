@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EditorState } from 'draft-js';
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
@@ -27,7 +27,7 @@ export function RichEditor(props) {
 
   const onEditorStateChange = (data) => {
     setEditorState(data);
-    props.onChange(data.getCurrentContent())
+    props.onChange(convertToRaw(data.getCurrentContent()));
   };
 
   return (
@@ -44,7 +44,8 @@ export function RichEditor(props) {
 }
 
 export function EditorReadOnly(props) {
-  const [editorState, setEditorState] = React.useState(EditorState.createWithContent(props.content));
+  let content = convertFromRaw(props.content);
+  const [editorState, setEditorState] = React.useState(EditorState.createWithContent(content));
 
   return (
     <Editor
