@@ -150,22 +150,11 @@ class EventModel(BaseModel):
 
 # COMMENTS
 
-
-class CommentTypeModel(BaseModel):
-    id: uuid.UUID
-    name: str
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
-
-    class Config:
-        orm_mode = True
-
-
 class CommentModel(BaseModel):
     id: uuid.UUID
     comment: str
+    type: str
     date: datetime.datetime
-    type: CommentTypeModel
     swarm: Optional[SwarmModel]
     hive: Optional[HiveModel]
     event: Optional[EventModel]
@@ -179,5 +168,4 @@ class CommentModel(BaseModel):
 class PostCommentModel(BaseModel):
     comment: str
     date: datetime.datetime
-    type_id: uuid.UUID
     event_id: Optional[uuid.UUID] = None

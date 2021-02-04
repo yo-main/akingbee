@@ -26,16 +26,15 @@ def test_get_comments(auth_token, test_app):
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize("date, type_id, event_id, expected", (
-    ("2020-12-20T01:02:03.012345", IDS["Comment_types"][0], None, 200),
-    ("2020-12-20T01:02:03012345", IDS["Comment_types"][0], None, 422),
-    ("2020-12-20T01:02:03.012345", uuid.uuid4(), None, 404),
-    ("2020-12-20T01:02:03.012345", IDS["Comment_types"][0], IDS["Events"][0], 200),
-    ("2020-12-20T01:02:03.012345", IDS["Comment_types"][0], IDS["Events"][-1], 400),
-    ("2020-12-20T01:02:03.012345", IDS["Comment_types"][0], uuid.uuid4(), 400),
+@pytest.mark.parametrize("date, event_id, expected", (
+    ("2020-12-20T01:02:03.012345", None, 200),
+    ("2020-12-20T01:02:03012345", None, 422),
+    ("2020-12-20T01:02:03.012345", IDS["Events"][0], 200),
+    ("2020-12-20T01:02:03.012345", IDS["Events"][-1], 400),
+    ("2020-12-20T01:02:03.012345", uuid.uuid4(), 400),
 ))
-def test_create_comments(auth_token, test_app, date, type_id, event_id, expected):
-    data = {"comment": "123", "type_id": type_id, "date": date, "event_id": event_id}
+def test_create_comments(auth_token, test_app, date, event_id, expected):
+    data = {"comment": "123", "date": date, "event_id": event_id}
     data = {k: str(v) for k, v in data.items() if v is not None}
     response = test_app.post(f"/comments/hive/{str(IDS['Hives'][0])}", json=data, cookies={"access_token": auth_token})
     assert response.status_code == expected
@@ -44,3 +43,4 @@ def test_create_comments(auth_token, test_app, date, type_id, event_id, expected
         data = response.json()
         assert data['date'] == datetime.datetime(year=2020, month=12, day=20, hour=1, minute=2, second=3, microsecond=12345).isoformat()
         assert data['comment'] == "123"
+        assert data['type'] == "user"

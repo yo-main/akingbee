@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from sqlalchemy.orm import Session
 
 from gaea.log import logger
-from gaea.models import Comments, CommentTypes, Hives
+from gaea.models import Comments, Hives
 from gaea.webapp.utils import get_session
 
 from aristaeus.helpers.common import validate_uuid
@@ -60,16 +60,12 @@ async def post_hive_comments(
     if not hive or hive.user_id != user_id or hive.deleted_at:
         raise HTTPException(status_code=404)
 
-    comment_type = session.query(CommentTypes).get(data.type_id)
-    if not comment_type or comment_type.deleted_at:
-        raise HTTPException(status_code=404, detail="Comment type not found")
-
     comment = Comments(
         user_id=user_id,
         hive_id=hive.id,
         swarm_id=hive.swarm_id,
         comment=data.comment,
-        type_id=comment_type.id,
+        type="user",
         date=data.date,
         event_id=data.event_id,
     )
