@@ -19,6 +19,7 @@ tags
 docker-compose.override.yml
 **/cache
 **/secrets.yaml
+**/.eslintcache
 node_modules
 .next
 *.egg-info
