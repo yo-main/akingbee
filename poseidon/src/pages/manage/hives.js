@@ -9,7 +9,7 @@ import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { getCommentsForHive, postCommentForHive } from '../../services/aristaeus/comments';
+import { getCommentsForHive, postCommentForHive, putComment } from '../../services/aristaeus/comments';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
@@ -33,7 +33,7 @@ export function UpdateHiveForm(props) {
   })
 
   return (
-    <Form {... formItemLayout} id="updateHiveFormId" form={form} name="basic" onFinish={props.onFinish} onFailed={onFailed}>
+    <Form {... formItemLayout} id={props.formId} form={form} name="basic" onFinish={props.onFinish} onFailed={onFailed}>
       <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 1, message: window.i18n('form.insertHiveName')}]}>
         <Input defaultValue={props.hive.name} />
       </Form.Item>
@@ -123,7 +123,7 @@ function CreateHiveForm(props) {
   )
 }
 
-function CreateComment(props) {
+function CreateCommentForm(props) {
   const [form] = Form.useForm();
 
   const onChange = (data) => {
@@ -142,6 +142,31 @@ function CreateComment(props) {
   )
 }
 
+
+function UpdateCommentForm(props) {
+  const [form] = Form.useForm();
+  form.setFieldsValue({
+    "commentId": props.commentId,
+    "date": props.date,
+    "comment": props.content
+  });
+
+  const onChange = (data) => {
+    form.setFieldsValue({comment: data })
+  };
+
+  return (
+    <Form id={props.formId} form={form} layout="vertical" requiredMark={false} onFinish={props.onFinish} onFailed={onFailed}>
+      <Form.Item label={window.i18n("word.date")} name="date">
+        <DatePicker format="L" />
+      </Form.Item>
+      <Form.Item label={window.i18n("word.comment")} name="comment">
+        <RichEditor defaultContent={props.content} onChange={onChange} />
+      </Form.Item>
+      <Form.Item name="commentId" hidden/>
+    </Form>
+  )
+}
 
 export class HivePage extends React.Component {
   state = {tableData: [], hiveBeekeeper: [], hiveCondition: [], pageStatus: LOADING_STATUS}
@@ -175,6 +200,7 @@ export class HivePage extends React.Component {
       dealWithError(error);
       this.setState((state) => {
         state['pageStatus'] = ERROR_STATUS;
+        return state;
       })
     }
   }
@@ -194,8 +220,6 @@ export class HivePage extends React.Component {
       dealWithError(error);
       return
     };
-
-
   }
 
   updateData = async(form) => {
@@ -256,16 +280,19 @@ export class HivePage extends React.Component {
       {
         title: window.i18n('word.actions'),
         key: 'action',
-        render: (text, record) => (
-          <Space size='middle'>
-            <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateHiveForm hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
-            </FormLinkModal>
-            <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
-              <a href='#'>{window.i18n('word.delete')}</a>
-            </Popconfirm>
-          </Space>
-        )
+        render: (text, record) => {
+          let formId = `updateHive${record.key}`;
+          return (
+            <Space size='middle'>
+              <FormLinkModal formId={formId} title={window.i18n('title.hiveUpdate')} linkContent={window.i18n('word.edit')}>
+                <UpdateHiveForm formId={formId} hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
+              </FormLinkModal>
+              <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
+                <a href='#'>{window.i18n('word.delete')}</a>
+              </Popconfirm>
+            </Space>
+          )
+        }
       }
     ]
 
@@ -367,7 +394,7 @@ export class HiveDetailsPage extends React.Component {
     this.refCascader = React.createRef();
   }
 
-  updateData = async(form) => {
+  updateHiveData = async(form) => {
     const hiveId = form.hiveId;
     const data = {
       name: form.name,
@@ -388,7 +415,7 @@ export class HiveDetailsPage extends React.Component {
     }
   }
 
-    getCommentsTableData = (data) => {
+  getCommentsTableData = (data) => {
     return data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,
@@ -454,7 +481,7 @@ export class HiveDetailsPage extends React.Component {
       children: apiaries.reduce((acc, val) => {
         if (!current_apiary || current_apiary.id != val.id) {
           acc.push({
-           value: val.id,
+            value: val.id,
             label: val.name,
           });
         }
@@ -574,23 +601,26 @@ export class HiveDetailsPage extends React.Component {
       {
         title: window.i18n('word.comment'),
         dataIndex: 'comment',
-        render: (text, record) => (
-          <EditorReadOnly content={JSON.parse(text)} />
-        )
+        render: (text, record) => {
+          return <EditorReadOnly content={JSON.parse(text)} />
+        }
       },
       {
         title: window.i18n('word.actions'),
         key: 'action',
-        render: (text, record) => (
-          <Space size='middle'>
-            <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateHiveForm hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
-            </FormLinkModal>
-            <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
-              <a href='#'>{window.i18n('word.delete')}</a>
-            </Popconfirm>
-          </Space>
-        )
+        render: (text, record) => {
+          let formId = `updateComment${record.key}`
+          return (
+            <Space size='middle'>
+              <FormLinkModal formId={formId} title={window.i18n('title.editComment')} linkContent={window.i18n('word.edit')}>
+                <UpdateCommentForm formId={formId} onFinish={this.updateComment} commentId={record.id} date={record.date} content={JSON.parse(record.comment)} />
+              </FormLinkModal>
+              <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
+                <a href='#'>{window.i18n('word.delete')}</a>
+              </Popconfirm>
+            </Space>
+          )
+        }
       }
     ];
   }
@@ -608,6 +638,7 @@ export class HiveDetailsPage extends React.Component {
       await postCommentForHive(this.state.hive.id, {date, comment})
     } catch (error) {
       dealWithError(error);
+      return;
     }
 
     let comments = await getCommentsForHive(this.props.hiveId);
@@ -615,9 +646,34 @@ export class HiveDetailsPage extends React.Component {
 
     this.setState((state) => {
       state['commentsTableData'] = commentsTableData;
+      return state;
     });
+  }
 
-    this.forceUpdate();
+  updateComment = async(data) => {
+    if (!data.date || !data.comment) {
+      notificate('error', window.i18n('error.incorrectEntry'))
+      return;
+    }
+
+    let commentId = data.commentId;
+    let date = data.date.toISOString();
+    let comment = JSON.stringify(data.comment);
+
+    try {
+      await putComment(commentId, {date, comment})
+    } catch (error) {
+      dealWithError(error);
+      return;
+    }
+
+    let comments = await getCommentsForHive(this.props.hiveId);
+    let commentsTableData = this.getCommentsTableData(comments);
+
+    this.setState((state) => {
+      state['commentsTableData'] = commentsTableData;
+      return state;
+    });
   }
 
   render() {
@@ -635,16 +691,16 @@ export class HiveDetailsPage extends React.Component {
     let health, apiary;
     if (this.state.hive.swarm) {
       health = cardItems(window.i18n('word.health'), this.state.hive.swarm.health.name);
-    }
+    };
     if (this.state.hive.apiary) {
       apiary = cardItems(window.i18n('word.apiary'), this.state.hive.apiary.name);
-    }
+    };
 
-    let updateForm = (
+    let updateHiveForm = (
       <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-        <UpdateHiveForm hive={this.state.hive} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
+        <UpdateHiveForm hive={this.state.hive} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateHiveData} />
       </FormLinkModal>
-    )
+    );
 
     let cascaderOptions = this.getCascaderOptions();
 
@@ -652,7 +708,7 @@ export class HiveDetailsPage extends React.Component {
       <>
         <Row>
           <Col offset="1">
-            <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<div style={{paddingLeft: '50px'}}>{updateForm}</div>}>
+            <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<div style={{paddingLeft: '50px'}}>{updateHiveForm}</div>}>
               {owner}
               {health}
               {apiary}
@@ -674,7 +730,7 @@ export class HiveDetailsPage extends React.Component {
                   <Row justify="end" style={{marginBottom: '1%'}} >
                     <Col>
                       <FormButtonModal buttonIcon={<PlusOutlined style={{ fontSize: '20px'}}/>} title={window.i18n('title.newComment')} formId='newComment'>
-                        <CreateComment onFinish={this.submitComment}/>
+                        <CreateCommentForm onFinish={this.submitComment}/>
                       </FormButtonModal>
                     </Col>
                   </Row>

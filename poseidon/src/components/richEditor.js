@@ -22,8 +22,8 @@ const TOOLBAR = {
 
 
 export function RichEditor(props) {
-
-  const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
+  let editor = props.defaultContent ? EditorState.createWithContent(convertFromRaw(props.defaultContent)) : EditorState.createEmpty();
+  const [editorState, setEditorState] = React.useState(editor);
 
   const onEditorStateChange = (data) => {
     setEditorState(data);
@@ -45,11 +45,9 @@ export function RichEditor(props) {
 
 export function EditorReadOnly(props) {
   let content = convertFromRaw(props.content);
-  const [editorState, setEditorState] = React.useState(EditorState.createWithContent(content));
-
   return (
     <Editor
-      editorState={editorState}
+      editorState={EditorState.createWithContent(content)}
       toolbarClassName="toolbarClassName"
       wrapperClassName="wrapperClassName"
       editorClassName="editorClassName"
