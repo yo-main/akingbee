@@ -77,6 +77,7 @@
     "title.hiveUpdate": "Update hive",
     "title.newComment": "New comment",
     "title.editComment": "Edit comment",
+    "confirm.deleteComment": "Delete comment",
     "word.info": "Info",
     "word.name": "Name",
     "word.location": "Location",

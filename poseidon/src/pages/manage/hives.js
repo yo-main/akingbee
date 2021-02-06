@@ -9,7 +9,7 @@ import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { getCommentsForHive, postCommentForHive, putComment } from '../../services/aristaeus/comments';
+import { getCommentsForHive, postCommentForHive, putComment, deleteComment } from '../../services/aristaeus/comments';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
@@ -588,6 +588,7 @@ export class HiveDetailsPage extends React.Component {
       {
         title: window.i18n('word.date'),
         dataIndex: 'date',
+        width: 100,
         defaultSortOrder: 'ascend',
         sorter: (a, b) => a.date.isBefore(b.date),
         render: (text, record) => (
@@ -596,6 +597,7 @@ export class HiveDetailsPage extends React.Component {
       },
       {
         title: window.i18n('word.type'),
+        width: 100,
         dataIndex: 'type',
       },
       {
@@ -608,6 +610,7 @@ export class HiveDetailsPage extends React.Component {
       {
         title: window.i18n('word.actions'),
         key: 'action',
+        width: 100,
         render: (text, record) => {
           let formId = `updateComment${record.key}`
           return (
@@ -615,7 +618,7 @@ export class HiveDetailsPage extends React.Component {
               <FormLinkModal formId={formId} title={window.i18n('title.editComment')} linkContent={window.i18n('word.edit')}>
                 <UpdateCommentForm formId={formId} onFinish={this.updateComment} commentId={record.id} date={record.date} content={JSON.parse(record.comment)} />
               </FormLinkModal>
-              <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
+              <Popconfirm onConfirm={async() => this.deleteComment(record.id)} title={window.i18n("confirm.deleteComment")}>
                 <a href='#'>{window.i18n('word.delete')}</a>
               </Popconfirm>
             </Space>
@@ -623,6 +626,22 @@ export class HiveDetailsPage extends React.Component {
         }
       }
     ];
+  }
+
+  deleteComment = async(commentId) => {
+    try {
+      await deleteComment(commentId);
+    } catch (error) {
+      dealWithError(error);
+    }
+
+    let comments = await getCommentsForHive(this.props.hiveId);
+    let commentsTableData = this.getCommentsTableData(comments);
+
+    this.setState((state) => {
+      state['commentsTableData'] = commentsTableData;
+      return state;
+    });
   }
 
   submitComment = async(data) => {

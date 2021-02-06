@@ -21,3 +21,8 @@ export async function putComment(commentId, { comment, date }) {
   let response = await aristaeusApi.put(`/comments/${commentId}`, { comment, date });
   return response.data;
 }
+
+export async function deleteComment(commentId) {
+  let response = await aristaeusApi.delete(`/comments/${commentId}`);
+  return response.data;
+}
