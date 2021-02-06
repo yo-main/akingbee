@@ -169,3 +169,9 @@ class PostCommentModel(BaseModel):
     comment: str
     date: datetime.datetime
     event_id: Optional[uuid.UUID] = None
+
+class PutCommentModel(BaseModel):
+    comment: Optional[str] = None
+    date: Optional[datetime.datetime] = None
+    event_id: Optional[uuid.UUID] = None
+

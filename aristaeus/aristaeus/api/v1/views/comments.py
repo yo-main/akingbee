@@ -12,7 +12,7 @@ from gaea.webapp.utils import get_session
 
 from aristaeus.helpers.common import validate_uuid
 from aristaeus.helpers.authentication import get_logged_in_user
-from aristaeus.models import CommentModel, PostCommentModel
+from aristaeus.models import CommentModel, PostCommentModel, PutCommentModel
 
 router = APIRouter()
 
@@ -81,3 +81,30 @@ async def post_hive_comments(
         ) from exc
 
     return comment
+
+@router.put("/comments/{comment_id}", status_code=204)
+async def put_comment(
+    comment_id: uuid.UUID,
+    data: PutCommentModel,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    Modify a comment
+    """
+    user_id = await get_logged_in_user(access_token)
+    comment = session.query(Comments).get(comment_id)
+    if not comment or comment.user_id != user_id or comment.deleted_at:
+        raise HTTPException(status_code=404)
+
+    for key, value in data.dict().items():
+        if value is not None:
+            setattr(comment, key, value)
+
+    try:
+        session.commit()
+    except Exception as exc:
+        logger.exception("Database error", comment=comment)
+        raise HTTPException(
+            status_code=400, detail="Couldn't update the comment in database"
+        ) from exc
