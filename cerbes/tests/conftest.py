@@ -26,11 +26,13 @@ def test_app(test_db):  # pylint: disable=redefined-outer-name
     client = AppClient(routers=router, middleware=middleware)
     yield TestClient(client.get_app())
 
+
 @pytest.fixture()
 def mock_rbmq_channel(monkeypatch):
     mocked_channel = Mock()
     mocked_conn = Mock()
     monkeypatch.setattr(mocked_conn, "channel", MagicMock(return_value=mocked_channel))
-    monkeypatch.setattr(RBMQConnectionManager, "_get_connection", MagicMock(return_value=mocked_conn))
+    monkeypatch.setattr(
+        RBMQConnectionManager, "_get_connection", MagicMock(return_value=mocked_conn)
+    )
     return mocked_channel
-

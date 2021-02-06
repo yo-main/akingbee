@@ -41,7 +41,9 @@ class Swarms(Base):
     user = relationship(Users, backref="swarms_healths")
     health = relationship(SwarmHealthStatuses)
 
-func = DDL("""
+
+func = DDL(
+    """
     CREATE FUNCTION check_user_swarms() RETURNS trigger AS $check_user_swarms$
         BEGIN
             IF NEW.user_id NOT IN (SELECT t.user_id FROM swarm_health_statuses as t WHERE t.id = NEW.health_status_id) THEN
@@ -50,12 +52,15 @@ func = DDL("""
 
             RETURN NEW;
         END; $check_user_swarms$ LANGUAGE PLPGSQL
-""")
+"""
+)
 
-trigger = DDL("""
+trigger = DDL(
+    """
     CREATE TRIGGER trigger_user_swarms BEFORE INSERT OR UPDATE ON swarms
         FOR EACH ROW EXECUTE PROCEDURE check_user_swarms();
-""")
+"""
+)
 
 event.listen(Swarms.metadata, "after_create", func.execute_if(dialect="postgresql"))
 event.listen(Swarms.metadata, "after_create", trigger.execute_if(dialect="postgresql"))

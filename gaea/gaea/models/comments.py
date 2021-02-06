@@ -35,7 +35,9 @@ class Comments(Base):
     hive = relationship(Hives, backref="comments")
     event = relationship(Events, backref=backref("comment", uselist=False))
 
-func = DDL("""
+
+func = DDL(
+    """
     CREATE FUNCTION check_user_comments() RETURNS trigger AS $check_user_comments$
         BEGIN
             IF new.event_id IS NOT NULL AND NEW.user_id NOT IN (SELECT t.user_id FROM events as t WHERE t.id = NEW.event_id) THEN
@@ -52,12 +54,17 @@ func = DDL("""
 
             RETURN NEW;
         END; $check_user_comments$ LANGUAGE PLPGSQL
-""")
+"""
+)
 
-trigger = DDL("""
+trigger = DDL(
+    """
     CREATE TRIGGER trigger_user_comments BEFORE INSERT OR UPDATE ON comments
         FOR EACH ROW EXECUTE PROCEDURE check_user_comments();
-""")
+"""
+)
 
 event.listen(Comments.metadata, "after_create", func.execute_if(dialect="postgresql"))
-event.listen(Comments.metadata, "after_create", trigger.execute_if(dialect="postgresql"))
+event.listen(
+    Comments.metadata, "after_create", trigger.execute_if(dialect="postgresql")
+)

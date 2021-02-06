@@ -153,7 +153,9 @@ DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 json_formatter = JSONFormatter(datefmt=DATE_FORMAT)
 pretty_json_formatter = PrettyJSONFormatter(datefmt=DATE_FORMAT)
 normal_formatter = logging.Formatter(
-    fmt="{asctime} | {levelname:8s} | {message}", datefmt=DATE_FORMAT, style="{",
+    fmt="{asctime} | {levelname:8s} | {message}",
+    datefmt=DATE_FORMAT,
+    style="{",
 )
 
 

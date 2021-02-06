@@ -82,6 +82,7 @@ async def post_hive_comments(
 
     return comment
 
+
 @router.put("/comments/{comment_id}", status_code=204)
 async def put_comment(
     comment_id: uuid.UUID,
@@ -108,6 +109,7 @@ async def put_comment(
         raise HTTPException(
             status_code=400, detail="Couldn't update the comment in database"
         ) from exc
+
 
 @router.delete("/comments/{comment_id}", status_code=204)
 async def del_comment(

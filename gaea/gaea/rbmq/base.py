@@ -22,7 +22,9 @@ class RBMQClient:
 
     def declare_exchange(self, channel):
         channel.exchange_declare(
-            exchange=self.exchange, exchange_type="topic", durable=True,
+            exchange=self.exchange,
+            exchange_type="topic",
+            durable=True,
         )
 
     def close(self):

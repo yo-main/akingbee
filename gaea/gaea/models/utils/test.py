@@ -91,19 +91,23 @@ DATASETS = (
             user_id=IDS["Users"][-1],
         ),
         HoneyTypes(
-            id=IDS["Honey_types"][0], name=HONEY_TYPE_ALL_FLOWERS, user_id=IDS["Users"][0]
+            id=IDS["Honey_types"][0],
+            name=HONEY_TYPE_ALL_FLOWERS,
+            user_id=IDS["Users"][0],
         ),
         HoneyTypes(
             id=IDS["Honey_types"][1], name=HONEY_TYPE_CHESTNUT, user_id=IDS["Users"][0]
         ),
-        HoneyTypes(
-            id=IDS["Honey_types"][-1], name="unknown", user_id=IDS["Users"][-1]
+        HoneyTypes(id=IDS["Honey_types"][-1], name="unknown", user_id=IDS["Users"][-1]),
+        HiveConditions(
+            id=IDS["Hive_conditions"][0],
+            name=HIVES_CONDITION_NEW,
+            user_id=IDS["Users"][0],
         ),
         HiveConditions(
-            id=IDS["Hive_conditions"][0], name=HIVES_CONDITION_NEW, user_id=IDS["Users"][0]
-        ),
-        HiveConditions(
-            id=IDS["Hive_conditions"][1], name=HIVES_CONDITION_OLD, user_id=IDS["Users"][0]
+            id=IDS["Hive_conditions"][1],
+            name=HIVES_CONDITION_OLD,
+            user_id=IDS["Users"][0],
         ),
         HiveConditions(
             id=IDS["Hive_conditions"][-1], name="unknown", user_id=IDS["Users"][-1]
@@ -292,5 +296,5 @@ DATASETS = (
             swarm_id=IDS["Swarms"][-1],
             hive_id=IDS["Hives"][-1],
         ),
-    )
+    ),
 )

@@ -11,7 +11,6 @@ from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 from cerbes.helpers import generate_jwt
 
 
-
 @pytest.mark.parametrize(
     "username, password, email, expected_code, expected_msg",
     (
@@ -36,7 +35,9 @@ def test_register_user(
     assert response.status_code == expected_code
     content = response.json()
     assert expected_msg == (content["detail"] if expected_code != 204 else None)
-    assert mock_rbmq_channel.basic_publish.call_count == (1 if expected_code == 204 else 0)
+    assert mock_rbmq_channel.basic_publish.call_count == (
+        1 if expected_code == 204 else 0
+    )
 
 
 @pytest.mark.parametrize(
@@ -68,7 +69,11 @@ def test_login(test_app, creds, expected_code, expected_content):
         assert response.json() == {"detail": expected_content}
     else:
         data = response.json()
-        assert jwt.decode(data["access_token"], options={"verify_signature": False}, algorithms=["HS256"])
+        assert jwt.decode(
+            data["access_token"],
+            options={"verify_signature": False},
+            algorithms=["HS256"],
+        )
         with pytest.raises(jwt.InvalidSignatureError):
             jwt.decode(data["access_token"], algorithms=["HS256"])
 

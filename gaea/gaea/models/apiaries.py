@@ -48,11 +48,12 @@ class Apiaries(Base):
     @property
     def nb_hives(self):
         if self._nb_hives is None:
-            self._nb_hives = len(self.hives) # pylint: disable=no-member
+            self._nb_hives = len(self.hives)  # pylint: disable=no-member
         return self._nb_hives
 
 
-func = DDL("""
+func = DDL(
+    """
     CREATE FUNCTION check_user_apiaries() RETURNS trigger AS $check_user_apiaries$
         BEGIN
             IF NEW.user_id NOT IN (SELECT t.user_id FROM honey_types as t WHERE t.id = NEW.honey_type_id) THEN
@@ -61,12 +62,17 @@ func = DDL("""
 
             RETURN NEW;
         END; $check_user_apiaries$ LANGUAGE PLPGSQL
-""")
+"""
+)
 
-trigger = DDL("""
+trigger = DDL(
+    """
     CREATE TRIGGER trigger_user_apiaries BEFORE INSERT OR UPDATE ON apiaries
         FOR EACH ROW EXECUTE PROCEDURE check_user_apiaries();
-""")
+"""
+)
 
 event.listen(Apiaries.metadata, "after_create", func.execute_if(dialect="postgresql"))
-event.listen(Apiaries.metadata, "after_create", trigger.execute_if(dialect="postgresql"))
+event.listen(
+    Apiaries.metadata, "after_create", trigger.execute_if(dialect="postgresql")
+)

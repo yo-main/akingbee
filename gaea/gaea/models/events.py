@@ -64,7 +64,8 @@ class Events(Base):
     hive = relationship(Hives, backref="events")
 
 
-func = DDL("""
+func = DDL(
+    """
     CREATE FUNCTION check_user_events() RETURNS trigger AS $check_user_events$
         BEGIN
             IF NEW.user_id NOT IN (SELECT t.user_id FROM event_types as t WHERE t.id = NEW.type_id) THEN
@@ -81,12 +82,15 @@ func = DDL("""
 
             RETURN NEW;
         END; $check_user_events$ LANGUAGE PLPGSQL
-""")
+"""
+)
 
-trigger = DDL("""
+trigger = DDL(
+    """
     CREATE TRIGGER trigger_user_events BEFORE INSERT OR UPDATE ON events
         FOR EACH ROW EXECUTE PROCEDURE check_user_events();
-""")
+"""
+)
 
 event.listen(Events.metadata, "after_create", func.execute_if(dialect="postgresql"))
 event.listen(Events.metadata, "after_create", trigger.execute_if(dialect="postgresql"))

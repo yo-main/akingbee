@@ -15,7 +15,13 @@ pylint = "*"
 pytest = "*"
 black = "*"
 mock = "*"
+coverage = {version = "^5.4", extras = ["toml"]}
 
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.coverage.run]
+branch = true
+source = ["aristaeus"]
+omit = ["tests"]

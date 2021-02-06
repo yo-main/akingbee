@@ -52,7 +52,8 @@ class Hives(Base):
     condition = relationship(HiveConditions, backref="hives")
 
 
-func = DDL("""
+func = DDL(
+    """
     CREATE FUNCTION check_user_hives() RETURNS trigger AS $check_user_hives$
         BEGIN
             IF NEW.user_id NOT IN (SELECT t.user_id FROM owners as t WHERE t.id = NEW.owner_id) THEN
@@ -73,12 +74,15 @@ func = DDL("""
 
             RETURN NEW;
         END; $check_user_hives$ LANGUAGE PLPGSQL
-""")
+"""
+)
 
-trigger = DDL("""
+trigger = DDL(
+    """
     CREATE TRIGGER trigger_user_hives BEFORE INSERT OR UPDATE ON hives
         FOR EACH ROW EXECUTE PROCEDURE check_user_hives();
-""")
+"""
+)
 
 event.listen(Hives.metadata, "after_create", func.execute_if(dialect="postgresql"))
 event.listen(Hives.metadata, "after_create", trigger.execute_if(dialect="postgresql"))

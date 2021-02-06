@@ -35,16 +35,22 @@ def test_app(test_db):  # pylint: disable=redefined-outer-name
     client = AppClient(routers=routers, middleware=middleware)
     yield TestClient(client.get_app())
 
+
 @pytest.fixture
 def auth_token(monkeypatch):
     mocked_results = {"user_id": str(IDS["Users"][0])}
-    monkeypatch.setattr(authentication, "validate_access_token", AsyncMock(return_value=mocked_results))
+    monkeypatch.setattr(
+        authentication, "validate_access_token", AsyncMock(return_value=mocked_results)
+    )
     return "token"
+
 
 @pytest.fixture()
 def mock_rbmq_channel(monkeypatch):
     mocked_channel = Mock()
     mocked_conn = Mock()
     monkeypatch.setattr(mocked_conn, "channel", MagicMock(return_value=mocked_channel))
-    monkeypatch.setattr(RBMQConnectionManager, "_get_connection", MagicMock(return_value=mocked_conn))
+    monkeypatch.setattr(
+        RBMQConnectionManager, "_get_connection", MagicMock(return_value=mocked_conn)
+    )
     return mocked_channel
