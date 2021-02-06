@@ -108,3 +108,27 @@ async def put_comment(
         raise HTTPException(
             status_code=400, detail="Couldn't update the comment in database"
         ) from exc
+
+@router.delete("/comments/{comment_id}", status_code=204)
+async def del_comment(
+    comment_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    """
+    Delete a comment
+    """
+    user_id = await get_logged_in_user(access_token)
+    comment = session.query(Comments).get(comment_id)
+    if not comment or comment.user_id != user_id or comment.deleted_at:
+        raise HTTPException(status_code=404)
+
+    comment.deleted_at = datetime.datetime.now()
+
+    try:
+        session.commit()
+    except Exception as exc:
+        logger.exception("Database error", comment=comment)
+        raise HTTPException(
+            status_code=400, detail="Couldn't mark a comment as deleted in database"
+        ) from exc
