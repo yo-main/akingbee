@@ -11,50 +11,66 @@ defaults:
     working-directory: aristaeus
 
 jobs:
-  pytest:
-    name: lint & pytest
+  # validation:
+  #   name: lint & pytest
+  #   runs-on: ubuntu-latest
+
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       ports:
+  #         - 5432:5432
+  #       env:
+  #         POSTGRES_DB: dbtest
+  #         POSTGRES_USER: dbtest
+  #         POSTGRES_PASSWORD: dbtest
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+
+  #   env:
+  #     AKB_DATABASE_HOST: localhost
+  #     AKB_DATABASE_PORT: 5432
+  #     AKB_DATABASE_USER: dbtest
+  #     AKB_DATABASE_PASSWORD: dbtest
+  #     AKB_DATABASE_DATABASE: dbtest
+
+  #   steps:
+  #     - name: install python3.9
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.9'
+    #   - name: checkout
+    #     uses: actions/checkout@v2
+    #   - name: install poetry
+    #     run: |
+    #       curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+    #       echo "~/.poetry/bin" >> $GITHUB_PATH
+    #   - name: setup env
+    #     run: poetry install
+    #   - name: black
+    #     run: poetry run black . --check
+    #   - name: pytest
+    #     run: poetry run coverage run -m pytest
+    #   - name: coverage report
+    #     run: poetry run coverage report
+
+  release:
+    name: release new version
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: dbtest
-          POSTGRES_USER: dbtest
-          POSTGRES_PASSWORD: dbtest
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+    # needs: validation
+     
     env:
-      AKB_DATABASE_HOST: localhost
-      AKB_DATABASE_PORT: 5432
-      AKB_DATABASE_USER: dbtest
-      AKB_DATABASE_PASSWORD: dbtest
-      AKB_DATABASE_DATABASE: dbtest
+      GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
 
     steps:
-      - name: install python3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
       - name: checkout
         uses: actions/checkout@v2
-      - name: install poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          echo "~/.poetry/bin" >> $GITHUB_PATH
-      - name: setup env
-        run: poetry install
-      - name: black
-        run: poetry run black . --check
-      - name: pytest
-        run: poetry run coverage run -m pytest
-      - name: coverage report
-        run: poetry run coverage report
-
-
+      - name: install node
+        uses: actions/setup-node@v2
+      - name: install dependencies
+        run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec @semantic-release/changelog
+      - name: run semantic release
+        run: semantic-release

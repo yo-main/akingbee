@@ -1,0 +1,35 @@
+{
+  "branches": ["master", "hello-react"],
+  "verifyConditions": [
+    "@semantic-release/git",
+    "@semantic-release/exec",
+    "@semantic-release/changelog",
+    "@semantic-release/github"
+  ],
+  "generateNotes": [
+    ["@semantic-release/release-notes-generator", {
+      "preset": "angular",
+      "releaseRules": [
+        {"type": "feat", "scope": "aristaeus", "release": "minor"},
+        {"type": "fix", "scope": "aristaeus", "release": "patch"}
+      ]
+    }]
+  ],
+  "prepare": [
+    ["@semantic-release/exec", 
+      {
+      "prepareCmd": "sed -i \"s/\\(^version *= *\\).*/\\1\"${nextRelease.version}\"/\" pyproject.toml"
+      }
+    ],
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/git",
+      {
+        "message": "release(aristaeus): {nextRelease.version} - ${nextRelease.notes}"
+      }
+    ]
+  ],
+  "publish": [
+      "@semantic-release/github"
+  ]
+}
