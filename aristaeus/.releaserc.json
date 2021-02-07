@@ -1,6 +1,6 @@
 {
   "branches": ["master"],
-  "tagFormat": "aristaeus:v${version}",
+  "tagFormat": "aristaeus-v${version}",
   "verifyConditions": [
     "@semantic-release/git",
     "@semantic-release/exec",
