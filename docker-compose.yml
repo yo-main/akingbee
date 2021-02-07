@@ -1,77 +1,127 @@
 version: "3.7"
 
 services:
-  akingbee:
-    image: yomain/akingbee:prod
-    container_name: akingbee
-    expose:
-      - 8080
-    volumes:
-      - .env:/app/.env
-      - ./log:/app/log
+  cerbes:
+    image: yomain/cerbes:latest
+    container_name: cerbes
     environment:
-      - REDIS_HOST=redis
-      - SERVICE_NAME=webapp
-      - IDENTIFIER=AKB
-      - ENV=SIMU
-    env_file: .env
-    command: uwsgi --ini ./uwsgi.ini
-    restart: "always"
-    depends_on:
-      - redis
-      - messaging_bee
-    networks:
-      - akingbee_nw
-
-  messaging_bee:
-    image: yomain/akingbee:prod
-    user: 1000:1000
-    container_name: messaging_bee
-    volumes:
-      - .env:/app/.env
-      - ./log:/app/log
-    environment:
-      - REDIS_HOST=redis
-      - SERVICE_NAME=messaging
-      - IDENTIFIER=AKB
-    command: python listener.py
-    restart: "always"
-    env_file: .env
-    depends_on:
-      - redis
-    networks:
-      - akingbee_nw
-
-  nginx:
-    image: nginx:alpine
-    container_name: nginx
-    restart: "always"
-    command: ["/etc/nginx/start.sh"]
-    environment:
-      TZ: Europe/Paris
-      NGINX_AUTH_USERNAME: ${NGINX_AUTH_USERNAME}
-      NGINX_AUTH_PWD: ${NGINX_AUTH_PWD}
-    volumes:
-      - /etc/letsencrypt:/certs
-      - ./infra/conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./infra/conf/nginx/start.sh:/etc/nginx/start.sh
+      - SERVICE_NAME=cerbes
+      - AKB_DATABASE_HOST=db
+      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_PASSWORD=123
+      - AKB_DATABASE_DATABASE=akb_dev
+      - AKB_RBMQ_USER=akingbee
+      - AKB_RBMQ_PASSWORD=password
+      - AKB_RBMQ_HOST=rbmq
+      - AKB_RBMQ_PORT=5672
+      - AKB_RBMQ_VHOST=/
     ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - akingbee
-    networks:
-      - akingbee_nw
-
-  redis:
-    image: redis:rc-alpine
-    container_name: redis
-    expose:
-      - 6379
+      - 9001:9001
+    depends_on: [db, rbmq]
     restart: always
     networks:
-      - akingbee_nw
+      - akb
+
+  aristaeus-api:
+    image: yomain/aristaeus:latest
+    container_name: aristeaus-api
+    environment:
+      - SERVICE_NAME=aristaeus-api
+      - AKB_DATABASE_HOST=db
+      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_PASSWORD=123
+      - AKB_DATABASE_DATABASE=akb_dev
+      - AKB_CERBES_ENDPOINT=http://cerbes:9001
+    ports:
+      - 9002:9002
+    depends_on: [db, rbmq, cerbes]
+    restart: always
+    networks:
+      - akb
+
+  aristaeus-listener:
+    image: yomain/aristaeus:latest
+    container_name: aristeaus-listener
+    environment:
+      - SERVICE_NAME=aristaeus-listener
+      - AKB_DATABASE_HOST=db
+      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_PASSWORD=123
+      - AKB_DATABASE_DATABASE=akb_dev
+      - AKB_RBMQ_USER=akingbee
+      - AKB_RBMQ_PASSWORD=password
+      - AKB_RBMQ_HOST=rbmq
+      - AKB_RBMQ_PORT=5672
+      - AKB_RBMQ_VHOST=/
+    command: python ./aristaeus/listener.py
+    depends_on: [db, rbmq]
+    restart: always
+    networks:
+      - akb
+
+  migration:
+    image: yomain/gaea:latest
+    container_name: migration
+    environment:
+      - SERVICE_NAME=migration
+      - AKB_DATABASE_HOST=db
+      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_PASSWORD=123
+      - AKB_DATABASE_DATABASE=akb_dev
+    depends_on: [db, rbmq]
+    networks:
+      - akb
+
+
+
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: nginx
+  #   restart: "always"
+  #   command: ["/etc/nginx/start.sh"]
+  #   environment:
+  #     TZ: Europe/Paris
+  #     NGINX_AUTH_USERNAME: ${NGINX_AUTH_USERNAME}
+  #     NGINX_AUTH_PWD: ${NGINX_AUTH_PWD}
+  #   volumes:
+  #     - /etc/letsencrypt:/certs
+  #     - ./infra/conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #     - ./infra/conf/nginx/start.sh:/etc/nginx/start.sh
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - akingbee
+  #   networks:
+  #     - akb
+
+  db:
+    image: postgres:10-alpine
+    container_name: db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: akb_dev
+      POSTGRES_USER: akingbee
+      POSTGRES_PASSWORD: "123"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    networks:
+      - akb
+
+  rbmq:
+    image: rabbitmq:management-alpine
+    container_name: rbmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: akingbee
+      RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - akb
 
 networks:
-    akingbee_nw:
+    akb:
 

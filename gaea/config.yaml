@@ -1,0 +1,20 @@
+DEFAULT:
+  LOG_LEVEL: 20
+  SERVICE_NAME: "gaea"
+
+
+DEVELOPMENT:
+  LOGS_FOLDER_NAME: "log"
+
+  DATABASE_PORT: 5432
+  DATABASE_HOST: "127.0.0.1"
+  DATABASE_USER: "akingbee"
+  DATABASE_PASSWORD: "password"
+  DATABASE_DATABASE: "akb_dev"
+
+  RBMQ_PORT: 5672
+  RBMQ_HOST: "127.0.0.1"
+  RBMQ_USER: "akingbee"
+  RBMQ_PASSWORD: "password"
+  RBMQ_VHOST: "/"
+

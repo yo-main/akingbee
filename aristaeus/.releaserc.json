@@ -1,0 +1,40 @@
+{
+  "branches": ["master"],
+  "tagFormat": "aristaeus:v${version}",
+  "verifyConditions": [
+    "@semantic-release/git",
+    "@semantic-release/exec",
+    "@semantic-release/changelog",
+    "@semantic-release/github"
+  ],
+  "analyzeCommits": [
+    ["@semantic-release/commit-analyzer", {
+      "preset": "angular",
+      "releaseRules": [
+        {"scope": "poseidon", "release": false},
+        {"scope": "cerbes", "release": false},
+        {"scope": "gaea", "release": false}
+      ],
+      "parserOpts": {
+        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+      }
+    }]
+  ],
+  "generateNotes": [
+    "@semantic-release/release-notes-generator"
+  ],
+  "prepare": [
+    ["@semantic-release/exec", 
+      {
+      "prepareCmd": "sed -i \"s/\\(^version *= *\\).*/\\1\"${nextRelease.version}\"/\" pyproject.toml"
+      }
+    ],
+    ["@semantic-release/git",
+    {
+      "message": "release(aristaeus): ${nextRelease.version} - ${nextRelease.notes}"
+    }]
+  ],
+  "publish": [
+      "@semantic-release/github"
+  ]
+}

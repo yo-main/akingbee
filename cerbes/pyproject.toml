@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "cerbes"
+version = "0.1.0"
+description = ""
+authors = ["rarnal <arnal.romain@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pyjwt = "^2"
+uvicorn = "^0"
+pydantic = "^1"
+fastapi = "^0"
+gaea = "^0"
+
+[tool.poetry.dev-dependencies]
+pylint = "*"
+ipython = "*"
+pytest = "*"
+requests = "*"
+black = "*"
+mock = "*"
+coverage = {version = "^5.4", extras = ["toml"]}
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.coverage.run]
+branch = true
+source = ["cerbes"]
+omit = ["tests"]
