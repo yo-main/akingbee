@@ -31,7 +31,8 @@
     ],
     ["@semantic-release/git",
     {
-      "message": "release(aristaeus): ${nextRelease.version} - ${nextRelease.notes}"
+      "message": "release(aristaeus): ${nextRelease.version} - ${nextRelease.notes}",
+      "assets": ["pyproject.toml"]
     }]
   ],
   "publish": [
