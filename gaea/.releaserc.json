@@ -1,0 +1,40 @@
+{
+  "branches": ["master"],
+  "tagFormat": "gaea-v${version}",
+  "verifyConditions": [
+    "@semantic-release/git",
+    "@semantic-release/exec",
+    "@semantic-release/github"
+  ],
+  "analyzeCommits": [
+    ["@semantic-release/commit-analyzer", {
+      "preset": "angular",
+      "releaseRules": [
+        {"scope": "aristaeus", "release": false},
+        {"scope": "poseidon", "release": false},
+        {"scope": "cerbes", "release": false}
+      ],
+      "parserOpts": {
+        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+      }
+    }]
+  ],
+  "generateNotes": [
+    "@semantic-release/release-notes-generator"
+  ],
+  "prepare": [
+    ["@semantic-release/exec", 
+      {
+      "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" pyproject.toml"
+      }
+    ],
+    ["@semantic-release/git",
+    {
+      "message": "release(gaea): ${nextRelease.version} - ${nextRelease.notes}",
+      "assets": ["pyproject.toml"]
+    }]
+  ],
+  "publish": [
+      "@semantic-release/github"
+  ]
+}
