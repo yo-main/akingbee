@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "gaea"
 version = "1.0.0"
-description = ""
+description = "A microservice chassis for akingbee.com !"
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
