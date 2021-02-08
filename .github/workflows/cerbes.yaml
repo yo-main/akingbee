@@ -11,8 +11,8 @@ defaults:
     working-directory: cerbes
 
 jobs:
-  pytest:
-    name: pytest
+  validation:
+    name: lint & pytest
     runs-on: ubuntu-latest
 
     services:
