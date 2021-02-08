@@ -72,6 +72,6 @@ jobs:
       - name: install node
         uses: actions/setup-node@v2
       - name: install dependencies
-        run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec @semantic-release/changelog
+        run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec
       - name: run semantic release
         run: semantic-release
