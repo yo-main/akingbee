@@ -4,7 +4,6 @@
   "verifyConditions": [
     "@semantic-release/git",
     "@semantic-release/exec",
-    "@semantic-release/changelog",
     "@semantic-release/github"
   ],
   "analyzeCommits": [
@@ -26,7 +25,7 @@
   "prepare": [
     ["@semantic-release/exec", 
       {
-      "prepareCmd": "sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" pyproject.toml"
+      "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" pyproject.toml"
       }
     ],
     ["@semantic-release/git",
