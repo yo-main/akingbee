@@ -31,6 +31,6 @@ COPY --from=build $VENV_PATH $VENV_PATH
 COPY ./aristaeus ./aristaeus
 COPY config.yaml ./
 
-EXPOSE 9001
+EXPOSE 9002
 
 CMD ["uvicorn", "aristaeus.app:app", "--host", "0.0.0.0", "--port", "9002"]
