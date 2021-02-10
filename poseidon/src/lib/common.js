@@ -37,12 +37,12 @@ export function notificate(type, description) {
 axios.defaults.headers.common["Content-Type"] = "application/json"
 
 export const cerbesApi = axios.create({
-  baseURL: 'http://localhost:9001',
+  baseURL: `http://${process.env.REACT_APP_CERBES_API}`,
   withCredentials: true,
 })
 
 export const aristaeusApi = axios.create({
-  baseURL: 'http://localhost:9002',
+  baseURL: `http://${process.env.REACT_APP_ARISTAEUS_API}`,
   withCredentials: true,
 })
 

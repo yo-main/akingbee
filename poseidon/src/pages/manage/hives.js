@@ -246,8 +246,13 @@ export class HivePage extends React.Component {
   }
 
   render() {
+    console.log(process.env.REACT_APP_ARISTAEUS_API)
+    console.log(process.env.REACT_APP_CERBES_API)
+
+
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
+
 
     const columns = [
       {
