@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button, Form, Space, Row, Col, Cascader } from 'antd';
-import { PlusOutlined, MinusCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { Button, Form, Row, Col, Cascader } from 'antd';
+import { PlusOutlined, MinusCircleOutlined, CheckCircleOutlined } from '@ant-design/icons'
 
 import { formItemLayoutWithoutLabel } from '../constants';
 

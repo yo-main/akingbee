@@ -29,7 +29,7 @@ export function logOff() {
 
 export async function registrationRequest({email, username, password, password_bis}) {
   // checks
-  if (password != password_bis){
+  if (password !== password_bis){
     notificate("error", window.i18n("error.passwordsNotIdentical"))
     return;
   }

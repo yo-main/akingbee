@@ -16,7 +16,7 @@ import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
 import '../styles.css';
-import { PlusOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 
 function onFailed(err) {
   notificate("error", "Failed")
@@ -288,7 +288,7 @@ export class HivePage extends React.Component {
                 <UpdateHiveForm formId={formId} hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
               </FormLinkModal>
               <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
-                <a href='#'>{window.i18n('word.delete')}</a>
+                <Button type="link">{window.i18n('word.delete')}</Button>
               </Popconfirm>
             </Space>
           )
@@ -479,7 +479,7 @@ export class HiveDetailsPage extends React.Component {
       label: window.i18n('form.moveHive'),
       value: "newApiary",
       children: apiaries.reduce((acc, val) => {
-        if (!current_apiary || current_apiary.id != val.id) {
+        if (!current_apiary || current_apiary.id !== val.id) {
           acc.push({
             value: val.id,
             label: val.name,
@@ -619,7 +619,7 @@ export class HiveDetailsPage extends React.Component {
                 <UpdateCommentForm formId={formId} onFinish={this.updateComment} commentId={record.id} date={record.date} content={JSON.parse(record.comment)} />
               </FormLinkModal>
               <Popconfirm onConfirm={async() => this.deleteComment(record.id)} title={window.i18n("confirm.deleteComment")}>
-                <a href='#'>{window.i18n('word.delete')}</a>
+                <Button type="link">{window.i18n('word.delete')}</Button>
               </Popconfirm>
             </Space>
           )

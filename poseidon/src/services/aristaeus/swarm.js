@@ -7,5 +7,5 @@ export async function createSwarm({health_status_id}) {
 
 export async function deleteSwarm({swarm_id}) {
   let response = await aristaeusApi.delete(`/swarm/${swarm_id}`);
-  return response.status_code == 204;
+  return response.data;
 }

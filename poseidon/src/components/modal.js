@@ -1,7 +1,5 @@
 import React from 'react';
 import { Modal, Button} from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
-import Base from 'antd/lib/typography/Base';
 
 class BaseModal extends React.Component {
   state = { visible: false}
@@ -63,9 +61,9 @@ export class FormButtonModal extends BaseModal {
 export class FormLinkModal extends BaseModal {
   entrypoint() {
     return (
-      <a onClick={this.showModal}>
+      <Button onClick={this.showModal} type="link">
         {this.props.linkContent}
-      </a>
+      </Button>
     )
   }
 }

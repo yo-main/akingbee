@@ -167,7 +167,7 @@ export class SetupPage extends React.Component {
               <UpdateDataForm objectId={record.id} currentValue={record.name} dataType={this.props.dataType} onFinish={this.updateData} />
             </FormLinkModal>
             <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteData")}>
-              <a href='#'>{window.i18n('word.delete')}</a>
+              <Button type="link">{window.i18n('word.delete')}</Button>
             </Popconfirm>
           </Space>
         )

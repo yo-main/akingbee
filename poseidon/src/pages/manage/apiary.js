@@ -1,16 +1,15 @@
 import React from 'react';
 
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
 import { navigate } from '@reach/router';
 
-import { FormButtonModal, FormLinkModal } from '../../components';
+import { FormLinkModal } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { createApiary, getApiaries, updateApiary, deleteApiary } from '../../services/aristaeus/apiary';
-import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
+import { ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
 
 
 function onFailed(err) {
@@ -164,7 +163,7 @@ export class ApiaryPage extends React.Component {
               <UpdateApiaryForm apiaryId={record.id} record={record} honey_types={this.state.apiaryHoneyType} onFinish={this.updateData} />
             </FormLinkModal>
             <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteApiary")}>
-              <a href='#'>{window.i18n('word.delete')}</a>
+              <Button type="link">{window.i18n('word.delete')}</Button>
             </Popconfirm>
           </Space>
         )

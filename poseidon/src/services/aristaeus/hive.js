@@ -33,16 +33,16 @@ export async function createHive({name, condition_id, owner_id, apiary_id, swarm
 
 export async function updateHive(hive_id, {name, owner_id, condition_id, swarm_id, apiary_id}) {
   let response = await aristaeusApi.put(`/hive/${hive_id}`, {name, owner_id, condition_id, swarm_id, apiary_id});
-  return response.status_code == 204;
+  return response.data;
 }
 
 
 export async function deleteHive(hive_id) {
   let response = await aristaeusApi.delete(`/hive/${hive_id}`);
-  return response.status_code == 204;
+  return response.data;
 }
 
 export async function moveHive(hive_id, apiary_id) {
   let response = await aristaeusApi.put(`hive/${hive_id}/move/${apiary_id}`)
-  return response.status_code == 204;
+  return response.data;
 }

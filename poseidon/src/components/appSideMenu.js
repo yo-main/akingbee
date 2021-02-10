@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React from 'react';
 import Icon from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import { Link } from '@reach/router';

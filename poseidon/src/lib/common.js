@@ -2,8 +2,6 @@ import { notification } from 'antd';
 import { navigate } from '@reach/router';
 import axios from 'axios';
 
-import { NotFound } from '../pages'
-
 export function getCookie(name, cookies) {
   if (!cookies) {
     cookies = document.cookie;
@@ -56,7 +54,7 @@ export function dealWithError(error) {
     return;
   }
 
-  if (response.status === 401 && window.location.pathname != "/login") {
+  if (response.status === 401 && window.location.pathname !== "/login") {
     navigate("/login");
     return;
   }

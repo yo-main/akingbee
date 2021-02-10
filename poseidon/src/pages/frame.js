@@ -5,7 +5,7 @@ import { Redirect } from '@reach/router';
 import { LoggedInMenu, LoggedOutMenu, ManageSideMenu, SetupSideMenu } from '../components';
 import { isLogged } from '../services/authentication';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 
 class Frame extends React.Component {

@@ -1,4 +1,3 @@
-/* global i18n */
 import 'moment/locale/fr';
 
 import enUS from 'antd/lib/locale/en_US';

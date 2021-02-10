@@ -1,4 +1,4 @@
-import { aristaeusApi, dealWithError, notificate } from '../../lib/common';
+import { aristaeusApi } from '../../lib/common';
 
 export async function getSetupData(type) {
   let response = await aristaeusApi.get(`/setup/${type}`)
