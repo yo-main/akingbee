@@ -1,5 +1,4 @@
 import { aristaeusApi } from '../../lib/common';
-import { createSwarm } from './swarm';
 import moment from 'moment';
 
 export async function getCommentsForHive(hive_id) {
