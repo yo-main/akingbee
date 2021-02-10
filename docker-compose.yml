@@ -1,6 +1,15 @@
 version: "3.7"
 
 services:
+
+  poseidon:
+    image: yomain/poseidon:latest
+    container_name: poseidon
+    ports:
+      - 8080:80
+    networks:
+      - akb
+
   cerbes:
     image: yomain/cerbes:latest
     container_name: cerbes
@@ -71,29 +80,6 @@ services:
     depends_on: [db, rbmq]
     networks:
       - akb
-
-
-
-  # nginx:
-  #   image: nginx:alpine
-  #   container_name: nginx
-  #   restart: "always"
-  #   command: ["/etc/nginx/start.sh"]
-  #   environment:
-  #     TZ: Europe/Paris
-  #     NGINX_AUTH_USERNAME: ${NGINX_AUTH_USERNAME}
-  #     NGINX_AUTH_PWD: ${NGINX_AUTH_PWD}
-  #   volumes:
-  #     - /etc/letsencrypt:/certs
-  #     - ./infra/conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
-  #     - ./infra/conf/nginx/start.sh:/etc/nginx/start.sh
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   depends_on:
-  #     - akingbee
-  #   networks:
-  #     - akb
 
   db:
     image: postgres:10-alpine
