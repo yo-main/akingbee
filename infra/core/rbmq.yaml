@@ -32,7 +32,7 @@ spec:
         app: rbmq
     spec:
       containers:
-        - image: rbmq:management-alpine
+        - image: rabbitmq:management-alpine
           name: rbmq
 
 

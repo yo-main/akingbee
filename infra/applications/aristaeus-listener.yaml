@@ -29,7 +29,7 @@ spec:
         app: aristaeus-listener
     spec:
       containers:
-      - image: yomain/aristaeus:v1.1.3
+      - image: yomain/aristaeus:1.3.0
         name: aristaeus-listener
         env:
         - name: AKB_SERVICE_NAME
