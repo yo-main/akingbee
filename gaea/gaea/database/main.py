@@ -19,7 +19,7 @@ def get_database_url(dbname=None):
     pswd = CONFIG.DATABASE_PASSWORD
     host = CONFIG.DATABASE_HOST
     port = CONFIG.DATABASE_PORT
-    dbnm = dbname or CONFIG.DATABASE_DATABASE
+    dbnm = dbname or CONFIG.DATABASE_DBNAME
 
     if any(val is None for val in (user, pswd, host, port, dbnm)):
         raise ValueError("Database configuration is missing")

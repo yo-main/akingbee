@@ -26,7 +26,7 @@ class Config:
     DATABASE_HOST = None
     DATABASE_USER = None
     DATABASE_PASSWORD = None
-    DATABASE_DATABASE = "akb"
+    DATABASE_DBNAME = "akb"
 
     def __init__(self):
         self.load_env_variables()
