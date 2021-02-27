@@ -1,0 +1,34 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "akb-entrypoint"
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # server: https://acme-v02.api.letsencrypt.org/directory
+    email: hostingroa@gmail.com
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - dns01:
+        digitalocean:
+          tokenSecretRef:
+            name: digitalocean-dns
+            key: access-token
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: akingbee.com
+  namespace: default
+spec:
+  secretName: akingbee.com-tls
+  issuerRef:
+    name: letsencrypt
+  commonName: akingbee.com
+  dnsNames:
+  - akingbee.com
+  - www.akingbee.com
+  - '*.akingbee.com'

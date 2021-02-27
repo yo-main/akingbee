@@ -35,7 +35,7 @@ jobs:
       AKB_DATABASE_PORT: 5432
       AKB_DATABASE_USER: dbtest
       AKB_DATABASE_PASSWORD: dbtest
-      AKB_DATABASE_DATABASE: dbtest
+      AKB_DATABASE_DBNAME: dbtest
 
     steps:
       - name: install python3.9
@@ -53,7 +53,7 @@ jobs:
       - name: black
         run: poetry run black . --check
       - name: pytest
-        run: poetry run coverage run -m pytest 
+        run: poetry run coverage run -m pytest
       - name: coverage report
         run: poetry run coverage report
 

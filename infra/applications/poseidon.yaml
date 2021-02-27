@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: poseidon
+  labels:
+    app: poseidon
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 9000
+  selector:
+    app: poseidon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poseidon
+  labels:
+    app: poseidon
+spec:
+  selector:
+    matchLabels:
+      app: poseidon
+  template:
+    metadata:
+      labels:
+        app: poseidon
+    spec:
+      containers:
+      - image: yomain/poseidon:v1.1.3
+        name: poseidon
+        env:
+        - name: SERVICE_NAME
+          value: poseidon
+        - name: ENV
+          valueFrom:
+            configMapKeyRef:
+              name: env-vars-config
+              key: ENV
+        - name: IDENTIFIER
+          value: AKB
+        - name: AKB_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: akingbee-application-cookie
+              key: secret_key
+        - name: AKB_DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: database-europe-west-1c
+              key: host
+        - name: AKB_DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: database-europe-west-1c
+              key: username
+        - name: AKB_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-europe-west-1c
+              key: password
+        - name: AKB_RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: rbmq-erlang-cookie
+              key: secret_key
+        command: ["uvicorn", "poseidon.app:app", "--host", "0.0.0.0", "--port", "9002"]
+        ports:
+        - containerPort: 9000
+        readinessProbe:
+          httpGet:
+            path: /_/status
+            port: 9000
+        volumeMounts:
+        - mountPath: /app/log
+          name: logs
+
+      volumes:
+      - name: logs
+        hostPath:
+          type: DirectoryOrCreate
+          path: /var/log/poseidon
+
+
