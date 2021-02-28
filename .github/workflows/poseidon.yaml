@@ -53,6 +53,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: 'master'
       - name: install node
         uses: actions/setup-node@v2
       - name: Set up QEMU
