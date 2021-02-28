@@ -15,7 +15,7 @@ pylint = "*"
 pytest = "*"
 black = "*"
 mock = "*"
-coverage = {version = "^5.4", extras = ["toml"]}
+coverage = {version = "*", extras = ["toml"]}
 
 [build-system]
 requires = ["poetry>=0.12"]
