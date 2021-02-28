@@ -1,6 +1,8 @@
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 
+from .monitoring import router as monitoring_router
+
 
 class AppClient:
     def __init__(self, routers, middleware=None):
@@ -9,6 +11,7 @@ class AppClient:
         if not isinstance(routers, (list, tuple)):
             routers = [routers]
 
+        self.app.include_router(monitoring_router)
         for router in routers:
             self.app.include_router(router)
 
