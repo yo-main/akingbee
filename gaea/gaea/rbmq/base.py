@@ -8,13 +8,8 @@ RBMQ_DEFAULT_EXCHANGE = "akingbee.main_exchange"
 
 
 class RBMQClient:
-    exchange = None
-
     def __init__(self, exchange=None, connection_manager=None):
-        if not connection_manager:
-            connection_manager = RBMQConnectionManager()
-        self.connection_manager = connection_manager
-
+        self.connection_manager = connection_manager or RBMQConnectionManager()
         self.exchange = exchange or RBMQ_DEFAULT_EXCHANGE
 
         with self.connection_manager as channel:
