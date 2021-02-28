@@ -2,7 +2,7 @@ flask_session/
 __pycache__
 .vscode/
 var/
-env/
+**/env/
 log/
 database.db
 .ropeproject
