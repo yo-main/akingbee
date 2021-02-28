@@ -5,11 +5,11 @@ metadata:
   labels:
     app: poseidon
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - name: http
     port: 8080
-    targetPort: 9000
+    targetPort: 80
   selector:
     app: poseidon
 ---
@@ -32,49 +32,19 @@ spec:
       - image: yomain/poseidon:1.0.1
         name: poseidon
         env:
-        - name: SERVICE_NAME
-          value: poseidon
         - name: ENV
           valueFrom:
             configMapKeyRef:
               name: env-vars-config
               key: ENV
-        - name: IDENTIFIER
-          value: AKB
-        - name: AKB_SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: akingbee-application-cookie
-              key: secret_key
-        - name: AKB_DATABASE_HOST
-          valueFrom:
-            secretKeyRef:
-              name: database-europe-west-1c
-              key: host
-        - name: AKB_DATABASE_USER
-          valueFrom:
-            secretKeyRef:
-              name: database-europe-west-1c
-              key: username
-        - name: AKB_DATABASE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: database-europe-west-1c
-              key: password
-        - name: AKB_RABBITMQ_ERLANG_COOKIE
-          valueFrom:
-            secretKeyRef:
-              name: rbmq-erlang-cookie
-              key: secret_key
-        command: ["uvicorn", "poseidon.app:app", "--host", "0.0.0.0", "--port", "9002"]
+        - name: REACT_APP_ARISTAEUS_API
+          value: aristaeus-api
+        - name: REACT_APP_CERBES_API
+          value: cerbes-api
         ports:
-        - containerPort: 9000
-        readinessProbe:
-          httpGet:
-            path: /_/status
-            port: 9000
+        - containerPort: 80
         volumeMounts:
-        - mountPath: /app/log
+        - mountPath: /var/log/poseidon
           name: logs
 
       volumes:

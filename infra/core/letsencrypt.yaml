@@ -30,5 +30,4 @@ spec:
   commonName: akingbee.com
   dnsNames:
   - akingbee.com
-  - www.akingbee.com
   - '*.akingbee.com'

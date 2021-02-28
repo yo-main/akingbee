@@ -1,15 +1,13 @@
 configMapGenerator:
 - name: env-vars-config
-  files:
-  - config/env/production.env
+  env: config/env/production.env
 - name: promtail-config
   files:
   - config/grafana/promtail.yaml
 
 secretGenerator:
 - name: env-secrets-config
-  files:
-  - config/env/production.secrets
+  env: config/env/production.secrets
 
 resources:
   - applications/aristaeus-api.yaml

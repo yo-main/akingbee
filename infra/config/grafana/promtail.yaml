@@ -3,7 +3,6 @@ clients:
 
 scrape_configs:
   - job_name: syslog
-    entry_parser: raw
 
     static_configs:
       - targets: [localhost]
@@ -11,7 +10,6 @@ scrape_configs:
           __path__: /var/log/*.log
 
   - job_name: akingbee
-    entry_parser: raw
 
     static_configs:
       - targets: [localhost]

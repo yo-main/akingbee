@@ -5,7 +5,7 @@ metadata:
   labels:
     app: aristaeus-api
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - name: http
     port: 8080
@@ -29,7 +29,7 @@ spec:
         app: aristaeus-api
     spec:
       containers:
-      - image: yomain/aristaeus:1.2.0
+      - image: yomain/aristaeus:1.5.0
         name: aristaeus-api
         env:
         - name: AKB_SERVICE_NAME
