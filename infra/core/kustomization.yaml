@@ -1,0 +1,11 @@
+configMapGenerator:
+- name: promtail-config
+  files:
+  - config/grafana/promtail.yaml
+
+resources:
+  - letsencrypt.yaml
+  - promtail.yaml
+  - grafana.yaml
+  - ingress.yaml
+  - rbmq.yaml

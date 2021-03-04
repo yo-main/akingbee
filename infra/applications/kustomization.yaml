@@ -1,0 +1,5 @@
+resources:
+  - aristaeus-api.yaml
+  - aristaeus-listener.yaml
+  - cerbes.yaml
+  - poseidon.yaml

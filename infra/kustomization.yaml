@@ -1,6 +1,6 @@
 configMapGenerator:
 - name: env-vars-config
-  env: config/env/production.env
+  env: env/production.env
 - name: promtail-config
   files:
   - config/grafana/promtail.yaml
@@ -14,9 +14,8 @@ resources:
   - applications/aristaeus-listener.yaml
   - applications/cerbes.yaml
   - applications/poseidon.yaml
-  - core/grafana.yaml
-  - core/ingress.yaml
   - core/letsencrypt.yaml
   - core/promtail.yaml
+  - core/grafana.yaml
+  - core/ingress.yaml
   - core/rbmq.yaml
-  - core/secrets.yaml

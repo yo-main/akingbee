@@ -1,0 +1,21 @@
+configMapGenerator:
+- name: env-vars-config
+  env: production.env
+
+secretGenerator:
+- name: env-secrets-config
+  env: production.secrets
+
+bases:
+  - ../../applications
+  - ../../core
+
+
+vars:
+- name: MAIN_HOSTED_ZONE
+  objref:
+    kind: ConfigMap
+    name: env-vars-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.DNS

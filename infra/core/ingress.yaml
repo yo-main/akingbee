@@ -5,11 +5,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - akingbee.com
-    - www.akingbee.com
-    - grafana.akingbee.com
-    - cerbes.akingbee.com
-    - aristaeus.akingbee.com
+    - $(MAIN_HOSTED_ZONE)
+    - "grafana.$(MAIN_HOSTED_ZONE)"
+    - "cerbes.$(MAIN_HOSTED_ZONE)"
+    - "aristaeus.$(MAIN_HOSTED_ZONE)"
     secretName: akingbee.com-tls
 
   defaultBackend:
@@ -19,18 +18,7 @@ spec:
         number: 9000
 
   rules:
-  - host: akingbee.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: poseidon
-            port:
-              number: 9000
-
-  - host: cerbes.akingbee.com
+  - host: "cerbes.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
       - path: /
@@ -41,7 +29,7 @@ spec:
             port:
               number: 9001
 
-  - host: aristaeus.akingbee.com
+  - host: "aristaeus.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
       - path: /
@@ -52,7 +40,7 @@ spec:
             port:
               number: 9002
 
-  - host: grafana.akingbee.com
+  - host: "grafana.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
       - path: /
@@ -62,10 +50,3 @@ spec:
             name: grafana
             port:
               number: 3000
-
-
-
-
-
-
-

@@ -29,7 +29,7 @@ spec:
         app: cerbes-api
     spec:
       containers:
-      - image: yomain/cerbes:1.4.0
+      - image: yomain/cerbes:1.5.0
         name: cerbes-api
         env:
         - name: AKB_SERVICE_NAME
