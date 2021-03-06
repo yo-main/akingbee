@@ -9,8 +9,7 @@ python = "^3.9"
 pyjwt = "^2"
 uvicorn = "^0"
 pydantic = "^1"
-fastapi = "^0"
-gaea = "^1.3.0"
+gaea = "^1.4.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "*"
