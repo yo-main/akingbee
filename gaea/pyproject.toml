@@ -11,7 +11,7 @@ sqlalchemy = "^1"
 alembic = "^1"
 dynaconf = "^3"
 psycopg2-binary = "^2"
-fastapi = "^0"
+fastapi = "^0.63.0"
 uvicorn = "^0"
 pika = "^1"
 pydantic = "^1"
@@ -23,7 +23,7 @@ black = "*"
 pytest = "*"
 mock = "*"
 coverage = {version = "^5.4", extras = ["toml"]}
-requests = "^2.25.1"
+requests = "*"
 
 [build-system]
 requires = ["poetry>=0.12"]
