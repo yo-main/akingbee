@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aristaeus"
-version = "1.7.0"
+version = "1.7.1"
 description = "description"
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
