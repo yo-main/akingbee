@@ -9,15 +9,21 @@ spec:
     - "grafana.$(MAIN_HOSTED_ZONE)"
     - "cerbes.$(MAIN_HOSTED_ZONE)"
     - "aristaeus.$(MAIN_HOSTED_ZONE)"
-    secretName: akingbee.com-tls
-
-  defaultBackend:
-    service:
-      name: poseidon
-      port:
-        number: 9000
+    secretName: akingbee-tls
 
   rules:
+  - host: "$(MAIN_HOSTED_ZONE)"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: poseidon
+            port:
+              number: 8080
+
+
   - host: "cerbes.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
@@ -25,9 +31,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: cerbes
+            name: cerbes-api
             port:
-              number: 9001
+              number: 8080
 
   - host: "aristaeus.$(MAIN_HOSTED_ZONE)"
     http:
@@ -36,9 +42,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: aristaeus
+            name: aristaeus-api
             port:
-              number: 9002
+              number: 8080
 
   - host: "grafana.$(MAIN_HOSTED_ZONE)"
     http:

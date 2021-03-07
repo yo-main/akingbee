@@ -5,7 +5,7 @@ metadata:
   labels:
     app: poseidon
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - name: http
     port: 8080
@@ -29,7 +29,7 @@ spec:
         app: poseidon
     spec:
       containers:
-      - image: yomain/poseidon:1.0.1
+      - image: yomain/poseidon:1.3.2
         name: poseidon
         env:
         - name: ENV

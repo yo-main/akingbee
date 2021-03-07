@@ -4,7 +4,6 @@ configMapGenerator:
   - config/grafana/promtail.yaml
 
 resources:
-  - letsencrypt.yaml
   - promtail.yaml
   - grafana.yaml
   - ingress.yaml

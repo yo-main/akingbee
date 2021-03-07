@@ -7,8 +7,12 @@ secretGenerator:
   env: dev.secrets
 
 bases:
-  - ../../applications
-  - ../../core
+- ../../applications
+- ../../core
+
+resources:
+- letsencrypt.yaml
+- postgresql.yaml
 
 vars:
 - name: MAIN_HOSTED_ZONE

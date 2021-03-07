@@ -10,6 +10,8 @@ bases:
   - ../../applications
   - ../../core
 
+resources:
+- letsencrypt.yaml
 
 vars:
 - name: MAIN_HOSTED_ZONE

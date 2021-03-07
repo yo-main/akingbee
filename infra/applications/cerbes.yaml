@@ -5,7 +5,7 @@ metadata:
   labels:
     app: cerbes-api
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - name: http
     port: 8080
@@ -29,7 +29,7 @@ spec:
         app: cerbes-api
     spec:
       containers:
-      - image: yomain/cerbes:1.5.0
+      - image: yomain/cerbes:1.6.2
         name: cerbes-api
         env:
         - name: AKB_SERVICE_NAME

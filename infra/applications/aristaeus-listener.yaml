@@ -5,7 +5,7 @@ metadata:
   labels:
     app: aristaeus-listener
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - name: http
     port: 15672
@@ -29,7 +29,7 @@ spec:
         app: aristaeus-listener
     spec:
       containers:
-      - image: yomain/aristaeus:1.6.0
+      - image: yomain/aristaeus:1.7.2
         name: aristaeus-listener
         env:
         - name: AKB_SERVICE_NAME
