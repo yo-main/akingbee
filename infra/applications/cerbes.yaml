@@ -42,6 +42,13 @@ spec:
               name: env-vars-config
               key: ENV
 
+        # APP SECRETS
+        - name: AKB_APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: JWT_SECRET_KEY
+
         # DATABASE CREDENTIALS
         - name: AKB_DATABASE_HOST
           valueFrom:

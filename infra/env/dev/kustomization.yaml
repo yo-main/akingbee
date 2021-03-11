@@ -9,6 +9,7 @@ secretGenerator:
 bases:
 - ../../applications
 - ../../core
+- ../../jobs
 
 resources:
 - letsencrypt.yaml

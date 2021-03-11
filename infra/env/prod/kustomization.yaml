@@ -7,8 +7,9 @@ secretGenerator:
   env: production.secrets
 
 bases:
-  - ../../applications
-  - ../../core
+- ../../applications
+- ../../core
+- ../../jobs
 
 resources:
 - letsencrypt.yaml

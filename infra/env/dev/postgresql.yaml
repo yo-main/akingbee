@@ -56,3 +56,10 @@ spec:
           value: trust
         ports:
         - containerPort: 5432
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: data
+        hostPath:
+          path: /data/postgres
