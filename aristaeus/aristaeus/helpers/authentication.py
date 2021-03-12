@@ -10,6 +10,8 @@ from gaea.config import CONFIG
 async def validate_access_token(access_token):
     async with aiohttp.ClientSession() as session:
         url = f"{CONFIG.CERBES_ENDPOINT}/check"
+        if not url.startswith("http"):
+            url = f"https://{url}"
         async with session.get(url, cookies={"access_token": access_token}) as resp:
             return await resp.json() if resp.status == 200 else None
 
