@@ -20,7 +20,7 @@ export function getCookie(name, cookies) {
 
 export function setCookie(key, value, conf) {
   let cookie = `${key}=${value};`
-  let cookieConf = {path: '/', samesite: 'lax'}
+  let cookieConf = {path: '/', samesite: 'lax', domain: window.location.hostname}
   Object.assign(cookieConf, conf)
   cookie += Object.keys(cookieConf).map((key) => {
     return [key, cookieConf[key]].join("=")
