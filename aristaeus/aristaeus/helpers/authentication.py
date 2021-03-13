@@ -11,10 +11,11 @@ CERBES_URL = f"{CONFIG.CERBES_API_ENDPOINT}:{CONFIG.CERBES_API_PORT}"
 
 
 async def validate_access_token(access_token):
+    url = f"{CERBES_URL}/check"
+    if not url.startswith("http"):
+        url = f"http://{url}"
+
     async with aiohttp.ClientSession() as session:
-        url = CERBES_URL
-        if not url.startswith("http"):
-            url = f"http://{url}"
         async with session.get(url, cookies={"access_token": access_token}) as resp:
             return await resp.json() if resp.status == 200 else None
 
