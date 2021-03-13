@@ -5,10 +5,10 @@ metadata:
   labels:
     app: poseidon
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - name: http
-    port: 8080
+    port: 9000
     targetPort: 80
   selector:
     app: poseidon
@@ -29,7 +29,7 @@ spec:
         app: poseidon
     spec:
       containers:
-      - image: yomain/poseidon:1.3.2
+      - image: yomain/poseidon:1.3.4
         name: poseidon
         env:
         - name: ENV

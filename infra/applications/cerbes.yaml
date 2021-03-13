@@ -5,10 +5,10 @@ metadata:
   labels:
     app: cerbes-api
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - name: http
-    port: 8080
+    port: 9001
     targetPort: 9001
   selector:
     app: cerbes-api

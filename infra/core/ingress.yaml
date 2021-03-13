@@ -21,7 +21,7 @@ spec:
           service:
             name: poseidon
             port:
-              number: 8080
+              number: 9000
 
 
   - host: "cerbes.$(MAIN_HOSTED_ZONE)"
@@ -33,7 +33,7 @@ spec:
           service:
             name: cerbes-api
             port:
-              number: 8080
+              number: 9001
 
   - host: "aristaeus.$(MAIN_HOSTED_ZONE)"
     http:
@@ -44,7 +44,7 @@ spec:
           service:
             name: aristaeus-api
             port:
-              number: 8080
+              number: 9002
 
   - host: "grafana.$(MAIN_HOSTED_ZONE)"
     http:
@@ -55,4 +55,4 @@ spec:
           service:
             name: grafana
             port:
-              number: 3000
+              number: 80

@@ -5,10 +5,10 @@ metadata:
   labels:
     app: aristaeus-api
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - name: http
-    port: 8080
+    port: 9002
     targetPort: 9002
   selector:
     app: aristaeus-api
@@ -29,7 +29,7 @@ spec:
         app: aristaeus-api
     spec:
       containers:
-      - image: yomain/aristaeus:1.7.2
+      - image: yomain/aristaeus:1.7.5
         name: aristaeus-api
         env:
         - name: AKB_SERVICE_NAME
@@ -76,8 +76,12 @@ spec:
               name: env-secrets-config
               key: DATABASE_DBNAME
 
-        - name: AKB_CERBES_ENDPOINT
+        # Cerbes service
+        - name: AKB_CERBES_API_ENDPOINT
           value: cerbes-api
+        - name: AKB_CERBES_API_PORT
+          value: '9001'
+
         command: ["uvicorn", "aristaeus.app:app", "--host", "0.0.0.0", "--port", "9002"]
         ports:
         - containerPort: 9002
