@@ -7,9 +7,12 @@ import aiohttp
 from gaea.config import CONFIG
 
 
+CERBES_URL = f"{CONFIG.CERBES_API_ENDPOINT}:{CONFIG.CERBES_API_PORT}"
+
+
 async def validate_access_token(access_token):
     async with aiohttp.ClientSession() as session:
-        url = f"{CONFIG.CERBES_ENDPOINT}/check"
+        url = CERBES_URL
         if not url.startswith("http"):
             url = f"http://{url}"
         async with session.get(url, cookies={"access_token": access_token}) as resp:
