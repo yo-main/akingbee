@@ -69,12 +69,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+        with:
+          ref: 'master'
       - name: install node
         uses: actions/setup-node@v2
       - name: install dependencies
         run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec
-      - name: fetch master
-        run: git fetch && git rebase origin/master
+      - name: git pull
+        run: git pull
       - name: run semantic release
         run: semantic-release
 
