@@ -1,6 +1,6 @@
 {
   "branches": ["master"],
-  "tagFormat": "aristaeus-v${version}",
+  "tagFormat": "hermes-v${version}",
   "verifyConditions": [
     "@semantic-release/git",
     "@semantic-release/exec",
@@ -10,8 +10,8 @@
     ["@semantic-release/commit-analyzer", {
       "preset": "angular",
       "releaseRules": [
+        {"scope": "aristaeus", "release": false},
         {"scope": "poseidon", "release": false},
-        {"scope": "hermes", "release": false},
         {"scope": "cerbes", "release": false},
         {"scope": "gaea", "release": false}
       ],

@@ -12,6 +12,7 @@
       "releaseRules": [
         {"scope": "aristaeus", "release": false},
         {"scope": "poseidon", "release": false},
+        {"scope": "hermes", "release": false},
         {"scope": "gaea", "release": false}
       ],
       "parserOpts": {
@@ -23,7 +24,7 @@
     "@semantic-release/release-notes-generator"
   ],
   "prepare": [
-    ["@semantic-release/exec", 
+    ["@semantic-release/exec",
       {
       "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" pyproject.toml"
       }

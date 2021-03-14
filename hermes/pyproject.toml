@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "hermes"
+version = "0.1.0"
+description = "Hermes, the messenger of gods !"
+authors = ["Yomain <arnal.romain@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+ipython = "*"
+pylint = "*"
+black = "*"
+pynvim = "*"
+coverage = {version = "*", extras = ["toml"]}
+ipdb = "*"
+
+[tool.coverage.run]
+branch = true
+source = ["hermes"]
+omit = ["tests"]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+
