@@ -40,7 +40,8 @@ def initialize_user(properties, body):
             properties=properties,
         )
         return False
-    elif language not in LANGUAGES:
+
+    if language not in LANGUAGES:
         logger.error(f"Incorrect language: {body['languages']}")
         return False
 

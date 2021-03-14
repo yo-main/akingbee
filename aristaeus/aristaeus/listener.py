@@ -5,7 +5,7 @@ from aristaeus.consumer.handlers import initialize_user
 
 if __name__ == "__main__":
     handlers = {
-        "users.created": initialize_user,
+        "user.created": initialize_user,
     }
 
     consumer = RBMQConsumer(handlers=handlers, queue="aristaeus-main-queue")
