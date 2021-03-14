@@ -65,7 +65,7 @@ def create_user(
         raise HTTPException(400, "Database error when creating the user") from exc
 
     try:
-        helpers.send_event_user_created(user_id=user.id, language=language)
+        helpers.send_event_user_created(user=user, language=language)
     except:  # pylint: disable=bare-except
         logger.exception(
             "Could not insert message about user creation", user_id=user.id
