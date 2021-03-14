@@ -6,8 +6,19 @@ from .base import RBMQClient
 
 
 class RBMQConsumer(RBMQClient):
-    def __init__(self, handlers, queue, exchange=None, connection_manager=None):
-        super().__init__(exchange=exchange, connection_manager=connection_manager)
+    def __init__(
+        self,
+        handlers,
+        queue,
+        exchange=None,
+        connection_manager=None,
+        dead_letter_exchange=None,
+    ):
+        super().__init__(
+            exchange=exchange,
+            connection_manager=connection_manager,
+            dead_letter_exchange=dead_letter_exchange,
+        )
         self.handlers = handlers
         self.queue = queue
 
@@ -16,12 +27,22 @@ class RBMQConsumer(RBMQClient):
         self.bind_queues(channel=channel)
 
     def declare_queue(self, channel):
-        channel.queue_declare(queue=self.queue, durable=True)
+        channel.queue_declare(
+            queue=self.queue,
+            durable=True,
+            arguments={"x-dead-letter-exchange", self.declare_exchange},
+        )
+        channel.queue_declare(queue=f"{self.queue}-dead-letter", durable=True)
 
     def bind_queues(self, channel):
         for routing_key in self.handlers:
             channel.queue_bind(
                 queue=self.queue, exchange=self.exchange, routing_key=routing_key
+            )
+            channel.queue_bind(
+                queue=f"{self.queue}-dead-letter",
+                exchange=self.dead_letter_exchange,
+                routing_key=routing_key,
             )
 
     def consume(self):
@@ -65,7 +86,7 @@ class RBMQConsumer(RBMQClient):
             if success:
                 channel.basic_ack(method.delivery_tag)
             else:
-                channel.basic_nack(method.delivery_tag)
+                channel.basic_nack(method.delivery_tag, requeue=False)
         except:  # pylint: disable=bare-except
             logger.exception("Critical error when handling rbmq message", **log_details)
             channel.basic_nack(method.delivery_tag, requeue=False)

@@ -65,6 +65,6 @@ def test_rbmq_consumer():
     ]
     assert mocked_channel.basic_nack.mock_calls == [
         call("pouet", requeue=False),
-        call("3"),
+        call("3", requeue=False),
         call("boom", requeue=False),
     ]

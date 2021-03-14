@@ -5,12 +5,16 @@ from gaea.errors import AlreadyInitialized
 from gaea.log import logger
 
 RBMQ_DEFAULT_EXCHANGE = "akingbee.main_exchange"
+RBMQ_DEAD_LETTER_EXCHANGE = "akingbee.dead_letter"
 
 
 class RBMQClient:
-    def __init__(self, exchange=None, connection_manager=None):
+    def __init__(
+        self, exchange=None, connection_manager=None, dead_letter_exchange=None
+    ):
         self.connection_manager = connection_manager or RBMQConnectionManager()
         self.exchange = exchange or RBMQ_DEFAULT_EXCHANGE
+        self.dead_letter_exchange = dead_letter_exchange or RBMQ_DEAD_LETTER_EXCHANGE
 
         with self.connection_manager as channel:
             self.declare_exchange(channel=channel)
@@ -18,6 +22,11 @@ class RBMQClient:
     def declare_exchange(self, channel):
         channel.exchange_declare(
             exchange=self.exchange,
+            exchange_type="topic",
+            durable=True,
+        )
+        channel.exchange_declare(
+            exchange=RBMQ_DEAD_LETTER_EXCHANGE,
             exchange_type="topic",
             durable=True,
         )
