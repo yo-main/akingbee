@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cerbes"
-version = "1.6.3"
+version = "1.6.4"
 description = "Manage Authentication"
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
