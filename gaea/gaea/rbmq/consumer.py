@@ -30,7 +30,7 @@ class RBMQConsumer(RBMQClient):
         channel.queue_declare(
             queue=self.queue,
             durable=True,
-            arguments={"x-dead-letter-exchange", self.declare_exchange},
+            arguments={"x-dead-letter-exchange": self.declare_exchange},
         )
         channel.queue_declare(queue=f"{self.queue}-dead-letter", durable=True)
 
