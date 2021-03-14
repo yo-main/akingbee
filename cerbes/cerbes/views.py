@@ -3,9 +3,10 @@ from collections import namedtuple
 import datetime
 from enum import Enum
 import hashlib
+import re
 from sqlalchemy import exists
 from sqlalchemy.orm import joinedload, Session
-import re
+import uuid
 
 from fastapi import APIRouter, HTTPException, Depends, Cookie, Header
 from pydantic import BaseModel
@@ -28,7 +29,18 @@ class UserModel(BaseModel):
     password: str
 
 
-@router.post("/user", status_code=204)
+class UserResponseModel(BaseModel):
+    id: uuid.UUID
+    email: str
+    activation_id: uuid.UUID
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        orm_mode = True
+
+
+@router.post("/user", status_code=200, response_model=UserResponseModel)
 def create_user(
     user_data: UserModel,
     session: Session = Depends(get_session),
@@ -71,6 +83,8 @@ def create_user(
             "Could not insert message about user creation", user_id=user.id
         )
 
+    return user
+
 
 @router.post("/login", status_code=200)
 def authenticate_user(
@@ -105,3 +119,21 @@ def check_jwt(access_token: str = Cookie(None)):
         raise HTTPException(status_code=401)
 
     return {"user_id": data["user_id"]}
+
+
+@router.get("/activate/{user_id}/{activation_id}", status_code=201)
+def activate_user(
+    user_id: uuid.UUID,
+    activation_id: uuid.UUID,
+    session: Session = Depends(get_session),
+):
+    user = session.query(Users).get(user_id)
+
+    if user is None:
+        raise HTTPException(status_code=404)
+
+    if user.activation_id != activation_id:
+        raise HTTPException(status_code=400)
+
+    user.activation_id = None
+    session.commit()

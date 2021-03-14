@@ -14,7 +14,7 @@ CREDENTIALS = namedtuple("credentials", "username, password")
 
 def validate_email(string):
     """Validate email address. Should cover 99% of cases"""
-    pattern = re.compile(r"^[a-z0-9\._%+-]+@[a-z0-9\.-]+\.[a-z]{2,3}$")
+    pattern = re.compile(r"^[a-z0-9\._%+-]+@[a-z0-9\.-]+\.[a-z]{2,4}$")
     return bool(pattern.match(string))
 
 
@@ -58,9 +58,15 @@ def validate_jwt(token):
 
 
 def send_event_user_created(user, language):
+    activation_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/activation/{str(user.id)}/{str(user.activation_id)}"
     rbmq_client = RBMQPublisher()
     rbmq_client.publish(
         routing_key="user.created",
-        content={"user_id": user.id, "user_email": user.email, "language": language},
+        content={
+            "user_id": user.id,
+            "user_email": user.email,
+            "language": language,
+            "activation_link": activation_link,
+        },
     )
     rbmq_client.close()

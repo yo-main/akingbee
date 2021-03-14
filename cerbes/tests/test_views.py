@@ -14,7 +14,7 @@ from cerbes.helpers import generate_jwt
 @pytest.mark.parametrize(
     "username, password, email, expected_code, expected_msg",
     (
-        ("Maya", "ILoveYouHoney1", "maya.labeille@akingbee.com", 204, None),
+        ("Maya", "ILoveYouHoney1", "maya.labeille@akingbee.com", 200, None),
         ("coucou", "coucou", "coucou", 400, "Invalid email address"),
         ("coucou", "coucou", "coucou@cou", 400, "Invalid email address"),
         ("coucou", "coucou", "@cou.com", 400, "Invalid email address"),
@@ -22,7 +22,7 @@ from cerbes.helpers import generate_jwt
         ("coucou", "coucou", "coucou@coucou.com", 400, "Invalid password"),
         ("coucou", "coucou1", "coucou@coucou.com", 400, "Invalid password"),
         ("coucou", "c!ucAZEd", "coucou@coucou.com", 400, "Invalid password"),
-        ("coucou", "c!uAad&é1", "coucou@coucou.com", 204, None),
+        ("coucou", "c!uAad&é1", "coucou@coucou.com", 200, None),
         ("doudou", "d!udoudou1", "coucou@coucou.com", 400, "Email already exists"),
         ("coucou", "d!udoudou1", "doudou@doudou.com", 400, "Username already exists"),
     ),
@@ -34,9 +34,9 @@ def test_register_user(
     response = test_app.post("/user", json=data, cookies={"language": "en"})
     assert response.status_code == expected_code
     content = response.json()
-    assert expected_msg == (content["detail"] if expected_code != 204 else None)
+    assert expected_msg == (content["detail"] if expected_code != 200 else None)
     assert mock_rbmq_channel.basic_publish.call_count == (
-        1 if expected_code == 204 else 0
+        1 if expected_code == 200 else 0
     )
 
 
@@ -95,3 +95,21 @@ def test_check_jwt(test_app):
     response = test_app.get("/check", cookies={"access_token": jwt})
     assert response.status_code == 200
     assert "user_id" in response.json()
+
+
+def test_activate_user(test_app):
+    data = {"username": "hello", "password": "pwd123&éA", "email": "test@test.test"}
+    response = test_app.post("/user", json=data, cookies={"language": "en"})
+
+    assert response.status_code == 200
+
+    user = response.json()
+
+    response = test_app.get(f"/activate/{user['activation_id']}/{user['id']}")
+    assert response.status_code == 404
+
+    response = test_app.get(f"/activate/{user['id']}/{str(uuid.uuid4())}")
+    assert response.status_code == 400
+
+    response = test_app.get(f"/activate/{user['id']}/{user['activation_id']}")
+    assert response.status_code == 201

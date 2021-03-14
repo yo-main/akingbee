@@ -17,3 +17,5 @@ DEVELOPMENT:
   RBMQ_USER: "akingbee"
   RBMQ_PASSWORD: "password"
   RBMQ_VHOST: "/"
+
+  MAIN_HOSTED_ZONE: "localhost"
