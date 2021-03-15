@@ -6,6 +6,7 @@ authors = ["Yomain <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+gaea = "^1.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
@@ -15,6 +16,7 @@ black = "*"
 pynvim = "*"
 coverage = {version = "*", extras = ["toml"]}
 ipdb = "*"
+mock = "^4.0.3"
 
 [tool.coverage.run]
 branch = true
