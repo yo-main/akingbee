@@ -59,14 +59,15 @@ def validate_jwt(token):
 
 def send_event_user_created(user, language):
     activation_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/activation/{str(user.id)}/{str(user.activation_id)}"
-    rbmq_client = RBMQPublisher()
-    rbmq_client.publish(
-        routing_key="user.created",
-        content={
-            "user_id": user.id,
-            "user_email": user.email,
-            "language": language,
-            "activation_link": activation_link,
+    content = {
+        "user": {
+            "id": user.id,
+            "email": user.email,
         },
-    )
+        "language": language,
+        "activation_link": activation_link,
+    }
+
+    rbmq_client = RBMQPublisher()
+    rbmq_client.publish(routing_key="user.created", content=content)
     rbmq_client.close()
