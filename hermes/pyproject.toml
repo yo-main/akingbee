@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "hermes"
 version = "1.0.0"
-description = "Hermes, the messenger of gods !"
+description = "Hermes, the messenger of Gods !"
 authors = ["Yomain <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
