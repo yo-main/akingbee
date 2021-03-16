@@ -28,7 +28,7 @@ ENV PATH="$VENV_PATH/bin:$PATH"
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY ./aristaeus ./aristaeus
+COPY ./hermes ./hermes
 COPY config.yaml ./
 
 EXPOSE 9002
