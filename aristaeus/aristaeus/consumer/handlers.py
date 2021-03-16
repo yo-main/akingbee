@@ -22,12 +22,12 @@ from .constants import (
 
 def initialize_user(properties, body):
     body = json.loads(body)
-    user_id = body.get("user_id")
+    user_id = body.get("user", {}).get("id")
     language = body.get("language")
 
     if user_id is None:
         logger.error(
-            "Incorrect message received: missing 'user_id' key",
+            "Incorrect message received: missing 'user.id' key",
             body=body,
             properties=properties,
         )
