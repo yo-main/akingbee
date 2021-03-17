@@ -3,7 +3,7 @@ import uuid
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
+from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID, BOOLEAN
 
 from .base import Base
 
@@ -13,6 +13,7 @@ class Users(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(TEXT(), unique=True, nullable=False)
     activation_id = Column(UUID(as_uuid=True), nullable=True, default=uuid.uuid4)
+    activated = Column(BOOLEAN(), nullable=False, default=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
     updated_at = Column(
