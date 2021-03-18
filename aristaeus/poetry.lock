@@ -186,7 +186,7 @@ test = ["pytest (==5.4.3)", "pytest-cov (==2.10.0)", "pytest-asyncio (>=0.14.0,<
 
 [[package]]
 name = "gaea"
-version = "1.6.0"
+version = "1.6.1"
 description = "A microservice chassis for akingbee.com !"
 category = "main"
 optional = false
@@ -599,7 +599,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "743a2d9255bc4b05c2b1b2f4b6b0288cff42d7928068eede8b3c9521ed271dd7"
+content-hash = "7cd668d0de52f1ea808e97c66b359e17b55424765cc031e4cc16dc3825188ff4"
 
 [metadata.files]
 aiohttp = [
@@ -747,8 +747,8 @@ fastapi = [
     {file = "fastapi-0.63.0.tar.gz", hash = "sha256:63c4592f5ef3edf30afa9a44fa7c6b7ccb20e0d3f68cd9eba07b44d552058dcb"},
 ]
 gaea = [
-    {file = "gaea-1.6.0-py3-none-any.whl", hash = "sha256:3f92bc718c78e631afd608d58131f5857c523a4e5a0c94911d655cfb74a4869e"},
-    {file = "gaea-1.6.0.tar.gz", hash = "sha256:5f5ac7815f11736e74ffc519103cc947d9f179b0c78150a92d4e3946f93ed42a"},
+    {file = "gaea-1.6.1-py3-none-any.whl", hash = "sha256:a683c96b78b9ab973aaea9ccade846aceedc5c51ce9a39b05adc3c2b82385e3b"},
+    {file = "gaea-1.6.1.tar.gz", hash = "sha256:7eee21c27737ef5e804d004b98ee99920cee8418f394be4f7021bbf599d247f3"},
 ]
 h11 = [
     {file = "h11-0.12.0-py3-none-any.whl", hash = "sha256:36a3cb8c0a032f56e2da7084577878a035d3b61d104230d4bd49c0c6b555a9c6"},
