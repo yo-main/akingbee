@@ -63,3 +63,8 @@ export async function loginRequest({username, password}) {
       dealWithError(error);
     });
 }
+
+export async function activationRequest({userId, activationId}) {
+  let response = await cerbesApi.post(`/activate/${userId}/${activationId}`)
+  return response;
+}

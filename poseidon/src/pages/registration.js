@@ -16,7 +16,7 @@ export function RegistrationPage(props) {
         <Form.Item label={window.i18n('word.password')} name="password" rules={[{ required: true, message: window.i18n('form.insertPasswordMessage')}]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item label={window.i18n('word.password_bis')} name="password_bis" rules={[{ required: true, message: window.i18n('form.insertPasswordMessage')}]}>
+        <Form.Item label={window.i18n('word.passwordBis')} name="password_bis" rules={[{ required: true, message: window.i18n('form.insertPasswordMessage')}]}>
           <Input.Password />
         </Form.Item>
         <Form.Item wrapperCol={{offset: 12, span: 3}}>

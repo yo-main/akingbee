@@ -36,13 +36,20 @@ export function notificate(type, description) {
 
 axios.defaults.headers.common["Content-Type"] = "application/json"
 
+let cerbesUrl = `https://${process.env.REACT_APP_CERBES_SUB_DOMAIN}.${window.location.host}`
+let aristaeusUrl = `https://${process.env.REACT_APP_ARISTAEUS_SUB_DOMAIN}.${window.location.host}`
+if (process.env.NODE_ENV === "development") {
+  cerbesUrl = `http://${process.env.REACT_APP_CERBES_SUB_DOMAIN}`;
+  aristaeusUrl = `http://${process.env.REACT_APP_ARISTAEUS_SUB_DOMAIN}`;
+}
+
 export const cerbesApi = axios.create({
-  baseURL: `https://${process.env.REACT_APP_CERBES_SUB_DOMAIN}.${window.location.host}`,
+  baseURL: cerbesUrl,
   withCredentials: true,
 })
 
 export const aristaeusApi = axios.create({
-  baseURL: `https://${process.env.REACT_APP_ARISTAEUS_SUB_DOMAIN}.${window.location.host}`,
+  baseURL: aristaeusUrl,
   withCredentials: true,
 })
 

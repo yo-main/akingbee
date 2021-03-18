@@ -86,7 +86,9 @@
     "word.username": "Identifiant",
     "word.email": "Email",
     "word.password": "Mot de passe",
-    "word.password_bis": "Confirmer votre mot de passe",
+    "word.passwordBis": "Confirmer votre mot de passe",
+    "word.newPassword": "Nouveau mot de passe",
+    "word.newPasswordBis": "Confirmer votre nouveau mot de passe",
     "success.registrationSuccessful": "Inscription terminée avec succès !",
     "success.loginSuccessful": "Bienvenue !",
     "error.passwordsNotIdentical": "Les mots de passes ne sont pas identiques",
@@ -100,5 +102,7 @@
     "word.owner": "Apiculteur",
     "confirm.deleteData": "Supprimer cette donnée ?",
     "confirm.deleteApiary": "Supprimer ce rucher ?",
-    "confirm.deleteHive": "Supprimer cette ruche ?"
+    "confirm.deleteHive": "Supprimer cette ruche ?",
+    "sentence.accountJustActivated": "Votre compte vient d'être activé. Vous pouvez vous connecter dés à présent !",
+    "sentence.accountAlreadyActivated": "Votre compte a déjà été activé !"
   }

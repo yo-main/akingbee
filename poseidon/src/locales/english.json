@@ -86,8 +86,10 @@
     "word.username": "Username",
     "word.email": "Email",
     "word.password": "Password",
-    "word.password_bis": "Confirm your password",
+    "word.passwordBis": "Confirm your password",
     "success.registrationSuccessful": "Subscription successful !",
+    "word.newPassword": "New password",
+    "word.newPasswordBis": "Confirm new password",
     "success.loginSuccessful": "Welcome !",
     "error.passwordsNotIdentical": "Passwords are not identical",
     "error.unknwownError": "An unexpected error happened",
@@ -100,5 +102,7 @@
     "word.owner": "Beekeeper",
     "confirm.deleteData": "Delete that entry ?",
     "confirm.deleteApiary": "Delete that apiary ?",
-    "confirm.deleteHive": "Delete that hive ?"
+    "confirm.deleteHive": "Delete that hive ?",
+    "sentence.accountJustActivated": "Your account has been successfully activated. You can connect as of now !",
+    "sentence.accountAlreadyActivated": "Your account has alredy been activated !"
   }
