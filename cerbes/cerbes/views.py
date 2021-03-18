@@ -9,6 +9,7 @@ from sqlalchemy.orm import joinedload, Session
 import uuid
 
 from fastapi import APIRouter, HTTPException, Depends, Cookie, Header
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import jwt
 
@@ -121,7 +122,7 @@ def check_jwt(access_token: str = Cookie(None)):
     return {"user_id": data["user_id"]}
 
 
-@router.get("/activate/{user_id}/{activation_id}", status_code=201)
+@router.post("/activate/{user_id}/{activation_id}", status_code=201)
 def activate_user(
     user_id: uuid.UUID,
     activation_id: uuid.UUID,
@@ -135,5 +136,8 @@ def activate_user(
     if user.activation_id != activation_id:
         raise HTTPException(status_code=400)
 
-    user.activation_id = None
+    if user.activated:
+        return JSONResponse(content="Already activated", status_code=200)
+
+    user.activated = True
     session.commit()

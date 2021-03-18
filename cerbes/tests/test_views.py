@@ -105,11 +105,14 @@ def test_activate_user(test_app):
 
     user = response.json()
 
-    response = test_app.get(f"/activate/{user['activation_id']}/{user['id']}")
+    response = test_app.post(f"/activate/{user['activation_id']}/{user['id']}")
     assert response.status_code == 404
 
-    response = test_app.get(f"/activate/{user['id']}/{str(uuid.uuid4())}")
+    response = test_app.post(f"/activate/{user['id']}/{str(uuid.uuid4())}")
     assert response.status_code == 400
 
-    response = test_app.get(f"/activate/{user['id']}/{user['activation_id']}")
+    response = test_app.post(f"/activate/{user['id']}/{user['activation_id']}")
     assert response.status_code == 201
+
+    response = test_app.post(f"/activate/{user['id']}/{user['activation_id']}")
+    assert response.status_code == 200
