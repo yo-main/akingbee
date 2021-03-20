@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gaea"
-version = "1.6.2"
+version = "1.6.3"
 description = "A microservice chassis for akingbee.com !"
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
