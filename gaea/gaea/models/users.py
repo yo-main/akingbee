@@ -29,6 +29,7 @@ class Credentials(Base):
     password = Column(BYTEA(), nullable=False)
     last_seen = Column(TIMESTAMP())
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
+    reset_id = Column(UUID(as_uuid=True), nullable=True)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
     updated_at = Column(
