@@ -6,4 +6,5 @@ CONFIG = Dynaconf(
     env_switcher="ENV",
     core_loaders=["YAML"],
     environments=True,
+    load_dotenv=True,
 )
