@@ -57,8 +57,25 @@ def validate_jwt(token):
         return None
 
 
+def send_rbmq_message(routing_key, content):
+    rbmq_client = RBMQPublisher()
+    try:
+        rbmq_client.publish(routing_key=routing_key, content=content)
+    except:
+        logger.exception(
+            "Could not publish rabbitmq message",
+            routing_key=routing_key,
+            content=content,
+        )
+        return False
+    finally:
+        rbmq_client.close()
+
+    return True
+
+
 def send_event_user_created(user, language):
-    activation_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/activation/{str(user.id)}/{str(user.activation_id)}"
+    activation_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/activate/{str(user.id)}/{str(user.activation_id)}"
     content = {
         "user": {
             "id": user.id,
@@ -68,6 +85,18 @@ def send_event_user_created(user, language):
         "activation_link": activation_link,
     }
 
-    rbmq_client = RBMQPublisher()
-    rbmq_client.publish(routing_key="user.created", content=content)
-    rbmq_client.close()
+    return send_rbmq_message(routing_key="user.created", content=content)
+
+
+def send_event_user_password_reset(user, reset_id, language):
+    reset_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/password-reset/{str(user.id)}/{str(reset_id)}"
+    content = {
+        "user": {
+            "id": user.id,
+            "email": user.email,
+        },
+        "language": language,
+        "reset_link": reset_link,
+    }
+
+    return send_rbmq_message(routing_key="user.reset_password", content=content)

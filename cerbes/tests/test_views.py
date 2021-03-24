@@ -105,14 +105,47 @@ def test_activate_user(test_app):
 
     user = response.json()
 
-    response = test_app.post(f"/activate/{user['activation_id']}/{user['id']}")
+    payload = {"user_id": user["id"], "activation_id": user["activation_id"]}
+
+    response = test_app.post(
+        "/activate",
+        json={"user_id": user["activation_id"], "activation_id": user["id"]},
+    )
     assert response.status_code == 404
 
-    response = test_app.post(f"/activate/{user['id']}/{str(uuid.uuid4())}")
+    response = test_app.post(
+        "/activate", json={"user_id": user["id"], "activation_id": str(uuid.uuid4())}
+    )
     assert response.status_code == 400
 
-    response = test_app.post(f"/activate/{user['id']}/{user['activation_id']}")
+    response = test_app.post("/activate", json=payload)
     assert response.status_code == 201
 
-    response = test_app.post(f"/activate/{user['id']}/{user['activation_id']}")
+    response = test_app.post("/activate", json=payload)
+    assert response.status_code == 200
+
+
+def test_reset_user_password(test_app):
+    data = {
+        "username": "forgot",
+        "password": "pwd123&éA",
+        "email": "forgot@password.test",
+    }
+    response = test_app.post("/user", json=data, cookies={"language": "en"})
+    assert response.status_code == 200
+
+    user = response.json()
+
+    response = test_app.post(
+        "/password-reset/request",
+        json={"username": "forgot"},
+        cookies={"language": "en"},
+    )
+    assert response.status_code == 201
+
+    reset_id = response.json()["reset_id"]
+
+    response = test_app.get(
+        "/password-reset/validate", params={"user_id": user["id"], "reset_id": reset_id}
+    )
     assert response.status_code == 200
