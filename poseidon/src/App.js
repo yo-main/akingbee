@@ -4,7 +4,7 @@ import { Router } from '@reach/router';
 import { ConfigProvider } from 'antd';
 import './services/localization';
 
-import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage } from './pages';
+import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage } from './pages';
 import { setupData, sections } from './constants';
 
 class App extends React.Component {
@@ -17,10 +17,10 @@ class App extends React.Component {
     return (
       <ConfigProvider locale={window.locale}>
         <Router >
-          <PrivateFrame path="/" languageCallback={this.changeLanguage}>
+          <PublicFrame path="/" languageCallback={this.changeLanguage}>
             <WelcomePage path="/" />
             <NotFound default />
-          </PrivateFrame>
+          </PublicFrame>
 
           <PrivateFrame path="/manage" languageCallback={this.changeLanguage} />
           <PrivateFrame path="/manage/apiary" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_apiary} submenuItem={sections.submenu_apiary_list}>
@@ -79,8 +79,13 @@ class App extends React.Component {
             <RegistrationPage path="/" />
           </PublicFrame>
 
-          <PublicFrame path="/activate/:hiveId/:activationId" languageCallback={this.changeLanguage}>
+          <PublicFrame path="/activate/:userId/:activationId" languageCallback={this.changeLanguage}>
             <ActivationPage path="/" />
+          </PublicFrame>
+
+          <PublicFrame path="/password-reset" languageCallback={this.changeLanguage}>
+            <RequestPasswordResetPage path="/" />
+            <PasswordResetPage path="/:userId/:resetId" />
           </PublicFrame>
 
         </Router>

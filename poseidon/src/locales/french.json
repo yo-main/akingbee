@@ -103,6 +103,16 @@
     "confirm.deleteData": "Supprimer cette donnée ?",
     "confirm.deleteApiary": "Supprimer ce rucher ?",
     "confirm.deleteHive": "Supprimer cette ruche ?",
-    "sentence.accountJustActivated": "Votre compte vient d'être activé. Vous pouvez vous connecter dés à présent !",
-    "sentence.accountAlreadyActivated": "Votre compte a déjà été activé !"
+    "confirm.resetPassword": "Réinitialiser votre mot de passe",
+    "sentence.accountJustActivated": "Votre compte vient d'être activé !",
+    "sentence.accountAlreadyActivated": "Votre compte a déjà été activé !",
+    "sentence.clickHereToLogin": "Suivez ce lien pour vous connecter",
+    "action.passwordForgotten": "Mot de passe oublié",
+    "sentence.processResetPassword": "Si votre compte existe, vous allez recevoir un email avec un lien pour réinitialiser votre mot de passe",
+    "success.passwordReseted": "Mot de passe réinitialisé avec succès ! Vous pouvez maintenant vous connecter.",
+    "form.heightCharactersMinimum": "8 caractères au minimum",
+    "form.passwordsMustBeSame": "Les mots de passes doivent être identiques",
+    "form.mustBeAnEmail": "Email incorrect",
+    "form.mustIncludeOneDigit": "Doit inclure au moins un chiffre",
+    "form.mustIncludeOneLetter": "Doit inclure au moins une lettre"
   }

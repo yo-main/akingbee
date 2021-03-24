@@ -103,6 +103,16 @@
     "confirm.deleteData": "Delete that entry ?",
     "confirm.deleteApiary": "Delete that apiary ?",
     "confirm.deleteHive": "Delete that hive ?",
-    "sentence.accountJustActivated": "Your account has been successfully activated. You can connect as of now !",
-    "sentence.accountAlreadyActivated": "Your account has alredy been activated !"
+    "confirm.resetPassword": "Reset your password",
+    "sentence.accountJustActivated": "Your account has been successfully activated !",
+    "sentence.accountAlreadyActivated": "Your account has alredy been activated !",
+    "sentence.clickHereToLogin": "You can connect by following this link",
+    "action.passwordForgotten": "Password forgotten",
+    "sentence.processResetPassword": "If your account exists, you will receive an email with a link to reset your password",
+    "success.passwordReseted": "Password reseted with success ! You can now log in.",
+    "form.heightCharactersMinimum": "8 characters minimum",
+    "form.passwordsMustBeSame": "Passwords must be identical",
+    "form.mustBeAnEmail": "Invalid email",
+    "form.mustIncludeOneDigit": "Must include at least one digit",
+    "form.mustIncludeOneLetter": "Must include at least one letter"
   }

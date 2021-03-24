@@ -1,7 +1,5 @@
 export { PublicFrame, PrivateFrame } from './frame';
-export { LoginPage } from './login';
-export { RegistrationPage } from './registration';
-export { ActivationPage } from './activation';
+export * from './user';
 export { WelcomePage } from './welcome';
 export { NotFound } from './generic';
 export { SetupPage } from './setup';

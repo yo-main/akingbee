@@ -30,7 +30,7 @@ export function logOff() {
 export async function registrationRequest({email, username, password, password_bis}) {
   // checks
   if (password !== password_bis){
-    notificate("error", window.i18n("error.passwordsNotIdentical"))
+    notificate("error", window.i18n("error.passwordsNotIdentical"));
     return;
   }
   const language = window.currentLanguage;
@@ -39,8 +39,8 @@ export async function registrationRequest({email, username, password, password_b
   const data = {email, username, password, language}
   await cerbesApi.post("/user", data)
     .then((response) => {
-      notificate("success", window.i18n("success.registrationSuccessful"))
-      navigate("/login")
+      notificate("success", window.i18n("success.registrationSuccessful"));
+      navigate("/login");
     })
     .catch((error) => {
       dealWithError(error);
@@ -56,8 +56,8 @@ export async function loginRequest({username, password}) {
     .then((response) => {
       const token = response.data.access_token;
       storeJWT(token);
-      notificate("success", window.i18n("success.loginSuccessful"))
-      navigate("/")
+      notificate("success", window.i18n("success.loginSuccessful"));
+      navigate("/");
     })
     .catch((error) => {
       dealWithError(error);
@@ -65,6 +65,25 @@ export async function loginRequest({username, password}) {
 }
 
 export async function activationRequest({userId, activationId}) {
-  let response = await cerbesApi.post(`/activate/${userId}/${activationId}`)
+  let data = {user_id: userId, activation_id: activationId};
+  let response = await cerbesApi.post('/activate', data);
+  return response;
+}
+
+export async function resetPasswordRequest({username}) {
+  let data = {username: username};
+  let response = await cerbesApi.post('/password-reset/request', data);
+  return response;
+}
+
+export async function validateResetId({userId, resetId}) {
+  let data = {user_id: userId, reset_id: resetId};
+  let response = await cerbesApi.get('/password-reset/validate', {params: data});
+  return response;
+}
+
+export async function resetPassword({userId, resetId, password}) {
+  let data = {user_id: userId, reset_id: resetId, password: password};
+  let response = await cerbesApi.post('/password-reset', data)
   return response;
 }

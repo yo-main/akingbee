@@ -45,7 +45,7 @@ export function UpdateApiaryForm(props) {
           }
         </Select>
       </Form.Item>
-      <Form.Item name="apiaryId" hidden={true} />
+      <Form.Item name="apiaryId" hidden />
     </Form>
   )
 }

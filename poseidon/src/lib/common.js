@@ -68,7 +68,6 @@ export function dealWithError(error) {
 
   let msg;
   if (response.status === 422) {
-    console.log(response)
     msg = response.data.detail.map(e => {
       return `${e.loc[1]}: ${e.msg}`
     }).join(", ")

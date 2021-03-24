@@ -1,7 +1,8 @@
 import React from 'react';
-import { Form, Input, Button, Row } from 'antd';
+import { Link } from '@reach/router';
+import { Form, Input, Button, Row, Space } from 'antd';
 
-import { loginRequest } from '../services/authentication';
+import { loginRequest } from '../../services/authentication';
 
 export function LoginPage(props) {
   return (
@@ -13,10 +14,15 @@ export function LoginPage(props) {
         <Form.Item label={window.i18n('word.password')} name="password" rules={[{ required: true, message: window.i18n('form.insertPasswordMessage')}]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item wrapperCol={{offset: 8, span: 3}}>
-          <Button type="primary" htmlType="submit">
-            {window.i18n('form.loginSubmit')}
-          </Button>
+        <Form.Item wrapperCol={{offset: 8}}>
+          <Space>
+            <Button type="primary" htmlType="submit">
+              {window.i18n('form.loginSubmit')}
+            </Button>
+            <Button>
+              <Link to={`/password-reset`}>{window.i18n("action.passwordForgotten")}</Link>
+            </Button>
+          </Space>
         </Form.Item>
       </Form>
     </Row>
