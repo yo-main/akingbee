@@ -13,6 +13,7 @@ bases:
 
 resources:
 - letsencrypt.yaml
+- secrets.yaml
 
 vars:
 - name: MAIN_HOSTED_ZONE

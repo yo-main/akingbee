@@ -3,3 +3,4 @@ resources:
   - aristaeus-listener.yaml
   - cerbes.yaml
   - poseidon.yaml
+  - hermes.yaml

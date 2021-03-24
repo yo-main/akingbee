@@ -23,7 +23,6 @@ spec:
             port:
               number: 9000
 
-
   - host: "cerbes.$(MAIN_HOSTED_ZONE)"
     http:
       paths:

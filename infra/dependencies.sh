@@ -9,6 +9,6 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 # set up nginx controller
 # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.32.0/deploy/static/mandatory.yaml
 # kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.30.0/deploy/static/provider/cloud-generic.yaml
-# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/do/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/do/deploy.yaml
 
 

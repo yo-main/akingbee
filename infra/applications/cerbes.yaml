@@ -29,7 +29,7 @@ spec:
         app: cerbes-api
     spec:
       containers:
-      - image: yomain/cerbes:1.6.2
+      - image: yomain/cerbes:1.8.0
         name: cerbes-api
         env:
         - name: AKB_SERVICE_NAME
@@ -41,6 +41,8 @@ spec:
             configMapKeyRef:
               name: env-vars-config
               key: ENV
+        - name: AKB_MAIN_HOSTED_ZONE
+          value: $(MAIN_HOSTED_ZONE)
 
         # APP SECRETS
         - name: AKB_APP_SECRET

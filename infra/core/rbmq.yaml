@@ -31,24 +31,31 @@ spec:
       labels:
         app: rbmq
     spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: rbmq-data
       containers:
-        - image: rabbitmq:management-alpine
-          name: rbmq
-          env:
-          - name: RABBITMQ_ERLANG_COOKIE
-            valueFrom:
-              secretKeyRef:
-                name: env-secrets-config
-                key: RBMQ_ERLANG_COOKIE
-          - name: RABBITMQ_DEFAULT_USER
-            valueFrom:
-              secretKeyRef:
-                name: env-secrets-config
-                key: RBMQ_USER
-          - name: RABBITMQ_DEFAULT_PASS
-            valueFrom:
-              secretKeyRef:
-                name: env-secrets-config
-                key: RBMQ_PASSWORD
+      - image: rabbitmq:management-alpine
+        name: rbmq
+        env:
+        - name: RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: RBMQ_ERLANG_COOKIE
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: RBMQ_USER
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: RBMQ_PASSWORD
+        volumeMounts:
+        - mountPath: /var/lib/rabbitmq
+          name: data
 
 

@@ -12,17 +12,6 @@ spec:
   selector:
     app: loki
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: loki-data
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -42,7 +31,7 @@ spec:
         runAsUser: 0
         runAsGroup: 0
       volumes:
-      - name: loki-data
+      - name: data
         persistentVolumeClaim:
           claimName: loki-data
       containers:
@@ -52,7 +41,7 @@ spec:
         - containerPort: 3100
         volumeMounts:
         - mountPath: /loki
-          name: loki-data
+          name: data
 ---
 apiVersion: v1
 kind: Service

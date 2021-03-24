@@ -8,3 +8,5 @@ resources:
   - grafana.yaml
   - ingress.yaml
   - rbmq.yaml
+  - volumes.yaml
+  - postgresql.yaml
