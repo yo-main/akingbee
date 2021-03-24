@@ -97,7 +97,7 @@ def test_check_jwt(test_app):
     assert "user_id" in response.json()
 
 
-def test_activate_user(test_app):
+def test_activate_user(test_app, mock_rbmq_channel):
     data = {"username": "hello", "password": "pwd123&éA", "email": "test@test.test"}
     response = test_app.post("/user", json=data, cookies={"language": "en"})
 
@@ -125,7 +125,7 @@ def test_activate_user(test_app):
     assert response.status_code == 200
 
 
-def test_reset_user_password(test_app):
+def test_reset_user_password(test_app, mock_rbmq_channel):
     data = {
         "username": "forgot",
         "password": "pwd123&éA",
