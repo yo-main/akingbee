@@ -1,15 +1,31 @@
 import React from 'react';
 
+import { ReactComponent as NotFoundSvg } from '../images/404.svg';
+
+import { Row } from 'antd';
+
+import ClipLoader from "react-spinners/ClipLoader";
+
 export const NOT_FOUND_STATUS = 'NOT_FOUND';
 export const ERROR_STATUS = 'ERROR';
 export const LOADING_STATUS = 'LOADING';
 
 export function NotFound() {
-  return <p>Sorry, nothing here</p>;
+  return (
+    <>
+    <Row justify="center" align="middle" style={{'min-height': '85vh'}}>
+      <NotFoundSvg />
+    </Row>
+    </>
+  )
 }
 
 function Loading() {
-  return <p>Loading</p>
+  return (
+    <Row justify="center" align="middle" style={{'min-height': '85vh'}}>
+      <ClipLoader color="#599BFF" size={75} />
+    </Row>
+  );
 }
 
 function Error() {
