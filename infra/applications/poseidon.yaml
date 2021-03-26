@@ -29,7 +29,7 @@ spec:
         app: poseidon
     spec:
       containers:
-      - image: yomain/poseidon:1.5.0
+      - image: yomain/poseidon:1.5.1
         name: poseidon
         env:
         - name: ENV
