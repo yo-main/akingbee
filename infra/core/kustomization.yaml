@@ -6,7 +6,8 @@ configMapGenerator:
 resources:
   - promtail.yaml
   - grafana.yaml
-  - ingress.yaml
+  - ingress-main.yaml
+  - ingress-redirect.yaml
   - rbmq.yaml
   - volumes.yaml
   - postgresql.yaml

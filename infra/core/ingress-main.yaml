@@ -23,17 +23,6 @@ spec:
             port:
               number: 9000
 
-  - host: "www.$(MAIN_HOSTED_ZONE)"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: poseidon
-            port:
-              number: 9000
-
   - host: "cerbes.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
