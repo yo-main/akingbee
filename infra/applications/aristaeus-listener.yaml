@@ -26,6 +26,8 @@ spec:
               key: ENV
         - name: AKB_LOGS_FOLDER_NAME
           value: /var/log/aristaeus
+        - name: AKB_LOG_TO_FILE
+          value: "true"
 
         # DATABASE CREDENTIALS
         - name: AKB_DATABASE_HOST
@@ -92,6 +94,6 @@ spec:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
-          path: /var/log/aristaeus
+          path: /var/log/akingbee
 
 

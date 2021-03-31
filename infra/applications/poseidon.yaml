@@ -51,6 +51,6 @@ spec:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
-          path: /var/log/poseidon
+          path: /var/log/akingbee
 
 

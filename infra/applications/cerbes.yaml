@@ -36,11 +36,15 @@ spec:
           value: cerbes-api
         - name: AKB_LOGS_FOLDER_NAME
           value: "/var/log/cerbes"
+        - name: AKB_LOG_TO_FILE
+          value: "true"
+
         - name: ENV
           valueFrom:
             configMapKeyRef:
               name: env-vars-config
               key: ENV
+
         - name: AKB_MAIN_HOSTED_ZONE
           value: $(MAIN_HOSTED_ZONE)
 
@@ -120,6 +124,6 @@ spec:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
-          path: /var/log/cerbes
+          path: /var/log/akingbee
 
 
