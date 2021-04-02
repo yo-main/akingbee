@@ -53,5 +53,6 @@ export function PrivateFrame(props) {
 }
 
 export function PublicFrame(props) {
-  return <Frame {...props} isLoggedIn={false} />
+  const logged = isLogged();
+  return <Frame {...props} isLoggedIn={logged} />
 }
