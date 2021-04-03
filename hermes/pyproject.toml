@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hermes"
-version = "1.1.0"
+version = "1.1.1"
 description = "Hermes, the messenger of Gods !"
 authors = ["Yomain <arnal.romain@gmail.com>"]
 
