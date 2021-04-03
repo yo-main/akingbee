@@ -92,10 +92,11 @@ async function loginRefresh({username, password}) {
     storeJWT(token);
   } catch (error) {
     console.log("Could not refresh JWT token");
+    clearJWT();
     return;
   }
 
-  setTimeout(() => {loginRefresh({username, password})}, 5*1000);
+  setTimeout(() => {loginRefresh({username, password})}, 60*5*1000);
 }
 
 export async function activationRequest({userId, activationId}) {
