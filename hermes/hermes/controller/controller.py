@@ -32,6 +32,7 @@ def welcome_new_user(properties, payload):
         return False
 
     send_email(payload, WELCOME_EMAIL, activation_link=payload["activation_link"])
+    return True
 
 
 def reset_user_password(properties, payload):
@@ -56,6 +57,7 @@ def reset_user_password(properties, payload):
         return False
 
     send_email(payload, RESET_PASSWORD_EMAIL, reset_link=payload["reset_link"])
+    return True
 
 
 def send_email(payload, template, **kwargs):
