@@ -8,14 +8,24 @@ export function getJWT() {
 }
 
 export function isLogged() {
-  if (getJWT()) {
-    return true;
+  let jwt = getJWT();
+  if (!jwt) {
+    return false;
   }
-  return false;
+
+  let content = decodeJWT(jwt);
+  let expiry_date = new Date(content.exp * 1000);
+  return expiry_date > new Date();
+}
+
+function decodeJWT(jwt) {
+  return JSON.parse(atob(jwt.split('.')[1]))
 }
 
 export function storeJWT(jwt) {
-  setCookie(AUTH_COOKIE_NAME, jwt);
+  let content = decodeJWT(jwt)
+  let expiry_date = new Date(content.exp * 1000);
+  setCookie(AUTH_COOKIE_NAME, jwt, {'expires': expiry_date.toUTCString()});
 }
 
 export function clearJWT() {
@@ -47,21 +57,45 @@ export async function registrationRequest({email, username, password, password_b
     });
 }
 
-export async function loginRequest({username, password}) {
+async function logIn({username, password}) {
   const config = {
     auth: {username: username, password: password}
   };
 
-  await cerbesApi.post("/login", null, config)
-    .then((response) => {
-      const token = response.data.access_token;
-      storeJWT(token);
-      notificate("success", window.i18n("success.loginSuccessful"));
-      navigate("/");
-    })
-    .catch((error) => {
-      dealWithError(error);
-    });
+  let response = await cerbesApi.post("/login", null, config)
+  return response.data.access_token;
+}
+
+export async function loginRequest({username, password}) {
+  try {
+    let token = await logIn({username, password});
+    storeJWT(token);
+  } catch (error) {
+    dealWithError(error);
+    return;
+  }
+
+  notificate("success", window.i18n("success.loginSuccessful"));
+  navigate("/");
+  setTimeout(() => {loginRefresh({username, password})}, 5*1000);
+}
+
+async function loginRefresh({username, password}) {
+  console.log("REFRESHING")
+
+  if (!isLogged()) {
+    return;
+  };
+
+  try {
+    let token = await logIn({username, password});
+    storeJWT(token);
+  } catch (error) {
+    console.log("Could not refresh JWT token");
+    return;
+  }
+
+  setTimeout(() => {loginRefresh({username, password})}, 5*1000);
 }
 
 export async function activationRequest({userId, activationId}) {
