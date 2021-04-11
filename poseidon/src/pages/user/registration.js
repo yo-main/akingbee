@@ -43,7 +43,7 @@ export function RegistrationPage(props) {
         </Form.Item>
         <Form.Item wrapperCol={{offset: 12, pull: 6}}>
           <Button type="primary" htmlType="submit">
-            {window.i18n('form.loginSubmit')}
+            {window.i18n('word.submit')}
           </Button>
         </Form.Item>
       </Form>
