@@ -14,7 +14,7 @@ spec:
         app: hermes
     spec:
       containers:
-      - image: yomain/hermes:1.1.0
+      - image: yomain/hermes:latest
         name: hermes
         env:
         - name: AKB_SERVICE_NAME

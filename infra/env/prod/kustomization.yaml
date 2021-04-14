@@ -15,6 +15,16 @@ resources:
 - letsencrypt.yaml
 - secrets.yaml
 
+images:
+- name: yomain/aristaeus
+  newTag: 1.7.13
+- name: yomain/cerbes
+  newTag: 1.8.0
+- name: yomain/hermes
+  newTag: 1.1.1
+- name: yomain/poseidon
+  newTag: 1.6.3
+
 vars:
 - name: MAIN_HOSTED_ZONE
   objref:

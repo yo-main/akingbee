@@ -29,7 +29,7 @@ spec:
         app: aristaeus-api
     spec:
       containers:
-      - image: yomain/aristaeus:1.7.13
+      - image: yomain/aristaeus:latest
         name: aristaeus-api
         env:
         - name: AKB_SERVICE_NAME
