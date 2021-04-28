@@ -77,7 +77,7 @@ export async function loginRequest({username, password}) {
 
   notificate("success", window.i18n("success.loginSuccessful"));
   navigate("/");
-  setTimeout(() => {loginRefresh({username, password})}, 5*1000);
+  setTimeout(() => {loginRefresh({username, password})}, 5*1000*60);
 }
 
 async function loginRefresh({username, password}) {
