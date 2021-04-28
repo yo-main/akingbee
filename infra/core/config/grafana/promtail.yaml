@@ -21,6 +21,9 @@ scrape_configs:
           expressions:
             job: name
             user_id: user_id
+            user_email: user_email
+            hive_id: hive.id
+            apiary_id: apiary.id
             message: message
             duration: duration
             levelname: levelname
@@ -43,6 +46,9 @@ scrape_configs:
       - labels:
           job:
           user_id:
+          user_email:
+          hive_id:
+          apiary_id:
           message:
           duration:
           levelname:
