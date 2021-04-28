@@ -73,7 +73,7 @@ class RBMQConsumer(RBMQClient):
         log_details = dict(
             properties=properties, body=body, routing_key=method.routing_key
         )
-        logger.info("New message received", **log_details)
+        logger.info(f"New message received {method.routing_key}", **log_details)
 
         handler = self.handlers.get(method.routing_key)
         if handler is None:
