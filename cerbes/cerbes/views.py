@@ -132,7 +132,7 @@ def authenticate_user(
     session.commit()
 
     logger.info(
-        f"User logged in: {username}",
+        f"User logged in: {credentials.username}",
         user_id=user_id,
         username=user_credentials.username,
     )
@@ -209,7 +209,7 @@ def reset_user_password_request(
     session.commit()
 
     logger.info(
-        f"User password reset request successful: {user_credentials.email}",
+        f"User password reset request successful: {user_credentials.user.email}",
         user_id=user_credentials.user.id,
         user_email=user_credentials.user.email,
     )
