@@ -92,7 +92,7 @@ def create_user(
     try:
         session.add_all((user, credentials, owner))
         session.commit()
-        logger.info("User created", user_id=user.id, user_email=user.email)
+        logger.info(f"User created: {user.email}", user_id=user.id, user_email=user.email)
     except Exception as exc:
         logger.exception(f"Could not create user {user_data.email}")
         raise HTTPException(400, "Database error when creating the user") from exc
@@ -129,7 +129,7 @@ def authenticate_user(
     user_credentials.last_seen = datetime.datetime.utcnow()
     session.commit()
 
-    logger.info("User logged in", user_id=user_id, username=user_credentials.username)
+    logger.info(f"User logged in: {username}", user_id=user_id, username=user_credentials.username)
 
     return {"access_token": helpers.generate_jwt(user_id)}
 
@@ -165,7 +165,7 @@ def activate_user(
     user.activated = True
     session.commit()
 
-    logger.info("User activated", user_id=user.id, user_email=user.email)
+    logger.info(f"User activated: {user.email}", user_id=user.id, user_email=user.email)
 
 
 @router.post(
@@ -203,7 +203,7 @@ def reset_user_password_request(
     session.commit()
 
     logger.info(
-        "User password reset request successful",
+        f"User password reset request successful: {user_credentials.email}",
         user_id=user_credentials.user.id,
         user_email=user_credentials.user.email,
     )
