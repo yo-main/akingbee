@@ -72,5 +72,5 @@ def send_email(payload, template, **kwargs):
 
     client = EmailEngine()
     client.send(email)
-    logger.info("Email sent !", payload=payload, subject=subject)
+    logger.info(f"Email '{subject}' sent to {receiver} !", payload=payload, subject=subject)
     client.close()
