@@ -6,7 +6,7 @@ authors = ["Yomain <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-gaea = "^1.6.6"
+gaea = "^1.6.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
