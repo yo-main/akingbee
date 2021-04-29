@@ -10,19 +10,32 @@ Today the project is composed of several services.
 
 ## Aristaeus
 
-The service which is in charge of managing hives & apiaries.
-Aristaeus is the Greek god that discovered bee-keeping.
+Aristaeus is the Greek god that discovered bee-keeping. 
+It only makes sense that the service is in charge of managing hives & apiaries is named after this god.
+
+The service itself is composed of a web api and of a rabbitmq listener.
+
 
 ## Cerbes
 
-Manage users & authentication.
 Who's better than cerberus himself to protect the realm of bees ?
+
+Cerbes will manages users & authentication through jwt. It's not keeping the gates of hell, but it does guard the entrance of something.
+It's reason enough for me to name it this way.
+
+## Hermes
+
+Hermes if the messager of the gods ! I couldn't name a service that sends emails otherwise.
 
 ## Gaea
 
-Python library used in other python services.
+Gaea is the mother of all gods.
+
+It's also the python library used in other python services. Because everyone needs a mother to rely on, even gods.
 
 ## Poseidon
 
-Frontend app in react. 
+Poseidon, gods of the seas and oceans. Not better gods than him for spreading my website through the vast of internet.
+
+It's basically a react app. Fair warning: check out this service at your own risk.
 
