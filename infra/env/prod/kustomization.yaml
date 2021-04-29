@@ -19,11 +19,11 @@ images:
 - name: yomain/aristaeus
   newTag: 1.7.13
 - name: yomain/cerbes
-  newTag: 1.8.0
+  newTag: 1.8.1
 - name: yomain/hermes
-  newTag: 1.1.1
+  newTag: 1.1.2
 - name: yomain/poseidon
-  newTag: 1.6.3
+  newTag: 1.6.4
 
 vars:
 - name: MAIN_HOSTED_ZONE
