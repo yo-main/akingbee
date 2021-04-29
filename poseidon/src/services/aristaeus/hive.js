@@ -32,6 +32,7 @@ export async function createHive({name, condition_id, owner_id, apiary_id, swarm
 
 
 export async function updateHive(hive_id, {name, owner_id, condition_id, swarm_id, apiary_id}) {
+  console.log(hive_id);
   let response = await aristaeusApi.put(`/hive/${hive_id}`, {name, owner_id, condition_id, swarm_id, apiary_id});
   return response.data;
 }

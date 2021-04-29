@@ -722,7 +722,7 @@ export class HiveDetailsPage extends React.Component {
 
     let updateHiveForm = (
       <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-        <UpdateHiveForm hive={this.state.hive} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateHiveData} />
+        <UpdateHiveForm formId='updateHiveFormId' hive={this.state.hive} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateHiveData} />
       </FormLinkModal>
     );
 
