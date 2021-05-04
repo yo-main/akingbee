@@ -137,7 +137,12 @@ def authenticate_user(
         username=user_credentials.username,
     )
 
-    return {"access_token": helpers.generate_jwt(user_id)}
+    data = {
+        "username": user_credentials.username,
+        "email": user_credentials.user.email,
+    }
+
+    return {"access_token": helpers.generate_jwt(user_id=user_id, extra_data=data)}
 
 
 @router.get("/check", status_code=200)
