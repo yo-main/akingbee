@@ -114,5 +114,6 @@
     "form.passwordsMustBeSame": "Les mots de passes doivent être identiques",
     "form.mustBeAnEmail": "Email incorrect",
     "form.mustIncludeOneDigit": "Doit inclure au moins un chiffre",
-    "form.mustIncludeOneLetter": "Doit inclure au moins une lettre"
+    "form.mustIncludeOneLetter": "Doit inclure au moins une lettre",
+    "title.userInformation": "Information utilisateur"
   }

@@ -64,3 +64,11 @@ export const tailFormItemLayout = {
     },
   },
 };
+
+export const passwordValidationRules = [
+  {min: 8, message: window.i18n('form.heightCharactersMinimum')},
+  {pattern: ".*[0-9]+.*", message: window.i18n('form.mustIncludeOneDigit')},
+  {pattern: ".*[a-zA-Z]+.*", message: window.i18n('form.mustIncludeOneLetter')},
+  {required: true, message: window.i18n('form.insertPasswordMessage')}
+]
+

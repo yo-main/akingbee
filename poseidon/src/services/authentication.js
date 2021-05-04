@@ -28,6 +28,11 @@ export function storeJWT(jwt) {
   setCookie(AUTH_COOKIE_NAME, jwt, {'expires': expiry_date.toUTCString()});
 }
 
+export function getLoggerUserData(key) {
+  let content = decodeJWT(getJWT());
+  return content[key];
+}
+
 export function clearJWT() {
   setCookie(AUTH_COOKIE_NAME, '', {'max-age': 0});
 }

@@ -4,7 +4,7 @@ import { Router } from '@reach/router';
 import { ConfigProvider } from 'antd';
 import './services/localization';
 
-import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage } from './pages';
+import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, ProfilePage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage } from './pages';
 import { setupData, sections } from './constants';
 
 class App extends React.Component {
@@ -69,7 +69,9 @@ class App extends React.Component {
             <SetupPage path="/" dataType={setupData.event_status}/>
           </PrivateFrame>
 
-          <PrivateFrame path="/profil" languageCallback={this.changeLanguage}/>
+          <PrivateFrame path="/profil" languageCallback={this.changeLanguage}>
+            <ProfilePage path="/" />
+          </PrivateFrame>
 
           <PublicFrame path="/login" languageCallback={this.changeLanguage}>
             <LoginPage path="/" />

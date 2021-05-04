@@ -5,55 +5,7 @@ import { Form, Input, Button, Row } from 'antd';
 import { resetPasswordRequest, resetPassword, validateResetId } from '../../services/authentication';
 import { LOADING_STATUS, getGenericPage, NOT_FOUND_STATUS } from '../generic';
 import { dealWithError, notificate } from '../../lib/common';
-
-export function ResetPasswordForm(props) {
-  const [form] = Form.useForm();
-
-  form.setFieldsValue({
-    "resetId": props.resetId,
-    "userId": props.userId,
-  })
-
-  let passwordValidator = (rule, value) => {
-    if (value.length < 8) {
-      return Promise.resolve();
-    }
-    if (form.getFieldValue("password") === form.getFieldValue("passwordBis")) {
-      return Promise.resolve();
-    }
-    return Promise.reject();
-  }
-
-  let passwordValidationRules = [
-    {min: 8, message: window.i18n('form.heightCharactersMinimum')},
-    {pattern: ".*[0-9]+.*", message: window.i18n('form.mustIncludeOneDigit')},
-    {pattern: ".*[a-zA-Z]+.*", message: window.i18n('form.mustIncludeOneLetter')},
-    {required: true, message: window.i18n('form.insertPasswordMessage')}
-  ]
-
-  let passwordValidationRulesBis = [
-    {required: true, message: window.i18n('form.insertPasswordMessage')},
-    {validator: passwordValidator, message: window.i18n('form.passwordsMustBeSame')}
-  ]
-
-  return (
-    <Form labelCol={{span: 14, pull: 7}} form={form} wrapperCol={{pull: 7}} labelAlign='right' onFinish={props.onFinish} requiredMark={false}>
-      <Form.Item label={window.i18n('word.newPassword')} name="password" rules={passwordValidationRules}>
-        <Input.Password />
-      </Form.Item>
-      <Form.Item label={window.i18n('word.newPasswordBis')} name="passwordBis" rules={passwordValidationRulesBis}>
-        <Input.Password />
-      </Form.Item>
-      <Form.Item name="resetId" hidden />
-      <Form.Item name="userId" hidden />
-      <Form.Item wrapperCol={{offset: 14, pull: 7}}>
-      <Button type="primary" htmlType="submit">
-        {window.i18n('confirm.resetPassword')}
-      </Button>
-      </Form.Item>
-    </Form>
-  )
-}
+import { ResetPasswordForm } from '../../forms/users';
 
 export function RequestPasswordResetPage(props) {
   let onSubmit = async({username}) => {

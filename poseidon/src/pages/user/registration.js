@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, Row } from 'antd';
 
 import { registrationRequest } from '../../services/authentication';
+import { passwordValidationRules } from '../../constants';
 
 export function RegistrationPage(props) {
   const [form] = Form.useForm();
@@ -15,13 +16,6 @@ export function RegistrationPage(props) {
     }
     return Promise.reject();
   }
-
-  let passwordValidationRules = [
-    {min: 8, message: window.i18n('form.heightCharactersMinimum')},
-    {pattern: ".*[0-9]+.*", message: window.i18n('form.mustIncludeOneDigit')},
-    {pattern: ".*[a-zA-Z]+.*", message: window.i18n('form.mustIncludeOneLetter')},
-    {required: true, message: window.i18n('form.insertPasswordMessage')}
-  ]
 
   let passwordValidationRulesBis = [
     {required: true, message: window.i18n('form.insertPasswordMessage')},
