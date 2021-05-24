@@ -51,6 +51,12 @@ async def get_setup_data(
         .all()
     )
 
+    logger.info(
+        "Get setup object successfull",
+        user_id=user_id,
+        nb_object=len(objects),
+        data_type=data_type,
+    )
     return objects
 
 
@@ -65,6 +71,9 @@ async def create_setup_data(
     Create a setup object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info(
+        "Create setup data received", user_id=user_id, data_type=data_type, payload=body
+    )
     model = MAPPING[data_type]
 
     obj = model(name=body.value, user_id=user_id)
@@ -77,6 +86,13 @@ async def create_setup_data(
         raise HTTPException(status_code=400, detail="Database error") from exc
 
     session.refresh(obj)
+
+    logger.info(
+        "Create setup data successfull",
+        user_id=user_id,
+        data_type=data_type,
+        obj_id=obj.id,
+    )
     return obj
 
 
@@ -92,6 +108,10 @@ async def update_setup_data(
     Update a setup object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info(
+        "Put setup data received", user_id=user_id, data_type=data_type, payload=body
+    )
+
     model = MAPPING[data_type]
 
     obj = session.query(model).get(obj_id)
@@ -108,6 +128,13 @@ async def update_setup_data(
         logger.exception("Something went wrong when saving the object")
         raise HTTPException(status_code=400, detail="Database error") from exc
 
+    logger.info(
+        "Put setup data successfull",
+        user_id=user_id,
+        data_type=data_type,
+        obj_id=obj.id,
+    )
+
 
 @router.delete("/setup/{data_type}/{obj_id}", status_code=204)
 async def delete_setup_data(
@@ -120,6 +147,13 @@ async def delete_setup_data(
     Update a setup object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info(
+        "Delete setup data received",
+        user_id=user_id,
+        data_type=data_type,
+        obj_id=obj_id,
+    )
+
     model = MAPPING[data_type]
 
     obj = session.query(model).get(obj_id)
@@ -135,3 +169,10 @@ async def delete_setup_data(
     except Exception as exc:
         logger.exception("Something went wrong when saving the object")
         raise HTTPException(status_code=400, detail="Database error") from exc
+
+    logger.info(
+        "Delete setup data successfull",
+        user_id=user_id,
+        data_type=data_type,
+        obj_id=obj_id,
+    )

@@ -30,6 +30,8 @@ async def get_hives(
         .filter(Hives.user_id == user_id, Hives.deleted_at.is_(None))
         .all()
     )
+
+    logger.info("Get list of hives successfull", user_id=user_id, nb_hives=len(hives))
     return hives
 
 
@@ -43,6 +45,7 @@ async def post_hive(
     Create an Hive object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info("Post hive received", user_id=user_id, payload=data)
 
     hive = Hives(
         name=data.name,
@@ -63,6 +66,7 @@ async def post_hive(
             status_code=400, detail="Couldn't save the hive in database"
         ) from exc
 
+    logger.info("Post hive successfull", user_id=user_id, hive_id=hive.id)
     return hive
 
 
@@ -77,6 +81,7 @@ async def put_hive(
     Update an Hive object
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info("Put hive received", user_id=user_id, payload=data, hive_id=hive_id)
 
     if all(v is None for v in data.dict().values()):
         raise HTTPException(400, detail="No argument provided")
@@ -98,6 +103,8 @@ async def put_hive(
             status_code=400, detail="Couldn't update the hive in database"
         ) from exc
 
+    logger.info("Put hive successfull", user_id=user_id, hive_id=hive_id)
+
 
 @router.delete("/hive/{hive_id}", status_code=204)
 async def delete_hive(
@@ -109,6 +116,8 @@ async def delete_hive(
     Delete hive
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info("Delete hive received", user_id=user_id, hive_id=hive_id)
+
     hive = session.query(Hives).get(hive_id)
 
     if hive is None or hive.deleted_at or hive.user_id != user_id:
@@ -126,6 +135,8 @@ async def delete_hive(
         logger.exception("Something went wrong when deleting the hive", hive=hive)
         raise HTTPException(status_code=400, detail="Database error") from exc
 
+    logger.info("Delete hive successfull", user_id=user_id, hive_id=hive_id)
+
 
 @router.get("/hive/{hive_id}", status_code=200, response_model=HiveModel)
 async def get_hive(
@@ -142,6 +153,7 @@ async def get_hive(
     if hive is None or hive.user_id != user_id or hive.deleted_at:
         raise HTTPException(status_code=404)
 
+    logger.info("Get hive successfull", hive_id=hive_id)
     return hive
 
 
@@ -156,6 +168,10 @@ async def move_hive(
     Move hive to a new apiary
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info(
+        "Move hive received", user_id=user_id, hive_id=hive_id, new_apiary_id=apiary_id
+    )
+
     hive = session.query(Hives).get(hive_id)
 
     if hive is None or hive.user_id != user_id or hive.deleted_at:
@@ -176,3 +192,10 @@ async def move_hive(
             apiary=apiary,
         )
         raise HTTPException(status_code=400, detail="Database error") from exc
+
+    logger.info(
+        "Apiary successfully moved",
+        user_id=user_id,
+        new_apiary_id=apiary_id,
+        hive_id=hive_id,
+    )

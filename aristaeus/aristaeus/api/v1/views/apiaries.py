@@ -29,6 +29,10 @@ async def get_apiaries(
         .filter(Apiaries.user_id == user_id, Apiaries.deleted_at.is_(None))
         .all()
     )
+
+    logger.info(
+        "Get list of apiaries sucessfull", user_id=user_id, nb_apiaries=len(apiaries)
+    )
     return apiaries
 
 
@@ -42,6 +46,7 @@ async def post_apiary(
     Create an Apiary object and return it as json
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info("Post apiary received", user_id=user_id, payload=data)
 
     apiary = Apiaries(
         name=data.name,
@@ -60,6 +65,7 @@ async def post_apiary(
             status_code=400, detail="Couldn't save the apiary in database"
         ) from exc
 
+    logger.info("Post apiary successfull", apiary_id=apiary.id, user_id=user_id)
     return apiary
 
 
@@ -73,6 +79,8 @@ async def delete_apiary(
     Delete apiary
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info("Delete apiary received", user_id=user_id, apiary_id=apiary_id)
+
     apiary = session.query(Apiaries).get(apiary_id)
 
     if apiary is None or apiary.deleted_at or apiary.user_id != user_id:
@@ -84,6 +92,8 @@ async def delete_apiary(
     except Exception as exc:
         logger.exception("Something went wrong when deleting the apiary", apiary=apiary)
         raise HTTPException(status_code=400, detail="Database error") from exc
+
+    logger.info("Delete apiary successful", apiary_id=apiary_id, user_id=user_id)
 
 
 @router.put("/apiary/{apiary_id}", status_code=204)
@@ -97,6 +107,9 @@ async def update_apiary(
     Update an Apiary object
     """
     user_id = await get_logged_in_user(access_token)
+    logger.info(
+        "Put apiary received", user_id=user_id, payload=body, apiary_id=apiary_id
+    )
 
     if all(v is None for v in body.dict().values()):
         raise HTTPException(400, detail="No argument provided")
@@ -115,3 +128,5 @@ async def update_apiary(
     except Exception as exc:
         logger.exception("Something went wrong when updating the apiary", apiary=apiary)
         raise HTTPException(status_code=400, detail="Database error") from exc
+
+    logger.info("Put apiary successfull", apiary_id=apiary_id, user_id=user_id)
