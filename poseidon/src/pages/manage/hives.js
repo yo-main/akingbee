@@ -130,8 +130,13 @@ function CreateCommentForm(props) {
     form.setFieldsValue({comment: data })
   }
 
+  const onFinish = (data) => {
+    props.onFinish(data);
+    form.resetFields();
+  }
+
   return (
-    <Form id="newComment" form={form} layout="vertical" requiredMark={false} onFinish={props.onFinish} onFailed={onFailed}>
+    <Form id="newComment" form={form} layout="vertical" requiredMark={false} onFinish={onFinish} onFailed={onFailed}>
       <Form.Item label={window.i18n("word.date")} name="date">
         <DatePicker />
       </Form.Item>
