@@ -1,10 +1,18 @@
 configMapGenerator:
 - name: env-vars-config
   env: production.env
+  namespace: default
+  options:
+    disableNameSuffixHash: false
 
 secretGenerator:
 - name: env-secrets-config
   env: production.secrets
+  options:
+    annotations:
+      kustomize.config.k8s.io/behavior: replace
+    disableNameSuffixHash: false
+  namespace: default
 
 bases:
 - ../../applications
@@ -17,7 +25,7 @@ resources:
 
 images:
 - name: yomain/aristaeus
-  newTag: 1.7.14
+  newTag: 1.7.15
 - name: yomain/cerbes
   newTag: 1.8.2
 - name: yomain/hermes

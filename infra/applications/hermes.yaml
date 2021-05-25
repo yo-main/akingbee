@@ -68,11 +68,6 @@ spec:
             secretKeyRef:
               name: env-secrets-config
               key: EMAIL_SERVER_PORT
-        - name: AKB_RBMQ_USER
-          valueFrom:
-            secretKeyRef:
-              name: env-secrets-config
-              key: RBMQ_USER
         - name: AKB_NOREPLY_EMAIL
           valueFrom:
             secretKeyRef:
@@ -86,8 +81,8 @@ spec:
 
         command: ["python", "hermes/consumer.py"]
         volumeMounts:
-        - mountPath: /var/log/hermes
-          name: logs
+        - name: logs
+          mountPath: /var/log/hermes
 
       volumes:
       - name: logs
