@@ -55,7 +55,7 @@ spec:
               name: env-secrets-config
               key: RBMQ_PASSWORD
         volumeMounts:
-        - mountPath: /var/lib/rabbitmq
-          name: data
+        - name: data
+          mountPath: /var/lib/rabbitmq/data
 
 
