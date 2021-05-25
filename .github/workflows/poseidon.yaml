@@ -23,7 +23,7 @@ jobs:
       - name: install dependencies
         run: npm install
       - name: run eslint
-        run: npx eslint src
+        run: npx eslint src --max-warnings 0
 
   release:
     name: release new version
