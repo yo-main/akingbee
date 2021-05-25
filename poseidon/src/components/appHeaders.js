@@ -3,7 +3,7 @@ import { Link } from '@reach/router';
 import { Menu, Row, Col } from 'antd';
 
 import * as constants from '../constants';
-import { logOff, getLoggerUserData } from '../services/authentication';
+import { logOff } from '../services/authentication';
 
 class LanguageMenu extends React.Component {
   render() {
