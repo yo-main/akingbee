@@ -148,6 +148,22 @@ class EventModel(BaseModel):
         orm_mode = True
 
 
+class PostEventModel(BaseModel):
+    title: str
+    description: Optional[str]
+    due_date: datetime.datetime
+    type_id: uuid.UUID
+    status_id: uuid.UUID
+    hive_id: Optional[uuid.UUID]
+
+
+class PutEventModel(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    due_date: Optional[datetime.datetime]
+    status_id: Optional[uuid.UUID]
+
+
 # COMMENTS
 
 
