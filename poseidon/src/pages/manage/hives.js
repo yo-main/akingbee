@@ -19,8 +19,6 @@ import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '
 import '../styles.css';
 import { PlusOutlined } from '@ant-design/icons';
 
-import moment from 'moment';
-
 function onFailed(err) {
   notificate("error", "Failed")
 }
