@@ -8,29 +8,29 @@ from gaea.models.utils.test import IDS
 
 
 def test_get_comments(auth_token, test_app):
-    response = test_app.get(f"/comments/hive/{IDS['Hives'][0]}")
+    response = test_app.get(f"/comments?hive={IDS['Hives'][0]}")
     assert response.status_code == 401
 
     response = test_app.get(
-        f"/comments/hive/{IDS['Hives'][0]}", cookies={"access_token": auth_token}
+        f"/comments?hive_id={IDS['Hives'][0]}", cookies={"access_token": auth_token}
     )
     assert response.status_code == 200
     assert len(response.json()) == 2
 
     response = test_app.get(
-        f"/comments/hive/{IDS['Hives'][1]}", cookies={"access_token": auth_token}
+        f"/comments?hive_id={IDS['Hives'][1]}", cookies={"access_token": auth_token}
     )
     assert response.status_code == 200
     assert len(response.json()) == 1
 
     response = test_app.get(
-        f"/comments/hive/{IDS['Hives'][2]}", cookies={"access_token": auth_token}
+        f"/comments?hive_id={IDS['Hives'][2]}", cookies={"access_token": auth_token}
     )
     assert response.status_code == 200
     assert len(response.json()) == 0
 
     response = test_app.get(
-        f"/comments/hive/{IDS['Hives'][3]}", cookies={"access_token": auth_token}
+        f"/comments?hive_id={IDS['Hives'][3]}", cookies={"access_token": auth_token}
     )
     assert response.status_code == 404
 

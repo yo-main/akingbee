@@ -1,6 +1,6 @@
 """API endpoints for hive"""
 import datetime
-from typing import List
+from typing import List, Optional
 import uuid
 
 from fastapi import APIRouter, Depends, Cookie, HTTPException
@@ -17,11 +17,9 @@ from aristaeus.models import CommentModel, PostCommentModel, PutCommentModel
 router = APIRouter()
 
 
-@router.get(
-    "/comments/hive/{hive_id}", status_code=200, response_model=List[CommentModel]
-)
+@router.get("/comments", status_code=200, response_model=List[CommentModel])
 async def get_hive_comments(
-    hive_id: uuid.UUID,
+    hive_id: Optional[uuid.UUID] = None,
     access_token: str = Cookie(None),
     session: Session = Depends(get_session),
 ):
@@ -29,20 +27,19 @@ async def get_hive_comments(
     Get a list of comments related to a hive
     """
     user_id = await get_logged_in_user(access_token)
-    hive = session.query(Hives).get(hive_id)
-    if not hive or hive.user_id != user_id or hive.deleted_at:
-        raise HTTPException(status_code=404)
-
-    comments = (
-        session.query(Comments)
-        .filter(
-            Comments.user_id == user_id,
-            Comments.deleted_at.is_(None),
-            Comments.hive_id == hive_id,
-        )
-        .all()
+    query = session.query(Comments).filter(
+        Comments.user_id == user_id,
+        Comments.deleted_at.is_(None),
     )
-    return comments
+
+    if hive_id:
+        hive = session.query(Hives).get(hive_id)
+        if not hive or hive.user_id != user_id or hive.deleted_at:
+            raise HTTPException(status_code=404)
+
+        query = query.filter(Comments.hive_id == hive_id)
+
+    return query.all()
 
 
 @router.post("/comments/hive/{hive_id}", status_code=200, response_model=CommentModel)

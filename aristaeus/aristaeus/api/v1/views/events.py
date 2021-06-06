@@ -28,9 +28,16 @@ async def get_events(
     Get a list of events
     """
     user_id = await get_logged_in_user(access_token)
-    query = session.query(Events).filter(Events.user_id == user_id, Events.deleted_at.is_(None))
+    query = session.query(Events).filter(
+        Events.user_id == user_id, Events.deleted_at.is_(None)
+    )
+
     if hive_id:
-        query = query.filter(Events.hive_id == hive_id)
+        hive = session.query(Hives).get(hive_id)
+        if not hive or hive.user_id != user_id or hive.deleted_at:
+            raise HTTPException(status_code=404)
+
+        query = query.filter(Events.hive_id == hive.id)
 
     return query.all()
 
