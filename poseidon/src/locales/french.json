@@ -9,6 +9,7 @@
     "word.swarms": "Essaims",
     "word.swarmHealth": "Santé de l'essaim",
     "word.date": "Date",
+    "word.dueDate": "Date Prévue",
     "word.comment": "Commentaire",
     "action.createApiary": "Créer un rucher",
     "action.createHive": "Créer une ruche",
@@ -68,8 +69,8 @@
     "title.swarm_health_status": "Santés essaim",
     "title.hive_beekeeper": "Apiculteurs",
     "title.hive_condition": "États de ruche",
-    "title.event_type": "Types d'évènement",
-    "title.event_status": "Status d'évènement",
+    "title.eventType": "Types d'évènement",
+    "title.eventStatus": "Status d'évènement",
     "title.apiary_honey_type": "Types de miel",
     "title.apiaryCreation": "Création d'un rucher",
     "title.apiaryUpdate": "Modification du rucher",
@@ -103,6 +104,7 @@
     "confirm.deleteData": "Supprimer cette donnée ?",
     "confirm.deleteApiary": "Supprimer ce rucher ?",
     "confirm.deleteHive": "Supprimer cette ruche ?",
+    "confirm.deleteEvent": "Supprimer cet évènement ?",
     "confirm.resetPassword": "Réinitialiser votre mot de passe",
     "sentence.accountJustActivated": "Votre compte vient d'être activé !",
     "sentence.accountAlreadyActivated": "Votre compte a déjà été activé !",
@@ -115,5 +117,7 @@
     "form.mustBeAnEmail": "Email incorrect",
     "form.mustIncludeOneDigit": "Doit inclure au moins un chiffre",
     "form.mustIncludeOneLetter": "Doit inclure au moins une lettre",
-    "title.userInformation": "Information utilisateur"
+    "title.userInformation": "Information utilisateur",
+    "word.title": "Titre",
+    "word.description": "Description"
   }

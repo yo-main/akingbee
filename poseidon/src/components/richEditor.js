@@ -44,10 +44,14 @@ export function RichEditor(props) {
 }
 
 export function EditorReadOnly(props) {
-  let content = convertFromRaw(props.content);
+  let content = EditorState.createEmpty();
+  if (props.content) {
+    content = EditorState.createWithContent(convertFromRaw(props.content));
+  }
+
   return (
     <Editor
-      editorState={EditorState.createWithContent(content)}
+      editorState={content}
       toolbarClassName="toolbarClassName"
       wrapperClassName="wrapperClassName"
       editorClassName="editorClassName"

@@ -9,6 +9,7 @@
     "word.swarms": "Swarms",
     "word.swarmHealth": "Swarm health",
     "word.date": "Date",
+    "word.dueDate": "Due date",
     "word.comment": "Comment",
     "action.createApiary": "New apiary",
     "action.createHive": "New hive",
@@ -68,8 +69,8 @@
     "title.swarm_health_status": "Swarm healths",
     "title.hive_beekeeper": "Beekeepers",
     "title.hive_condition": "Hive conditions",
-    "title.event_type": "Event types",
-    "title.event_status": "Event statuses",
+    "title.eventType": "Event types",
+    "title.eventStatus": "Event statuses",
     "title.apiary_honey_type": "Honey types",
     "title.apiaryCreation": "Creation of an apiary",
     "title.apiaryUpdate": "Update apiary",
@@ -103,6 +104,7 @@
     "confirm.deleteData": "Delete that entry ?",
     "confirm.deleteApiary": "Delete that apiary ?",
     "confirm.deleteHive": "Delete that hive ?",
+    "confirm.deleteEvent": "Delete that event ?",
     "confirm.resetPassword": "Reset your password",
     "sentence.accountJustActivated": "Your account has been successfully activated !",
     "sentence.accountAlreadyActivated": "Your account has alredy been activated !",
@@ -115,5 +117,7 @@
     "form.mustBeAnEmail": "Invalid email",
     "form.mustIncludeOneDigit": "Must include at least one digit",
     "form.mustIncludeOneLetter": "Must include at least one letter",
-    "title.userInformation": "User information"
+    "title.userInformation": "User information",
+    "word.title": "Title",
+    "word.description": "Description"
   }
