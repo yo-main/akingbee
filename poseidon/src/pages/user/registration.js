@@ -22,9 +22,14 @@ export function RegistrationPage(props) {
     {validator: passwordValidator, message: window.i18n('form.passwordsMustBeSame')}
   ]
 
+  let onFinish = (data) => {
+    data['history'] = props.history;
+    return registrationRequest(data);
+  }
+
   return (
     <Row justify="center" style={{ paddingTop: "150px"}}>
-      <Form labelCol={{span: 12, pull: 6}} wrapperCol={{pull: 6}} form={form} onFinish={registrationRequest} requiredMark={false}>
+      <Form labelCol={{span: 12, pull: 6}} wrapperCol={{pull: 6}} form={form} onFinish={onFinish} requiredMark={false}>
         <Form.Item label={window.i18n('word.username')} name="username" rules={[{ required: true, message: window.i18n('form.insertUsernameMessage')}]}>
           <Input />
         </Form.Item>

@@ -1,4 +1,3 @@
-import { navigate } from '@reach/router';
 import { getCookie, dealWithError } from '../lib/common';
 import { AUTH_COOKIE_NAME } from '../constants';
 import { cerbesApi, notificate, setCookie } from '../lib/common';
@@ -37,12 +36,12 @@ export function clearJWT() {
   setCookie(AUTH_COOKIE_NAME, '', {'max-age': 0});
 }
 
-export function logOff() {
+export function logOff(history) {
   clearJWT();
-  navigate("/login")
+  history.push("/login");
 }
 
-export async function registrationRequest({email, username, password, password_bis}) {
+export async function registrationRequest({email, username, password, password_bis, history}) {
   // checks
   if (password !== password_bis){
     notificate("error", window.i18n("error.passwordsNotIdentical"));
@@ -55,7 +54,7 @@ export async function registrationRequest({email, username, password, password_b
   await cerbesApi.post("/user", data)
     .then((response) => {
       notificate("success", window.i18n("success.registrationSuccessful"));
-      navigate("/login");
+      history.push("/login");
     })
     .catch((error) => {
       dealWithError(error);
@@ -71,7 +70,7 @@ async function logIn({username, password}) {
   return response.data.access_token;
 }
 
-export async function loginRequest({username, password}) {
+export async function loginRequest({username, password, history}) {
   try {
     let token = await logIn({username, password});
     storeJWT(token);
@@ -81,7 +80,7 @@ export async function loginRequest({username, password}) {
   }
 
   notificate("success", window.i18n("success.loginSuccessful"));
-  navigate("/");
+  history.push("/");
   setTimeout(() => {loginRefresh({username, password})}, 5*1000*60);
 }
 

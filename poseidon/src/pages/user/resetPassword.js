@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { navigate } from '@reach/router';
 import { Form, Input, Button, Row } from 'antd';
 import { resetPasswordRequest, resetPassword, validateResetId } from '../../services/authentication';
 import { LOADING_STATUS, getGenericPage, NOT_FOUND_STATUS } from '../generic';
@@ -36,8 +35,11 @@ export class PasswordResetPage extends React.Component {
   state = {pageStatus: LOADING_STATUS}
 
   async componentDidMount() {
+
+    let {userId, resetId} = this.props.match.params;
+
     try {
-      await validateResetId({userId: this.props.userId, resetId: this.props.resetId})
+      await validateResetId({userId, resetId})
       this.setState((state) => {
         state["pageStatus"] = null;
         return state;
@@ -54,7 +56,7 @@ export class PasswordResetPage extends React.Component {
     try {
       await resetPassword(form);
       notificate("success", window.i18n("success.passwordReseted"));
-      navigate("/login");
+      this.props.history.push("/login");
     } catch (error) {
       dealWithError(error);
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs, DatePicker } from 'antd';
-import { navigate, Link } from '@reach/router';
+import { Link } from 'react-router-dom';
 
 import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, RichEditor, EditorReadOnly } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
@@ -14,7 +14,7 @@ import { getEvents, postEvent, putEvent, deleteEvent } from '../../services/aris
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
 
-import { NOT_FOUND_STATUS, ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
+import { LOADING_STATUS, getGenericPage } from '../generic';
 
 import '../styles.css';
 import { PlusOutlined } from '@ant-design/icons';
@@ -294,9 +294,9 @@ export class HivePage extends React.Component {
       this.setState({hives, hiveBeekeeper, hiveCondition, pageStatus, tableData});
 
     } catch (error) {
-      dealWithError(error);
+      let status = dealWithError(error);
       this.setState((state) => {
-        state['pageStatus'] = ERROR_STATUS;
+        state['pageStatus'] = status;
         return state;
       })
     }
@@ -343,13 +343,8 @@ export class HivePage extends React.Component {
   }
 
   render() {
-    console.log(process.env.REACT_APP_ARISTAEUS_API)
-    console.log(process.env.REACT_APP_CERBES_API)
-
-
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
-
 
     const columns = [
       {
@@ -431,17 +426,17 @@ export class HiveCreationPage extends React.Component {
 
       this.setState({apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
     } catch (error) {
-      dealWithError(error);
+      let status = dealWithError(error);
       this.setState((state) => {
-        state['pageStatus'] = ERROR_STATUS;
+        state['pageStatus'] = status;
       })
     }
   }
 
-  async postData(data) {
+  postData = async (data) => {
     try {
       await createHive(data);
-      navigate('/manage/hive');
+      this.props.history.push('/manage/hive');
     } catch (error) {
       dealWithError(error);
     }
@@ -553,17 +548,17 @@ export class HiveDetailsPage extends React.Component {
   async componentDidMount() {
     let hive;
 
+    let { hiveId } = this.props.match.params;
+
     try {
-      hive = await getHive(this.props.hiveId);
+      hive = await getHive(hiveId);
     } catch (error) {
-      if (error.response.status === 404) {
-        this.setState((state) => {
-          state['pageStatus'] = NOT_FOUND_STATUS;
-          return state;
-        })
-      } else {
-        dealWithError(error);
-      }
+      let status = dealWithError(error);
+
+      this.setState((state) => {
+        state['pageStatus'] = status;
+        return state;
+      })
 
       return;
     }
@@ -575,9 +570,8 @@ export class HiveDetailsPage extends React.Component {
       let swarmHealthStatus = await getSetupData('swarm_health_status');
       let eventTypes = await getSetupData('event_type');
       let eventStatuses = await getSetupData('event_status');
-      let comments = await getCommentsForHive(this.props.hiveId);
-      let events = await getEvents(this.props.hiveId);
-      console.log(events);
+      let comments = await getCommentsForHive(hiveId);
+      let events = await getEvents(hiveId);
 
       let commentsTableData = this.getCommentsTableData(comments);
       let eventsTableData = this.getEventsTableData(events);
@@ -586,11 +580,12 @@ export class HiveDetailsPage extends React.Component {
       this.setState({hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, commentsTableData, eventsTableData, eventTypes, eventStatuses, pageStatus});
 
     } catch (error) {
-      dealWithError(error);
+      let status = dealWithError(error);
+
       this.setState((state) => {
-        state['pageStatus'] = ERROR_STATUS;
-      });
-      this.forceUpdate();
+        state['pageStatus'] = status;
+        return state;
+      })
     }
   }
 
@@ -672,7 +667,7 @@ export class HiveDetailsPage extends React.Component {
         try {
           await deleteHive(this.state.hive.id);
           notificate('success', window.i18n('form.hiveDeletedSuccess'));
-          navigate("/manage/hive");
+          this.props.history.push("/manage/hive");
         } catch(error) {
           dealWithError(error);
         }
@@ -820,7 +815,7 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
-    let comments = await getCommentsForHive(this.props.hiveId);
+    let comments = await getCommentsForHive(this.state.hive.id);
     let commentsTableData = this.getCommentsTableData(comments);
 
     this.setState((state) => {
@@ -837,7 +832,7 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
-    let events = await getEvents(this.props.hiveId);
+    let events = await getEvents(this.state.hive.id);
     let eventsTableData = this.getEventsTableData(events);
 
     this.setState((state) => {
@@ -862,7 +857,7 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
-    let comments = await getCommentsForHive(this.props.hiveId);
+    let comments = await getCommentsForHive(this.state.hive.id);
     let commentsTableData = this.getCommentsTableData(comments);
 
     this.setState((state) => {
@@ -882,7 +877,7 @@ export class HiveDetailsPage extends React.Component {
     let description = JSON.stringify(data.description);
     let statusId = data.statusId;
     let typeId = data.typeId;
-    let hiveId = this.props.hiveId;
+    let hiveId = this.state.hive.id;
 
     try {
       await postEvent({dueDate, title, description, statusId, typeId, hiveId});
@@ -891,7 +886,7 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
-    let events = await getEvents(this.props.hiveId);
+    let events = await getEvents(this.state.hive.id);
     let eventsTableData = this.getEventsTableData(events);
 
     this.setState((state) => {
@@ -917,7 +912,7 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
-    let comments = await getCommentsForHive(this.props.hiveId);
+    let comments = await getCommentsForHive(this.state.hive.id);
     let commentsTableData = this.getCommentsTableData(comments);
 
     this.setState((state) => {
@@ -945,7 +940,7 @@ export class HiveDetailsPage extends React.Component {
       return;
     }
 
-    let events = await getEvents(this.props.hiveId);
+    let events = await getEvents(this.state.hive.id);
     let eventsTableData = this.getEventsTableData(events);
 
     this.setState((state) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@reach/router';
+import { Link, useHistory } from 'react-router-dom';
 import { Menu, Row, Col } from 'antd';
 
 import * as constants from '../constants';
@@ -42,6 +42,12 @@ export function LoggedOutMenu({ languageCallback }) {
 }
 
 export function LoggedInMenu({ languageCallback, section }) {
+  let history = useHistory();
+
+  let onClick = () => {
+    logOff(history);
+  }
+
   return (
     <Row justify="space-between">
       <Col>
@@ -58,7 +64,7 @@ export function LoggedInMenu({ languageCallback, section }) {
           </Col>
           <Col>
             <Menu theme="dark" mode="horizontal">
-              <Menu.Item onClick={logOff}>{window.i18n("word.logout")}</Menu.Item>
+              <Menu.Item onClick={onClick}>{window.i18n("word.logout")}</Menu.Item>
             </Menu>
           </Col>
         </Row>

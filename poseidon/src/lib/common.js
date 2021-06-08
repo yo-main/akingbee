@@ -1,6 +1,7 @@
 import { notification } from 'antd';
-import { navigate } from '@reach/router';
 import axios from 'axios';
+
+import { UNLOGGED_STATUS, ERROR_STATUS, NOT_FOUND_STATUS } from '../pages/generic';
 
 export function getCookie(name, cookies) {
   if (!cookies) {
@@ -58,12 +59,15 @@ export function dealWithError(error) {
 
   if (!response) {
     notificate("error", error.message);
-    return;
+    return ERROR_STATUS;
   }
 
   if (response.status === 401 && window.location.pathname !== "/login") {
-    navigate("/login");
-    return;
+    return UNLOGGED_STATUS;
+  }
+
+  if (response.status === 404) {
+    return NOT_FOUND_STATUS;
   }
 
   let msg;
@@ -76,4 +80,6 @@ export function dealWithError(error) {
   }
 
   notificate("error", msg)
+
+  return ERROR_STATUS;
 }

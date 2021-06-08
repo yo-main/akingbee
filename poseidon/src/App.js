@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Router } from '@reach/router';
+import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import './services/localization';
 
@@ -14,83 +14,100 @@ class App extends React.Component {
   }
 
   render () {
+    const ApiaryPageWithRouter = withRouter(ApiaryPage);
+    const ApiaryCreationPageWithRouter = withRouter(ApiaryCreationPage);
+    const HivePageWithRouter = withRouter(HivePage);
+    const HiveCreationPageWithRouter = withRouter(HiveCreationPage);
+    const HiveDetailsPageWithRouter = withRouter(HiveDetailsPage);
+    const ActivationPageWithRouter = withRouter(ActivationPage);
+    const PasswordResetPageWithRouter = withRouter(PasswordResetPage);
+
     return (
       <ConfigProvider locale={window.locale}>
-        <Router >
-          <PublicFrame path="/" languageCallback={this.changeLanguage}>
-            <WelcomePage path="/" />
-            <NotFound default />
-          </PublicFrame>
+        <BrowserRouter >
+          <Switch>
+            <PublicFrame exact path="/" languageCallback={this.changeLanguage}>
+              <WelcomePage />
+            </PublicFrame>
 
-          <PrivateFrame path="/manage" languageCallback={this.changeLanguage} />
-          <PrivateFrame path="/manage/apiary" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_apiary} submenuItem={sections.submenu_apiary_list}>
-            <ApiaryPage path="/"/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/manage" languageCallback={this.changeLanguage} />
 
-          <PrivateFrame path="/manage/apiary/create" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_apiary} submenuItem={sections.submenu_apiary_create}>
-            <ApiaryCreationPage path="/" />
-          </PrivateFrame>
+            <PrivateFrame exact path="/manage/apiary" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_apiary} submenuItem={sections.submenu_apiary_list}>
+              <ApiaryPageWithRouter />
+            </PrivateFrame>
 
-          <PrivateFrame path="/manage/hive" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_list}>
-            <HivePage path="/" />
-          </PrivateFrame>
+            <PrivateFrame exact path="/manage/apiary/create" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_apiary} submenuItem={sections.submenu_apiary_create}>
+              <ApiaryCreationPageWithRouter />
+            </PrivateFrame>
 
-          <PrivateFrame path="/manage/hive/create" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_create}>
-            <HiveCreationPage path="/" />
-          </PrivateFrame>
+            <PrivateFrame exact path="/manage/hive" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_list}>
+              <HivePageWithRouter />
+            </PrivateFrame>
 
-          <PrivateFrame path="/manage/hive/:hiveId" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_list}>
-            <HiveDetailsPage path="/" />
-          </PrivateFrame>
+            <PrivateFrame exact path="/manage/hive/create" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_create}>
+              <HiveCreationPageWithRouter />
+            </PrivateFrame>
 
-          <PrivateFrame path="/setup" languageCallback={this.changeLanguage} />
+            <PrivateFrame exact path="/manage/hive/:hiveId" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_list}>
+              <HiveDetailsPageWithRouter />
+            </PrivateFrame>
 
-          <PrivateFrame path="/setup/apiary/honey_type" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_apiary} submenuItem={sections.submenu_setup_apiary_honey_type}>
-            <SetupPage path="/" dataType={setupData.apiary_honey_type}/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup" languageCallback={this.changeLanguage} />
 
-          <PrivateFrame path="/setup/swarm/health" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_swarm} submenuItem={sections.submenu_setup_swarm_health}>
-            <SetupPage path="/" dataType={setupData.swarm_health_status}/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup/apiary/honey_type" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_apiary} submenuItem={sections.submenu_setup_apiary_honey_type} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.apiary_honey_type} key={setupData.apiary_honey_type} />
+            </PrivateFrame>
 
-          <PrivateFrame path="/setup/hive/beekeeper" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_hive} submenuItem={sections.submenu_setup_hive_beekeeper}>
-            <SetupPage path="/" dataType={setupData.hive_beekeeper}/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup/swarm/health" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_swarm} submenuItem={sections.submenu_setup_swarm_health} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.swarm_health_status} key={setupData.swarm_health_status} />
+            </PrivateFrame>
 
-          <PrivateFrame path="/setup/hive/condition" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_hive} submenuItem={sections.submenu_setup_hive_condition}>
-            <SetupPage path="/" dataType={setupData.hive_condition}/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup/hive/beekeeper" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_hive} submenuItem={sections.submenu_setup_hive_beekeeper} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.hive_beekeeper} key={setupData.hive_beekeeper} />
+            </PrivateFrame>
 
-          <PrivateFrame path="/setup/event/type" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_event} submenuItem={sections.submenu_setup_event_type}>
-            <SetupPage path="/" dataType={setupData.event_type}/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup/hive/condition" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_hive} submenuItem={sections.submenu_setup_hive_condition} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.hive_condition} key={setupData.hive_condition} />
+            </PrivateFrame>
 
-          <PrivateFrame path="/setup/event/status" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_event} submenuItem={sections.submenu_setup_event_status}>
-            <SetupPage path="/" dataType={setupData.event_status}/>
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup/event/type" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_event} submenuItem={sections.submenu_setup_event_type} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.event_type} key={setupData.event_type} />
+            </PrivateFrame>
 
-          <PrivateFrame path="/profil" languageCallback={this.changeLanguage}>
-            <ProfilePage path="/" />
-          </PrivateFrame>
+            <PrivateFrame exact path="/setup/event/status" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_event} submenuItem={sections.submenu_setup_event_status} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.event_status} key={setupData.event_status} />
+            </PrivateFrame>
 
-          <PublicFrame path="/login" languageCallback={this.changeLanguage}>
-            <LoginPage path="/" />
-          </PublicFrame>
+            <PrivateFrame exact path="/profil" languageCallback={this.changeLanguage}>
+              <ProfilePage />
+            </PrivateFrame>
 
-          <PublicFrame path="/register" languageCallback={this.changeLanguage}>
-            <RegistrationPage path="/" />
-          </PublicFrame>
+            <PublicFrame exact path="/login" languageCallback={this.changeLanguage}>
+              <LoginPage />
+            </PublicFrame>
 
-          <PublicFrame path="/activate/:userId/:activationId" languageCallback={this.changeLanguage}>
-            <ActivationPage path="/" />
-          </PublicFrame>
+            <PublicFrame exact path="/register" languageCallback={this.changeLanguage}>
+              <RegistrationPage />
+            </PublicFrame>
 
-          <PublicFrame path="/password-reset" languageCallback={this.changeLanguage}>
-            <RequestPasswordResetPage path="/" />
-            <PasswordResetPage path="/:userId/:resetId" />
-          </PublicFrame>
+            <PublicFrame exact path="/activate/:userId/:activationId" languageCallback={this.changeLanguage}>
+              <ActivationPageWithRouter />
+            </PublicFrame>
 
-        </Router>
+            <PublicFrame exact path="/password-reset" languageCallback={this.changeLanguage}>
+              <RequestPasswordResetPage />
+            </PublicFrame>
+
+            <PublicFrame path="/password-reset/:userId/:resetId" languageCallback={this.changeLanguage}>
+              <PasswordResetPageWithRouter />
+            </PublicFrame>
+
+            <Route path="*">
+                <NotFound default />
+            </Route>
+
+          </Switch>
+        </BrowserRouter>
       </ConfigProvider>
     );
   }

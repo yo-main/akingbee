@@ -1,13 +1,20 @@
 import React from 'react';
-import { Link } from '@reach/router';
+import { Link, useHistory } from 'react-router-dom';
 import { Form, Input, Button, Row, Space } from 'antd';
 
 import { loginRequest } from '../../services/authentication';
 
 export function LoginPage(props) {
+  let history = useHistory();
+
+  let onFinish = (data) => {
+    data['history'] = history;
+    return loginRequest(data);
+  }
+
   return (
     <Row justify="center" style={{ paddingTop: "150px"}}>
-      <Form labelCol={{span: 8}} onFinish={loginRequest} requiredMark={false}>
+      <Form labelCol={{span: 8}} onFinish={onFinish} requiredMark={false}>
         <Form.Item label={window.i18n('word.username')} name="username" rules={[{ required: true, message: window.i18n('form.insertUsernameMessage')}]}>
           <Input />
         </Form.Item>

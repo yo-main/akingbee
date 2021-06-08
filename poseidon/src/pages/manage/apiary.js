@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider } from 'antd';
-import { navigate } from '@reach/router';
 
 import { FormLinkModal } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
@@ -9,7 +8,7 @@ import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { getSetupData } from '../../services/aristaeus/setup';
 import { createApiary, getApiaries, updateApiary, deleteApiary } from '../../services/aristaeus/apiary';
-import { ERROR_STATUS, LOADING_STATUS, getGenericPage } from '../generic';
+import { LOADING_STATUS, getGenericPage } from '../generic';
 
 
 function onFailed(err) {
@@ -81,9 +80,9 @@ export class ApiaryPage extends React.Component {
       this.setState({tableData, apiaryHoneyType, pageStatus})
 
     } catch (error) {
-      dealWithError(error);
+      let status = dealWithError(error);
       this.setState((state) => {
-        state['pageStatus'] = ERROR_STATUS;
+        state['pageStatus'] = status;
       })
     }
   }
@@ -197,18 +196,18 @@ export class ApiaryCreationPage extends React.Component {
 
       this.setState({apiaryHoneyType, pageStatus})
     } catch (error) {
-      dealWithError(error);
+      let status = dealWithError(error);
       this.setState((state) => {
-        state['pageStatus'] = ERROR_STATUS;
+        state['pageStatus'] = status;
         return state;
       })
     }
   }
 
-  async postData(data) {
+  postData = async (data) => {
     try {
       await createApiary(data);
-      navigate('/manage/apiary');
+      this.props.history.push('/manage/apiary');
     } catch (error) {
       dealWithError(error);
     }

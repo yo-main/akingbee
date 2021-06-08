@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Row } from 'antd';
-import { Link } from '@reach/router';
+import { Link } from 'react-router-dom';
 
 import { activationRequest } from '../../services/authentication';
 import { LOADING_STATUS, getGenericPage, NOT_FOUND_STATUS } from '../generic';
@@ -10,8 +10,8 @@ export class ActivationPage extends React.Component {
   state = {pageStatus: LOADING_STATUS, content: ""}
 
   async componentDidMount() {
-    let userId = this.props.userId;
-    let activationId = this.props.activationId;
+
+    let {userId, activationId} = this.props.match.params;
 
     try {
       let response = await activationRequest({userId, activationId});

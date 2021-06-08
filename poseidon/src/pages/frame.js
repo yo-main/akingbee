@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Affix } from 'antd';
-import { Redirect } from '@reach/router';
+import { Redirect, Route } from 'react-router-dom';
 
 import { LoggedInMenu, LoggedOutMenu, ManageSideMenu, SetupSideMenu } from '../components';
 import { isLogged } from '../services/authentication';
@@ -23,7 +23,9 @@ class Frame extends React.Component {
       SideMenu = SetupSideMenu;
     }
 
-    return (
+    let exact = this.props.exact ? true : false;
+
+    let content = (
       <Layout style={{ 'min-height': '100vh' }}>
         <Affix offsetTop='0'>
           <Header className="header">
@@ -40,6 +42,10 @@ class Frame extends React.Component {
           </Layout>
         </Content>
       </Layout>
+    )
+
+    return (
+      <Route path={this.props.path} exact={exact} children={() => content}/>
     )
   };
 }

@@ -53,7 +53,7 @@ export function UpdateDataForm(props) {
 
 
 export class SetupPage extends React.Component {
-  state = {tableData: [], pageStatus: LOADING_STATUS}
+  state = {tableData: [], pageStatus: LOADING_STATUS, dataType: this.props.dataType}
 
   getTableData = (data) => {
     const tableData = data.reduce((acc, val, index) => {
@@ -147,6 +147,7 @@ export class SetupPage extends React.Component {
   }
 
   render() {
+    console.log(this.state);
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
 
