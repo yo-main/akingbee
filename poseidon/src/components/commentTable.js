@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs, DatePicker } from 'antd';
+import { Row, Col, Table, Space, Button, Form, Popconfirm, DatePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import { getCommentsForHive, postCommentForHive, putComment, deleteComment } from '../services/aristaeus/comments';
@@ -7,7 +7,7 @@ import { getCommentsForHive, postCommentForHive, putComment, deleteComment } fro
 import { LOADING_STATUS, getGenericPage } from '../pages/generic';
 import { dealWithError, notificate } from '../lib/common';
 
-import { OptionalFormItem, FormLinkModal, FormButtonModal, CascaderForm, RichEditor, EditorReadOnly } from '.';
+import { FormLinkModal, FormButtonModal, RichEditor, EditorReadOnly } from '.';
 
 function CreateCommentForm(props) {
   const [form] = Form.useForm();
