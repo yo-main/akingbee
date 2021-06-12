@@ -1,4 +1,4 @@
-![Aristaeus](https://github.com/yo-main/akingbee/actions/workflows/aristaeus.yaml/badge.svg) ![Cerbes](https://github.com/yo-main/akingbee/actions/workflows/cerbes.yaml/badge.svg) ![Hermes](https://github.com/yo-main/akingbee/actions/workflows/hermes.yaml/badge.svg) ![Gaea](https://github.com/yo-main/akingbee/actions/workflows/gaea.yaml/badge.svg) ![Poseidon](https://github.com/yo-main/akingbee/actions/workflows/poseidon.yaml/badge.svg)
+
 
 # akingbee.com
 A website for beekeepers !
@@ -11,7 +11,7 @@ It's mostly a pet project that I started a few years ago and on which I kept wor
 
 Today the project is composed of several services.
 
-### Aristaeus 
+### Aristaeus  ![Aristaeus](https://github.com/yo-main/akingbee/actions/workflows/aristaeus.yaml/badge.svg) 
 
 Aristaeus is the Greek god that discovered bee-keeping. 
 It only makes sense that the service is in charge of managing hives & apiaries is named after this god.
@@ -19,24 +19,24 @@ It only makes sense that the service is in charge of managing hives & apiaries i
 The service itself is composed of a web api and of a rabbitmq listener.
 
 
-### Cerbes
+### Cerbes ![Cerbes](https://github.com/yo-main/akingbee/actions/workflows/cerbes.yaml/badge.svg) 
 
 Who's better than cerberus himself to protect the realm of bees ?
 
 Cerbes will manages users & authentication through jwt. It's not keeping the gates of hell, but it does guard the entrance of something.
 It's reason enough for me to name it this way.
 
-### Hermes
+### Hermes ![Hermes](https://github.com/yo-main/akingbee/actions/workflows/hermes.yaml/badge.svg)
 
 Hermes is the messager of the gods ! I couldn't name otherwise a service that sends emails !
 
-### Poseidon
+### Poseidon  ![Poseidon](https://github.com/yo-main/akingbee/actions/workflows/poseidon.yaml/badge.svg)
 
 Poseidon, god of the seas and oceans. There's no better gods than him for spreading my website through the immensity of what is the world wide web.
 
 It's basically a react app. If you wanna dive in this service's code, keep in mind that you might find things that will hurt you, deeply (some things are better kept hidden in the deep darkness of the oceans).
 
-### Gaea
+### Gaea  ![Gaea](https://github.com/yo-main/akingbee/actions/workflows/gaea.yaml/badge.svg)
 
 Gaea, she's the mother of all gods. And everyone needs a mother to rely on (even Gods). So I named my "chassis" after her, since this library will be used by all the other services.
 
