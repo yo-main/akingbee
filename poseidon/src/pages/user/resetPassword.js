@@ -52,7 +52,7 @@ export class PasswordResetPage extends React.Component {
     }
   }
 
-  async onFinish(form) {
+  onFinish = async(form) => {
     try {
       await resetPassword(form);
       notificate("success", window.i18n("success.passwordReseted"));
@@ -68,7 +68,7 @@ export class PasswordResetPage extends React.Component {
 
     return (
       <Row justify="center" style={{ paddingTop: '150px'}}>
-        <ResetPasswordForm userId={this.props.userId} resetId={this.props.resetId} onFinish={this.onFinish} />
+        <ResetPasswordForm userId={this.props.match.params.userId} resetId={this.props.match.params.resetId} onFinish={this.onFinish} />
       </Row>
     )
   }

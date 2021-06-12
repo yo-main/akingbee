@@ -20,6 +20,7 @@ class App extends React.Component {
     const HiveCreationPageWithRouter = withRouter(HiveCreationPage);
     const HiveDetailsPageWithRouter = withRouter(HiveDetailsPage);
     const ActivationPageWithRouter = withRouter(ActivationPage);
+    const RegistrationPageWithRouter = withRouter(RegistrationPage);
     const PasswordResetPageWithRouter = withRouter(PasswordResetPage);
 
     return (
@@ -87,7 +88,7 @@ class App extends React.Component {
             </PublicFrame>
 
             <PublicFrame exact path="/register" languageCallback={this.changeLanguage}>
-              <RegistrationPage />
+              <RegistrationPageWithRouter />
             </PublicFrame>
 
             <PublicFrame exact path="/activate/:userId/:activationId" languageCallback={this.changeLanguage}>
