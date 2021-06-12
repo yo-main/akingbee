@@ -141,21 +141,25 @@ DATASETS = (
         Swarms(
             id=IDS["Swarms"][0],
             health_status_id=IDS["Swarm_health_statuses"][0],
+            queen_year=2020,
             user_id=IDS["Users"][0],
         ),
         Swarms(
             id=IDS["Swarms"][1],
             health_status_id=IDS["Swarm_health_statuses"][0],
+            queen_year=2021,
             user_id=IDS["Users"][0],
         ),
         Swarms(
             id=IDS["Swarms"][2],
             health_status_id=IDS["Swarm_health_statuses"][1],
+            queen_year=2018,
             user_id=IDS["Users"][0],
         ),
         Swarms(
             id=IDS["Swarms"][-1],
             health_status_id=IDS["Swarm_health_statuses"][-1],
+            queen_year=2019,
             user_id=IDS["Users"][-1],
         ),
         Apiaries(

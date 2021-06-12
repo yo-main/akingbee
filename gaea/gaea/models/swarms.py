@@ -3,7 +3,7 @@ import uuid
 
 from sqlalchemy import Column, ForeignKey, DDL, event
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID
+from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID, INTEGER
 
 from .base import Base
 from .users import Users
@@ -30,6 +30,7 @@ class Swarms(Base):
     health_status_id = Column(
         UUID(as_uuid=True), ForeignKey(SwarmHealthStatuses.id), nullable=False
     )
+    queen_year = Column(INTEGER(), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey(Users.id), nullable=False)
 
     created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
