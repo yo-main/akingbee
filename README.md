@@ -1,6 +1,5 @@
 ![Aristaeus](https://github.com/yo-main/akingbee/actions/workflows/aristaeus.yaml/badge.svg) ![Cerbes](https://github.com/yo-main/akingbee/actions/workflows/cerbes.yaml/badge.svg) ![Hermes](https://github.com/yo-main/akingbee/actions/workflows/hermes.yaml/badge.svg) ![Gaea](https://github.com/yo-main/akingbee/actions/workflows/gaea.yaml/badge.svg) ![Poseidon](https://github.com/yo-main/akingbee/actions/workflows/poseidon.yaml/badge.svg)
 
-[![Build Status](https://travis-ci.com/yo-main/akingbee.svg?branch=master)](https://travis-ci.com/yo-main/akingbee)
 # akingbee.com
 A website for beekeepers !
 
