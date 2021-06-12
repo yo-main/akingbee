@@ -50,6 +50,7 @@ async def post_swarm(
 
     swarm = Swarms(
         health_status_id=data.health_status_id,
+        queen_year=data.queen_year,
         user_id=user_id,
     )
 
@@ -85,8 +86,13 @@ async def put_swarm(
     if swarm is None or swarm.deleted_at or swarm.user_id != user_id:
         raise HTTPException(status_code=404, detail="Swarm not found")
 
+    if not (data.health_status_id or data.queen_year):
+        raise HTTPException(status_code=400, detail="No data provided")
+
+    swarm.health_status_id = data.health_status_id or swarm.health_status_id
+    swarm.queen_year = data.queen_year or swarm.queen_year
+
     try:
-        swarm.health_status_id = data.health_status_id
         session.commit()
     except Exception as exc:
         logger.exception("Database error", swarm=swarm)
@@ -104,7 +110,7 @@ async def delete_swarm(
     session: Session = Depends(get_session),
 ):
     """
-    delete a swarm
+    Delete a swarm
     """
     user_id = await get_logged_in_user(access_token)
     logger.info("Delete swarm received", user_id=user_id, swarm_id=swarm_id)

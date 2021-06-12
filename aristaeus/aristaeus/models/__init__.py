@@ -61,15 +61,18 @@ class ApiaryModel(BaseModel):
 
 class SwarmPostModel(BaseModel):
     health_status_id: uuid.UUID
+    queen_year: int
 
 
 class SwarmPutModel(BaseModel):
-    health_status_id: uuid.UUID
+    health_status_id: Optional[uuid.UUID] = None
+    queen_year: Optional[int] = None
 
 
 class SwarmModel(BaseModel):
     id: uuid.UUID
     health: SetupDataModel
+    queen_year: int
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
