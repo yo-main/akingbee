@@ -1,16 +1,19 @@
 import React from 'react';
 
 import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs } from 'antd';
+import Icon from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
 import { OptionalFormItem, FormLinkModal, CascaderForm } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
+import { ReactComponent as queenSVG } from '../../images/queen.svg';
+
 import { getSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
-import { deleteSwarm, createSwarm } from '../../services/aristaeus/swarm';
+import { deleteSwarm, createSwarm, updateSwarm } from '../../services/aristaeus/swarm';
 
 import { LOADING_STATUS, getGenericPage } from '../generic';
 
@@ -18,6 +21,28 @@ import { CommentTableComponent } from '../../components/commentTable';
 import { EventTableComponent } from '../../components/eventTable';
 
 import '../styles.css';
+
+
+const QUEEN_INVISIBLE = "#FFFFFF";
+const QUEEN_BLUE = "#01A0FF";
+const QUEEN_WHITE = "#CECFCD";
+const QUEEN_YELLOW = "#E2D70F";
+const QUEEN_RED = "#E24739";
+const QUEEN_GREEN = "#50C375";
+
+const QUEEN_COLOR_MAPPING = {
+  0: QUEEN_BLUE,
+  1: QUEEN_WHITE,
+  2: QUEEN_YELLOW,
+  3: QUEEN_RED,
+  4: QUEEN_GREEN,
+  5: QUEEN_BLUE,
+  6: QUEEN_WHITE,
+  7: QUEEN_YELLOW,
+  8: QUEEN_RED,
+  9: QUEEN_GREEN,
+}
+
 
 function onFailed(err) {
   notificate("error", "Failed")
@@ -28,18 +53,21 @@ export function UpdateHiveForm(props) {
 
   form.setFieldsValue({
     "hiveId": props.hive.id,
+    "swarmId": props.hive.swarm.id,
     "name": props.hive.name,
     "owner": props.hive.owner.id,
     "condition": props.hive.condition.id,
+    "health": props.hive.swarm.health.id,
+    "queenYear": props.hive.swarm.queen_year,
   })
 
   return (
-    <Form {... formItemLayout} id={props.formId} form={form} name="basic" onFinish={props.onFinish} onFailed={onFailed}>
-      <Form.Item label={window.i18n("word.name")} name="name" rules={[{type: 'string', min: 1, message: window.i18n('form.insertHiveName')}]}>
-        <Input defaultValue={props.hive.name} />
+    <Form {... formItemLayout} id={props.formId} form={form} onFinish={props.onFinish} onFailed={onFailed} requiredMark={false}>
+      <Form.Item label={window.i18n("word.name")} name="name" rules={[{required: true, type: 'string', min: 1, message: window.i18n('form.insertHiveName')}]}>
+        <Input />
       </Form.Item>
-      <Form.Item label={window.i18n("word.owner")} name="owner" rules={[{message: window.i18n('form.selectHiveOwner')}]}>
-        <Select defaultValue={props.hive.owner.id}>
+      <Form.Item label={window.i18n("word.owner")} name="owner">
+        <Select>
           {
             props.owners.map(data => {
               return (
@@ -49,8 +77,8 @@ export function UpdateHiveForm(props) {
           }
         </Select>
       </Form.Item>
-      <Form.Item label={window.i18n("word.condition")} name="condition" rules={[{message: window.i18n('form.selectHiveCondition')}]}>
-        <Select defaultValue={props.hive.condition.id}>
+      <Form.Item label={window.i18n("form.hiveCondition")} name="condition">
+        <Select>
           {
             props.conditions.map(data => {
               return (
@@ -60,7 +88,22 @@ export function UpdateHiveForm(props) {
           }
         </Select>
       </Form.Item>
+      <Form.Item label={window.i18n("word.swarmHealth")} name="health">
+        <Select>
+          {
+            props.healths.map(data => {
+              return (
+                <Select.Option key={data.id}>{data.name}</Select.Option>
+              )
+            })
+          }
+        </Select>
+      </Form.Item>
+      <Form.Item label={window.i18n("word.queenYear")} name="queenYear" rules={[{required: true, message: window.i18n('form.insertQueenYear')}]}>
+        <Input type="number" />
+      </Form.Item>
       <Form.Item name="hiveId" hidden={true} />
+      <Form.Item name="swarmId" hidden={true} />
     </Form>
   )
 }
@@ -127,7 +170,7 @@ function CreateHiveForm(props) {
 
 
 export class HivePage extends React.Component {
-  state = {tableData: [], hiveBeekeeper: [], hiveCondition: [], pageStatus: LOADING_STATUS}
+  state = {tableData: [], hiveBeekeeper: [], hiveCondition: [], swarmHealths: [], pageStatus: LOADING_STATUS}
 
   getTableData = (data) => {
     return data.reduce((acc, val, index) => {
@@ -149,10 +192,11 @@ export class HivePage extends React.Component {
       let hives = await getHives();
       let hiveBeekeeper = await getSetupData('hive_beekeeper');
       let hiveCondition = await getSetupData('hive_condition');
+      let swarmHealths = await getSetupData('swarm_health_status');
       let tableData = this.getTableData(hives);
       let pageStatus = 'OK';
 
-      this.setState({hives, hiveBeekeeper, hiveCondition, pageStatus, tableData});
+      this.setState({hives, hiveBeekeeper, hiveCondition, swarmHealths, pageStatus, tableData});
 
     } catch (error) {
       let status = dealWithError(error);
@@ -182,14 +226,20 @@ export class HivePage extends React.Component {
 
   updateData = async(form) => {
     const hiveId = form.hiveId;
-    const data = {
+    const swarmId = form.swarmId;
+    const hiveData = {
       name: form.name,
       owner_id: form.owner,
       condition_id: form.condition
     }
+    const swarmData = {
+      swarm_health_id: form.health,
+      queen_year: form.queenYear
+    }
 
     try {
-      await updateHive(hiveId, data);
+      await updateHive(hiveId, hiveData);
+      await updateSwarm(swarmId, swarmData);
 
       let hives = await getHives();
       let tableData = this.getTableData(hives);
@@ -220,6 +270,10 @@ export class HivePage extends React.Component {
         }
       },
       {
+        title: window.i18n('word.apiary'),
+        dataIndex: ['apiary', 'name']
+      },
+      {
         title: window.i18n('word.owner'),
         dataIndex: ['owner', 'name'],
       },
@@ -232,8 +286,15 @@ export class HivePage extends React.Component {
         dataIndex: ['swarm', 'health', 'name']
       },
       {
-        title: window.i18n('word.apiary'),
-        dataIndex: ['apiary', 'name']
+        title: window.i18n('word.queenYear'),
+        dataIndex: ['swarm', 'queen_year'],
+        render: (text, record) => {
+          let queenColor = QUEEN_COLOR_MAPPING[record.swarm.queen_year % 10];
+          if (record.swarm.queen_year === 1900) {
+            return "N/A";
+          };
+          return <>{text} &nbsp;&nbsp;&nbsp;<span style={{fontSize: 20, color: queenColor}}>■</span></>;
+        }
       },
       {
         title: window.i18n('word.actions'),
@@ -243,7 +304,7 @@ export class HivePage extends React.Component {
           return (
             <Space size='middle'>
               <FormLinkModal formId={formId} title={window.i18n('title.hiveUpdate')} linkContent={window.i18n('word.edit')}>
-                <UpdateHiveForm formId={formId} hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateData} />
+                <UpdateHiveForm formId={formId} hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} healths={this.state.swarmHealths} onFinish={this.updateData} />
               </FormLinkModal>
               <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
                 <Button type="link">{window.i18n('word.delete')}</Button>
@@ -353,14 +414,20 @@ export class HiveDetailsPage extends React.Component {
 
   updateHiveData = async(form) => {
     const hiveId = form.hiveId;
-    const data = {
+    const swarmId = form.swarmId;
+    const hiveData = {
       name: form.name,
       owner_id: form.owner,
       condition_id: form.condition
     }
+    const swarmData = {
+      health_status_id: form.health,
+      queen_year: form.queenYear
+    }
 
     try {
-      await updateHive(hiveId, data);
+      await updateHive(hiveId, hiveData);
+      await updateSwarm(swarmId, swarmData);
 
       let hive = await getHive(hiveId);
       this.setState((state) => {
@@ -534,11 +601,11 @@ export class HiveDetailsPage extends React.Component {
 
     let name = this.state.hive.name;
     let owner = cardItems(window.i18n('word.owner'), this.state.hive.owner.name);
-    let condition = cardItems(window.i18n('word.condition'), this.state.hive.condition.name);
+    let condition = cardItems(window.i18n('form.hiveCondition'), this.state.hive.condition.name);
 
     let health, apiary;
     if (this.state.hive.swarm) {
-      health = cardItems(window.i18n('word.health'), this.state.hive.swarm.health.name);
+      health = cardItems(window.i18n('word.swarmHealth'), this.state.hive.swarm.health.name);
     };
     if (this.state.hive.apiary) {
       apiary = cardItems(window.i18n('word.apiary'), this.state.hive.apiary.name);
@@ -546,25 +613,39 @@ export class HiveDetailsPage extends React.Component {
 
     let updateHiveForm = (
       <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-        <UpdateHiveForm formId='updateHiveFormId' hive={this.state.hive} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} onFinish={this.updateHiveData} />
+        <UpdateHiveForm formId='updateHiveFormId' hive={this.state.hive} owners={this.state.hiveBeekeeper} healths={this.state.swarmHealthStatus} conditions={this.state.hiveCondition} onFinish={this.updateHiveData} />
       </FormLinkModal>
     );
 
     let cascaderOptions = this.getCascaderOptions();
+    let queenColor = QUEEN_COLOR_MAPPING[this.state.hive.swarm.queen_year % 10];
+    if (this.state.hive.swarm.queen_year === 1900) {
+      queenColor = QUEEN_INVISIBLE;
+    }
 
     return (
       <>
         <Row>
           <Col offset="1">
             <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<div style={{paddingLeft: '50px'}}>{updateHiveForm}</div>}>
-              {owner}
-              {health}
+              <Row>
+                <Col span={22}>
+                  {owner}
+                </Col>
+                <Col span={2}>
+                  <Icon style={{ fontSize: 35, color: queenColor }} component={queenSVG} />
+                </Col>
+              </Row>
               {apiary}
               {condition}
+              {health}
+              {/* {year} */}
             </Card>
           </Col>
           <Col style={{paddingLeft: '10px'}}>
             <CascaderForm ref={this.refCascader} title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
+          </Col>
+          <Col offset={14}>
           </Col>
         </Row>
         <Col offset="1">

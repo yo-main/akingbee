@@ -119,5 +119,8 @@
     "form.mustIncludeOneLetter": "Doit inclure au moins une lettre",
     "title.userInformation": "Information utilisateur",
     "word.title": "Titre",
-    "word.description": "Description"
+    "word.description": "Description",
+    "word.queenYear": "Année de la reine",
+    "form.insertQueenYear": "Insérer l'année de la reine",
+    "form.hiveCondition": "État de la ruche"
   }

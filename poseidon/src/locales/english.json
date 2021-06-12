@@ -119,5 +119,8 @@
     "form.mustIncludeOneLetter": "Must include at least one letter",
     "title.userInformation": "User information",
     "word.title": "Title",
-    "word.description": "Description"
+    "word.description": "Description",
+    "word.queenYear": "Queen's year",
+    "form.insertQueenYear": "Insert the queen's year",
+    "form.hiveCondition": "Hive condition"
   }
