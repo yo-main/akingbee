@@ -36,11 +36,6 @@ const QUEEN_COLOR_MAPPING = {
   2: QUEEN_YELLOW,
   3: QUEEN_RED,
   4: QUEEN_GREEN,
-  5: QUEEN_BLUE,
-  6: QUEEN_WHITE,
-  7: QUEEN_YELLOW,
-  8: QUEEN_RED,
-  9: QUEEN_GREEN,
 }
 
 
@@ -289,7 +284,7 @@ export class HivePage extends React.Component {
         title: window.i18n('word.queenYear'),
         dataIndex: ['swarm', 'queen_year'],
         render: (text, record) => {
-          let queenColor = QUEEN_COLOR_MAPPING[record.swarm.queen_year % 10];
+          let queenColor = QUEEN_COLOR_MAPPING[record.swarm.queen_year % 5];
           if (record.swarm.queen_year === 1900) {
             return "N/A";
           };
@@ -618,7 +613,7 @@ export class HiveDetailsPage extends React.Component {
     );
 
     let cascaderOptions = this.getCascaderOptions();
-    let queenColor = QUEEN_COLOR_MAPPING[this.state.hive.swarm.queen_year % 10];
+    let queenColor = QUEEN_COLOR_MAPPING[this.state.hive.swarm.queen_year % 5];
     if (this.state.hive.swarm.queen_year === 1900) {
       queenColor = QUEEN_INVISIBLE;
     }
