@@ -4,7 +4,11 @@
 A website for beekeepers !
 
 This website aims to help beekeepers to manage their hives and record everything which has happened, planify things and so on.
-It's mostly a pet project that I started a few years ago and on which I kept working on through the years, and still continue to this day.
+It's mostly a pet project that I started a few years ago for my family and on which I kept working on through the years, and still continue to this day.
+
+Even though I do not maintain a friendly relationship with bees, I realize how important they are, and I do hope this website might help some beekeepers around the world.
+
+The website is available in French and in English.
 
 ## Micro services
 
