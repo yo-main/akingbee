@@ -3,9 +3,8 @@
 # akingbee.com
 A website for beekeepers !
 
-This website aims to help beekeepers to manage their hives and record everything which has happened, create events and so on.
+This website aims to help beekeepers to manage their hives and record everything which has happened, planify things and so on.
 It's mostly a pet project that I started a few years ago and on which I kept working on through the years, and still continue to this day.
-
 
 ## Micro services
 
