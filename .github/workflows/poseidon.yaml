@@ -72,21 +72,19 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: install dependencies
         run: npm install
-      - name: build app
-        run: npm run build
       - name: git latest tag
         run: |
           git fetch --tags --prune --unshallow
           tag=$(git describe --tags --abbrev=0 --match 'poseidon-*')
           version=$(echo $tag | cut -d'-' -f2 | cut -d'v' -f2)
-          echo "image_version=${version}" >> $GITHUB_ENV
+          echo "REACT_APP_VERSION=${version}" >> $GITHUB_ENV
+      - name: build app
+        run: npm run build
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: poseidon
           push: true
-          build-args: |
-            image_version=${{ env.image_version }}
           tags: |
-            yomain/poseidon:${{ env.image_version }}
+            yomain/poseidon:${{ env.REACT_APP_VERSION }}
             yomain/poseidon:latest
