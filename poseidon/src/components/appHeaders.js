@@ -23,17 +23,22 @@ class LanguageMenu extends React.Component {
 
 export function LoggedOutMenu({ languageCallback }) {
   return (
-    <Row justify="end">
-      <Col>
-        <Row>
+    <Row justify="center">
+      <Col span={12}>
+      </Col>
+      <Col span={4} >
+        <span style={{color: '#404040'}}>AKingBee {process.env.REACT_APP_VERSION}</span>
+      </Col>
+      <Col span={8}>
+        <Row justify="end">
           <Col>
             <LanguageMenu callback={languageCallback} />
           </Col>
           <Col>
-          <Menu theme="dark" mode="horizontal">
-          <Menu.Item><Link to={`/login`}>{window.i18n("word.login")}</Link></Menu.Item>
-          <Menu.Item><Link to={`/register`}>{window.i18n("word.register")}</Link></Menu.Item>
-          </Menu>
+            <Menu theme="dark" mode="horizontal">
+              <Menu.Item><Link to={`/login`}>{window.i18n("word.login")}</Link></Menu.Item>
+              <Menu.Item><Link to={`/register`}>{window.i18n("word.register")}</Link></Menu.Item>
+            </Menu>
           </Col>
         </Row>
       </Col>
