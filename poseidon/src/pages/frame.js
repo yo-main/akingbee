@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Affix } from 'antd';
+import { Layout, Affix  } from 'antd';
 import { Redirect, Route } from 'react-router-dom';
 
 import { LoggedInMenu, LoggedOutMenu, ManageSideMenu, SetupSideMenu } from '../components';
@@ -34,7 +34,7 @@ class Frame extends React.Component {
           </Header>
         </Affix>
         <Content style={{ padding: '0 50px'}}>
-          <Layout className="site-layout-background" style={{ padding: '24px 0', 'min-height': '93vh'}}>
+          <Layout className="site-layout-background" style={{ padding: '24px 0', 'min-height': 'calc(100vh - 64px)'}} hasSider>
             <SideMenu submenuTopic={this.props.submenuTopic} submenuItem={this.props.submenuItem} />
             <Content>
               {this.props.children}

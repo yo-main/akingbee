@@ -85,6 +85,8 @@ jobs:
         with:
           context: poseidon
           push: true
+          build-args: |
+            image_version=${{ env.image_version }}
           tags: |
             yomain/poseidon:${{ env.image_version }}
             yomain/poseidon:latest

@@ -58,6 +58,9 @@ export function LoggedInMenu({ languageCallback, section }) {
         </Menu>
       </Col>
       <Col>
+          <span style={{color: '#404040'}}>AKingBee {process.env.REACT_APP_VERSION}</span>
+      </Col>
+      <Col>
         <Row>
           <Col>
             <LanguageMenu callback={languageCallback} />
@@ -67,6 +70,7 @@ export function LoggedInMenu({ languageCallback, section }) {
               <Menu.Item onClick={onClick}>{window.i18n("word.logout")}</Menu.Item>
             </Menu>
           </Col>
+
         </Row>
       </Col>
     </Row>

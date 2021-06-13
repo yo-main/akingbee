@@ -2,7 +2,7 @@ import { aristaeusApi } from '../../lib/common';
 import moment from 'moment';
 
 export async function getCommentsForHive(hive_id) {
-  let response = await aristaeusApi.get(`/comments?hive=${hive_id}`);
+  let response = await aristaeusApi.get(`/comments?hive_id=${hive_id}`);
   let data = response.data;
   return data.reduce((acc, val) => {
     val['date'] = moment(val.date);
