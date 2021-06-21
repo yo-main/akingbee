@@ -1,28 +1,44 @@
-flask_session/
-__pycache__
-.vscode/
-var/
-**/*.secrets
-**/*.secret
-log/
-database.db
-.ropeproject
-environment.yaml
-*.log
-!*log/
+# useless
 *.pyc
+*.log
 *.swp
+__pycache__
+var/
+
+# dev env
+.vscode/
+.venv
+.coverage
+.env
 .ycm_extra_conf.py
 tags
-.env
-.coverage
-.venv
+.ropeproject
+
+# dockercompose
 docker-compose.override.yml
+
+# cachette
 **/cache
 **/secrets.yaml
-**/.eslintcache
+**/*.secret
+**/*.secrets
+environment.yaml
+
+# node js
+.eslintcache
 node_modules
 .next
+
+# dumb birds
 *.egg-info
+
+# poseidon useless files
 dist
 build
+
+# google api files
+google-credentials.json
+token.json
+
+# postgres
+.pgpass
