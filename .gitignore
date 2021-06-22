@@ -23,6 +23,7 @@ docker-compose.override.yml
 **/*.secret
 **/*.secrets
 environment.yaml
+**/tokens/*
 
 # node js
 .eslintcache

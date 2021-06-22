@@ -1,0 +1,56 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "0, 4, *, *, *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          volumes:
+          - name: google-api-token
+            secret:
+              secretName: google-api-token
+
+          containers:
+          - name: pg-backup
+            command: ["python", "backup.py"]
+            image: yomain/pg-backup:latest
+            volumeMounts:
+            - name: google-api-token
+              mountPath: /app/tokens
+            env:
+            - name: TOKEN_FILE
+              value: google-token.json
+            - name: PGHOST
+              valueFrom:
+                secretKeyRef:
+                  name: env-secrets-config
+                  key: DATABASE_HOST
+            - name: PGPORT
+              valueFrom:
+                secretKeyRef:
+                  name: env-secrets-config
+                  key: DATABASE_PORT
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: env-secrets-config
+                  key: DATABASE_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: env-secrets-config
+                  key: DATABASE_PASSWORD
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: env-secrets-config
+                  key: DATABASE_DBNAME
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env-secrets-config
+                  key: PG_BACKUP_ENCRYPTION_KEY
