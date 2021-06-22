@@ -17,8 +17,8 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive.metadata.readonly",
     "https://www.googleapis.com/auth/drive.file",
 ]
-TOKEN_FILE = os.environ.get("TOKEN_FILE", "token.json")
-CREDENTIAL_FILE = os.environ.get("CREDENTIAL_FILE", "google-credentials.json")
+TOKEN_FILE = os.path.join("tokens", os.environ.get("TOKEN_FILE", "token.json"))
+CREDENTIAL_FILE = os.path.join("tokens", os.environ.get("CREDENTIAL_FILE", "google-credentials.json"))
 
 
 GOOGLE_APP_FOLDER_NAME = "akingbee"
