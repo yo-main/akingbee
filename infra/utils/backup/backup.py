@@ -101,14 +101,6 @@ def dump_database():
     name = f"BACKUP_AKINGBEE-{datetime.datetime.utcnow().isoformat()}.txt"
     commands = [
         "pg_dump",
-        "--host",
-        os.environ["DB_HOST"],
-        "--username",
-        os.environ["DB_USERNAME"],
-        "--dbname",
-        os.environ["DB_DBNAME"],
-        "--port",
-        os.environ["DB_PORT"],
         "--file",
         name,
     ]
