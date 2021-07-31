@@ -16,7 +16,7 @@ secretGenerator:
 
 - name: google-api-token
   files:
-    - tokens/google-token.json
+    - tokens/google-credentials.json
   options:
     annotations:
       kustomize.config.k8s.io/behavior: replace
