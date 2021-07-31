@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import datetime
+import logging
 import os
 import subprocess
 
@@ -23,6 +24,9 @@ CREDENTIAL_FILE = os.path.join("tokens", os.environ.get("CREDENTIAL_FILE", "goog
 GOOGLE_APP_FOLDER_NAME = "akingbee"
 GOOGLE_FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
 
+logging.basicConfig()
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def authenticate():
     credentials = service_account.Credentials.from_service_account_file(
@@ -78,6 +82,7 @@ def create_folder(name, drive=None):
         metadata["parents"] = [app_folder]
 
     res = drive.files().create(body=metadata, fields="id").execute()
+    logger.info("Backup uploaded")
     return res
 
 
@@ -91,6 +96,8 @@ def dump_database():
     subprocess.run(
         commands, check=True
     )  # check=true ensure an exception is raised if the command fails
+
+    logger.info("Database dumped")
     return name
 
 
@@ -106,6 +113,7 @@ def encrypt(file):
     with open(file, "wb") as target:
         target.write(encrypted)
 
+    logger.info("Encryption done")
     return file
 
 
@@ -113,9 +121,13 @@ def main():
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
     """
+    logger.info("Starting backup script")
+
     file = dump_database()
     encrypted = encrypt("here")
     upload(encrypted)
+
+    logger.info("Mission succeded")
 
 
 if __name__ == "__main__":
