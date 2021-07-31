@@ -13,7 +13,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
 
-# If modifying these scopes, delete the file token.json.
 SCOPES = [
     "https://www.googleapis.com/auth/drive.metadata.readonly",
     "https://www.googleapis.com/auth/drive.file",
@@ -41,14 +40,15 @@ def upload(file):
 
     backup_folder = get_folder(name="backup", drive=drive)
 
-    file = MediaFileUpload(file, mimetype="text/plain")
+    media = MediaFileUpload(file, mimetype="text/plain")
     metadata = {
         "name": file,
         "mimeType": "text/plain",
         "parents": [backup_folder.get("id")],
     }
 
-    drive.files().create(media_body=file, body=metadata).execute()
+
+    drive.files().create(media_body=media, body=metadata).execute()
 
 
 def get_folder(name, drive=None):
