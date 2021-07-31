@@ -25,7 +25,7 @@ GOOGLE_APP_FOLDER_NAME = "akingbee"
 GOOGLE_FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
 
 logging.basicConfig()
-logger = logging.getLogger()
+logger = logging.getLogger("backup-script")
 logger.setLevel(logging.INFO)
 
 def authenticate():
@@ -41,7 +41,7 @@ def upload(file):
 
     backup_folder = get_folder(name="backup", drive=drive)
 
-    # file = MediaFileUpload(file, mimetype="text/plain")
+    file = MediaFileUpload(file, mimetype="text/plain")
     metadata = {
         "name": file,
         "mimeType": "text/plain",
@@ -86,8 +86,7 @@ def create_folder(name, drive=None):
     return res
 
 
-def dump_database():
-    name = f"BACKUP_AKINGBEE-{datetime.datetime.utcnow().isoformat()}.txt"
+def dump_database(name):
     commands = [
         "pg_dump",
         "--file",
@@ -123,8 +122,9 @@ def main():
     """
     logger.info("Starting backup script")
 
-    file = dump_database()
-    encrypted = encrypt("here")
+    name = f"BACKUP_AKINGBEE-{datetime.datetime.utcnow().isoformat()}.txt"
+    file = dump_database(name)
+    encrypted = encrypt(name)
     upload(encrypted)
 
     logger.info("Mission succeded")
