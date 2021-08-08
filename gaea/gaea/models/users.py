@@ -52,3 +52,21 @@ class Owners(Base):
     deleted_at = Column(TIMESTAMP(), nullable=True)
 
     user = relationship(Users, backref="owners", uselist=False)
+
+
+class Permissions(Base):
+    __tablename__ = "permissions"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey(Users.id), nullable=False, index=True
+    )
+
+    impersonate = Column(BOOLEAN(), default=False, nullable=False)
+
+    created_at = Column(TIMESTAMP(), default=datetime.datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP(), default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
+    deleted_at = Column(TIMESTAMP(), nullable=True)
+
+    users = relationship(Users, backref="permissions")
