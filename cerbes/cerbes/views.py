@@ -2,6 +2,7 @@ import base64
 from collections import namedtuple
 import datetime
 from enum import Enum
+from typing import List
 import hashlib
 import re
 from sqlalchemy import exists
@@ -39,6 +40,10 @@ class UserResponseModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ListUserResponseModel(BaseModel):
+    users: List[UserResponseModel]
 
 
 class ActivateModel(BaseModel):
@@ -105,6 +110,27 @@ def create_user(
         )
 
     return user
+
+
+@router.get("/users", status_code=200, response_model=ListUserResponseModel)
+def get_users(
+    session: Session = Depends(get_session),
+    access_token: str = Cookie(None),
+):
+    if not access_token:
+        raise HTTPException(status_code=401)
+
+    data = helpers.validate_jwt(access_token)
+    if data is None:
+        raise HTTPException(status_code=401)
+
+    requester = session.query(Users).get(data["user_id"])
+    if requester.permissions is None:
+        raise HTTPException(status_code=403)
+
+    users = session.query(Users).filter(Users.deleted_at.is_(None)).all()
+
+    return {"users": users}
 
 
 @router.post("/login", status_code=200)

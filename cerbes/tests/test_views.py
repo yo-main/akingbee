@@ -249,3 +249,20 @@ def test_impersonate(test_app, test_db):
             assert new_data["exp"] != admin_data["exp"]
         else:
             assert new_data[key] == admin_data[key]
+
+
+def test_get_users(test_app):
+    creds = base64.b64encode("Maya:ILoveYouHoney1".encode()).decode()
+    response = test_app.post("/login", headers={"Authorization": f"Basic {creds}"})
+    jwt = response.json()["access_token"]
+
+    response = test_app.get("/users", cookies={"access_token": jwt})
+    assert response.status_code == 403
+
+    creds = base64.b64encode("Admin :azerty1!".encode()).decode()
+    response = test_app.post("/login", headers={"Authorization": f"Basic {creds}"})
+    jwt = response.json()["access_token"]
+
+    response = test_app.get("/users", cookies={"access_token": jwt})
+    assert response.status_code == 200
+    assert len(response.json()["users"]) == 5
