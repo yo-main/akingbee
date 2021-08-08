@@ -231,6 +231,7 @@ def reset_user_password_request(
 ):
     user_credentials = (
         session.query(Credentials)
+        .join(Users)
         .options(joinedload(Credentials.user))
         .filter(
             (Credentials.username == data.username) | (Users.email == data.username)

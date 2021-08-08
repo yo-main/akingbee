@@ -186,7 +186,7 @@ def test_refresh_jwt(test_app):
             assert data[key] == old_data[key]
 
 
-def test_impersonate(test_app, test_db):
+def test_impersonate(test_app, test_db, mock_rbmq_channel):
     data = {"username": "Admin", "password": "azerty1!", "email": "abc@abc.com"}
     response = test_app.post("/user", json=data, cookies={"language": "en"})
     assert response.status_code == 200
