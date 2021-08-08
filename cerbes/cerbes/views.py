@@ -145,6 +145,20 @@ def authenticate_user(
     return {"access_token": helpers.generate_jwt(user_id=user_id, extra_data=data)}
 
 
+@router.get("/refresh", status_code=200)
+def refresh_jwt(access_token: str = Cookie(None)):
+    if not access_token:
+        raise HTTPException(status_code=401)
+
+    data = helpers.validate_jwt(access_token)
+    if data is None:
+        raise HTTPException(status_code=401)
+
+    return {
+        "access_token": helpers.generate_jwt(user_id=data["user_id"], extra_data=data)
+    }
+
+
 @router.get("/check", status_code=200)
 def check_jwt(access_token: str = Cookie(None)):
     if not access_token:
@@ -191,7 +205,7 @@ def reset_user_password_request(
 ):
     user_credentials = (
         session.query(Credentials)
-        .join(Users)
+        .options(joinedload(Credentials.user))
         .filter(
             (Credentials.username == data.username) | (Users.email == data.username)
         )
@@ -252,3 +266,80 @@ def password_reset(data: PasswordResetModel, session: Session = Depends(get_sess
     credentials.password = helpers.get_password_hash(data.password)
     credentials.reset_id = None
     session.commit()
+
+
+@router.post("/impersonate/{user_id}", status_code=200)
+def impersonate_user(
+    user_id: uuid.UUID,
+    access_token: str = Cookie(None),
+    session: Session = Depends(get_session),
+):
+    user = session.query(Users).get(user_id)
+    if user is None:
+        raise HTTPException(status_code=404)
+
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+
+    data = helpers.validate_jwt(access_token)
+    if data is None:
+        raise HTTPException(status_code=401)
+
+    impersonator = (
+        session.query(Users).options(joinedload(Users.permissions)).get(data["user_id"])
+    )
+    if impersonator is None:
+        raise HTTPException(status_code=401)
+
+    if impersonator.permissions is None or not impersonator.permissions.impersonate:
+        raise HTTPException(status_code=403)
+
+    logger.info(
+        f"Impersonating user: {user.email} (by {impersonator.email})",
+        user_id=str(user.id),
+        impersonator_id=str(impersonator.id),
+    )
+
+    data = {
+        "username": f"{user.email} ({data['username']})",
+        "email": user.email,
+        "impersonator_id": str(impersonator.id),
+        "impersonator_email": data["email"],
+        "impersonator_username": data["username"],
+    }
+
+    return {"access_token": helpers.generate_jwt(user_id=user_id, extra_data=data)}
+
+
+@router.post("/desimpersonate", status_code=200)
+def desimpersonate(
+    access_token: str = Cookie(None), session: Session = Depends(get_session)
+):
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Missing authorization header")
+
+    data = helpers.validate_jwt(access_token)
+    if data is None or "impersonator_id" not in data:
+        raise HTTPException(status_code=401)
+
+    impersonator = (
+        session.query(Users)
+        .options(joinedload(Users.permissions))
+        .get(data["impersonator_id"])
+    )
+    if impersonator is None:
+        logger.warning("Could not find impersonator. This is odd")
+        raise HTTPException(status_code=400)
+
+    logger.info(
+        f"Desimpersonating from {impersonator.email}",
+        impersonator_id=str(impersonator.id),
+    )
+
+    data = {
+        "username": data["impersonator_username"],
+        "email": data["impersonator_email"],
+    }
+    return {
+        "access_token": helpers.generate_jwt(user_id=impersonator.id, extra_data=data)
+    }

@@ -41,12 +41,14 @@ def parse_authorization_header(auth_header):
 
 
 def generate_jwt(user_id, extra_data):
-    data = {
-        "user_id": user_id,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
-        "iss": CONFIG.SERVICE_NAME,
-    }
-    data.update(extra_data)
+    data = extra_data
+    data.update(
+        {
+            "user_id": str(user_id),
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+            "iss": CONFIG.SERVICE_NAME,
+        }
+    )
 
     return jwt.encode(payload=data, key=CONFIG.APP_SECRET, algorithm="HS256")
 

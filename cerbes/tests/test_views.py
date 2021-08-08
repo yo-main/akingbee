@@ -2,9 +2,11 @@
 import base64
 import jwt
 import uuid
+import time
 
 import pytest
 
+from gaea.models import Users, Permissions
 from gaea.rbmq import RBMQPublisher
 from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 
@@ -149,3 +151,101 @@ def test_reset_user_password(test_app, mock_rbmq_channel):
         "/password-reset/validate", params={"user_id": user["id"], "reset_id": reset_id}
     )
     assert response.status_code == 200
+
+
+def test_refresh_jwt(test_app):
+    creds = base64.b64encode("Maya:ILoveYouHoney1".encode()).decode()
+    response = test_app.post("/login", headers={"Authorization": f"Basic {creds}"})
+    token = response.json()["access_token"]
+
+    response = test_app.get("/refresh")
+    assert response.status_code == 401
+
+    response = test_app.get("/refresh", cookies={"access_token": ""})
+    assert response.status_code == 401
+
+    response = test_app.get("/refresh", cookies={"access_token": f"Basic {token}"})
+    assert response.status_code == 401
+
+    time.sleep(1)
+    response = test_app.get("/refresh", cookies={"access_token": token})
+    assert response.status_code == 200
+    new_token = response.json()["access_token"]
+
+    old_data = jwt.decode(
+        token, algorithms=["HS256"], options={"verify_signature": False}
+    )
+    data = jwt.decode(
+        new_token, algorithms=["HS256"], options={"verify_signature": False}
+    )
+
+    for key in data.keys():
+        if key == "exp":
+            assert data[key] != old_data[key]
+        else:
+            assert data[key] == old_data[key]
+
+
+def test_impersonate(test_app, test_db):
+    data = {"username": "Admin", "password": "azerty1!", "email": "abc@abc.com"}
+    response = test_app.post("/user", json=data, cookies={"language": "en"})
+    assert response.status_code == 200
+    user_id = response.json()["id"]
+
+    # give impersonate permission manually
+    session = test_db.get_session()
+    admin = session.query(Users).get(user_id)
+    admin.permissions = Permissions(impersonate=True)
+    session.add(admin)
+    session.commit()
+
+    # get user to be impersonated
+    user = (
+        session.query(Users).filter(Users.email == "maya.labeille@akingbee.com").one()
+    )
+    user_id = str(user.id)
+    admin_id = str(admin.id)
+    session.close()
+
+    # login with admin user
+    creds = base64.b64encode("Admin:azerty1!".encode()).decode()
+    headers = {"Authorization": f"Basic {creds}"}
+    response = test_app.post("/login", headers=headers)
+    assert response.status_code == 200
+    admin_jwt = response.json()["access_token"]
+
+    # finally, impersonate
+    response = test_app.post(
+        f"/impersonate/{str(user.id)}", cookies={"access_token": admin_jwt}
+    )
+    assert response.status_code == 200
+    impersonated_jwt = response.json()["access_token"]
+
+    admin_data = jwt.decode(
+        admin_jwt, algorithms=["HS256"], options={"verify_signature": False}
+    )
+    impersonated_data = jwt.decode(
+        impersonated_jwt, algorithms=["HS256"], options={"verify_signature": False}
+    )
+
+    assert admin_data["user_id"] == admin_id
+    assert impersonated_data["user_id"] == user_id
+    assert impersonated_data["impersonator_id"] == admin_id
+
+    # and now, impersonate
+    time.sleep(1)
+    response = test_app.post(
+        "/desimpersonate", cookies={"access_token": impersonated_jwt}
+    )
+    assert response.status_code == 200
+    new_jwt = response.json()["access_token"]
+
+    new_data = jwt.decode(
+        new_jwt, algorithms=["HS256"], options={"verify_signature": False}
+    )
+
+    for key in admin_data.keys():
+        if key == "exp":
+            assert new_data["exp"] != admin_data["exp"]
+        else:
+            assert new_data[key] == admin_data[key]
