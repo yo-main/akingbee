@@ -25,6 +25,7 @@ def test_models(test_db):
         assert hive.user.id == IDS["Users"][0]
         assert hive.apiary.id == IDS["Apiaries"][0]
         assert hive.swarm.id == IDS["Swarms"][0]
+        assert hive.user.permissions.impersonate
 
         swarm = session.query(Swarms).get(IDS["Swarms"][0])
         assert swarm.hive.id == hive.id

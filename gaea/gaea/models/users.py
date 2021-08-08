@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.dialects.postgresql import TIMESTAMP, TEXT, BYTEA, UUID, BOOLEAN
 
 from .base import Base
@@ -69,4 +69,4 @@ class Permissions(Base):
     )
     deleted_at = Column(TIMESTAMP(), nullable=True)
 
-    users = relationship(Users, backref="permissions")
+    user = relationship(Users, backref=backref("permissions", uselist=False))

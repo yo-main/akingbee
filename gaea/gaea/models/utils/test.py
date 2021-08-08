@@ -15,6 +15,7 @@ from gaea.models import (
     Events,
     EventStatuses,
     EventTypes,
+    Permissions,
 )
 
 
@@ -59,6 +60,7 @@ DATASETS = (
         Users(id=IDS["Users"][0], email=USER_EMAIL),
         Users(id=IDS["Users"][-1], email="unknown_user@gmail.com"),
     ),
+    (Permissions(user_id=IDS["Users"][0], impersonate=True),),
     (
         Credentials(
             id=IDS["Credentials"][0],

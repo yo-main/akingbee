@@ -1,4 +1,4 @@
-from .users import Users, Owners, Credentials
+from .users import Users, Owners, Credentials, Permissions
 from .apiaries import Apiaries, HoneyTypes
 from .hives import Hives, HiveConditions
 from .swarms import Swarms, SwarmHealthStatuses
