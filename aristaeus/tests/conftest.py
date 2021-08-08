@@ -10,7 +10,7 @@ from gaea.models.utils.test import DATASETS, IDS
 from gaea.webapp import MiddleWare, AppClient
 
 from aristaeus.api.v1 import ROUTERS
-from aristaeus.helpers import authentication
+from gaea.helpers import auth
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -40,7 +40,7 @@ def test_app(test_db):  # pylint: disable=redefined-outer-name
 def auth_token(monkeypatch):
     mocked_results = {"user_id": str(IDS["Users"][0])}
     monkeypatch.setattr(
-        authentication, "validate_access_token", AsyncMock(return_value=mocked_results)
+        auth, "validate_access_token", AsyncMock(return_value=mocked_results)
     )
     return "token"
 

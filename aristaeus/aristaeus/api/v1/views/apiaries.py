@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Cookie, HTTPException
 from pydantic import BaseModel, constr
 from sqlalchemy.orm import Session
 
-from aristaeus.helpers.authentication import get_logged_in_user
+from gaea.helpers.auth import get_logged_in_user
 from aristaeus.models import ApiaryPostModel, ApiaryPutModel, ApiaryModel
 
 router = APIRouter()

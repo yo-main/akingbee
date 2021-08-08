@@ -17,7 +17,7 @@ from typing import List, Optional
 import uuid
 
 
-from aristaeus.helpers.authentication import get_logged_in_user
+from gaea.helpers.auth import get_logged_in_user
 from aristaeus.models import SetupDataType, SetupDataPostModel, SetupDataModel
 
 

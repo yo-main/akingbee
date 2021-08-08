@@ -11,7 +11,7 @@ from gaea.models import Comments, Hives
 from gaea.webapp.utils import get_session
 
 from aristaeus.helpers.common import validate_uuid
-from aristaeus.helpers.authentication import get_logged_in_user
+from gaea.helpers.auth import get_logged_in_user
 from aristaeus.models import CommentModel, PostCommentModel, PutCommentModel
 
 router = APIRouter()
