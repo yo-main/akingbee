@@ -7,6 +7,7 @@ export const sections = {
   menu_manage: 'manage',
   menu_setup: 'setup',
   menu_profil: 'profil',
+  menu_admin: 'admin',
   submenu_hive: 'submenu_hive',
   submenu_hive_list: 'submenu_hive_list',
   submenu_hive_create: 'submenu_hive_create',

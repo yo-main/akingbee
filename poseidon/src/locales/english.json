@@ -122,5 +122,6 @@
     "word.description": "Description",
     "word.queenYear": "Queen's year",
     "form.insertQueenYear": "Insert the queen's year",
-    "form.hiveCondition": "Hive condition"
+    "form.hiveCondition": "Hive condition",
+    "word.admin": "Admin"
   }

@@ -122,5 +122,6 @@
     "word.description": "Description",
     "word.queenYear": "Année de la reine",
     "form.insertQueenYear": "Insérer l'année de la reine",
-    "form.hiveCondition": "État de la ruche"
+    "form.hiveCondition": "État de la ruche",
+    "word.admin": "Admin"
   }

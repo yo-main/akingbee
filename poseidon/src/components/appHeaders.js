@@ -3,7 +3,8 @@ import { Link, useHistory } from 'react-router-dom';
 import { Menu, Row, Col } from 'antd';
 
 import * as constants from '../constants';
-import { logOff } from '../services/authentication';
+import { logOff, getJWT, getLoggerUserData } from '../services/authentication';
+import { ContentState } from 'draft-js';
 
 class LanguageMenu extends React.Component {
   render() {
@@ -53,6 +54,14 @@ export function LoggedInMenu({ languageCallback, section }) {
     logOff(history);
   }
 
+  let is_admin= getLoggerUserData("admin");
+
+  let admin_menu = <></>;
+  if (is_admin) {
+    admin_menu = <Menu.Item key={constants.sections.menu_admin}><Link to={'/admin'}>{window.i18n("word.admin")}</Link></Menu.Item>
+  }
+
+
   return (
     <Row justify="space-between">
       <Col>
@@ -60,6 +69,7 @@ export function LoggedInMenu({ languageCallback, section }) {
           <Menu.Item key={constants.sections.menu_manage}><Link to={`/manage`}>{window.i18n("word.manage")}</Link></Menu.Item>
           <Menu.Item key={constants.sections.menu_setup}><Link to={`/setup`}>{window.i18n("word.setup")}</Link></Menu.Item>
           <Menu.Item key={constants.sections.menu_profil}><Link to={`/profil`}>{window.i18n("word.profil")}</Link></Menu.Item>
+          {admin_menu}
         </Menu>
       </Col>
       <Col>
