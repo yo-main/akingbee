@@ -229,8 +229,10 @@ def test_impersonate(test_app, test_db, mock_rbmq_channel):
     )
 
     assert admin_data["user_id"] == admin_id
+    assert admin_data["admin"]
     assert impersonated_data["user_id"] == user_id
     assert impersonated_data["impersonator_id"] == admin_id
+    assert impersonated_data["admin"]
 
     # and now, impersonate
     time.sleep(1)

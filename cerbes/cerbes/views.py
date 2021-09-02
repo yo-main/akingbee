@@ -166,6 +166,7 @@ def authenticate_user(
     data = {
         "username": user_credentials.username,
         "email": user_credentials.user.email,
+        "admin": user_credentials.user.permissions is not None,
     }
 
     return {"access_token": helpers.generate_jwt(user_id=user_id, extra_data=data)}
@@ -330,6 +331,7 @@ def impersonate_user(
     data = {
         "username": f"{user.email} ({data['username']})",
         "email": user.email,
+        "admin": data["admin"],
         "impersonator_id": str(impersonator.id),
         "impersonator_email": data["email"],
         "impersonator_username": data["username"],
@@ -366,6 +368,7 @@ def desimpersonate(
     data = {
         "username": data["impersonator_username"],
         "email": data["impersonator_email"],
+        "admin": data["admin"],
     }
     return {
         "access_token": helpers.generate_jwt(user_id=impersonator.id, extra_data=data)
