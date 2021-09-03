@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import './services/localization';
 
-import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, ProfilePage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage } from './pages';
+import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, ProfilePage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage, AdminPage } from './pages';
 import { setupData, sections } from './constants';
 
 class App extends React.Component {
@@ -81,6 +81,10 @@ class App extends React.Component {
 
             <PrivateFrame exact path="/profil" languageCallback={this.changeLanguage}>
               <ProfilePage />
+            </PrivateFrame>
+
+            <PrivateFrame exact path="/admin" languageCallback={this.changeLanguage}>
+              <AdminPage />
             </PrivateFrame>
 
             <PublicFrame exact path="/login" languageCallback={this.changeLanguage}>

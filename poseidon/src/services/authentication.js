@@ -84,9 +84,20 @@ export async function loginRequest({username, password, history}) {
   setTimeout(() => {loginRefresh({username, password})}, 5*1000*60);
 }
 
-async function loginRefresh({username, password}) {
-  console.log("REFRESHING")
 
+export async function impersonateRequest({ userId }) {
+  try {
+    let token = await impersonate({ userId });
+    storeJWT(token);
+  } catch (error) {
+    dealWithError(error);
+    return;
+  }
+
+  notificate("success", window.i18n("success.loginSuccessful"));
+}
+
+async function loginRefresh({username, password}) {
   if (!isLogged()) {
     return;
   };
@@ -95,7 +106,6 @@ async function loginRefresh({username, password}) {
     let token = await logIn({username, password});
     storeJWT(token);
   } catch (error) {
-    console.log("Could not refresh JWT token");
     return;
   }
 
@@ -124,4 +134,14 @@ export async function resetPassword({userId, resetId, password}) {
   let data = {user_id: userId, reset_id: resetId, password: password};
   let response = await cerbesApi.post('/password-reset', data)
   return response;
+}
+
+export async function getAllUsers() {
+  let response = await cerbesApi.get('/users')
+  return response;
+}
+
+export async function impersonate({ userId }) {
+  let response = await cerbesApi.post(`/impersonate/${userId}`)
+  return response.data.access_token;
 }

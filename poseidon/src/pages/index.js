@@ -5,3 +5,4 @@ export { NotFound } from './generic';
 export { SetupPage } from './setup';
 export { ApiaryPage, ApiaryCreationPage } from './manage/apiary';
 export { HivePage, HiveDetailsPage, HiveCreationPage } from './manage/hives';
+export { AdminPage } from './admin';

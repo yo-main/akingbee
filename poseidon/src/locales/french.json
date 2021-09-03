@@ -123,5 +123,10 @@
     "word.queenYear": "Année de la reine",
     "form.insertQueenYear": "Insérer l'année de la reine",
     "form.hiveCondition": "État de la ruche",
-    "word.admin": "Admin"
+    "word.admin": "Admin",
+    "title.email": "Email",
+    "title.id": "ID",
+    "title.activationId": "Activation ID",
+    "word.impersonate": "Impersonifier",
+    "confirm.impersonate": "Se connecter en tant que cet utilisateur"
   }

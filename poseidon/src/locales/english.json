@@ -123,5 +123,10 @@
     "word.queenYear": "Queen's year",
     "form.insertQueenYear": "Insert the queen's year",
     "form.hiveCondition": "Hive condition",
-    "word.admin": "Admin"
+    "word.admin": "Admin",
+    "title.email": "Email",
+    "title.id": "ID",
+    "title.activationId": "Activation ID",
+    "word.impersonate": "Impersonate",
+    "confirm.impersonate": "Log in as this user"
   }
