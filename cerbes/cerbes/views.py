@@ -124,7 +124,7 @@ def get_users(
     if data is None:
         raise HTTPException(status_code=401)
 
-    if not data.get("admin"):
+    if not (data.get("admin") or data.get("impersonator_id")):
         raise HTTPException(status_code=403)
 
     users = session.query(Users).filter(Users.deleted_at.is_(None)).all()
@@ -331,7 +331,7 @@ def impersonate_user(
     data = {
         "username": f"{user.email} ({data['username']})",
         "email": user.email,
-        "admin": data["admin"],
+        "admin": user.permissions is not None,
         "impersonator_id": str(impersonator.id),
         "impersonator_email": data["email"],
         "impersonator_username": data["username"],
@@ -368,7 +368,7 @@ def desimpersonate(
     data = {
         "username": data["impersonator_username"],
         "email": data["impersonator_email"],
-        "admin": data["admin"],
+        "admin": impersonator.permissions is not None,
     }
     return {
         "access_token": helpers.generate_jwt(user_id=impersonator.id, extra_data=data)

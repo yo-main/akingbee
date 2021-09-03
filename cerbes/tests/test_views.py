@@ -232,7 +232,7 @@ def test_impersonate(test_app, test_db, mock_rbmq_channel):
     assert admin_data["admin"]
     assert impersonated_data["user_id"] == user_id
     assert impersonated_data["impersonator_id"] == admin_id
-    assert impersonated_data["admin"]
+    assert impersonated_data["admin"] is False
 
     # and now, impersonate
     time.sleep(1)
@@ -249,7 +249,7 @@ def test_impersonate(test_app, test_db, mock_rbmq_channel):
     for key in admin_data.keys():
         if key == "exp":
             assert new_data["exp"] != admin_data["exp"]
-        else:
+        elif key != "admin":
             assert new_data[key] == admin_data[key]
 
 
