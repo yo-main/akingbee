@@ -94,11 +94,24 @@ export async function impersonateRequest({ userId }) {
     return;
   }
 
-  notificate("success", window.i18n("success.loginSuccessful"));
+  notificate("success", window.i18n("success.impersonationSuccessfull"));
+}
+
+export async function desimpersonateRequest() {
+  try {
+    let token = await desimpersonate();
+    storeJWT(token);
+  } catch (error) {
+    dealWithError(error);
+    return;
+  }
+
+  notificate("success", window.i18n("success.desimpersonationSuccessfull"));
+
 }
 
 async function loginRefresh({username, password}) {
-  if (!isLogged()) {
+  if (!isLogged() || getLoggerUserData("impersonate_id")) {
     return;
   };
 
@@ -143,5 +156,10 @@ export async function getAllUsers() {
 
 export async function impersonate({ userId }) {
   let response = await cerbesApi.post(`/impersonate/${userId}`)
+  return response.data.access_token;
+}
+
+export async function desimpersonate() {
+  let response = await cerbesApi.post(`/desimpersonate`)
   return response.data.access_token;
 }

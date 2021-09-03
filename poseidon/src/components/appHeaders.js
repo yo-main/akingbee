@@ -3,8 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { Menu, Row, Col } from 'antd';
 
 import * as constants from '../constants';
-import { logOff, getJWT, getLoggerUserData } from '../services/authentication';
-import { ContentState } from 'draft-js';
+import { logOff, getLoggerUserData } from '../services/authentication';
 
 class LanguageMenu extends React.Component {
   render() {
@@ -54,7 +53,7 @@ export function LoggedInMenu({ languageCallback, section }) {
     logOff(history);
   }
 
-  let is_admin= getLoggerUserData("admin");
+  let is_admin= getLoggerUserData("admin") || getLoggerUserData("impersonator_id");
 
   let admin_menu = <></>;
   if (is_admin) {

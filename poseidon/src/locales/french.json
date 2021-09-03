@@ -128,5 +128,9 @@
     "title.id": "ID",
     "title.activationId": "Activation ID",
     "word.impersonate": "Impersonifier",
-    "confirm.impersonate": "Se connecter en tant que cet utilisateur"
+    "confirm.impersonate": "Se connecter en tant que cet utilisateur",
+    "word.desimpersonate": "Desimpersonifier",
+    "confirm.desimpersonate": "Désimpersonifier cet utilisateur",
+    "success.impersonationSuccessfull": "Impersonification faites avec succès",
+    "success.desimpersonationSuccessfull": "Desimpersonification faites avec succès"
   }
