@@ -2,7 +2,7 @@ import base64
 from collections import namedtuple
 import datetime
 from enum import Enum
-from typing import List
+from typing import List, Optional
 import hashlib
 import re
 from sqlalchemy import exists
@@ -34,7 +34,7 @@ class UserModel(BaseModel):
 class UserResponseModel(BaseModel):
     id: uuid.UUID
     email: str
-    activation_id: uuid.UUID
+    activation_id: Optional[uuid.UUID]
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
@@ -124,8 +124,7 @@ def get_users(
     if data is None:
         raise HTTPException(status_code=401)
 
-    requester = session.query(Users).get(data["user_id"])
-    if requester.permissions is None:
+    if not data.get("admin"):
         raise HTTPException(status_code=403)
 
     users = session.query(Users).filter(Users.deleted_at.is_(None)).all()
@@ -208,12 +207,13 @@ def activate_user(
     if user is None:
         raise HTTPException(status_code=404)
 
-    if user.activation_id != data.activation_id:
-        raise HTTPException(status_code=400)
-
     if user.activated:
         return JSONResponse(content="Already activated", status_code=200)
 
+    if user.activation_id != data.activation_id:
+        raise HTTPException(status_code=400)
+
+    user.activation_id = None
     user.activated = True
     session.commit()
 
