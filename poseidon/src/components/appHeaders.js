@@ -53,6 +53,7 @@ export function LoggedInMenu({ languageCallback, section }) {
     logOff(history);
   }
 
+  let username = getLoggerUserData("username")
   let is_admin= getLoggerUserData("admin") || getLoggerUserData("impersonator_id");
 
   let admin_menu = <></>;
@@ -76,6 +77,9 @@ export function LoggedInMenu({ languageCallback, section }) {
       </Col>
       <Col>
         <Row>
+          <Col>
+            <span style={{color: 'grey'}}>{window.i18n("word.welcome")} {username}</span>
+          </Col>
           <Col>
             <LanguageMenu callback={languageCallback} />
           </Col>

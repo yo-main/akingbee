@@ -132,5 +132,6 @@
     "word.desimpersonate": "Desimpersonifier",
     "confirm.desimpersonate": "Désimpersonifier cet utilisateur",
     "success.impersonationSuccessfull": "Impersonification faites avec succès",
-    "success.desimpersonationSuccessfull": "Desimpersonification faites avec succès"
+    "success.desimpersonationSuccessfull": "Desimpersonification faites avec succès",
+    "word.welcome": "Bienvenue"
   }
