@@ -284,10 +284,10 @@ export class HivePage extends React.Component {
         title: window.i18n('word.queenYear'),
         dataIndex: ['swarm', 'queen_year'],
         render: (text, record) => {
-          let queenColor = QUEEN_COLOR_MAPPING[record.swarm.queen_year % 5];
-          if (record.swarm.queen_year === 1900) {
+          if (record.swarm === null || record.swarm.queen_year === 1900) {
             return "N/A";
-          };
+          }
+          let queenColor = QUEEN_COLOR_MAPPING[record.swarm.queen_year % 5];
           return <>{text} &nbsp;&nbsp;&nbsp;<span style={{fontSize: 20, color: queenColor}}>■</span></>;
         }
       },
