@@ -126,6 +126,7 @@ async def delete_hive(
     try:
         now = datetime.datetime.now()
         hive.deleted_at = now
+        hive.apiary_id = None
         # TODO: how to manage swarm when hive is being deleted
         # if hive.swarm:
         # hive.swarm.deleted_at = now

@@ -86,6 +86,9 @@ async def delete_apiary(
     if apiary is None or apiary.deleted_at or apiary.user_id != user_id:
         raise HTTPException(status_code=404)
 
+    if apiary.nb_hives > 0:
+        raise HTTPException(status_code=400, detail="Hives are linked to this apiary")
+
     try:
         apiary.deleted_at = datetime.datetime.utcnow()
         session.commit()
