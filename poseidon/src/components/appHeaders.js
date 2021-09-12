@@ -26,7 +26,7 @@ export function LoggedOutMenu({ languageCallback }) {
   return (
     <Row justify="center">
       <Col span={12}>
-        <Menu theme="dark" mode="horizontal">
+        <Menu theme="dark" mode="horizontal" selectedKeys={[""]}>
           <Menu.Item><Link to={`/`}><HomeOutlined style={{fontSize: '17px'}} /></Link></Menu.Item>
         </Menu>
       </Col>
@@ -39,7 +39,7 @@ export function LoggedOutMenu({ languageCallback }) {
             <LanguageMenu callback={languageCallback} />
           </Col>
           <Col>
-            <Menu theme="dark" mode="horizontal">
+            <Menu theme="dark" mode="horizontal" selectedKeys={[]}>
               <Menu.Item><Link to={`/login`}>{window.i18n("word.login")}</Link></Menu.Item>
               <Menu.Item><Link to={`/register`}>{window.i18n("word.register")}</Link></Menu.Item>
             </Menu>
