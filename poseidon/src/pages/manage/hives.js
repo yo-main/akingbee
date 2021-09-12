@@ -613,9 +613,10 @@ export class HiveDetailsPage extends React.Component {
     );
 
     let cascaderOptions = this.getCascaderOptions();
-    let queenColor = QUEEN_COLOR_MAPPING[this.state.hive.swarm.queen_year % 5];
-    if (this.state.hive.swarm.queen_year === 1900) {
-      queenColor = QUEEN_INVISIBLE;
+
+    let queenColor = QUEEN_INVISIBLE;
+    if (this.state.hive.swarm && this.state.hive.swarm.queen_year !== 1900) {
+      queenColor = QUEEN_COLOR_MAPPING[this.state.hive.swarm.queen_year % 5];
     }
 
     return (
