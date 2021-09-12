@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Menu, Row, Col } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
 
 import * as constants from '../constants';
 import { logOff, getLoggerUserData } from '../services/authentication';
@@ -25,6 +26,9 @@ export function LoggedOutMenu({ languageCallback }) {
   return (
     <Row justify="center">
       <Col span={12}>
+        <Menu theme="dark" mode="horizontal">
+          <Menu.Item><Link to={`/`}><HomeOutlined style={{fontSize: '17px'}} /></Link></Menu.Item>
+        </Menu>
       </Col>
       <Col span={4} >
         <span style={{color: '#404040'}}>AKingBee {process.env.REACT_APP_VERSION}</span>
@@ -66,6 +70,7 @@ export function LoggedInMenu({ languageCallback, section }) {
     <Row justify="space-between">
       <Col>
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[section]}>
+          <Menu.Item><Link to={`/`}><HomeOutlined style={{fontSize: '17px'}} /></Link></Menu.Item>
           <Menu.Item key={constants.sections.menu_manage}><Link to={`/manage`}>{window.i18n("word.manage")}</Link></Menu.Item>
           <Menu.Item key={constants.sections.menu_setup}><Link to={`/setup`}>{window.i18n("word.setup")}</Link></Menu.Item>
           <Menu.Item key={constants.sections.menu_profil}><Link to={`/profil`}>{window.i18n("word.profil")}</Link></Menu.Item>
