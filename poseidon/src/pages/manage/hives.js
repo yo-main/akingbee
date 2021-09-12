@@ -48,13 +48,39 @@ export function UpdateHiveForm(props) {
 
   form.setFieldsValue({
     "hiveId": props.hive.id,
-    "swarmId": props.hive.swarm.id,
     "name": props.hive.name,
     "owner": props.hive.owner.id,
     "condition": props.hive.condition.id,
-    "health": props.hive.swarm.health.id,
-    "queenYear": props.hive.swarm.queen_year,
   })
+
+  let swarmMenuItems = <></>;
+  if (props.hive.swarm) {
+    form.setFieldsValue({
+      "swarmId": props.hive.swarm.id,
+      "health": props.hive.swarm.health.id,
+      "queenYear": props.hive.swarm.queen_year,
+    })
+
+    swarmMenuItems = (
+      <>
+        <Form.Item label={window.i18n("word.swarmHealth")} name="health">
+          <Select>
+            {
+              props.healths.map(data => {
+                return (
+                  <Select.Option key={data.id}>{data.name}</Select.Option>
+                )
+              })
+            }
+          </Select>
+        </Form.Item>
+        <Form.Item label={window.i18n("word.queenYear")} name="queenYear" rules={[{required: true, message: window.i18n('form.insertQueenYear')}]}>
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item name="swarmId" hidden={true} />
+      </>
+    )
+  }
 
   return (
     <Form {... formItemLayout} id={props.formId} form={form} onFinish={props.onFinish} onFailed={onFailed} requiredMark={false}>
@@ -83,22 +109,8 @@ export function UpdateHiveForm(props) {
           }
         </Select>
       </Form.Item>
-      <Form.Item label={window.i18n("word.swarmHealth")} name="health">
-        <Select>
-          {
-            props.healths.map(data => {
-              return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
-              )
-            })
-          }
-        </Select>
-      </Form.Item>
-      <Form.Item label={window.i18n("word.queenYear")} name="queenYear" rules={[{required: true, message: window.i18n('form.insertQueenYear')}]}>
-        <Input type="number" />
-      </Form.Item>
+      {swarmMenuItems}
       <Form.Item name="hiveId" hidden={true} />
-      <Form.Item name="swarmId" hidden={true} />
     </Form>
   )
 }
@@ -569,7 +581,7 @@ export class HiveDetailsPage extends React.Component {
         break;
       case 'addSwarm':
         try {
-          let swarm = await createSwarm({health_status_id: action[1]});
+          let swarm = await createSwarm({health_status_id: action[1], queen_year: new Date().getFullYear()});
           await updateHive(this.state.hive.id, {swarm_id: swarm.id})
           let hive = await getHive(this.state.hive.id)
           this.setState((state) => {
