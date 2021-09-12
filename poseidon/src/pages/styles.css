@@ -45,3 +45,12 @@
   border-color: #141414;
   background: #141414;
 }
+
+.slick-dots button {
+  background: orange !important;
+  height: 6px !important;
+}
+
+#language-menu {
+  color: rgba(255, 255, 255, 0.65);
+}

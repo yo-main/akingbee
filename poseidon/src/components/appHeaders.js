@@ -13,7 +13,7 @@ class LanguageMenu extends React.Component {
 
     return (
       <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[window.currentLanguage]}>
-        <Menu.SubMenu key="language_menu" title={window.i18n("word.language")} onClick={this.props.callback}>
+        <Menu.SubMenu key="language_menu" title={window.i18n("word.language")} onClick={this.props.callback} id='language-menu'>
           {items}
         </Menu.SubMenu>
       </Menu>
@@ -78,7 +78,7 @@ export function LoggedInMenu({ languageCallback, section }) {
       <Col>
         <Row>
           <Col>
-            <span style={{color: 'grey'}}>{window.i18n("word.welcome")} {username}</span>
+            <span style={{color: 'white'}}>{window.i18n("word.welcome")} {username}</span>
           </Col>
           <Col>
             <LanguageMenu callback={languageCallback} />

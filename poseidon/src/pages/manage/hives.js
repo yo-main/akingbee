@@ -246,7 +246,9 @@ export class HivePage extends React.Component {
 
     try {
       await updateHive(hiveId, hiveData);
-      await updateSwarm(swarmId, swarmData);
+      if (swarmId) {
+        await updateSwarm(swarmId, swarmData);
+      }
 
       let hives = await getHives();
       let tableData = this.getTableData(hives);
