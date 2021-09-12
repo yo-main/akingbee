@@ -1,6 +1,6 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
+import { BrowserRouter, Switch, withRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import './services/localization';
 
@@ -107,9 +107,9 @@ class App extends React.Component {
               <PasswordResetPageWithRouter />
             </PublicFrame>
 
-            <Route path="*">
-                <NotFound default />
-            </Route>
+            <PublicFrame path="*">
+              <NotFound default />
+            </PublicFrame>
 
           </Switch>
         </BrowserRouter>

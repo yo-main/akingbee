@@ -14,11 +14,9 @@ export const UNLOGGED_STATUS = 'UNLOGGED';
 
 export function NotFound() {
   return (
-    <>
     <Row justify="center" align="middle" style={{'min-height': '85vh'}}>
       <NotFoundSvg />
     </Row>
-    </>
   )
 }
 

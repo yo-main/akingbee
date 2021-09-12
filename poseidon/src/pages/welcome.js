@@ -54,7 +54,7 @@ export function WelcomePage(props) {
                 </Row>
                 <Row>
                   <div style={{border: "2px solid #aaaaaa", borderRadius: "5px", margin: "20px"}}>
-                    <img src={apiaryList} width="100%"/>
+                    <img src={apiaryList} alt="list of apiaries example" width="100%"/>
                   </div>
                 </Row>
                 <Row>
@@ -68,7 +68,7 @@ export function WelcomePage(props) {
                 </Row>
                 <Row>
                   <div style={{border: "2px solid #aaaaaa", borderRadius: "5px", margin: "20px"}}>
-                    <img src={hiveList} width="100%"/>
+                    <img src={hiveList} alt="List of hives example" width="100%"/>
                   </div>
                 </Row>
                 <Row>
@@ -82,7 +82,7 @@ export function WelcomePage(props) {
                 </Row>
                 <Row>
                   <div style={{border: "2px solid #aaaaaa", borderRadius: "5px", margin: "20px"}}>
-                    <img src={hiveDetails} width="100%"/>
+                    <img src={hiveDetails} alt="Hive details example" width="100%"/>
                   </div>
                 </Row>
                 <Row>
@@ -96,7 +96,7 @@ export function WelcomePage(props) {
                 </Row>
                 <Row>
                   <div style={{border: "2px solid #aaaaaa", borderRadius: "5px", margin: "20px"}}>
-                    <img src={hiveEvents} width="100%"/>
+                    <img src={hiveEvents} alt="Hive events example" width="100%"/>
                   </div>
                 </Row>
                 <Row>
