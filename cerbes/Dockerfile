@@ -14,6 +14,7 @@ RUN apt-get update && \
     curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python && \
     mv /root/.poetry $POETRY_PATH && \
     python -m venv $VENV_PATH && \
+    pip --upgrade pip && \
     poetry config virtualenvs.create false && \
     poetry install --no-interaction --no-ansi --no-dev -vvv && \
     apt-get clean && \
