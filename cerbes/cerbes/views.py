@@ -5,7 +5,7 @@ from enum import Enum
 from typing import List, Optional
 import hashlib
 import re
-from sqlalchemy import exists
+from sqlalchemy import exists, or_
 from sqlalchemy.orm import joinedload, Session
 import uuid
 
@@ -87,25 +87,16 @@ def create_user(
 
     # create all objects
     user = Users(email=user_data.email)
-    credentials_with_username = Credentials(
+    credentials = Credentials(
         user=user,
         username=user_data.username,
         password=helpers.get_password_hash(user_data.password),
     )
 
-    if user_data.username != user_data.email:
-        credentials_with_email = Credentials(
-            user=user,
-            username=user_data.email,
-            password=helpers.get_password_hash(user_data.password),
-        )
-
     owner = Owners(user=user, name=user_data.username)
 
     try:
-        session.add_all(
-            (user, credentials_with_email, credentials_with_username, owner)
-        )
+        session.add_all((user, credentials, owner))
         session.commit()
         logger.info(
             f"User created: {user.email}", user_id=user.id, user_email=user.email
@@ -155,7 +146,13 @@ def authenticate_user(
 
     user_credentials = (
         session.query(Credentials)
-        .filter(Credentials.username == credentials.username)
+        .join(Users)
+        .filter(
+            or_(
+                Credentials.username == credentials.username,
+                Users.email == credentials.username,
+            )
+        )
         .one_or_none()
     )
     if user_credentials is None or user_credentials.password != credentials.password:
