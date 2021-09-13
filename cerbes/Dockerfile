@@ -1,5 +1,5 @@
 FROM python:3.9.1-slim-buster as build
-ENV PIP_NO_CACHE_DIR=off \
+ENV PIP_NO_CACHE_DIR=on \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     TZ=Europe/Paris \
     POETRY_PATH=/opt/poetry \
