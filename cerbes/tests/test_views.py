@@ -56,6 +56,7 @@ def test_register_user(
         ("maya:ilovehoney", 401, "Wrong credentials"),
         ("maya.labeille@akingbee.com:ILoveHoney", 401, "Wrong credentials"),
         ("Maya:ILoveYouHoney1", 200, None),
+        ("maya.labeille@akingbee.com:ILoveYouHoney1", 200, None),
     ),
 )
 def test_login(test_app, creds, expected_code, expected_content):

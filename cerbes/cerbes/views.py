@@ -87,15 +87,25 @@ def create_user(
 
     # create all objects
     user = Users(email=user_data.email)
-    credentials = Credentials(
+    credentials_with_username = Credentials(
         user=user,
         username=user_data.username,
         password=helpers.get_password_hash(user_data.password),
     )
+
+    if user_data.username != user_data.email:
+        credentials_with_email = Credentials(
+            user=user,
+            username=user_data.email,
+            password=helpers.get_password_hash(user_data.password),
+        )
+
     owner = Owners(user=user, name=user_data.username)
 
     try:
-        session.add_all((user, credentials, owner))
+        session.add_all(
+            (user, credentials_with_email, credentials_with_username, owner)
+        )
         session.commit()
         logger.info(
             f"User created: {user.email}", user_id=user.id, user_email=user.email
