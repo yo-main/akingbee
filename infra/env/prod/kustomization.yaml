@@ -36,13 +36,13 @@ resources:
 
 images:
 - name: yomain/aristaeus
-  newTag: 1.9.0
+  newTag: 1.9.2
 - name: yomain/cerbes
-  newTag: 1.9.0
+  newTag: 1.11.3
 - name: yomain/hermes
   newTag: 1.1.3
 - name: yomain/poseidon
-  newTag: 1.10.5
+  newTag: 1.13.1
 
 vars:
 - name: MAIN_HOSTED_ZONE
