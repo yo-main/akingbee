@@ -42,7 +42,7 @@ class CustomLogger(logging.Logger):
             args,
             exc_info=exc_info,
             stack_info=stack_info,
-            extra=kwargs,
+            extra={"extra": kwargs},
         )
 
     def info(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
@@ -52,7 +52,7 @@ class CustomLogger(logging.Logger):
             args,
             exc_info=exc_info,
             stack_info=stack_info,
-            extra=kwargs,
+            extra={"extra": kwargs},
         )
 
     def warning(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
@@ -62,7 +62,7 @@ class CustomLogger(logging.Logger):
             args,
             exc_info=exc_info,
             stack_info=stack_info,
-            extra=kwargs,
+            extra={"extra": kwargs},
         )
 
     def critical(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
@@ -72,7 +72,7 @@ class CustomLogger(logging.Logger):
             args,
             exc_info=exc_info,
             stack_info=stack_info,
-            extra=kwargs,
+            extra={"extra": kwargs},
         )
 
     def error(self, msg, *args, exc_info=False, stack_info=False, **kwargs):
@@ -82,7 +82,7 @@ class CustomLogger(logging.Logger):
             args,
             exc_info=exc_info,
             stack_info=stack_info,
-            extra=kwargs,
+            extra={"extra": kwargs},
         )
 
     def exception(self, msg, *args, stack_info=False, exc_info=True, **kwargs):
@@ -92,7 +92,7 @@ class CustomLogger(logging.Logger):
             args,
             exc_info=exc_info,
             stack_info=stack_info,
-            extra=kwargs,
+            extra={"extra": kwargs},
         )
 
 
