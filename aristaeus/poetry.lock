@@ -234,7 +234,7 @@ test = ["pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<3.0.0)", "pytest-async
 
 [[package]]
 name = "gaea"
-version = "1.8.1"
+version = "1.8.2"
 description = "A microservice chassis for akingbee.com !"
 category = "main"
 optional = false
@@ -792,7 +792,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "95788de597dc28d9a6241b3db6230b1c79f8367461de980547b882a46abf26a0"
+content-hash = "3f9b99685410fe0a2b1774e5c06adad6e85f317a718e46e21898da80a6307ad7"
 
 [metadata.files]
 aiohttp = [
@@ -957,8 +957,8 @@ fastapi = [
     {file = "fastapi-0.68.1.tar.gz", hash = "sha256:644bb815bae326575c4b2842469fb83053a4b974b82fa792ff9283d17fbbd99d"},
 ]
 gaea = [
-    {file = "gaea-1.8.1-py3-none-any.whl", hash = "sha256:7d0aa6c6d0608054a8ef52f8a512c0aa485c4ef24b59ddb8c76a3f505a912d7d"},
-    {file = "gaea-1.8.1.tar.gz", hash = "sha256:0f049e8be7ece4b14a18f8efe2d0579fe311b6cc5b6b33d1d084b3d613bf743a"},
+    {file = "gaea-1.8.2-py3-none-any.whl", hash = "sha256:1e31dc77537bf1c5d223e646e65e2d0024be610940f37d28ddd8fb0add4e26a1"},
+    {file = "gaea-1.8.2.tar.gz", hash = "sha256:b1dc696c98d0f161e13dada973ec59903d56e745764a2a8b811193887c7f4721"},
 ]
 greenlet = [
     {file = "greenlet-1.1.1-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:476ba9435afaead4382fbab8f1882f75e3fb2285c35c9285abb3dd30237f9142"},
