@@ -21,10 +21,10 @@ scrape_configs:
       - json:
           expressions:
             job: name
-            user_id: user_id
-            user_email: user_email
-            hive_id: hive.id
-            apiary_id: apiary.id
+            user_id: extra.user_id
+            user_email: extra.user_email
+            hive_id: extra.hive.id
+            apiary_id: extra.apiary.id
             message: message
             duration: duration
             levelname: levelname
@@ -64,6 +64,8 @@ scrape_configs:
           request_method:
           request_ip_address:
           request_user_agent:
+          exc_info:
+          extra:
       - output:
           source: log_message
 
