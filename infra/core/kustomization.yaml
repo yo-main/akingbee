@@ -3,11 +3,22 @@ configMapGenerator:
   files:
   - config/grafana/promtail.yaml
 
+bases:
+  - ./elk
+
 resources:
-  - promtail.yaml
-  - grafana.yaml
   - ingress-main.yaml
   - ingress-redirect.yaml
   - rbmq.yaml
   - volumes.yaml
   - postgresql.yaml
+
+
+images:
+- name: docker.elastic.co/elasticsearch/elasticsearch
+  newTag: 7.15.1
+- name: docker.elastic.co/kibana/kibana
+  newTag: 7.15.1
+- name: docker.elastic.co/filebeat/filebeat
+  newTag: 7.15.1
+

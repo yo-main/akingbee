@@ -1,0 +1,4 @@
+resources:
+  - elasticsearch.yaml
+  - kibana.yaml
+  - filebeat.yaml

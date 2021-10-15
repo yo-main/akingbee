@@ -12,7 +12,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: loki-data
+  name: elasticsearch-data
 spec:
   accessModes:
   - ReadWriteOnce

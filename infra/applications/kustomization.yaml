@@ -4,3 +4,13 @@ resources:
   - cerbes.yaml
   - poseidon.yaml
   - hermes.yaml
+
+images:
+- name: yomain/aristaeus
+  newTag: 1.9.4
+- name: yomain/cerbes
+  newTag: 1.11.6
+- name: yomain/hermes
+  newTag: 1.1.5
+- name: yomain/poseidon
+  newTag: 1.13.1
