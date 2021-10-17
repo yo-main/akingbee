@@ -1,4 +1,3 @@
 resources:
   - backup.yaml
-  - migration.yaml
 

@@ -2,26 +2,26 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: filebeat
-  namespace: kube-system
+  namespace: default
   labels:
-    k8s-app: filebeat
+    app: filebeat
 spec:
   selector:
-    matchlabel:
-      name: filebeat
+    matchLabels:
+      app: filebeat
   template:
     metadata:
       labels:
         app: filebeat
     spec:
-      serviceAccount: filebeat-service-account
-      serviceAccountName: filebeat-service-account
+      serviceAccount: filebeat
+      serviceAccountName: filebeat
       terminationGracePeriodSeconds: 30
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: filebeat
-        image: docker.elastic.co/filebeat/filebeat
+        image: docker.elastic.co/beats/filebeat
         args: [
           "-c", "/etc/filebeat.yml",
           "-e",
@@ -36,13 +36,16 @@ spec:
             memory: 100Mi
         env:
         - name: ELASTICSEARCH_HOST
-          value: http://elasticsearch:9200
+          value: elasticsearch
         - name: ELASTICSEARCH_PORT
-          value: 9200
+          value: "9200"
         - name: ELASTICSEARCH_USERNAME
           value: elastic
         - name: ELASTICSEARCH_PASSWORD
-          value: changeme
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: ELASTIC_PASSWORD
         - name: NODE_NAME
           valueFrom:
             fieldRef:
@@ -92,7 +95,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: filebeat
-  namespace: kube-system
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: filebeat
@@ -102,11 +105,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: filebeat
-  namespace: kube-system
+  namespace: default
 subjects:
   - kind: ServiceAccount
     name: filebeat
-    namespace: kube-system
+    namespace: default
 roleRef:
   kind: Role
   name: filebeat
@@ -116,11 +119,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: filebeat-kubeadm-config
-  namespace: kube-system
+  namespace: default
 subjects:
   - kind: ServiceAccount
     name: filebeat
-    namespace: kube-system
+    namespace: default
 roleRef:
   kind: Role
   name: filebeat-kubeadm-config
@@ -131,7 +134,7 @@ kind: ClusterRole
 metadata:
   name: filebeat
   labels:
-    k8s-app: filebeat
+    app: filebeat
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources:
@@ -152,9 +155,9 @@ kind: Role
 metadata:
   name: filebeat
   # should be the namespace where filebeat is running
-  namespace: kube-system
+  namespace: default
   labels:
-    k8s-app: filebeat
+    app: filebeat
 rules:
   - apiGroups:
       - coordination.k8s.io
@@ -166,9 +169,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: filebeat-kubeadm-config
-  namespace: kube-system
+  namespace: default
   labels:
-    k8s-app: filebeat
+    app: filebeat
 rules:
   - apiGroups: [""]
     resources:
@@ -181,7 +184,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filebeat
-  namespace: kube-system
+  namespace: default
   labels:
-    k8s-app: filebeat
+    app: filebeat
 ---

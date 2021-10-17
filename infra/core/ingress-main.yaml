@@ -6,7 +6,7 @@ spec:
   tls:
   - hosts:
     - $(MAIN_HOSTED_ZONE)
-    - "grafana.$(MAIN_HOSTED_ZONE)"
+    - "kibana.$(MAIN_HOSTED_ZONE)"
     - "cerbes.$(MAIN_HOSTED_ZONE)"
     - "aristaeus.$(MAIN_HOSTED_ZONE)"
     - "rbmq.$(MAIN_HOSTED_ZONE)"
@@ -46,16 +46,16 @@ spec:
             port:
               number: 9002
 
-  - host: "grafana.$(MAIN_HOSTED_ZONE)"
+  - host: "kibana.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: grafana
+            name: kibana
             port:
-              number: 80
+              number: 5601
 
   - host: "rbmq.$(MAIN_HOSTED_ZONE)"
     http:

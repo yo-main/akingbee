@@ -19,6 +19,6 @@ images:
   newTag: 7.15.1
 - name: docker.elastic.co/kibana/kibana
   newTag: 7.15.1
-- name: docker.elastic.co/filebeat/filebeat
+- name: docker.elastic.co/beats/filebeat
   newTag: 7.15.1
 

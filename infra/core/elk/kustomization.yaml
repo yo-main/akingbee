@@ -1,3 +1,14 @@
+configMapGenerator:
+- name: elastic-config
+  files:
+  - conf/elasticsearch.yml
+- name: kibana-config
+  files:
+  - conf/kibana.yml
+- name: filebeat-config
+  files:
+  - conf/filebeat.yml
+
 resources:
   - elasticsearch.yaml
   - kibana.yaml

@@ -9,7 +9,7 @@ secretGenerator:
 bases:
 - ../../applications
 - ../../core
-- ../../jobs
+- ../../jobs/migrations
 
 resources:
 - letsencrypt.yaml
@@ -22,3 +22,4 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: data.DNS
+

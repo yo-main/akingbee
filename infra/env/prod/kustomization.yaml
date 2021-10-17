@@ -28,7 +28,8 @@ secretGenerator:
 bases:
 - ../../applications
 - ../../core
-- ../../jobs
+- ../../jobs/migrations
+- ../../jobs/backup
 
 resources:
 - letsencrypt.yaml
