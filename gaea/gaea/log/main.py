@@ -173,6 +173,8 @@ stream_handler.setLevel(LOG_LEVEL)
 
 if CONFIG.get("LOG_FORMAT") == "minimize":
     stream_log_format = normal_formatter
+elif CONFIG.get("LOG_FORMAT") == "json":
+    stream_log_format = json_formatter
 else:
     stream_log_format = pretty_json_formatter
 
