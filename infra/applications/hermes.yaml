@@ -19,10 +19,8 @@ spec:
         env:
         - name: AKB_SERVICE_NAME
           value: hermes
-        - name: AKB_LOGS_FOLDER_NAME
-          value: "/var/log/hermes"
-        - name: AKB_LOG_TO_FILE
-          value: "true"
+        - name: AKB_LOG_FORMAT
+          value: json
 
         - name: ENV
           valueFrom:
