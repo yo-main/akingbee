@@ -28,6 +28,13 @@ spec:
       labels:
         app: poseidon
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: elastic-node
+                operator: DoesNotExist
       containers:
       - image: yomain/poseidon:latest
         name: poseidon

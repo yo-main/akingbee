@@ -1,10 +1,12 @@
 server.name: kibana
 server.host: "0"
 server.shutdownTimeout: "5s"
+server.publicBaseUrl: "https://kibana.${MAIN_HOSTED_ZONE}"
 
 monitoring.ui.container.elasticsearch.enabled: true
 
 elasticsearch.hosts: ['http://elasticsearch:9200']
+
 
 xpack.security.authc:
   providers:

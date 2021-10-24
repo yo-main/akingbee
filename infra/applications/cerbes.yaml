@@ -28,6 +28,13 @@ spec:
       labels:
         app: cerbes-api
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: elastic-node
+                operator: DoesNotExist
       containers:
       - image: yomain/cerbes:latest
         name: cerbes-api

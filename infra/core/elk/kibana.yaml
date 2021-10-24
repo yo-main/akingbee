@@ -33,6 +33,13 @@ spec:
         configMap:
           defaultMode: 0640
           name: kibana-config
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: elastic-node
+                operator: DoesNotExist
       containers:
       - name: kibana
         image: docker.elastic.co/kibana/kibana
@@ -51,3 +58,9 @@ spec:
             secretKeyRef:
               name: env-secrets-config
               key: ELASTIC_PASSWORD
+        - name: MAIN_HOSTED_ZONE
+          valueFrom:
+            configMapKeyRef:
+              name: env-vars-config
+              key: DNS
+

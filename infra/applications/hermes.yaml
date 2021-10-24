@@ -13,6 +13,13 @@ spec:
       labels:
         app: hermes
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: elastic-node
+                operator: DoesNotExist
       containers:
       - image: yomain/hermes:latest
         name: hermes
