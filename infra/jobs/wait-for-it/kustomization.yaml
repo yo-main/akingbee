@@ -1,0 +1,4 @@
+configMapGenerator:
+- name: wait-for-it
+  files:
+  - wait-for-it.sh

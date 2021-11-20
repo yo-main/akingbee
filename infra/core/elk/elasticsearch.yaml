@@ -67,7 +67,60 @@ spec:
             secretKeyRef:
               name: env-secrets-config
               key: ELASTIC_PASSWORD
-        # - name: ES_JVM_OPTIONS
-        #   value: "-Xms26g -Xmx26g"
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: provision-elasticsearch
+  labels:
+    app: provision-elasticsearch
+spec:
+  securityContext:
+    fsGroup: 0
+  volumes:
+  - name: provision-elasticsearch
+    configMap:
+      defaultMode: 0770
+      name: provision-elasticsearch
+  - name: wait-for-it
+    configMap:
+      defaultMode: 0770
+      name: wait-for-it
+  restartPolicy: OnFailure
+  containers:
+  - name: provision-elasticsearch
+    image: ellerbrock/alpine-bash-curl-ssl
+    command: ["/script/wait-for-it.sh", "-t", "300", "elasticsearch:9200", "--", "/app/provision-elasticsearch.sh"]
+    volumeMounts:
+    - name: wait-for-it
+      mountPath: /script
+      readOnly: true
+    - name: provision-elasticsearch
+      mountPath: /app
+      readOnly: true
+    env:
+    - name: ELASTIC_HOST
+      value: elasticsearch:9200
+    - name: ELASTIC_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: env-secrets-config
+          key: ELASTIC_PASSWORD
+    - name: KIBANA_SYSTEM_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: env-secrets-config
+          key: KIBANA_SYSTEM_PASSWORD
+    - name: BEATS_SYSTEM_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: env-secrets-config
+          key: BEATS_SYSTEM_PASSWORD
+    - name: KIBANA_YOMAIN_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: env-secrets-config
+          key: KIBANA_YOMAIN_PASSWORD
 
 

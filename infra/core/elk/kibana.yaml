@@ -52,12 +52,12 @@ spec:
           subPath: kibana.yml
         env:
         - name: ELASTICSEARCH_USERNAME
-          value: elastic
+          value: kibana_system
         - name: ELASTICSEARCH_PASSWORD
           valueFrom:
             secretKeyRef:
               name: env-secrets-config
-              key: ELASTIC_PASSWORD
+              key: KIBANA_SYSTEM_PASSWORD
         - name: MAIN_HOSTED_ZONE
           valueFrom:
             configMapKeyRef:

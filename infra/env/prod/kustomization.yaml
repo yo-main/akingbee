@@ -30,6 +30,7 @@ bases:
 - ../../core
 - ../../jobs/migrations
 - ../../jobs/backup
+- ../../jobs/wait-for-it
 
 resources:
 - letsencrypt.yaml
