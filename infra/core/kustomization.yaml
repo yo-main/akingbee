@@ -1,7 +1,8 @@
 configMapGenerator:
-- name: promtail-config
+- name: db-users-setup
   files:
-  - config/grafana/promtail.yaml
+  - config/postgresql/users.sh
+
 
 bases:
   - ./elk

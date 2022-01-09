@@ -61,12 +61,29 @@ spec:
               key: DATABASE_DBNAME
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        - name: FIREFLY_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: FIREFLY_USERNAME
+        - name: FIREFLY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env-secrets-config
+              key: FIREFLY_PASSWORD
         ports:
         - containerPort: 5432
         volumeMounts:
         - name: data
           mountPath: /var/lib/postgresql/data
+        - name: db-users-setup
+          mountPath: /docker-entrypoint-initdb.d/
+          readOnly: true
       volumes:
       - name: data
         persistentVolumeClaim:
           claimName: postgres-data
+      - name: db-users-setup
+        configMap:
+          defaultMode: 0770
+          name: db-users-setup
