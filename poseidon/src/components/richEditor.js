@@ -1,62 +1,49 @@
 import React from 'react';
 
-import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-
-const TOOLBAR = {
-  options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker',],
-  inline: {
-    options: ['bold', 'italic', 'underline', 'strikethrough'],
-  },
-  blockType: {
-    options: ['Normal', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'Blockquote'],
-  },
-  colorPicker: {
-    colors: [
-      'rgb(97,189,109)', 'rgb(44,130,201)', 'rgb(147,101,184)', 'rgb(71,85,119)',
-      'rgb(204,204,204)', 'rgb(0,0,0)', 'rgb(251,160,38)', 'rgb(226,80,65)',
-    ]
-  },
-}
+import { Editor } from '@tinymce/tinymce-react';
 
 
 export function RichEditor(props) {
-  let editor = props.defaultContent ? EditorState.createWithContent(convertFromRaw(props.defaultContent)) : EditorState.createEmpty();
-  const [editorState, setEditorState] = React.useState(editor);
-
-  const onEditorStateChange = (data) => {
-    setEditorState(data);
-    props.onChange(convertToRaw(data.getCurrentContent()));
-  };
-
   return (
-    <Editor
-      editorState={editorState}
-      toolbarClassName="toolbarClassName"
-      wrapperClassName="wrapperClassName"
-      editorClassName="editorClassName"
-      onEditorStateChange={onEditorStateChange}
-      editorStyle={{height: '200px', border: '1px solid lightgrey'}}
-      toolbar={TOOLBAR}
-    />
-  )
+    <>
+      <Editor
+        apiKey={process.env.REACT_APP_TINYCLOUD_API_KEY}
+        onInit={(evt, editor) => props.editorRef.current = editor}
+        initialValue={props.defaultContent}
+        init={{
+          height: 500,
+          menubar: false,
+          plugins: [
+            'advlist autolink lists link image charmap print preview anchor',
+            'searchreplace visualblocks code fullscreen',
+            'insertdatetime media table paste code help wordcount'
+          ],
+          toolbar: 'undo redo | formatselect | ' +
+          'bold italic backcolor forecolor | alignleft aligncenter ' +
+          'alignright alignjustify | bullist numlist outdent indent | ' +
+          'removeformat | help',
+          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+        }}
+      />
+    </>
+  );
 }
 
+// deprecated (not working as intended)
 export function EditorReadOnly(props) {
-  let content = EditorState.createEmpty();
-  if (props.content) {
-    content = EditorState.createWithContent(convertFromRaw(props.content));
-  }
-
+  const editorRef = React.useRef(null);
   return (
-    <Editor
-      editorState={content}
-      toolbarClassName="toolbarClassName"
-      wrapperClassName="wrapperClassName"
-      editorClassName="editorClassName"
-      toolbarHidden
-      readOnly
-    />
-  )
+    <>
+      <Editor
+        apiKey={process.env.REACT_APP_TINYCLOUD_API_KEY}
+        onInit={(evt, editor) => {
+          editor.readonly = 1;
+          editor.theme = "advanced";
+          editorRef.current = editor;
+        }}
+        initialValue={props.content}
+        readonly = {true}
+      />
+    </>
+  );
 }

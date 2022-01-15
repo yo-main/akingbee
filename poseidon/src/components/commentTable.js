@@ -7,16 +7,15 @@ import { getCommentsForHive, postCommentForHive, putComment, deleteComment } fro
 import { LOADING_STATUS, getGenericPage } from '../pages/generic';
 import { dealWithError, notificate } from '../lib/common';
 
-import { FormLinkModal, FormButtonModal, RichEditor, EditorReadOnly } from '.';
+import { FormLinkModal, FormButtonModal, RichEditor } from '.';
 
 function CreateCommentForm(props) {
   const [form] = Form.useForm();
 
-  const onChange = (data) => {
-    form.setFieldsValue({comment: data })
-  }
+  const editorRef = React.useRef(null);
 
   const onFinish = (data) => {
+    data.comment = editorRef.current.getContent();
     props.onFinish(data);
     form.resetFields();
   }
@@ -27,7 +26,7 @@ function CreateCommentForm(props) {
         <DatePicker />
       </Form.Item>
       <Form.Item label={window.i18n("word.comment")} name="comment">
-        <RichEditor onChange={onChange} />
+        <RichEditor editorRef={editorRef} />
       </Form.Item>
     </Form>
   )
@@ -41,17 +40,20 @@ function UpdateCommentForm(props) {
     "comment": props.content
   });
 
-  const onChange = (data) => {
-    form.setFieldsValue({comment: data })
-  };
+  const onFinish = (data) => {
+    data.comment = editorRef.current.getContent();
+    props.onFinish(data);
+  }
+
+  const editorRef = React.useRef(null);
 
   return (
-    <Form id={props.formId} form={form} layout="vertical" requiredMark={false} onFinish={props.onFinish} onFailed={() => notificate("error", "Failed")}>
+    <Form id={props.formId} form={form} onFinish={onFinish} layout="vertical" requiredMark={false} onFailed={() => notificate("error", "Failed")}>
       <Form.Item label={window.i18n("word.date")} name="date">
         <DatePicker format="L" />
       </Form.Item>
       <Form.Item label={window.i18n("word.comment")} name="comment">
-        <RichEditor defaultContent={props.content} onChange={onChange} />
+        <RichEditor defaultContent={props.content} editorRef={editorRef} />
       </Form.Item>
       <Form.Item name="commentId" hidden/>
     </Form>
@@ -121,7 +123,7 @@ export class CommentTableComponent extends React.Component {
         title: window.i18n('word.comment'),
         dataIndex: 'comment',
         render: (text, record) => {
-          return <EditorReadOnly content={JSON.parse(text)} />
+          return <div dangerouslySetInnerHTML={{__html: JSON.parse(text)}} />
         }
       },
       {

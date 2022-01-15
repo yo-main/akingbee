@@ -13,11 +13,10 @@ import { FormLinkModal, FormButtonModal, RichEditor, EditorReadOnly } from '.';
 function CreateEventForm(props) {
   const [form] = Form.useForm();
 
-  const onChange = (data) => {
-    form.setFieldsValue({description: data })
-  }
+  const editorRef = React.useRef(null);
 
   const onFinish = (data) => {
+    data.description = editorRef.current.getContent();
     props.onFinish(data);
     form.resetFields();
   }
@@ -53,7 +52,7 @@ function CreateEventForm(props) {
         </Select>
       </Form.Item>
       <Form.Item label={window.i18n("word.description")} name="description">
-        <RichEditor onChange={onChange} />
+        <RichEditor editorRef={editorRef} />
       </Form.Item>
     </Form>
   )
@@ -69,12 +68,15 @@ function UpdateEventForm(props) {
     "statusId": props.status.id
   });
 
-  const onChange = (data) => {
-    form.setFieldsValue({description: data })
-  };
+  const editorRef = React.useRef(null);
+
+  const onFinish = (data) => {
+    data.description = editorRef.current.getContent();
+    props.onFinish(data);
+  }
 
   return (
-    <Form id={props.formId} form={form} layout="vertical" requiredMark={false} onFinish={props.onFinish} onFailed={() => notificate("error", "Failed")}>
+    <Form id={props.formId} form={form} layout="vertical" requiredMark={false} onFinish={onFinish} onFailed={() => notificate("error", "Failed")}>
       <Form.Item label={window.i18n("word.date")} name="dueDate">
         <DatePicker format="L" />
       </Form.Item>
@@ -93,7 +95,7 @@ function UpdateEventForm(props) {
         </Select>
       </Form.Item>
       <Form.Item label={window.i18n("word.description")} name="description">
-        <RichEditor defaultContent={props.description} onChange={onChange} />
+        <RichEditor defaultContent={props.description} editorRef={editorRef} />
       </Form.Item>
       <Form.Item name="eventId" hidden/>
     </Form>
@@ -118,7 +120,6 @@ export class EventTableComponent extends React.Component {
       let eventTypes = await getSetupData('event_type');
       let eventStatuses = await getSetupData('event_status');
       let eventsTableData = this.getEventsTableData(events);
-
 
       let pageStatus = "OK"
       this.setState({eventsTableData, eventStatuses, eventTypes, pageStatus});
@@ -174,7 +175,7 @@ export class EventTableComponent extends React.Component {
         title: window.i18n('word.description'),
         dataIndex: 'description',
         render: (text, record) => {
-          return <EditorReadOnly content={JSON.parse(text)} />
+          return <div dangerouslySetInnerHTML={{__html: JSON.parse(text)}} />
         }
       },
       {
