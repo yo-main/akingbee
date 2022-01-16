@@ -8,7 +8,7 @@ import { getSetupData } from '../services/aristaeus/setup';
 import { LOADING_STATUS, getGenericPage } from '../pages/generic';
 import { dealWithError, notificate } from '../lib/common';
 
-import { FormLinkModal, FormButtonModal, RichEditor, EditorReadOnly } from '.';
+import { FormLinkModal, FormButtonModal, RichEditor } from '.';
 
 function CreateEventForm(props) {
   const [form] = Form.useForm();
