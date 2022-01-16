@@ -123,7 +123,7 @@ export class CommentTableComponent extends React.Component {
         title: window.i18n('word.comment'),
         dataIndex: 'comment',
         render: (text, record) => {
-          return <div dangerouslySetInnerHTML={{__html: JSON.parse(text)}} />
+          return <div dangerouslySetInnerHTML={{__html: text}} />
         }
       },
       {
@@ -135,7 +135,7 @@ export class CommentTableComponent extends React.Component {
           return (
             <Space size='middle'>
               <FormLinkModal formId={formId} title={window.i18n('title.editComment')} linkContent={window.i18n('word.edit')}>
-                <UpdateCommentForm formId={formId} onFinish={this.updateComment} commentId={record.id} date={record.date} content={JSON.parse(record.comment)} />
+                <UpdateCommentForm formId={formId} onFinish={this.updateComment} commentId={record.id} date={record.date} content={record.comment} />
               </FormLinkModal>
               <Popconfirm onConfirm={async() => this.deleteComment(record.id)} title={window.i18n("confirm.deleteComment")}>
                 <Button type="link">{window.i18n('word.delete')}</Button>
@@ -171,7 +171,7 @@ export class CommentTableComponent extends React.Component {
     }
 
     let date = data.date.toISOString();
-    let comment = JSON.stringify(data.comment);
+    let comment = data.comment;
 
     try {
       await postCommentForHive(this.props.hiveId, {date, comment})
@@ -197,7 +197,7 @@ export class CommentTableComponent extends React.Component {
 
     let commentId = data.commentId;
     let date = data.date.toISOString();
-    let comment = JSON.stringify(data.comment);
+    let comment = data.comment;
 
     try {
       await putComment(commentId, {date, comment})

@@ -175,7 +175,7 @@ export class EventTableComponent extends React.Component {
         title: window.i18n('word.description'),
         dataIndex: 'description',
         render: (text, record) => {
-          return <div dangerouslySetInnerHTML={{__html: JSON.parse(text)}} />
+          return <div dangerouslySetInnerHTML={{__html: text}} />
         }
       },
       {
@@ -192,7 +192,7 @@ export class EventTableComponent extends React.Component {
           return (
             <Space size='middle'>
               <FormLinkModal formId={formId} title={window.i18n('title.editEvent')} linkContent={window.i18n('word.edit')}>
-                <UpdateEventForm formId={formId} onFinish={this.updateEvent} eventId={record.id} status={record.status} eventStatuses={this.state.eventStatuses} dueDate={record.dueDate} title={record.title} description={JSON.parse(record.description)} />
+                <UpdateEventForm formId={formId} onFinish={this.updateEvent} eventId={record.id} status={record.status} eventStatuses={this.state.eventStatuses} dueDate={record.dueDate} title={record.title} description={record.description} />
               </FormLinkModal>
               <Popconfirm onConfirm={async() => this.deleteEvent(record.id)} title={window.i18n("confirm.deleteEvent")}>
                 <Button type="link">{window.i18n('word.delete')}</Button>
@@ -229,7 +229,7 @@ export class EventTableComponent extends React.Component {
 
     let dueDate = data.dueDate.toISOString();
     let title = data.title;
-    let description = JSON.stringify(data.description);
+    let description = data.description;
     let statusId = data.statusId;
     let typeId = data.typeId;
     let hiveId = this.props.hiveId;
@@ -259,7 +259,7 @@ export class EventTableComponent extends React.Component {
     let eventId = data.eventId;
     let dueDate = data.dueDate.toISOString();
     let title = data.title;
-    let description = JSON.stringify(data.description);
+    let description = data.description;
     let statusId = data.statusId
 
     try {
