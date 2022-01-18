@@ -96,6 +96,8 @@
     "error.unknwownError": "Une erreur inconnue est survenue",
     "error.sameEntry": "La valeur n'a pas changé",
     "error.incorrectEntry": "La valeur est incorrecte",
+    "error.missingDate": "La valeur 'date' est manquante",
+    "error.missingComment": "La valeur 'commentaire' est manquante",
     "error.missingFields": "Champs manquants",
     "word.edit": "Modifier",
     "word.delete": "Supprimer",

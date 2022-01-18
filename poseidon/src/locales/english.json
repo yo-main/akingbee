@@ -96,6 +96,8 @@
     "error.unknwownError": "An unexpected error happened",
     "error.sameEntry": "The value didn't change",
     "error.incorrectEntry": "The value is incorrect",
+    "error.missingDate": "Value 'date' is missing",
+    "error.missingComment": "Value 'comment' is missing",
     "error.missingFields": "Missing fields",
     "word.edit": "Edit",
     "word.delete": "Delete",

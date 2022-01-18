@@ -13,4 +13,4 @@ images:
 - name: yomain/hermes
   newTag: 1.1.6
 - name: yomain/poseidon
-  newTag: 1.13.1
+  newTag: 1.14.4

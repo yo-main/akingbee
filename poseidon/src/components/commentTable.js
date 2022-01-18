@@ -165,8 +165,12 @@ export class CommentTableComponent extends React.Component {
   }
 
   submitComment = async(data) => {
-    if (!data.date || !data.comment) {
-      notificate('error', window.i18n('error.incorrectEntry'))
+    if (!data.date) {
+      notificate('error', window.i18n('error.missingDate'))
+      return;
+
+    } else if (!data.comment) {
+      notificate('error', window.i18n('error.missingComment'))
       return;
     }
 
@@ -190,8 +194,11 @@ export class CommentTableComponent extends React.Component {
   }
 
   updateComment = async(data) => {
-    if (!data.date || !data.comment) {
-      notificate('error', window.i18n('error.incorrectEntry'))
+    if (!data.date) {
+      notificate('error', window.i18n('error.missingDate'))
+      return;
+    } else if (!data.comment) {
+      notificate('error', window.i18n('error.missingComment'))
       return;
     }
 
