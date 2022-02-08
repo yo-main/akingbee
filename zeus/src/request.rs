@@ -12,8 +12,6 @@ pub struct Request {
     pub body: String
 }
 
-
-
 impl Request {
 
     pub  fn build(stream: &mut TcpStream) -> Result<Request, std::io::Error> {

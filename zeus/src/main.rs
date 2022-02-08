@@ -1,21 +1,52 @@
-use std::{net::{TcpListener, TcpStream}, io::{Write, Read}, convert::TryInto};
+use std::{net::{TcpListener, TcpStream}, io::{Write, Read}};
+use std::cell::RefCell;
 
-mod http;
+mod request;
 mod tls;
-use http::Request;
+mod server;
+
+use mio::{Poll, Events};
+use request::Request;
 
 fn main() {
-    let http_listener = TcpListener::bind("127.0.0.1:7878").unwrap();
-    for stream in http_listener.incoming() {
-        let stream = stream.unwrap();
-        // stream.set_read_timeout(Some(std::time::Duration::new(5, 0))).expect("Couldn't set a read timeout");
-        stream.set_nodelay(true).unwrap();
-        let res = handle_request(stream);
+    let http = "127.0.0.1:7878".parse().unwrap();
+    let https = "127.0.0.1:7879".parse().unwrap();
 
-        if res.is_err() {
-            // do something
+    let mut poll = Poll::new().expect("Couldn't create a mio::Poll");
+    let mut events = Events::with_capacity(128);
+
+    let mut token_generator = RefCell::new(server::TokenGenerator::new());
+
+    let mut http_server = server::Server::new(http, &token_generator);
+    let mut https_server = server::Server::new(https, &token_generator);
+
+    poll.registry().register(&mut http_server.client, http_server.token, mio::Interest::READABLE).unwrap();
+    poll.registry().register(&mut https_server.client, https_server.token, mio::Interest::READABLE).unwrap();
+
+    loop {
+        poll.poll(&mut events, None).unwrap();
+
+        for event in events.iter() {
+            match event.token() {
+                token if token == http_server.token => {
+                    http_server.accept();
+                },
+                token if token == https_server.token => {
+                },
+                _ => unreachable!(),
         }
     }
+
+    // for stream in http_listener.incoming() {
+    //     let stream = stream.unwrap();
+    //     // stream.set_read_timeout(Some(std::time::Duration::new(5, 0))).expect("Couldn't set a read timeout");
+    //     stream.set_nodelay(true).unwrap();
+    //     let res = handle_request(stream);
+
+    //     if res.is_err() {
+    //         // do something
+    //     }
+    // }
 }
 
 
