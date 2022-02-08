@@ -172,7 +172,7 @@ class PutEventModel(BaseModel):
 
 class CommentModel(BaseModel):
     id: uuid.UUID
-    comment: str
+    comment: Optional[str]
     type: str
     date: datetime.datetime
     swarm: Optional[SwarmModel]
