@@ -43,3 +43,7 @@ token.json
 
 # postgres
 .pgpass
+
+# rust
+**/target/
+**/zeus/keys/
