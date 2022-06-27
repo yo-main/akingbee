@@ -1,0 +1,5 @@
+scrape_configs:
+  - job_name: leigong
+    metrics_path: /
+    static_configs:
+    - targets: ['leigong:8000']

@@ -41,13 +41,6 @@ spec:
         configMap:
           defaultMode: 0660
           name: elasticsearch-config
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: Exists
       containers:
       - name: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch

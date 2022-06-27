@@ -13,13 +13,6 @@ spec:
       labels:
         app: hermes
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       containers:
       - image: yomain/hermes:latest
         name: hermes
@@ -88,11 +81,12 @@ spec:
         volumeMounts:
         - name: logs
           mountPath: /var/log/hermes
-
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
       volumes:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
           path: /var/log/akingbee
-
-

@@ -6,7 +6,8 @@ spec:
   tls:
   - hosts:
     - $(MAIN_HOSTED_ZONE)
-    - "kibana.$(MAIN_HOSTED_ZONE)"
+    - "grafana.$(MAIN_HOSTED_ZONE)"
+    - "promtail.$(MAIN_HOSTED_ZONE)"
     - "cerbes.$(MAIN_HOSTED_ZONE)"
     - "aristaeus.$(MAIN_HOSTED_ZONE)"
     - "rbmq.$(MAIN_HOSTED_ZONE)"
@@ -46,16 +47,27 @@ spec:
             port:
               number: 9002
 
-  - host: "kibana.$(MAIN_HOSTED_ZONE)"
+  - host: "grafana.$(MAIN_HOSTED_ZONE)"
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: kibana
+            name: grafana
             port:
-              number: 5601
+              number: 3000
+
+  - host: "promtail.$(MAIN_HOSTED_ZONE)"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: promtail
+            port:
+              number: 9080
 
   - host: "rbmq.$(MAIN_HOSTED_ZONE)"
     http:

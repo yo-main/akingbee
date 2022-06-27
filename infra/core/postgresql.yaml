@@ -28,13 +28,6 @@ spec:
       labels:
         app: postgres
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       containers:
       - image: postgres:12-alpine
         name: postgres

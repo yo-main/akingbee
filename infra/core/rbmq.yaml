@@ -15,6 +15,7 @@ spec:
       targetPort: 15672
   selector:
     app: rbmq
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -31,13 +32,6 @@ spec:
       labels:
         app: rbmq
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       volumes:
       - name: data
         persistentVolumeClaim:
@@ -64,5 +58,3 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/lib/rabbitmq/data
-
-

@@ -28,13 +28,6 @@ spec:
       labels:
         app: poseidon
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       containers:
       - image: yomain/poseidon:latest
         name: poseidon
@@ -53,11 +46,13 @@ spec:
         volumeMounts:
         - mountPath: /var/log/poseidon
           name: logs
-
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
       volumes:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
           path: /var/log/akingbee
-
 

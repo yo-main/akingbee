@@ -33,13 +33,6 @@ spec:
         configMap:
           defaultMode: 0640
           name: kibana-config
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       containers:
       - name: kibana
         image: docker.elastic.co/kibana/kibana

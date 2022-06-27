@@ -20,17 +20,44 @@ spec:
       - name: logs
         hostPath:
           path: /var/log
+      - name: position
+        hostPath:
+          path: /position.yaml
+          type: FileOrCreate
       containers:
       - name: promtail-daemon
         image: grafana/promtail
         args:
         - -config.file=/etc/promtail/promtail.yaml
+        ports:
+        - containerPort: 9080
+        env:
+        - name: 'HOSTNAME'
+          valueFrom:
+            fieldRef:
+              fieldPath: 'spec.nodeName'
         volumeMounts:
         - name: promtail-config
           mountPath: /etc/promtail
         - name: logs
           mountPath: /var/log
-
+        - name: position
+          mountPath: /run/promtail/position.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: promtail
+  labels:
+    app: promtail
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 9080
+    targetPort: 9080
+  selector:
+    app: promtail-daemon
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -41,12 +68,20 @@ rules:
 - apiGroups: [""]
   resources:
   - nodes
+  - nodes/proxy
   - services
-  - pod
+  - endpoints
+  - pods
   verbs:
   - get
   - watch
   - list
+- apiGroups:
+    - extensions
+    - networking.k8s.io
+  resources:
+    - ingresses
+  verbs: ["get", "list", "watch"]
 
 ---
 

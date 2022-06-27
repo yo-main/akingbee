@@ -13,13 +13,6 @@ spec:
       labels:
         app: aristaeus-listener
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       containers:
       - image: yomain/aristaeus:latest
         name: aristaeus-listener
@@ -94,11 +87,12 @@ spec:
         volumeMounts:
         - mountPath: /var/log/aristaeus
           name: logs
-
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
       volumes:
       - name: logs
         hostPath:
           type: DirectoryOrCreate
           path: /var/log/akingbee
-
-

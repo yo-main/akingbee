@@ -28,13 +28,6 @@ spec:
       labels:
         app: cerbes-api
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: elastic-node
-                operator: DoesNotExist
       containers:
       - image: yomain/cerbes:latest
         name: cerbes-api
@@ -124,7 +117,10 @@ spec:
         volumeMounts:
         - mountPath: /var/log/cerbes
           name: logs
-
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
       volumes:
       - name: logs
         hostPath:

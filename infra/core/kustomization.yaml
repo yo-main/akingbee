@@ -5,7 +5,7 @@ configMapGenerator:
 
 
 bases:
-  - ./elk
+  - ./grafana
 
 resources:
   - ingress-main.yaml
