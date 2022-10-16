@@ -30,6 +30,10 @@ spec:
       labels:
         app: grafana
     spec:
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
       volumes:
         # FMI, graphana data are stored in /var/lib/graphana
         # - name: grafana-config
@@ -49,7 +53,7 @@ spec:
             port: 3000
         volumeMounts:
         - name: data
-          mountPath: /var/lib/graphana
+          mountPath: /var/lib/grafana
         #   - name: grafana-config
         #     mountPath: /etc/grafana/grafana.ini
         #     subPath: grafana.ini

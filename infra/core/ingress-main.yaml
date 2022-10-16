@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: akb-ingress
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - $(MAIN_HOSTED_ZONE)

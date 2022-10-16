@@ -37,6 +37,7 @@ spec:
       containers:
       - name: loki
         image: grafana/loki
+        # command: ["tail", "-f", "/dev/null"]
         ports:
         - containerPort: 3100
         volumeMounts:
