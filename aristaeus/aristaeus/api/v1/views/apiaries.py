@@ -1,12 +1,11 @@
 import datetime
-from typing import List, Optional
+from typing import List
 import uuid
 
 from gaea.log import logger
 from gaea.models import Apiaries
 from gaea.webapp.utils import get_session
 from fastapi import APIRouter, Depends, Cookie, HTTPException
-from pydantic import BaseModel, constr
 from sqlalchemy.orm import Session
 
 from gaea.helpers.auth import get_logged_in_user
