@@ -4,30 +4,35 @@ from fastapi import HTTPException
 from fastapi import Depends
 from fastapi import Cookie
 
-import aiohttp
+from akingbee.domains.aristaeus.entities.user import UserEntity
+from akingbee.infrastructure.clients.http.cerbes import CerbesClientAsyncAdapter
+from akingbee.domains.aristaeus.adapters.repositories.user import UserRepositoryAdapter
 
 from akingbee.config import settings
-
-CERBES_URL = f"{settings.CERBES_API_ENDPOINT}:{settings.CERBES_API_PORT}"
-if not CERBES_URL.startswith("http"):
-    CERBES_URL = f"http://{CERBES_URL}"
+from akingbee.injector import InjectorMixin
+from akingbee.utils.singleton import SingletonMeta
 
 
-async def validate_access_token(access_token):
-    url = f"{CERBES_URL}/check"
+class UserManager(InjectorMixin, metaclass=SingletonMeta):
+    cerbes: CerbesClientAsyncAdapter
+    user_repository: UserRepositoryAdapter
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, cookies={"access_token": access_token}) as resp:
-            return await resp.json() if resp.status == 200 else None
+    async def validate_access_token(self, access_token) -> str | None:
+        return await self.cerbes.validate(access_token)
+
+    async def get_logged_in_user(self, access_token) -> UserEntity:
+        if not access_token:
+            raise HTTPException(status_code=401)
+
+        user_id = await self.validate_access_token(access_token=access_token)
+
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="Invalid access token")
+
+        user = await self.user_repository.get(UUID(user_id))
+
+        return user
 
 
-async def get_logged_in_user(access_token=Cookie(None)) -> UUID:
-    if not access_token:
-        raise HTTPException(status_code=401)
-
-    data = await validate_access_token(access_token=access_token)
-
-    if data is None:
-        raise HTTPException(status_code=401, detail="Invalid access token")
-
-    return UUID(data["user_id"])
+async def auth_user(access_token=Cookie(None)):
+    return await UserManager().get_logged_in_user(access_token)

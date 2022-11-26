@@ -1,8 +1,8 @@
 from uuid import UUID
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
-from domains.bee.entities.swarm import SwarmEntity
-from domains.bee.entities.vo.reference import Reference
-from sqlalchemy.orm import Mapped, mapped_column
+from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 
 from .base import BaseModel
 
@@ -16,9 +16,9 @@ class SwarmModel(BaseModel):
         return SwarmEntity(
             health=self.health,
             queen_year=self.queen_year,
-            public_id=Reference.of(self.public_id),
+            public_id=self.public_id,
         )
 
     @staticmethod
     def from_entity(entity: SwarmEntity) -> "SwarmModel":
-        return SwarmModel(health=entity.health, queen_year=entity.queen_year, public_id=entity.public_id.get())
+        return SwarmModel(health=entity.health, queen_year=entity.queen_year, public_id=entity.public_id)

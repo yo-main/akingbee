@@ -1,8 +1,13 @@
+from sqlalchemy import select
 from typing import Protocol
 from typing import TYPE_CHECKING
+from uuid import UUID
 
 from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
-from akingbee.domains.aristaeus.entities.vo.reference import Reference
+
+
+__all__ = ["SwarmRepositoryAdapter"]
+
 
 if TYPE_CHECKING:
     Base = object
@@ -11,8 +16,8 @@ else:
 
 
 class SwarmRepositoryAdapter(Base):
-    async def save_async(self, entity: SwarmEntity) -> None:
+    async def save(self, entity: SwarmEntity) -> None:
         ...
 
-    async def get_async(self, reference: Reference) -> SwarmEntity:
+    async def get(self, public_id: UUID) -> SwarmEntity:
         ...

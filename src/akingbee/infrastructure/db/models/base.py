@@ -9,7 +9,7 @@ class BaseModel(DeclarativeBase):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     date_creation: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    date_modification: Mapped[datetime] = mapped_column(on_update=datetime.utcnow)
+    date_modification: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
 
     @declared_attr.directive
     def __tablename__(cls) -> str:

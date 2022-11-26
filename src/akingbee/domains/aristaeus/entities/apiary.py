@@ -1,21 +1,17 @@
 import uuid
 from dataclasses import dataclass
+from uuid import UUID
+from dataclasses import field
+from dataclasses import asdict
 
-from domains.bee.entities.vo.reference import Reference
 
-
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class ApiaryEntity:
-    public_id: Reference
     name: str
     location: str
     honey_kind: str
+    organization_id: UUID
+    public_id: UUID = field(default_factory=uuid.uuid4)
 
-    @staticmethod
-    def create(name: str, location: str, honey_kind: str) -> "ApiaryEntity":
-        return ApiaryEntity(
-            public_id=Reference.of(uuid.uuid4()),
-            name=name,
-            location=location,
-            honey_kind=honey_kind,
-        )
+    def asdict(self) -> dict:
+        return asdict(self)

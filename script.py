@@ -51,6 +51,15 @@ class Handler:
         return wrapper
 
 
+class Wrapper:
+    def __init__(self, stores, default_key):
+        self.default_key = default_key
+        self.stores = stores
+
+    def __getattribute__(self, name):
+        instance = self.stores
+
+
 class Printer(Base):
     def print(self, value):
         ...

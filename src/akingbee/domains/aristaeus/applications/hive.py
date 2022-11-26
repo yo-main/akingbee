@@ -1,29 +1,22 @@
-from domains.bee.adapters.repository.apiary import ApiaryRepositoryAdapter
-from domains.bee.adapters.repository.hive import HiveRepositoryAdapter
-from domains.bee.adapters.repository.swarm import SwarmRepositoryAdapter
-from domains.bee.commands.create_hive import CreateHiveCommand
-from domains.bee.entities.hive import HiveEntity
-from domains.bee.entities.vo.reference import Reference
+from akingbee.domains.aristaeus.adapters.repositories.apiary import ApiaryRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.hive import HiveRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.swarm import SwarmRepositoryAdapter
+from akingbee.domains.aristaeus.commands.create_hive import CreateHiveCommand
+from akingbee.domains.aristaeus.entities.hive import HiveEntity
+from akingbee.injector import InjectorMixin
 
 
-class HiveApplication:
-    def __init__(
-        self,
-        hive_repository: HiveRepositoryAdapter,
-        apiary_repository: ApiaryRepositoryAdapter,
-    ):
-        self.hive_repository = hive_repository
-        self.apiary_repository = apiary_repository
+class HiveApplication(InjectorMixin):
+    hive_repository: HiveRepositoryAdapter
+    apiary_repository: ApiaryRepositoryAdapter
 
-    async def create_async(self, command: CreateHiveCommand) -> HiveEntity:
-        apiary_reference = Reference.of(command.apiary)
-        apiary = await self.apiary_repository.get_async(apiary_reference)
-
-        hive = HiveEntity.create(
+    async def create(self, command: CreateHiveCommand) -> HiveEntity:
+        hive = HiveEntity(
             name=command.name,
             condition=command.condition,
-            owner=command.owner,
-            apiary=apiary,
+            owner_id=command.owner_id,
+            apiary_id=command.apiary_id,
+            organization_id=command.organization_id,
         )
-        await self.hive_repository.save_async(hive)
+        await self.hive_repository.save(hive)
         return hive

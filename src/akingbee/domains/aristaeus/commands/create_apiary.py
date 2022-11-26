@@ -7,3 +7,4 @@ class CreateApiaryCommand:
     name: str
     location: str
     honey_kind: str
+    organization_id: UUID

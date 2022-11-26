@@ -1,4 +1,4 @@
-from akb.injector import Injector
+from akingbee.injector import Injector
 
 
 class BaseApplication:

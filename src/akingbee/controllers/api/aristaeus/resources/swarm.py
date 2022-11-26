@@ -1,27 +1,31 @@
 from uuid import UUID
+import functools
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import HTTPException
 
-from akb.domains.bee.commands.create_swarm import CreateSwarmCommand
-from akb.domains.bee.applications.swarm import SwarmApplication
-from akb.domains.bee.queries.swarm import SwarmQuery
-from akb.domains.bee.entities.swarm import SwarmEntity
+from akingbee.domains.aristaeus.commands.create_swarm import CreateSwarmCommand
+from akingbee.domains.aristaeus.applications.swarm import SwarmApplication
+from akingbee.domains.aristaeus.queries.swarm import SwarmQuery
+from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 
-from akb.controllers.api.bee.dtos.swarm import SwarmIn
-from akb.controllers.api.bee.dtos.swarm import SwarmOut
-from akb.controllers.api.bee.utils.auth import get_logged_in_user
+from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmIn
+from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmOut
+from akingbee.controllers.api.aristaeus.utils.auth import auth_user
 
 router = APIRouter()
 
 
-@router.post("/", response_model=SwarmOut)
-async def post_swarm(self, input: SwarmIn, user: UUID = Depends(get_logged_in_user)):
+@router.post("", response_model=SwarmOut)
+async def post_swarm(input: SwarmIn, user: UUID = Depends(auth_user)):
     command = CreateSwarmCommand(health_status=input.health, queen_year=input.queen_year)
     swarm_application = SwarmApplication()
-    swarm_entity = await swarm_application.create_async(command=command)
-    return swarm_entity
+    swarm_entity = await swarm_application.create_swarm(command=command)
+
+    return swarm_entity.asdict()
 
 
 @router.get("/{swarm_id}", response_model=SwarmOut)
-async def get_swarm(self, swarm_id: UUID, user: UUID = Depends(get_logged_in_user)) -> SwarmEntity:
-    return await SwarmQuery().get_swarm_query(swarm_id)
+async def get_swarm(swarm_id: UUID, user: UUID = Depends(auth_user)):
+    swarm_entity = await SwarmQuery().get_swarm(swarm_id)
+    return swarm_entity.asdict()
