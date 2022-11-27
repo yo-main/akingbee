@@ -14,12 +14,12 @@ class Injector:
     @classmethod
     def get(cls, protocol: Type[protocol], store: str = None) -> protocol:
         store = (store or getattr(settings, cls.default_store_key)).lower()
-        handler_members = cls._registry.get(protocol)
+        handlers = cls._registry.get(protocol)
 
-        if not handler_members:
+        if not handlers:
             raise NotImplementedError(f"Protocol {protocol} not managed")
 
-        klass = handler_members.get(store) or handler_members.get(DEFAULT_STORE)
+        klass = handlers.get(store) or handlers.get(DEFAULT_STORE)
 
         if not klass:
             raise NotImplementedError(f"No binding found for protocol {protocol} and store {store}")
@@ -53,5 +53,5 @@ class Injector:
 
 class InjectorMixin:
     def __init__(self):
-        Injector.inject(self)
         super().__init__()
+        Injector.inject(self)
