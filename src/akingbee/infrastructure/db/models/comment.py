@@ -5,8 +5,8 @@ from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import BaseModel
-from .hive import HiveModel
 from .event import EventModel
+from .hive import HiveModel
 
 
 class CommentModel(BaseModel):

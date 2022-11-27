@@ -1,9 +1,7 @@
-from typing import Protocol
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
 from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
-
 
 __all__ = ["ApiaryRepositoryAdapter"]
 

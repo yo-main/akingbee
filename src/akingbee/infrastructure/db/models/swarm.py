@@ -1,8 +1,7 @@
 from uuid import UUID
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
 
 from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import BaseModel
 

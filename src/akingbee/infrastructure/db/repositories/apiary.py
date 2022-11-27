@@ -1,19 +1,18 @@
 import asyncio
 import functools
-from sqlalchemy import select
-from typing import Protocol
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
+from akingbee.domains.aristaeus.adapters.repositories.apiary import (
+    ApiaryRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
 from akingbee.domains.aristaeus.errors import EntitySavingError
-from akingbee.infrastructure.db.models.apiary import ApiaryModel
 from akingbee.infrastructure.db.engine import AsyncDatabase
+from akingbee.infrastructure.db.models.apiary import ApiaryModel
 from akingbee.infrastructure.db.utils import error_handler
 from akingbee.injector import Injector
-
-from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
-from akingbee.domains.aristaeus.adapters.repositories.apiary import ApiaryRepositoryAdapter
+from sqlalchemy import select
 
 
 @Injector.bind(ApiaryRepositoryAdapter)

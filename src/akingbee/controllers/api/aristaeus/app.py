@@ -1,19 +1,16 @@
-from fastapi import FastAPI
-
 import akingbee.infrastructure.db.repositories
-
-from fastapi.responses import JSONResponse
-from fastapi import Request
-
 from akingbee.domains.aristaeus.errors import EntityNotFound
-from .resources.swarm import router as swarm_router
-from .resources.apiary import router as apiary_router
-from .resources.hive import router as hive_router
-from .resources.event import router as event_router
-from .resources.comment import router as comment_router
-from .resources.parameter import router as parameter_router
-from .resources.monitoring import router as monitoring_router
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+
 from .middlewares.cors import configure_cors_middleware
+from .resources.apiary import router as apiary_router
+from .resources.comment import router as comment_router
+from .resources.event import router as event_router
+from .resources.hive import router as hive_router
+from .resources.monitoring import router as monitoring_router
+from .resources.parameter import router as parameter_router
+from .resources.swarm import router as swarm_router
 
 
 def configure_error_handlers(app):

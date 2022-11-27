@@ -1,7 +1,6 @@
-from akingbee.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
 from akingbee.domains.aristaeus.commands.create_apiary import CreateApiaryCommand
 from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
-
+from akingbee.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
 from akingbee.injector import InjectorMixin
 
 

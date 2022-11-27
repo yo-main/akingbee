@@ -1,4 +1,6 @@
-from akingbee.domains.aristaeus.adapters.repositories.parameter import ParameterRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.parameter import (
+    ParameterRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.commands.create_parameter import CreateParameterCommand
 from akingbee.domains.aristaeus.entities.parameter import ParameterEntity
 from akingbee.injector import InjectorMixin

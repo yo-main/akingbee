@@ -1,18 +1,14 @@
-from uuid import UUID
 import functools
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
+from uuid import UUID
 
-from akingbee.domains.aristaeus.commands.create_swarm import CreateSwarmCommand
+from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmIn, SwarmOut
+from akingbee.controllers.api.aristaeus.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.swarm import SwarmApplication
-from akingbee.domains.aristaeus.queries.swarm import SwarmQuery
+from akingbee.domains.aristaeus.commands.create_swarm import CreateSwarmCommand
 from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 from akingbee.domains.aristaeus.entities.user import UserEntity
-
-from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmIn
-from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmOut
-from akingbee.controllers.api.aristaeus.utils.auth import auth_user
+from akingbee.domains.aristaeus.queries.swarm import SwarmQuery
+from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 

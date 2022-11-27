@@ -3,8 +3,8 @@ from uuid import UUID
 from akingbee.domains.aristaeus.entities.hive import HiveEntity
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import BaseModel
 from .apiary import ApiaryModel
+from .base import BaseModel
 
 
 class HiveModel(BaseModel):

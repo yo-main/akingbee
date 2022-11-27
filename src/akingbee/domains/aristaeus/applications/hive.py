@@ -1,6 +1,10 @@
-from akingbee.domains.aristaeus.adapters.repositories.apiary import ApiaryRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.apiary import (
+    ApiaryRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.adapters.repositories.hive import HiveRepositoryAdapter
-from akingbee.domains.aristaeus.adapters.repositories.swarm import SwarmRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.swarm import (
+    SwarmRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.commands.create_hive import CreateHiveCommand
 from akingbee.domains.aristaeus.entities.hive import HiveEntity
 from akingbee.injector import InjectorMixin

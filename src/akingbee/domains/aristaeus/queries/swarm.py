@@ -1,7 +1,9 @@
 from uuid import UUID
-from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
-from akingbee.domains.aristaeus.adapters.repositories.swarm import SwarmRepositoryAdapter
 
+from akingbee.domains.aristaeus.adapters.repositories.swarm import (
+    SwarmRepositoryAdapter,
+)
+from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 from akingbee.injector import InjectorMixin
 
 

@@ -1,8 +1,6 @@
 import uuid
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
 from uuid import UUID
-from dataclasses import field
-from dataclasses import asdict
 
 
 @dataclass(frozen=True, slots=True)

@@ -1,4 +1,6 @@
-from akingbee.domains.aristaeus.adapters.repositories.event import EventRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.event import (
+    EventRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.commands.create_event import CreateEventCommand
 from akingbee.domains.aristaeus.entities.event import EventEntity
 from akingbee.domains.aristaeus.entities.vo.reference import Reference

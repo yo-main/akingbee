@@ -1,6 +1,6 @@
 from typing import Protocol
-import aiohttp
 
+import aiohttp
 from akingbee.config import settings
 from akingbee.injector import Injector
 from akingbee.utils.singleton import SingletonMeta

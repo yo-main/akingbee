@@ -1,5 +1,5 @@
-from typing import TypeVar, Type
 import inspect
+from typing import Type, TypeVar
 
 from akingbee.config import settings
 

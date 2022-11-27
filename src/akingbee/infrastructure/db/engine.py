@@ -1,18 +1,13 @@
 from contextlib import asynccontextmanager
-from typing import Protocol
-from typing import AsyncIterator
-
-from akingbee.infrastructure.db.models.base import BaseModel
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
-from sqlalchemy.sql.expression import Executable
-from sqlalchemy import Result
-
-from akingbee.utils.singleton import SingletonMeta
-from akingbee.injector import Injector
-
+from typing import AsyncIterator, Protocol
 
 from akingbee.infrastructure.db.models.base import BaseModel
 from akingbee.infrastructure.db.utils import get_database_uri
+from akingbee.injector import Injector
+from akingbee.utils.singleton import SingletonMeta
+from sqlalchemy import Result
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.sql.expression import Executable
 
 
 class AsyncDatabase(Protocol):

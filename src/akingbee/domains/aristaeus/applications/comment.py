@@ -1,4 +1,6 @@
-from akingbee.domains.aristaeus.adapters.repositories.comment import CommentRepositoryAdapter
+from akingbee.domains.aristaeus.adapters.repositories.comment import (
+    CommentRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.commands.create_comment import CreateCommentCommand
 from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from akingbee.domains.aristaeus.entities.vo.reference import Reference

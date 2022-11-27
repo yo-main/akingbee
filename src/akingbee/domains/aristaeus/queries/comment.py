@@ -1,7 +1,7 @@
 from uuid import UUID
+
 from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from akingbee.infrastructure.db.repositories.comment import CommentRepositoryAdapter
-
 from akingbee.injector import InjectorMixin
 
 

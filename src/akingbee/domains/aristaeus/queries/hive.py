@@ -1,7 +1,7 @@
 from uuid import UUID
+
 from akingbee.domains.aristaeus.entities.hive import HiveEntity
 from akingbee.infrastructure.db.repositories.hive import HiveRepositoryAdapter
-
 from akingbee.injector import InjectorMixin
 
 

@@ -1,9 +1,8 @@
 import functools
 
-from sqlalchemy.exc import NoResultFound
-
 from akingbee.config import settings
 from akingbee.domains.aristaeus.errors import EntityNotFound
+from sqlalchemy.exc import NoResultFound
 
 
 def get_database_uri(dbname: str = None) -> str:

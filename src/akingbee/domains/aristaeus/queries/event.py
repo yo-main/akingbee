@@ -1,7 +1,7 @@
 from uuid import UUID
+
 from akingbee.domains.aristaeus.entities.event import EventEntity
 from akingbee.infrastructure.db.repositories.event import EventRepositoryAdapter
-
 from akingbee.injector import InjectorMixin
 
 

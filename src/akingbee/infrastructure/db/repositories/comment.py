@@ -1,15 +1,17 @@
 import asyncio
 import functools
 from uuid import UUID
-from sqlalchemy import select
 
+from akingbee.domains.aristaeus.adapters.repositories.comment import (
+    CommentRepositoryAdapter,
+)
 from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from akingbee.domains.aristaeus.errors import EntitySavingError
-from akingbee.domains.aristaeus.adapters.repositories.comment import CommentRepositoryAdapter
-from akingbee.infrastructure.db.models.comment import CommentModel
 from akingbee.infrastructure.db.engine import AsyncDatabase
-from akingbee.injector import Injector
+from akingbee.infrastructure.db.models.comment import CommentModel
 from akingbee.infrastructure.db.utils import error_handler
+from akingbee.injector import Injector
+from sqlalchemy import select
 
 
 @Injector.bind(CommentRepositoryAdapter)
