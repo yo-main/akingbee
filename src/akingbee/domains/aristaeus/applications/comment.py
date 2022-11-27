@@ -1,36 +1,20 @@
-from domains.bee.adapters.repository.comment import CommentRepositoryAdapter
-from domains.bee.adapters.repository.event import EventRepositoryAdapter
-from domains.bee.adapters.repository.hive import HiveRepositoryAdapter
-from domains.bee.commands.create_comment import CreateCommentCommand
-from domains.bee.entities.comment import CommentEntity
-from domains.bee.entities.vo.reference import Reference
+from akingbee.domains.aristaeus.adapters.repositories.comment import CommentRepositoryAdapter
+from akingbee.domains.aristaeus.commands.create_comment import CreateCommentCommand
+from akingbee.domains.aristaeus.entities.comment import CommentEntity
+from akingbee.domains.aristaeus.entities.vo.reference import Reference
+from akingbee.injector import InjectorMixin
 
 
-class CommentApplication:
-    def __init__(
-        self,
-        comment_repository: CommentRepositoryAdapter,
-        event_repository: EventRepositoryAdapter,
-        hive_repository: HiveRepositoryAdapter,
-    ):
-        self.comment_repository = comment_repository
-        self.hive_repository = hive_repository
-        self.event_repository = event_repository
+class CommentApplication(InjectorMixin):
+    comment_repository: CommentRepositoryAdapter
 
-    async def create_async(self, command: CreateCommentCommand) -> CommentEntity:
-        hive_reference = Reference.of(command.hive)
-        hive = await self.hive_repository.get_async(hive_reference)
-        event = None
-        if command.event:
-            event_reference = Reference.of(command.event)
-            event = await self.event_repository.get_async(event_reference)
-
-        comment = CommentEntity.create(
+    async def create(self, command: CreateCommentCommand) -> CommentEntity:
+        comment = CommentEntity(
             body=command.body,
             type=command.type,
             date=command.date,
-            hive=hive,
-            event=event,
+            hive_id=command.hive_id,
+            event_id=command.event_id,
         )
-        await self.comment_repository.save_async(comment)
+        await self.comment_repository.save(comment)
         return comment

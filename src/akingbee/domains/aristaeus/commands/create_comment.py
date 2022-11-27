@@ -5,8 +5,8 @@ from uuid import UUID
 
 @dataclass
 class CreateCommentCommand:
-    hive: UUID
-    event: UUID | None
+    hive_id: UUID
+    event_id: UUID | None
     date: datetime
     type: str
     body: str

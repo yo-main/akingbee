@@ -35,12 +35,6 @@ def test_create_event(app):
         {"type": None},
         {"hive_id": None},
         {"due_date": None},
-        {"title": ""},
-        {"description": ""},
-        {"status": ""},
-        {"type": ""},
-        {"hive_id": ""},
-        {"due_date": ""},
         {"due_date": "i_am_not_a_date"},
         {"hive_id": "i_am_not_a_uuid"},
     ),
@@ -56,7 +50,7 @@ def test_create_event__wrong_payload(app, payload):
     }
     data.update(payload)
     data = {k: v for k, v in data.items() if v is not None}
-    response = app.post("/hive", json=data)
+    response = app.post("/event", json=data)
     assert response.status_code == 422, response.text
 
 

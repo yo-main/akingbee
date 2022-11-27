@@ -8,5 +8,5 @@ from akingbee.injector import InjectorMixin
 class SwarmQuery(InjectorMixin):
     swarm_repository: SwarmRepositoryAdapter
 
-    async def get_swarm(self, public_id: UUID) -> SwarmEntity:
-        return await self.swarm_repository.get(public_id)
+    async def get_swarm(self, swarm_id: UUID) -> SwarmEntity:
+        return await self.swarm_repository.get(swarm_id)

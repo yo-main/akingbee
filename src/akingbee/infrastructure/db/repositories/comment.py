@@ -1,25 +1,28 @@
 import asyncio
 import functools
+from uuid import UUID
 from sqlalchemy import select
 
-from domains.bee.entities.comment import CommentEntity
-from domains.bee.errors import EntitySavingError
-from domains.bee.adapters.repository.comment import CommentRepositoryAdapter
-from infrastructure.db.models.comment import CommentModel
-from infrastructure.db.engine import AsyncDatabase
-from domains.bee.entities.vo.reference import Reference
-from injector import Injector
+from akingbee.domains.aristaeus.entities.comment import CommentEntity
+from akingbee.domains.aristaeus.errors import EntitySavingError
+from akingbee.domains.aristaeus.adapters.repositories.comment import CommentRepositoryAdapter
+from akingbee.infrastructure.db.models.comment import CommentModel
+from akingbee.infrastructure.db.engine import AsyncDatabase
+from akingbee.injector import Injector
+from akingbee.infrastructure.db.utils import error_handler
 
 
 @Injector.bind(CommentRepositoryAdapter)
 class CommentRepository:
     database: AsyncDatabase
 
-    async def get_async(self, reference: Reference) -> CommentEntity:
-        query = select(CommentModel).where(CommentModel.public_id == reference.get())
+    @error_handler
+    async def get(self, comment_id: UUID) -> CommentEntity:
+        query = select(CommentModel).where(CommentModel.public_id == comment_id)
         result = await self.database.execute(query)
         return result.scalar_one().to_entity()
 
-    async def save_async(self, entity: CommentEntity) -> None:
+    @error_handler
+    async def save(self, entity: CommentEntity) -> None:
         model = CommentModel.from_entity(entity)
-        await self.database.save(model)
+        await self.database.save(model, commit=True)

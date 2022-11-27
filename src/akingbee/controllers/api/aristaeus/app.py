@@ -2,18 +2,17 @@ from fastapi import FastAPI
 
 import akingbee.infrastructure.db.repositories
 
-
-from .resources.swarm import router as swarm_router
-from .resources.apiary import router as apiary_router
-from .resources.hive import router as hive_router
-from .resources.event import router as event_router
-from .resources.monitoring import router as monitoring_router
-from .middlewares.cors import configure_cors_middleware
-
 from fastapi.responses import JSONResponse
 from fastapi import Request
 
 from akingbee.domains.aristaeus.errors import EntityNotFound
+from .resources.swarm import router as swarm_router
+from .resources.apiary import router as apiary_router
+from .resources.hive import router as hive_router
+from .resources.event import router as event_router
+from .resources.comment import router as comment_router
+from .resources.monitoring import router as monitoring_router
+from .middlewares.cors import configure_cors_middleware
 
 
 def configure_error_handlers(app):
@@ -33,6 +32,8 @@ def create_app():
     app.include_router(apiary_router, prefix="/apiary")
     app.include_router(hive_router, prefix="/hive")
     app.include_router(event_router, prefix="/event")
+    app.include_router(comment_router, prefix="/comment")
+
     configure_error_handlers(app)
 
     configure_cors_middleware(

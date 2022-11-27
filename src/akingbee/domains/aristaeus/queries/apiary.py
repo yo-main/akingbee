@@ -8,5 +8,5 @@ from akingbee.injector import InjectorMixin
 class ApiaryQuery(InjectorMixin):
     apiary_repository: ApiaryRepositoryAdapter
 
-    async def get_apiary_query(self, swarm_id: UUID) -> ApiaryEntity:
-        return await self.apiary_repository.get(swarm_id)
+    async def get_apiary_query(self, apiary_id: UUID) -> ApiaryEntity:
+        return await self.apiary_repository.get(apiary_id)

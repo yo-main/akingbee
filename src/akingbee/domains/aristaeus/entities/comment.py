@@ -1,40 +1,22 @@
 import uuid
 from dataclasses import dataclass
+from dataclasses import field
+from dataclasses import asdict
 from datetime import datetime
 from uuid import UUID
 
-from domains.bee.entities.vo.reference import Reference
-
-from .apiary import ApiaryEntity
-from .event import EventEntity
-from .hive import HiveEntity
-from .swarm import SwarmEntity
+from akingbee.domains.aristaeus.entities.vo.reference import Reference
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class CommentEntity:
-    public_id: Reference
-
     date: datetime
     type: str  # choice
     body: str
 
-    hive: HiveEntity
-    event: EventEntity | None
+    hive_id: UUID
+    event_id: UUID | None
+    public_id: UUID = field(default_factory=uuid.uuid4)
 
-    @staticmethod
-    def create(
-        date: datetime,
-        body: str,
-        type: str,
-        hive: HiveEntity,
-        event: EventEntity | None,
-    ) -> "CommentEntity":
-        return CommentEntity(
-            public_id=Reference.of(uuid.uuid4()),
-            date=date,
-            body=body,
-            type=type,
-            hive=hive,
-            event=event,
-        )
+    def asdict(self) -> dict:
+        return asdict(self)
