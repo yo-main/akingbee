@@ -5,7 +5,7 @@ from uuid import UUID
 
 @dataclass
 class CreateEventCommand:
-    hive: UUID
+    hive_id: UUID
     due_date: datetime
     type: str
     status: str

@@ -3,8 +3,7 @@ import pytest
 
 
 def test_create_apiary(app):
-    org_id = str(uuid.uuid4())
-    data = {"name": "a name", "honey_kind": "too good", "location": "everywhere", "organization_id": org_id}
+    data = {"name": "a name", "honey_kind": "too good", "location": "everywhere"}
     response = app.post("/apiary", json=data)
     assert response.status_code == 200, response.text
 
@@ -12,16 +11,16 @@ def test_create_apiary(app):
     assert data["name"] == "a name", data
     assert data["location"] == "everywhere", data
     assert data["honey_kind"] == "too good", data
-    assert data["organization_id"] == org_id, data
+    assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
 
 @pytest.mark.parametrize(
     "payload",
     (
-        {"name": "a name", "honey_kind": "too good", "location": None, "organization_id": str(uuid.uuid4())},
-        {"name": "a name", "honey_kind": "too good", "organization_id": str(uuid.uuid4())},
-        {"location": "a name", "honey_kind": "too good", "organization_id": str(uuid.uuid4())},
-        {"location": "a name", "name": "too good", "organization_id": str(uuid.uuid4())},
+        {"name": "a name", "honey_kind": "too good", "location": None},
+        {"name": "a name", "honey_kind": "too good"},
+        {"location": "a name", "honey_kind": "too good"},
+        {"location": "a name", "name": "too good"},
     ),
 )
 def test_create_apiary__wrong_payload(app, payload):
@@ -35,7 +34,7 @@ def test_get_apiary__unknown(app):
 
 
 def test_get_apiary__get(app):
-    data = {"name": "a name", "honey_kind": "too good", "location": "everywhere", "organization_id": str(uuid.uuid4())}
+    data = {"name": "a name", "honey_kind": "too good", "location": "everywhere"}
     response = app.post("/apiary", json=data)
     assert response.status_code == 200, response.text
 

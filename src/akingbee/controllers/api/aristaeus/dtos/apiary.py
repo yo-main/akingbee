@@ -7,7 +7,6 @@ class ApiaryIn(BaseModel):
     name: str
     location: str
     honey_kind: str
-    organization_id: UUID
 
 
 class ApiaryOut(BaseModel):

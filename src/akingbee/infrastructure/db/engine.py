@@ -16,7 +16,7 @@ from akingbee.infrastructure.db.utils import get_database_uri
 
 
 class AsyncDatabase(Protocol):
-    async def save(self, entity: BaseModel, commit: bool = False) -> None:
+    async def save(self, entity: BaseModel, commit: bool) -> None:
         ...
 
     async def execute(self, query: Executable) -> Result:
@@ -38,7 +38,7 @@ class PostgresAsync(metaclass=SingletonMeta):
         self._engine = create_async_engine(get_database_uri())
         self._session_maker = async_sessionmaker(self._engine)
 
-    async def save(self, entity: BaseModel, commit: bool = False) -> None:
+    async def save(self, entity: BaseModel, commit: bool) -> None:
         async with self._session_maker() as session:
             session.add(entity)
             if commit:

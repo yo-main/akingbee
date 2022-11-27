@@ -1,25 +1,27 @@
 import asyncio
 import functools
+from uuid import UUID
 from sqlalchemy import select
 
-from domains.bee.entities.event import EventEntity
-from domains.bee.errors import EntitySavingError
-from domains.bee.adapters.repository.event import EventRepositoryAdapter
-from infrastructure.db.models.event import EventModel
-from infrastructure.db.engine import AsyncDatabase
-from domains.bee.entities.vo.reference import Reference
-from injector import Injector
+from akingbee.domains.aristaeus.entities.event import EventEntity
+from akingbee.domains.aristaeus.adapters.repositories.event import EventRepositoryAdapter
+from akingbee.infrastructure.db.models.event import EventModel
+from akingbee.infrastructure.db.engine import AsyncDatabase
+from akingbee.infrastructure.db.utils import error_handler
+from akingbee.injector import Injector
 
 
 @Injector.bind(EventRepositoryAdapter)
 class EventRepository:
     database: AsyncDatabase
 
-    async def get_async(self, reference: Reference) -> EventEntity:
-        query = select(EventModel).where(EventModel.public_id == reference.get())
+    @error_handler
+    async def get(self, public_id: UUID) -> EventEntity:
+        query = select(EventModel).where(EventModel.public_id == public_id)
         result = await self.database.execute(query)
         return result.scalar_one().to_entity()
 
-    async def save_async(self, entity: EventEntity) -> None:
+    @error_handler
+    async def save(self, entity: EventEntity) -> None:
         model = EventModel.from_entity(entity)
-        await self.database.save(model)
+        await self.database.save(model, commit=True)

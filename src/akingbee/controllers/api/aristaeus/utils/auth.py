@@ -34,5 +34,5 @@ class UserManager(InjectorMixin, metaclass=SingletonMeta):
         return user
 
 
-async def auth_user(access_token=Cookie(None)):
+async def auth_user(access_token=Cookie(None)) -> UserEntity:
     return await UserManager().get_logged_in_user(access_token)

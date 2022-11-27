@@ -20,7 +20,6 @@ class HiveRepository:
     @error_handler
     async def get(self, public_id: UUID) -> HiveEntity:
         query = select(HiveModel).where(HiveModel.public_id == public_id)
-        alll = await self.database.execute(select(HiveModel))
         result = await self.database.execute(query)
         return result.scalar_one().to_entity()
 

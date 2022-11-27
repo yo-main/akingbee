@@ -8,6 +8,7 @@ from akingbee.domains.aristaeus.commands.create_swarm import CreateSwarmCommand
 from akingbee.domains.aristaeus.applications.swarm import SwarmApplication
 from akingbee.domains.aristaeus.queries.swarm import SwarmQuery
 from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
+from akingbee.domains.aristaeus.entities.user import UserEntity
 
 from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmIn
 from akingbee.controllers.api.aristaeus.dtos.swarm import SwarmOut
@@ -17,7 +18,7 @@ router = APIRouter()
 
 
 @router.post("", response_model=SwarmOut)
-async def post_swarm(input: SwarmIn, user: UUID = Depends(auth_user)):
+async def post_swarm(input: SwarmIn, user: UserEntity = Depends(auth_user)):
     command = CreateSwarmCommand(health_status=input.health, queen_year=input.queen_year)
     swarm_application = SwarmApplication()
     swarm_entity = await swarm_application.create_swarm(command=command)
@@ -26,6 +27,6 @@ async def post_swarm(input: SwarmIn, user: UUID = Depends(auth_user)):
 
 
 @router.get("/{swarm_id}", response_model=SwarmOut)
-async def get_swarm(swarm_id: UUID, user: UUID = Depends(auth_user)):
+async def get_swarm(swarm_id: UUID, user: UserEntity = Depends(auth_user)):
     swarm_entity = await SwarmQuery().get_swarm(swarm_id)
     return swarm_entity.asdict()

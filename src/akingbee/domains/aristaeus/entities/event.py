@@ -1,37 +1,22 @@
 import uuid
 from dataclasses import dataclass
+from dataclasses import field
+from dataclasses import asdict
 from datetime import datetime
 from uuid import UUID
 
-from domains.bee.entities.hive import HiveEntity
-from domains.bee.entities.vo.reference import Reference
+from akingbee.domains.aristaeus.entities.hive import HiveEntity
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class EventEntity:
-    public_id: Reference
-    hive: HiveEntity
+    hive_id: UUID
     title: str
     description: str
     due_date: datetime
     type: str
     status: str
+    public_id: UUID = field(default_factory=uuid.uuid4)
 
-    @staticmethod
-    def create(
-        title: str,
-        description: str,
-        due_date: datetime,
-        type: str,
-        status: str,
-        hive: HiveEntity,
-    ) -> "EventEntity":
-        return EventEntity(
-            public_id=Reference.of(uuid.uuid4()),
-            hive=hive,
-            title=title,
-            description=description,
-            due_date=due_date,
-            type=type,
-            status=status,
-        )
+    def asdict(self) -> dict:
+        return asdict(self)

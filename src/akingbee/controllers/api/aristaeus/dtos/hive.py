@@ -7,7 +7,6 @@ class HiveIn(BaseModel):
     name: str
     condition: str
     owner_id: UUID
-    organization_id: UUID
     apiary_id: UUID | None
 
 
