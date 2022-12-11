@@ -5,7 +5,7 @@ description = ""
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 sqlalchemy = {version = "^2.0.0b2", allow-prereleases = true}
 dynaconf = "^3.1.11"
 fastapi = "^0.85.1"

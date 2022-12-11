@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select, update
 
 from akingbee.domains.aristaeus.adapters.repositories.apiary import (
     ApiaryRepositoryAdapter,
@@ -23,12 +23,27 @@ class ApiaryRespository:
         return result.scalar_one().to_entity()
 
     @error_handler
+    async def save(self, entity: ApiaryEntity) -> None:
+        model = ApiaryModel.from_entity(entity)
+        await self.database.save(model)
+
+    @error_handler
+    async def update(self, entity: ApiaryEntity, fields: list[str]) -> ApiaryEntity:
+        query = (
+            update(ApiaryModel)
+            .values({field: getattr(entity, field) for field in fields})
+            .where(ApiaryModel.public_id == entity.public_id)
+        )
+        await self.database.execute(query)
+        return await self.get(entity.public_id)
+
+    @error_handler
     async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
         query = select(ApiaryModel).where(ApiaryModel.organization_id == organization_id)
         result = await self.database.execute(query)
         return [model.to_entity() for model in result.scalars()]
 
     @error_handler
-    async def save(self, entity: ApiaryEntity) -> None:
-        model = ApiaryModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+    async def delete(self, entity: ApiaryEntity) -> None:
+        query = delete(ApiaryModel).where(ApiaryModel.public_id == entity.public_id)
+        await self.database.execute(query)

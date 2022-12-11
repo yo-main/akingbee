@@ -3,10 +3,15 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class ApiaryIn(BaseModel):
+class PostApiaryIn(BaseModel):
     name: str
     location: str
     honey_kind: str
+
+class PutApiaryIn(BaseModel):
+    name: str | None
+    location: str | None
+    honey_kind: str | None
 
 
 class ApiaryOut(BaseModel):

@@ -29,4 +29,4 @@ class SwarmRespository:
     @error_handler
     async def save(self, entity: SwarmEntity) -> None:
         model = SwarmModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+        await self.database.save(model)

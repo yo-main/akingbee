@@ -28,4 +28,4 @@ class CommentRepository:
     @error_handler
     async def save(self, entity: CommentEntity) -> None:
         model = CommentModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+        await self.database.save(model)

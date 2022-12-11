@@ -21,10 +21,11 @@ class UserRespository:
     @error_handler
     async def get(self, public_id: UUID) -> UserEntity:
         query = select(UserModel).where(UserModel.public_id == public_id)
-        result = await self.database.execute(query)
-        return result.scalar_one().to_entity()
+        async with self.database.get_session() as session:
+            result = await session.scalar(query)
+        return result.to_entity()
 
     @error_handler
     async def save(self, entity: UserEntity) -> None:
         model = UserModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+        await self.database.save(model)

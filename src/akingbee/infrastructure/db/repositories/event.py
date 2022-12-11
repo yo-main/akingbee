@@ -27,4 +27,4 @@ class EventRepository:
     @error_handler
     async def save(self, entity: EventEntity) -> None:
         model = EventModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+        await self.database.save(model)

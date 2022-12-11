@@ -29,4 +29,4 @@ class ParameterRespository:
     @error_handler
     async def save(self, entity: ParameterEntity) -> None:
         model = ParameterModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+        await self.database.save(model)

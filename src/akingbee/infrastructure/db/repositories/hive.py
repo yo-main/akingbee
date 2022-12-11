@@ -23,7 +23,7 @@ class HiveRepository:
     @error_handler
     async def save(self, entity: HiveEntity) -> None:
         model = HiveModel.from_entity(entity)
-        await self.database.save(model, commit=True)
+        await self.database.save(model)
 
     @error_handler
     async def list(self, organization_id: UUID) -> list[HiveEntity]:

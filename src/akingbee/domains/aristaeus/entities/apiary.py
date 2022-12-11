@@ -1,5 +1,5 @@
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace, fields
 from uuid import UUID
 
 
@@ -13,3 +13,13 @@ class ApiaryEntity:
 
     def asdict(self) -> dict:
         return asdict(self)
+
+    def update(self, organization_id: str = None, public_id: str = None, **kwargs) -> tuple["ApiaryEntity", list[str]]:
+        data = {k: v for k, v in kwargs.items() if v is not None}
+        new_apiary = replace(self, **data)
+
+        updated_fields = [
+            field.name for field in fields(new_apiary) if getattr(self, field.name) != getattr(new_apiary, field.name)
+        ]
+
+        return new_apiary, updated_fields
