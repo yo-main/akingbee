@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 from sqlalchemy.orm import Mapped, mapped_column
+
+from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 
 from .base import BaseModel
 
@@ -9,7 +10,7 @@ from .base import BaseModel
 class SwarmModel(BaseModel):
     health: Mapped[str]
     queen_year: Mapped[int]
-    public_id: Mapped[UUID]
+    public_id: Mapped[UUID] = mapped_column(unique=True)
 
     def to_entity(self) -> SwarmEntity:
         return SwarmEntity(

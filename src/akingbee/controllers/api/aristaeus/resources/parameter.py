@@ -1,6 +1,8 @@
 import functools
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException
+
 from akingbee.controllers.api.aristaeus.dtos.parameter import ParameterIn, ParameterOut
 from akingbee.controllers.api.aristaeus.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.parameter import ParameterApplication
@@ -8,7 +10,6 @@ from akingbee.domains.aristaeus.commands.create_parameter import CreateParameter
 from akingbee.domains.aristaeus.entities.parameter import ParameterEntity
 from akingbee.domains.aristaeus.entities.user import UserEntity
 from akingbee.domains.aristaeus.queries.parameter import ParameterQuery
-from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 

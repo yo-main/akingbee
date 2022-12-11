@@ -1,14 +1,14 @@
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.hive import HiveEntity
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .apiary import ApiaryModel
+from akingbee.domains.aristaeus.entities.hive import HiveEntity
+
 from .base import BaseModel
 
 
 class HiveModel(BaseModel):
-    public_id: Mapped[UUID]
+    public_id: Mapped[UUID] = mapped_column(unique=True)
     name: Mapped[str]
     condition: Mapped[str]
     owner_id: Mapped[UUID]

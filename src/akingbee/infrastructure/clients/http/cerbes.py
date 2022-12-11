@@ -1,6 +1,7 @@
 from typing import Protocol
 
 import aiohttp
+
 from akingbee.config import settings
 from akingbee.injector import Injector
 from akingbee.utils.singleton import SingletonMeta
@@ -14,7 +15,7 @@ class CerbesClientAsyncAdapter(Protocol):
 @Injector.bind(CerbesClientAsyncAdapter, "test")
 class TestClient(metaclass=SingletonMeta):
     async def validate(self, access_token: str) -> str | None:
-        return "11111111-1111-1111-1111-111111111111" if access_token == "test" else None
+        return access_token
 
 
 @Injector.bind(CerbesClientAsyncAdapter, "development", "production")

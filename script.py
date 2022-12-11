@@ -1,7 +1,6 @@
-from typing import Protocol
-from typing import TypeVar, Any, Type, Generic, ClassVar, TYPE_CHECKING
-import os
 import inspect
+import os
+from typing import TYPE_CHECKING, Any, ClassVar, Generic, Protocol, Type, TypeVar
 
 if TYPE_CHECKING:
     Base = object

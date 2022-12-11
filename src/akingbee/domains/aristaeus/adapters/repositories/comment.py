@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from sqlalchemy import select
+
+from akingbee.domains.aristaeus.entities.comment import CommentEntity
 
 __all__ = ["CommentRepositoryAdapter"]
 

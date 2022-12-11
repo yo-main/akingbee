@@ -10,3 +10,6 @@ class ApiaryQuery(InjectorMixin):
 
     async def get_apiary_query(self, apiary_id: UUID) -> ApiaryEntity:
         return await self.apiary_repository.get(apiary_id)
+
+    async def list_apiary_query(self, organization_id: UUID) -> list[ApiaryEntity]:
+        return await self.apiary_repository.list(organization_id)

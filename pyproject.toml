@@ -13,21 +13,21 @@ aiohttp = "^3.8.3"
 uvicorn = "^0.19.0"
 requests = "^2.28.1"
 asyncpg = "^0.27.0"
-
-[tool.poetry.dev-dependencies]
-pyright = "^1.1.275"
+anyio = "^3.6.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.10.0"
 isort = "^5.10.1"
 python-lsp-server = "^1.5.0"
-pylint = "^2.15.5"
 pylsp-mypy = "^0.6.3"
 python-lsp-black = "^1.2.1"
 pyls-isort = "^0.2.2"
 mypy = "^0.982"
 ipdb = "^0.13.9"
 pytest = "^7.2.0"
+factory-boy = "^3.2.1"
+flake8 = "^6.0.0"
+httpx = "^0.23.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -57,8 +57,13 @@ exclude = '''
 
 [tool.isort]
 profile = "black"
-src_paths = ["controllers", "domains", "infrastructure", "utils"]
+src_paths = ["src"]
 
 [tool.mypy]
 ignore_missing_imports = false
 
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "integration",
+]

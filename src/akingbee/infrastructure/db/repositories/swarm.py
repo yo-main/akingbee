@@ -3,6 +3,8 @@ import functools
 from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
+from sqlalchemy import select
+
 from akingbee.domains.aristaeus.adapters.repositories.swarm import (
     SwarmRepositoryAdapter,
 )
@@ -12,7 +14,6 @@ from akingbee.infrastructure.db.engine import AsyncDatabase
 from akingbee.infrastructure.db.models.swarm import SwarmModel
 from akingbee.infrastructure.db.utils import error_handler
 from akingbee.injector import Injector
-from sqlalchemy import select
 
 
 @Injector.bind(SwarmRepositoryAdapter)

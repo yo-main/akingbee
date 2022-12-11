@@ -1,6 +1,8 @@
 import functools
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException
+
 from akingbee.controllers.api.aristaeus.dtos.comment import CommentIn, CommentOut
 from akingbee.controllers.api.aristaeus.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.comment import CommentApplication
@@ -8,7 +10,6 @@ from akingbee.domains.aristaeus.commands.create_comment import CreateCommentComm
 from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from akingbee.domains.aristaeus.entities.user import UserEntity
 from akingbee.domains.aristaeus.queries.comment import CommentQuery
-from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 

@@ -2,9 +2,10 @@ import uuid
 import pytest
 
 
-def test_create_swarm(app):
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_create_swarm(async_app):
     data = {"queen_year": 2020, "health": "Good"}
-    response = app.post("/swarm", json=data)
+    response = await async_app.post("/swarm", json=data)
     assert response.status_code == 200, response.text
 
     data = response.json()
@@ -12,6 +13,7 @@ def test_create_swarm(app):
     assert data["health"] == "Good", data
 
 
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 @pytest.mark.parametrize(
     "payload",
     (
@@ -22,21 +24,23 @@ def test_create_swarm(app):
         {"health": "", "queen_year": "bla"},
     ),
 )
-def test_create_swarm__wrong_payload(app, payload):
-    response = app.post("/swarm", json=payload)
+async def test_create_swarm__wrong_payload(async_app, payload):
+    response = await async_app.post("/swarm", json=payload)
     assert response.status_code == 422, response.text
 
 
-def test_get_swarm__unknown(app):
-    response = app.get(f"/swarm/{uuid.uuid4()}")
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_get_swarm__unknown(async_app):
+    response = await async_app.get(f"/swarm/{uuid.uuid4()}")
     assert response.status_code == 404, response.text
 
 
-def test_get_swarm__get(app):
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_get_swarm__get(async_app):
     data = {"queen_year": 2010, "health": "Ok"}
-    response = app.post("/swarm", json=data)
+    response = await async_app.post("/swarm", json=data)
     assert response.status_code == 200, response.text
 
     swarm_id = response.json()["public_id"]
-    response = app.get(f"/swarm/{swarm_id}")
+    response = await async_app.get(f"/swarm/{swarm_id}")
     assert response.status_code == 200, response.text

@@ -4,7 +4,8 @@ from datetime import datetime
 from datetime import timezone
 
 
-def test_create_comment(app):
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_create_comment(async_app):
     hive_id = str(uuid.uuid4())
     data = {
         "type": "type",
@@ -13,7 +14,7 @@ def test_create_comment(app):
         "type": "type",
         "hive_id": hive_id,
     }
-    response = app.post("/comment", json=data)
+    response = await async_app.post("/comment", json=data)
     assert response.status_code == 200, response.text
 
     data = response.json()
@@ -24,6 +25,7 @@ def test_create_comment(app):
     assert data["hive_id"] == hive_id, data
 
 
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 @pytest.mark.parametrize(
     "payload",
     (
@@ -36,7 +38,7 @@ def test_create_comment(app):
         {"hive_id": "i_am_not_a_uuid"},
     ),
 )
-def test_create_comment__wrong_payload(app, payload):
+async def test_create_comment__wrong_payload(async_app, payload):
     data = {
         "type": "type",
         "body": "description",
@@ -46,16 +48,18 @@ def test_create_comment__wrong_payload(app, payload):
     }
     data.update(payload)
     data = {k: v for k, v in data.items() if v is not None}
-    response = app.post("/comment", json=data)
+    response = await async_app.post("/comment", json=data)
     assert response.status_code == 422, response.text
 
 
-def test_get_comment__unknown(app):
-    response = app.get(f"/comment/{uuid.uuid4()}")
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_get_comment__unknown(async_app):
+    response = await async_app.get(f"/comment/{uuid.uuid4()}")
     assert response.status_code == 404, response.text
 
 
-def test_get_comment(app):
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_get_comment(async_app):
     hive_id = str(uuid.uuid4())
     data = {
         "type": "type",
@@ -64,9 +68,9 @@ def test_get_comment(app):
         "type": "type",
         "hive_id": hive_id,
     }
-    response = app.post("/comment", json=data)
+    response = await async_app.post("/comment", json=data)
     assert response.status_code == 200, response.text
 
     comment_id = response.json()["public_id"]
-    response = app.get(f"/comment/{comment_id}")
+    response = await async_app.get(f"/comment/{comment_id}")
     assert response.status_code == 200, response.text

@@ -1,15 +1,14 @@
 import uuid
 import pytest
-from datetime import datetime
-from datetime import timezone
 
 
-def test_create_parameter(app):
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_create_parameter(async_app):
     data = {
         "key": "key",
         "value": "value",
     }
-    response = app.post("/parameter", json=data)
+    response = await async_app.post("/parameter", json=data)
     assert response.status_code == 200, response.text
 
     data = response.json()
@@ -18,6 +17,7 @@ def test_create_parameter(app):
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
 
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 @pytest.mark.parametrize(
     "payload",
     (
@@ -25,28 +25,31 @@ def test_create_parameter(app):
         {"value": None},
     ),
 )
-def test_create_parameter__wrong_payload(app, payload):
+async def test_create_parameter__wrong_payload(async_app, payload):
     data = {"key": "key", "value": "value"}
     data.update(payload)
     data = {k: v for k, v in data.items() if v is not None}
-    response = app.post("/parameter", json=data)
+    response = await async_app.post("/parameter", json=data)
     assert response.status_code == 422, response.text
 
 
-def test_get_parameter__unknown(app):
-    response = app.get(f"/parameter/{uuid.uuid4()}")
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_get_parameter__unknown(async_app):
+    response = await async_app.get(f"/parameter/{uuid.uuid4()}")
     assert response.status_code == 404, response.text
 
 
-def test_get_parameter(app):
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_get_parameter(async_app):
     hive_id = str(uuid.uuid4())
     data = {
         "key": "key",
         "value": "value",
     }
-    response = app.post("/parameter", json=data)
+    response = await async_app.post("/parameter", json=data)
     assert response.status_code == 200, response.text
 
     parameter_id = response.json()["public_id"]
-    response = app.get(f"/parameter/{parameter_id}")
+    response = await async_app.get(f"/parameter/{parameter_id}")
     assert response.status_code == 200, response.text
+

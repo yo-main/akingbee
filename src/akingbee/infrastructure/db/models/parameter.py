@@ -1,13 +1,14 @@
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.parameter import ParameterEntity
 from sqlalchemy.orm import Mapped, mapped_column
+
+from akingbee.domains.aristaeus.entities.parameter import ParameterEntity
 
 from .base import BaseModel
 
 
 class ParameterModel(BaseModel):
-    public_id: Mapped[UUID]
+    public_id: Mapped[UUID] = mapped_column(unique=True)
     key: Mapped[str]
     value: Mapped[str]
     organization_id: Mapped[UUID]

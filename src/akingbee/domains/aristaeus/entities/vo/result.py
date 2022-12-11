@@ -2,8 +2,9 @@ from dataclasses import dataclass, field
 from typing import Awaitable, Generic, TypeVar
 
 import anyio
-from akingbee.domains.aristaeus.errors import EntityNotFound
 from sqlalchemy.exc import NoResultFound
+
+from akingbee.domains.aristaeus.errors import EntityNotFound
 
 _type = TypeVar("_type")
 

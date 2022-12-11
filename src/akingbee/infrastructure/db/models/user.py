@@ -1,13 +1,14 @@
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.user import UserEntity
 from sqlalchemy.orm import Mapped, mapped_column
+
+from akingbee.domains.aristaeus.entities.user import UserEntity
 
 from .base import BaseModel
 
 
 class UserModel(BaseModel):
-    public_id: Mapped[UUID]
+    public_id: Mapped[UUID] = mapped_column(unique=True)
     organization_id: Mapped[UUID]
 
     def to_entity(self) -> UserEntity:

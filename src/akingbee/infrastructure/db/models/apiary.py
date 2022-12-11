@@ -1,13 +1,14 @@
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
 from sqlalchemy.orm import Mapped, mapped_column
+
+from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
 
 from .base import BaseModel
 
 
 class ApiaryModel(BaseModel):
-    public_id: Mapped[UUID]
+    public_id: Mapped[UUID] = mapped_column(unique=True)
     name: Mapped[str]
     location: Mapped[str]
     honey_kind: Mapped[str]

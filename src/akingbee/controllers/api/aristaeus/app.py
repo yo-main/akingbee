@@ -1,7 +1,8 @@
-import akingbee.infrastructure.db.repositories
-from akingbee.domains.aristaeus.errors import EntityNotFound
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+
+import akingbee.infrastructure.db.repositories
+from akingbee.domains.aristaeus.errors import EntityNotFound
 
 from .middlewares.cors import configure_cors_middleware
 from .resources.apiary import router as apiary_router

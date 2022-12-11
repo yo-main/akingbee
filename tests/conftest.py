@@ -1,27 +1,24 @@
-import anyio
-import pytest
+import asyncio
 import uuid
-import contextlib
 from datetime import datetime
+
+import pytest
 from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from sqlalchemy import text
-from sqlalchemy import Connection
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.ext.asyncio import AsyncConnection
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 from akingbee.config import settings
 
 settings.setenv("test")
 
-from akingbee.injector import Injector
-
-
 from akingbee.controllers.api.aristaeus.app import create_app
 from akingbee.infrastructure.db.engine import AsyncDatabase
-from akingbee.infrastructure.db.utils import get_database_uri
 from akingbee.infrastructure.db.models.base import BaseModel
+from akingbee.infrastructure.db.utils import get_database_uri
+from akingbee.injector import Injector
 
+pytestmark = pytest.mark.anyio
 
 @pytest.fixture(scope="session")
 def anyio_backend():
@@ -29,15 +26,15 @@ def anyio_backend():
 
 
 @pytest.fixture(scope="session")
-async def engine():
+async def root_engine():
     engine = create_async_engine(get_database_uri("postgres"))
     yield engine
     await engine.dispose()
 
 
 @pytest.fixture(scope="session")
-async def root_connection(engine):
-    connection = await engine.connect()
+async def root_connection(root_engine):
+    connection = await root_engine.connect()
     yield connection
     await connection.close()
 
@@ -50,7 +47,7 @@ def dbname():
 
 
 @pytest.fixture(scope="session")
-async def provision_database(dbname, root_connection, anyio_backend):
+async def provision_database(dbname, root_connection):
     await root_connection.execute(text("commit"))
     await root_connection.execute(text(f"CREATE DATABASE {dbname}"))
     await root_connection.execute(text("commit"))
@@ -61,17 +58,8 @@ async def provision_database(dbname, root_connection, anyio_backend):
     async with engine.begin() as conn:
         await conn.run_sync(BaseModel.metadata.create_all)
         await conn.commit()
-    async with engine.begin() as conn:
-        params = {"test_id": "11111111-1111-1111-1111-111111111111", "date": datetime.now()}
-        await conn.execute(
-            text(
-                """INSERT INTO "user"(public_id, organization_id, date_creation, date_modification) VALUES (:test_id, :test_id, :date, :date)"""
-            ),
-            params,
-        )
-        await conn.commit()
 
-    yield
+    yield engine
 
     await engine.dispose()
 
@@ -90,17 +78,39 @@ async def provision_database(dbname, root_connection, anyio_backend):
     await root_connection.close()
 
 
-@pytest.fixture(autouse=True)
-async def session(anyio_backend):
-    database = Injector.get(AsyncDatabase)
-    async with database.get_session() as session:
-        savepoint = await session.begin_nested()
-        yield
-        await savepoint.rollback()
+@pytest.fixture(scope="session", autouse=True)
+async def app(provision_database):
+    with TestClient(app=create_app(), base_url="http://testserver") as client:
+        client.cookies["access_token"] = "test"
+        yield client
 
 
 @pytest.fixture(scope="session", autouse=True)
-def app(provision_database):
-    with TestClient(app=create_app()) as client:
-        client.cookies["access_token"] = "test"
+async def async_app(provision_database, anyio_backend, request):
+    async with AsyncClient(app=create_app(), base_url="http://testserver") as client:
+        if hasattr(request, "param"):
+            access_token = request.param
+            
+            async with provision_database.begin() as conn:
+                params = {"test_id": access_token, "date": datetime.now()}
+                await conn.execute(
+                    text(
+                        """
+                            INSERT INTO "user"(public_id, organization_id, date_creation, date_modification) 
+                            VALUES (:test_id, :test_id, :date, :date)
+                            ON CONFLICT DO NOTHING
+                        """
+                    ),
+                    params,
+                )
+                await conn.commit()
+
+            client.cookies["access_token"] = access_token
         yield client
+
+
+@pytest.fixture(autouse=True)
+async def session():
+    database = Injector.get(AsyncDatabase)
+    async with database.get_session() as session:
+        yield session

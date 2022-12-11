@@ -15,3 +15,6 @@ class HiveRepositoryAdapter(Base):
 
     async def get(self, public_id: UUID) -> HiveEntity:
         ...
+
+    async def list(self, organization_id: UUID) -> list[HiveEntity]:
+        ...

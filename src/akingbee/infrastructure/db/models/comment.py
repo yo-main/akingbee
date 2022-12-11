@@ -1,8 +1,9 @@
 from datetime import datetime
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.comment import CommentEntity
 from sqlalchemy.orm import Mapped, mapped_column
+
+from akingbee.domains.aristaeus.entities.comment import CommentEntity
 
 from .base import BaseModel
 from .event import EventModel
@@ -10,7 +11,7 @@ from .hive import HiveModel
 
 
 class CommentModel(BaseModel):
-    public_id: Mapped[UUID]
+    public_id: Mapped[UUID] = mapped_column(unique=True)
     hive_id: Mapped[UUID]
     event_id: Mapped[UUID | None]
     date: Mapped[datetime]

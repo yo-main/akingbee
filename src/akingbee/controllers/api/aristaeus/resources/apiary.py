@@ -1,14 +1,13 @@
-import functools
 from uuid import UUID
+
+from fastapi import APIRouter, Depends
 
 from akingbee.controllers.api.aristaeus.dtos.apiary import ApiaryIn, ApiaryOut
 from akingbee.controllers.api.aristaeus.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.apiary import ApiaryApplication
 from akingbee.domains.aristaeus.commands.create_apiary import CreateApiaryCommand
-from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
 from akingbee.domains.aristaeus.entities.user import UserEntity
 from akingbee.domains.aristaeus.queries.apiary import ApiaryQuery
-from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter()
 
@@ -22,6 +21,12 @@ async def post_apiary(input: ApiaryIn, user: UserEntity = Depends(auth_user)):
     apiary_entity = await apiary_application.create(command=command)
 
     return apiary_entity.asdict()
+
+
+@router.get("", response_model=list[ApiaryOut])
+async def list_apiary(user: UserEntity = Depends(auth_user)):
+    apiary_entities = await ApiaryQuery().list_apiary_query(user.organization_id)
+    return [apiary.asdict() for apiary in apiary_entities]
 
 
 @router.get("/{apiary_id}", response_model=ApiaryOut)

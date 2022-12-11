@@ -1,12 +1,13 @@
 from uuid import UUID
 
+from fastapi import Cookie, Depends, HTTPException
+
 from akingbee.config import settings
 from akingbee.domains.aristaeus.adapters.repositories.user import UserRepositoryAdapter
 from akingbee.domains.aristaeus.entities.user import UserEntity
 from akingbee.infrastructure.clients.http.cerbes import CerbesClientAsyncAdapter
 from akingbee.injector import InjectorMixin
 from akingbee.utils.singleton import SingletonMeta
-from fastapi import Cookie, Depends, HTTPException
 
 
 class UserManager(InjectorMixin, metaclass=SingletonMeta):
