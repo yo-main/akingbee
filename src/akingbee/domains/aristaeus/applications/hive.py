@@ -1,3 +1,4 @@
+from uuid import UUID
 from akingbee.domains.aristaeus.adapters.repositories.apiary import (
     ApiaryRepositoryAdapter,
 )
@@ -5,7 +6,8 @@ from akingbee.domains.aristaeus.adapters.repositories.hive import HiveRepository
 from akingbee.domains.aristaeus.adapters.repositories.swarm import (
     SwarmRepositoryAdapter,
 )
-from akingbee.domains.aristaeus.commands.create_hive import CreateHiveCommand
+from akingbee.domains.aristaeus.commands.hive import CreateHiveCommand
+from akingbee.domains.aristaeus.commands.hive import PutHiveCommand
 from akingbee.domains.aristaeus.entities.hive import HiveEntity
 from akingbee.injector import InjectorMixin
 
@@ -24,3 +26,19 @@ class HiveApplication(InjectorMixin):
         )
         await self.hive_repository.save(hive)
         return hive
+
+    async def put(self, command: PutHiveCommand) -> HiveEntity:
+        hive = await self.hive_repository.get(command.hive_id)
+        new_hive, updated_fields = hive.update(
+            name=command.name,
+            condition=command.condition,
+            owner_id=command.owner_id,
+            apiary_id=command.apiary_id
+        )
+
+        await self.hive_repository.update(hive=new_hive, fields=updated_fields)
+        return new_hive
+
+    async def delete(self, hive_id: UUID) -> None:
+        hive = await self.hive_repository.get(hive_id)
+        await self.hive_repository.delete(hive)

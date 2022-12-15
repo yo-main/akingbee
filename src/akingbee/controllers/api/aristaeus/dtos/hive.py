@@ -3,11 +3,18 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class HiveIn(BaseModel):
+class PostHiveIn(BaseModel):
     name: str
     condition: str
     owner_id: UUID
     apiary_id: UUID | None
+
+    
+class PutHiveIn(BaseModel):
+    name: str | None
+    condition: str | None
+    apiary_id: UUID | None
+    owner_id: UUID | None
 
 
 class HiveOut(BaseModel):
