@@ -3,8 +3,6 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from uuid import UUID
 
-from akingbee.domains.aristaeus.entities.hive import HiveEntity
-
 
 @dataclass(frozen=True, slots=True)
 class EventEntity:

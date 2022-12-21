@@ -30,7 +30,7 @@ class ApiaryApplication(InjectorMixin):
             honey_kind=command.honey_kind,
         )
 
-        await self.apiary_repository.update(entity=new_apiary, fields=updated_fields)
+        await self.apiary_repository.update(apiary=new_apiary, fields=updated_fields)
         return new_apiary
 
     async def delete(self, apiary_id: UUID) -> None:

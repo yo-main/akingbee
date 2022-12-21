@@ -8,12 +8,14 @@ class PostHiveIn(BaseModel):
     condition: str
     owner_id: UUID
     apiary_id: UUID | None
+    swarm_id: UUID | None
 
-    
+
 class PutHiveIn(BaseModel):
     name: str | None
     condition: str | None
     apiary_id: UUID | None
+    swarm_id: UUID | None
     owner_id: UUID | None
 
 
@@ -24,3 +26,4 @@ class HiveOut(BaseModel):
     owner_id: UUID
     organization_id: UUID
     apiary_id: UUID | None
+    swarm_id: UUID | None

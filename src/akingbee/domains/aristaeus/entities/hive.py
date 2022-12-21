@@ -1,5 +1,5 @@
 import uuid
-from dataclasses import asdict, dataclass, field, replace, fields
+from dataclasses import asdict, dataclass, field, fields, replace
 from uuid import UUID
 
 from .apiary import ApiaryEntity
@@ -12,6 +12,7 @@ class HiveEntity:
     owner_id: UUID
     organization_id: UUID
     apiary_id: UUID | None
+    swarm_id: UUID | None
     public_id: UUID = field(default_factory=uuid.uuid4)
 
     def asdict(self) -> dict:

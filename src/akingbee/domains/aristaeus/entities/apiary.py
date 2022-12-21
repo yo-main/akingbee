@@ -1,5 +1,5 @@
 import uuid
-from dataclasses import asdict, dataclass, field, replace, fields
+from dataclasses import asdict, dataclass, field, fields, replace
 from uuid import UUID
 
 

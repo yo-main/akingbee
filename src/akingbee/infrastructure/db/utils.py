@@ -3,6 +3,7 @@ import functools
 from sqlalchemy.exc import NoResultFound
 
 from akingbee.config import settings
+from akingbee.domains.aristaeus.entities.utils import Entity
 from akingbee.domains.aristaeus.errors import EntityNotFound
 
 
@@ -25,3 +26,7 @@ def error_handler(func):
             raise EntityNotFound("Entity not found in database") from exc
 
     return wrapper
+
+
+def get_data_from_entity(entity: Entity):
+    return {k: v for k, v in entity.asdict().items() if v is not None}

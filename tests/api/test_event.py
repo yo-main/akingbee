@@ -3,17 +3,22 @@ import pytest
 from datetime import datetime
 from datetime import timezone
 
+from tests.factories import HiveModelFactory
+
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_create_event(async_app):
-    hive_id = str(uuid.uuid4())
+async def test_create_event(async_app, session):
+    public_id = str(uuid.uuid4())
+    hive = HiveModelFactory.build(public_id=public_id)
+    session.add(hive)
+    await session.commit()
     data = {
         "title": "title",
         "description": "description",
         "due_date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
         "status": "status",
         "type": "type",
-        "hive_id": hive_id,
+        "hive_id": public_id,
     }
     response = await async_app.post("/event", json=data)
     assert response.status_code == 200, response.text
@@ -24,7 +29,7 @@ async def test_create_event(async_app):
     assert data["due_date"] == "2022-01-01T00:00:00", data
     assert data["status"] == "status", data
     assert data["type"] == "type", data
-    assert data["hive_id"] == hive_id, data
+    assert data["hive_id"] == public_id, data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -63,15 +68,19 @@ async def test_get_event__unknown(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_get_event(async_app):
-    hive_id = str(uuid.uuid4())
+async def test_get_event(async_app, session):
+    public_id = str(uuid.uuid4())
+    hive = HiveModelFactory.build(public_id=public_id)
+    session.add(hive)
+    await session.commit()
+    await session.refresh(hive)
     data = {
         "title": "title",
         "description": "description",
         "due_date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
         "status": "status",
         "type": "type",
-        "hive_id": hive_id,
+        "hive_id": public_id,
     }
     response = await async_app.post("/event", json=data)
     assert response.status_code == 200, response.text

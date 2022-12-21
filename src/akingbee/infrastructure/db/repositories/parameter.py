@@ -1,18 +1,14 @@
-import asyncio
-import functools
-from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import insert, select
 
 from akingbee.domains.aristaeus.adapters.repositories.parameter import (
     ParameterRepositoryAdapter,
 )
 from akingbee.domains.aristaeus.entities.parameter import ParameterEntity
-from akingbee.domains.aristaeus.errors import EntitySavingError
 from akingbee.infrastructure.db.engine import AsyncDatabase
 from akingbee.infrastructure.db.models.parameter import ParameterModel
-from akingbee.infrastructure.db.utils import error_handler
+from akingbee.infrastructure.db.utils import error_handler, get_data_from_entity
 from akingbee.injector import Injector
 
 
@@ -27,6 +23,7 @@ class ParameterRespository:
         return result.scalar_one().to_entity()
 
     @error_handler
-    async def save(self, entity: ParameterEntity) -> None:
-        model = ParameterModel.from_entity(entity)
-        await self.database.save(model)
+    async def save(self, parameter: ParameterEntity) -> None:
+        data = get_data_from_entity(parameter)
+        query = insert(ParameterModel).values(data)
+        await self.database.execute(query)

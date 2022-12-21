@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, insert, select, update
 
 from akingbee.domains.aristaeus.adapters.repositories.apiary import (
     ApiaryRepositoryAdapter,
@@ -8,7 +8,7 @@ from akingbee.domains.aristaeus.adapters.repositories.apiary import (
 from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
 from akingbee.infrastructure.db.engine import AsyncDatabase
 from akingbee.infrastructure.db.models.apiary import ApiaryModel
-from akingbee.infrastructure.db.utils import error_handler
+from akingbee.infrastructure.db.utils import error_handler, get_data_from_entity
 from akingbee.injector import Injector
 
 
@@ -23,19 +23,20 @@ class ApiaryRespository:
         return result.scalar_one().to_entity()
 
     @error_handler
-    async def save(self, entity: ApiaryEntity) -> None:
-        model = ApiaryModel.from_entity(entity)
-        await self.database.save(model)
+    async def save(self, apiary: ApiaryEntity) -> None:
+        data = get_data_from_entity(apiary)
+        query = insert(ApiaryModel).values(data)
+        await self.database.execute(query)
 
     @error_handler
-    async def update(self, entity: ApiaryEntity, fields: list[str]) -> ApiaryEntity:
+    async def update(self, apiary: ApiaryEntity, fields: list[str]) -> ApiaryEntity:
         query = (
             update(ApiaryModel)
-            .values({field: getattr(entity, field) for field in fields})
-            .where(ApiaryModel.public_id == entity.public_id)
+            .values({field: getattr(apiary, field) for field in fields})
+            .where(ApiaryModel.public_id == apiary.public_id)
         )
         await self.database.execute(query)
-        return await self.get(entity.public_id)
+        return await self.get(apiary.public_id)
 
     @error_handler
     async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
@@ -44,6 +45,6 @@ class ApiaryRespository:
         return [model.to_entity() for model in result.scalars()]
 
     @error_handler
-    async def delete(self, entity: ApiaryEntity) -> None:
-        query = delete(ApiaryModel).where(ApiaryModel.public_id == entity.public_id)
+    async def delete(self, apiary: ApiaryEntity) -> None:
+        query = delete(ApiaryModel).where(ApiaryModel.public_id == apiary.public_id)
         await self.database.execute(query)

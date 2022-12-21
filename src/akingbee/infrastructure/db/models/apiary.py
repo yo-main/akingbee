@@ -1,6 +1,7 @@
+from typing import Optional
 from uuid import UUID
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from akingbee.domains.aristaeus.entities.apiary import ApiaryEntity
 
@@ -13,6 +14,8 @@ class ApiaryModel(BaseModel):
     location: Mapped[str]
     honey_kind: Mapped[str]
     organization_id: Mapped[UUID]
+
+    hive: Mapped[Optional["HiveModel"]] = relationship(back_populates="apiary")
 
     def to_entity(self) -> ApiaryEntity:
         return ApiaryEntity(

@@ -15,8 +15,17 @@ else:
 
 
 class CommentRepositoryAdapter(Base):
-    async def save(self, entity: CommentEntity) -> None:
+    async def save(self, comment: CommentEntity) -> None:
         ...
 
     async def get(self, public_id: UUID) -> CommentEntity:
+        ...
+
+    async def update(self, comment: CommentEntity, fields: list[str]) -> CommentEntity:
+        ...
+
+    async def delete(self, comment: CommentEntity) -> None:
+        ...
+
+    async def list(self, hive_id: UUID) -> list[CommentEntity]:
         ...

@@ -1,6 +1,7 @@
+from typing import Optional
 from uuid import UUID
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from akingbee.domains.aristaeus.entities.swarm import SwarmEntity
 
@@ -11,6 +12,8 @@ class SwarmModel(BaseModel):
     health: Mapped[str]
     queen_year: Mapped[int]
     public_id: Mapped[UUID] = mapped_column(unique=True)
+
+    hive: Mapped[Optional["HiveModel"]] = relationship(back_populates="swarm")
 
     def to_entity(self) -> SwarmEntity:
         return SwarmEntity(

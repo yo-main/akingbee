@@ -8,6 +8,7 @@ class PostApiaryIn(BaseModel):
     location: str
     honey_kind: str
 
+
 class PutApiaryIn(BaseModel):
     name: str | None
     location: str | None

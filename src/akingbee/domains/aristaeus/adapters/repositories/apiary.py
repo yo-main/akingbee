@@ -13,17 +13,17 @@ else:
 
 
 class ApiaryRepositoryAdapter(Base):
-    async def save(self, entity: ApiaryEntity) -> None:
+    async def save(self, apiary: ApiaryEntity) -> None:
         ...
 
     async def get(self, public_id: UUID) -> ApiaryEntity:
         ...
 
-    async def update(self, entity: ApiaryEntity, fields: list[str]) -> list[ApiaryEntity]:
+    async def update(self, apiary: ApiaryEntity, fields: list[str]) -> list[ApiaryEntity]:
         ...
 
     async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
         ...
 
-    async def delete(self, entity: ApiaryEntity) -> None:
+    async def delete(self, apiary: ApiaryEntity) -> None:
         ...

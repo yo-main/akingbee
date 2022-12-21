@@ -62,4 +62,3 @@ class PostgresAsync(metaclass=SingletonMeta):
     async def get_session(self) -> AsyncIterator[AsyncSession]:
         async with self._session_maker() as session:
             yield session
-
