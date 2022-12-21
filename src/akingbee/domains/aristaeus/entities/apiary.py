@@ -1,18 +1,17 @@
 import uuid
-from dataclasses import asdict, dataclass, field, fields, replace
+from dataclasses import dataclass, field, fields, replace
 from uuid import UUID
+
+from .base import Entity
 
 
 @dataclass(frozen=True, slots=True)
-class ApiaryEntity:
+class ApiaryEntity(Entity):
     name: str
     location: str
     honey_kind: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
-
-    def asdict(self) -> dict:
-        return asdict(self)
 
     def update(self, organization_id: str = None, public_id: str = None, **kwargs) -> tuple["ApiaryEntity", list[str]]:
         data = {k: v for k, v in kwargs.items() if v is not None}

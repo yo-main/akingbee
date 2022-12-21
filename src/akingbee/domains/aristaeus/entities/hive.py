@@ -1,12 +1,12 @@
 import uuid
-from dataclasses import asdict, dataclass, field, fields, replace
+from dataclasses import dataclass, field, fields, replace
 from uuid import UUID
 
-from .apiary import ApiaryEntity
+from .base import Entity
 
 
 @dataclass(frozen=True, slots=True)
-class HiveEntity:
+class HiveEntity(Entity):
     name: str
     condition: str
     owner_id: UUID
@@ -14,9 +14,6 @@ class HiveEntity:
     apiary_id: UUID | None
     swarm_id: UUID | None
     public_id: UUID = field(default_factory=uuid.uuid4)
-
-    def asdict(self) -> dict:
-        return asdict(self)
 
     def update(self, organization_id: str = None, public_id: str = None, **kwargs) -> tuple["HiveEntity", list[str]]:
         data = {k: v for k, v in kwargs.items() if v is not None}

@@ -1,11 +1,13 @@
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID
 
+from .base import Entity
+
 
 @dataclass(frozen=True, slots=True)
-class EventEntity:
+class EventEntity(Entity):
     hive_id: UUID
     title: str
     description: str
@@ -13,6 +15,3 @@ class EventEntity:
     type: str
     status: str
     public_id: UUID = field(default_factory=uuid.uuid4)
-
-    def asdict(self) -> dict:
-        return asdict(self)

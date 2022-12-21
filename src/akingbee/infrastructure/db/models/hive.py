@@ -12,7 +12,6 @@ from .base import BaseModel
 # from akingbee.infrastructure.db.models.swarm import SwarmModel
 
 
-
 class HiveModel(BaseModel):
     public_id: Mapped[UUID] = mapped_column(unique=True)
     name: Mapped[str]

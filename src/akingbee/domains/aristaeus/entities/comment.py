@@ -1,11 +1,13 @@
 import uuid
-from dataclasses import asdict, dataclass, field, fields, replace
+from dataclasses import dataclass, field, fields, replace
 from datetime import datetime
 from uuid import UUID
 
+from .base import Entity
+
 
 @dataclass(frozen=True, slots=True)
-class CommentEntity:
+class CommentEntity(Entity):
     date: datetime
     type: str  # choice
     body: str
@@ -13,9 +15,6 @@ class CommentEntity:
     hive_id: UUID
     event_id: UUID | None
     public_id: UUID = field(default_factory=uuid.uuid4)
-
-    def asdict(self) -> dict:
-        return asdict(self)
 
     def update(
         self, public_id: str = None, hive_id: str = None, event_id: str = None, **kwargs

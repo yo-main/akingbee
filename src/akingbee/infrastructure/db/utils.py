@@ -3,7 +3,7 @@ import functools
 from sqlalchemy.exc import NoResultFound
 
 from akingbee.config import settings
-from akingbee.domains.aristaeus.entities.utils import Entity
+from akingbee.domains.aristaeus.entities.base import Entity
 from akingbee.domains.aristaeus.errors import EntityNotFound
 
 

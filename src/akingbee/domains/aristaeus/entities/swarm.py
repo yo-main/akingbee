@@ -1,15 +1,12 @@
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from uuid import UUID
 
-from akingbee.domains.aristaeus.commands.create_swarm import CreateSwarmCommand
+from .base import Entity
 
 
 @dataclass(frozen=True, slots=True)
-class SwarmEntity:
+class SwarmEntity(Entity):
     health: str
     queen_year: int
     public_id: UUID = field(default_factory=uuid.uuid4)
-
-    def asdict(self) -> dict:
-        return asdict(self)

@@ -1,14 +1,13 @@
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from uuid import UUID
+
+from .base import Entity
 
 
 @dataclass(frozen=True, slots=True)
-class ParameterEntity:
+class ParameterEntity(Entity):
     key: str
     value: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
-
-    def asdict(self) -> dict:
-        return asdict(self)
