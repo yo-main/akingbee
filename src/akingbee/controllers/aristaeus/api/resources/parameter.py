@@ -2,12 +2,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from akingbee.controllers.api.aristaeus.dtos.parameter import (
+from akingbee.controllers.aristaeus.api.dtos.parameter import (
     ParameterOut,
     PostParameterIn,
     PutParameterIn,
 )
-from akingbee.controllers.api.aristaeus.utils.auth import auth_user
+from akingbee.controllers.aristaeus.api.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.parameter import ParameterApplication
 from akingbee.domains.aristaeus.commands.parameter import (
     CreateParameterCommand,

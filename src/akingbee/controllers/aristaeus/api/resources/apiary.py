@@ -2,12 +2,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from akingbee.controllers.api.aristaeus.dtos.apiary import (
+from akingbee.controllers.aristaeus.api.dtos.apiary import (
     ApiaryOut,
     PostApiaryIn,
     PutApiaryIn,
 )
-from akingbee.controllers.api.aristaeus.utils.auth import auth_user
+from akingbee.controllers.aristaeus.api.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.apiary import ApiaryApplication
 from akingbee.domains.aristaeus.commands.apiary import (
     CreateApiaryCommand,

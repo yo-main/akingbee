@@ -11,4 +11,3 @@ class ParameterEntity(Entity):
     value: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
-

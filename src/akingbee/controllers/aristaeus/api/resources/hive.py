@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
-from akingbee.controllers.api.aristaeus.dtos.hive import HiveOut, PostHiveIn, PutHiveIn
-from akingbee.controllers.api.aristaeus.utils.auth import auth_user
+from akingbee.controllers.aristaeus.api.dtos.hive import HiveOut, PostHiveIn, PutHiveIn
+from akingbee.controllers.aristaeus.api.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.hive import HiveApplication
 from akingbee.domains.aristaeus.commands.hive import CreateHiveCommand, PutHiveCommand
 from akingbee.domains.aristaeus.entities.user import UserEntity

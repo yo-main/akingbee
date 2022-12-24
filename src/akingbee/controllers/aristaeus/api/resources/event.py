@@ -1,13 +1,11 @@
-import functools
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
-from akingbee.controllers.api.aristaeus.dtos.event import EventIn, EventOut
-from akingbee.controllers.api.aristaeus.utils.auth import auth_user
+from akingbee.controllers.aristaeus.api.dtos.event import EventIn, EventOut
+from akingbee.controllers.aristaeus.api.utils.auth import auth_user
 from akingbee.domains.aristaeus.applications.event import EventApplication
 from akingbee.domains.aristaeus.commands.create_event import CreateEventCommand
-from akingbee.domains.aristaeus.entities.event import EventEntity
 from akingbee.domains.aristaeus.entities.user import UserEntity
 from akingbee.domains.aristaeus.queries.event import EventQuery
 

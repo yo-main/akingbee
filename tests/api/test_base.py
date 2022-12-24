@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from akingbee.controllers.api.aristaeus.app import create_app
+from akingbee.controllers.aristaeus.api.app import create_app
 
 
 def test_unlog_user():

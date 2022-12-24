@@ -1,4 +1,3 @@
-import asyncio
 import uuid
 from datetime import datetime
 
@@ -6,13 +5,13 @@ import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from akingbee.config import settings
 
 settings.setenv("test")
 
-from akingbee.controllers.api.aristaeus.app import create_app
+from akingbee.controllers.aristaeus.api.app import create_app
 from akingbee.infrastructure.db.engine import AsyncDatabase
 from akingbee.infrastructure.db.models.base import BaseModel
 from akingbee.infrastructure.db.utils import get_database_uri
