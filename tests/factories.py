@@ -5,6 +5,7 @@ import factory
 from akingbee.infrastructure.db.models.apiary import ApiaryModel
 from akingbee.infrastructure.db.models.comment import CommentModel
 from akingbee.infrastructure.db.models.hive import HiveModel
+from akingbee.infrastructure.db.models.parameter import ParameterModel
 
 
 class HiveModelFactory(factory.Factory):
@@ -38,3 +39,13 @@ class CommentModelFactory(factory.Factory):
     body = factory.Faker("word")
     type = factory.Faker("word")
     date = factory.Faker("date_time")
+
+
+class ParameterModelFactory(factory.Factory):
+    class Meta:
+        model = ParameterModel
+
+    public_id = factory.LazyFunction(uuid.uuid4)
+    key = factory.Faker("word")
+    value = factory.Faker("word")
+    organization_id = factory.LazyFunction(uuid.uuid4)

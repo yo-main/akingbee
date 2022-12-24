@@ -3,8 +3,12 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class ParameterIn(BaseModel):
+class PostParameterIn(BaseModel):
     key: str
+    value: str
+
+
+class PutParameterIn(BaseModel):
     value: str
 
 
