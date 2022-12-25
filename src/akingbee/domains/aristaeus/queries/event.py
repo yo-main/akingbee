@@ -10,3 +10,6 @@ class EventQuery(InjectorMixin):
 
     async def get_event_query(self, event_id: UUID) -> EventEntity:
         return await self.event_repository.get(event_id)
+
+    async def list_event_query(self, event_id: UUID) -> list[EventEntity]:
+        return await self.event_repository.list(event_id)

@@ -4,6 +4,7 @@ import factory
 
 from akingbee.infrastructure.db.models.apiary import ApiaryModel
 from akingbee.infrastructure.db.models.comment import CommentModel
+from akingbee.infrastructure.db.models.event import EventModel
 from akingbee.infrastructure.db.models.hive import HiveModel
 from akingbee.infrastructure.db.models.parameter import ParameterModel
 
@@ -39,6 +40,19 @@ class CommentModelFactory(factory.Factory):
     body = factory.Faker("word")
     type = factory.Faker("word")
     date = factory.Faker("date_time")
+
+
+class EventModelFactory(factory.Factory):
+    class Meta:
+        model = EventModel
+
+    public_id = factory.LazyFunction(uuid.uuid4)
+    hive_id = factory.LazyFunction(uuid.uuid4)
+    title = factory.Faker("word")
+    description = factory.Faker("word")
+    status = factory.Faker("word")
+    type = factory.Faker("word")
+    due_date = factory.Faker("date_time")
 
 
 class ParameterModelFactory(factory.Factory):

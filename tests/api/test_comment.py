@@ -2,8 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 import pytest
-from tests.factories import HiveModelFactory
-from tests.factories import CommentModelFactory
+from tests.factories import CommentModelFactory, HiveModelFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -87,7 +86,9 @@ async def test_get_comment(async_app, session):
 
 @pytest.mark.parametrize("async_app", ["33333333-3333-3333-3333-333333333333"], indirect=True)
 async def test_list_comments(async_app, session):
-    hive = HiveModelFactory.build(organization_id="33333333-3333-3333-3333-333333333333", public_id="44444444-4444-4444-4444-444444444444")
+    hive = HiveModelFactory.build(
+        organization_id="33333333-3333-3333-3333-333333333333", public_id="44444444-4444-4444-4444-444444444444"
+    )
     session.add(hive)
     await session.commit()
     await session.refresh(hive)
@@ -120,11 +121,7 @@ async def test_put_comment__success(async_app, session, payload):
     await session.commit()
     await session.refresh(comment)
 
-    data = {
-        "body": "body",
-        "date": "2022-01-01T00:00:00",
-        "type": "type"
-    }
+    data = {"body": "body", "date": "2022-01-01T00:00:00", "type": "type"}
 
     response = await async_app.put(f"/comment/{comment.public_id}", json=payload)
     assert response.status_code == 200, response.text

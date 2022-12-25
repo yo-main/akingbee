@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update, delete
 
 from akingbee.domains.aristaeus.adapters.repositories.event import (
     EventRepositoryAdapter,
@@ -33,3 +33,26 @@ class EventRepository:
 
         query = insert(EventModel).values(data)
         await self.database.execute(query)
+
+    @error_handler
+    async def update(self, event: EventEntity, fields: list[str]) -> EventEntity:
+        query = (
+            update(EventModel)
+            .values({field: getattr(event, field) for field in fields})
+            .where(EventModel.public_id == event.public_id)
+        )
+        await self.database.execute(query)
+        return await self.get(event.public_id)
+
+    @error_handler
+    async def delete(self, event: EventEntity) -> None:
+        query = delete(EventModel).where(EventModel.public_id == event.public_id)
+        await self.database.execute(query)
+
+    @error_handler
+    async def list(self, hive_id: UUID) -> list[EventEntity]:
+        query = (
+            select(EventModel).join(HiveModel, HiveModel.id == EventModel.hive_id).where(HiveModel.public_id == hive_id)
+        )
+        result = await self.database.execute(query)
+        return [model.to_entity() for model in result.unique().scalars()]
