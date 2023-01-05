@@ -1,10 +1,10 @@
 import base64
-from collections import namedtuple
 import datetime
 import hashlib
-import jwt
 import re
+from collections import namedtuple
 
+import jwt
 from gaea.config import CONFIG
 from gaea.log import logger
 from gaea.rbmq import RBMQPublisher

@@ -2,15 +2,15 @@ DEFAULT:
   SERVICE_NAME: "cerbes"
   LOG_LEVEL: 20
 
-DEVELOPMENT:
+DEVELOPMENT: &development
   LOGS_FOLDER_NAME: "log"
   APP_SECRET: "coucou"
 
   DATABASE_PORT: 5432
   DATABASE_HOST: "127.0.0.1"
-  DATABASE_USER: "akingbee"
-  DATABASE_PASSWORD: "password"
-  DATABASE_DBNAME: "akb_dev"
+  DATABASE_USER: "sa_cerbes"
+  DATABASE_PASSWORD: 123
+  DATABASE_DBNAME: "cerbes"
 
   RBMQ_PORT: 5672
   RBMQ_HOST: "127.0.0.1"
@@ -19,3 +19,9 @@ DEVELOPMENT:
   RBMQ_VHOST: "/"
 
   MAIN_HOSTED_ZONE: "localhost"
+
+  
+TEST:
+  <<: *development
+  DATABASE_USER: "postgres"
+  DATABASE_DBNAME: "postgres"

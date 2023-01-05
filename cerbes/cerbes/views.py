@@ -1,26 +1,17 @@
-import base64
-from collections import namedtuple
 import datetime
-from enum import Enum
-from typing import List, Optional
-import hashlib
-import re
-from sqlalchemy import exists, or_
-from sqlalchemy.orm import joinedload, Session
 import uuid
+from typing import List, Optional
 
-from fastapi import APIRouter, HTTPException, Depends, Cookie, Header
+from fastapi import APIRouter, Cookie, Depends, Header, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-import jwt
-
-from gaea.models import Users, Credentials, Owners
 from gaea.log import logger
-from gaea.config import CONFIG
 from gaea.webapp.utils import get_session
+from pydantic import BaseModel
+from sqlalchemy import exists, or_
+from sqlalchemy.orm import Session, joinedload
 
 from cerbes import helpers
-
+from cerbes.models import Credentials, Users
 
 router = APIRouter()
 
@@ -93,10 +84,8 @@ def create_user(
         password=helpers.get_password_hash(user_data.password),
     )
 
-    owner = Owners(user=user, name=user_data.username)
-
     try:
-        session.add_all((user, credentials, owner))
+        session.add_all((user, credentials))
         session.commit()
         logger.info(
             f"User created: {user.email}", user_id=user.id, user_email=user.email
