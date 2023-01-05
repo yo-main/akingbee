@@ -1,0 +1,1 @@
+from gaea import RBMQConsumer

@@ -9,7 +9,7 @@ def create_app():
     middleware = MiddleWare(db_client=db())
     client = AppClient(routers=routers, middleware=middleware)
     client.add_cors_middleware(
-        allow_origin_regex=r"^https?://(.*\.)?((akingbee\.(com|test))|localhost)(:\d+)?$",
+        # allow_origin_regex=r"^https?://(.*\.)?((akingbee\.(com|test))|localhost)(:\d+)?$",
         allow_credentials=True,
     )
     return client.get_app()

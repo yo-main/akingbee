@@ -14,11 +14,7 @@ services:
     image: yomain/cerbes:latest
     container_name: cerbes
     environment:
-      - SERVICE_NAME=cerbes
       - AKB_DATABASE_HOST=db
-      - AKB_DATABASE_USER=akingbee
-      - AKB_DATABASE_PASSWORD=123
-      - AKB_DATABASE_DBNAME=akb_dev
       - AKB_RBMQ_USER=akingbee
       - AKB_RBMQ_PASSWORD=password
       - AKB_RBMQ_HOST=rbmq
@@ -32,17 +28,17 @@ services:
       - akb
 
   aristaeus-api:
-    image: yomain/aristaeus:latest
+    image: yomain/aristaeus2:latest
     container_name: aristeaus-api
     environment:
       - SERVICE_NAME=aristaeus-api
       - AKB_DATABASE_HOST=db
-      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_USER=sa_aristaeus
       - AKB_DATABASE_PASSWORD=123
-      - AKB_DATABASE_DBNAME=akb_dev
+      - AKB_DATABASE_DBNAME=aristaeus
       - AKB_CERBES_ENDPOINT=http://cerbes:9001
     ports:
-      - 9002:9002
+      - 9002:80
     depends_on: [db, rbmq, cerbes]
     restart: always
     networks:
@@ -88,10 +84,13 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_DB: akb_dev
-      POSTGRES_USER: akingbee
-      POSTGRES_PASSWORD: "123"
       POSTGRES_HOST_AUTH_METHOD: "trust"
+      ARISTAEUS_USERNAME: aristaeus
+      ARISTAEUS_PASSWORD: 123
+      CERBES_USERNAME: cerbes
+      CERBES_PASSWORD: 123
+    volumes:
+      - ./infra/core/config/postgresql/users.sh:/docker-entrypoint-initdb.d/users.sh
     networks:
       - akb
 

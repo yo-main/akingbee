@@ -30,4 +30,5 @@ class HttpClient(metaclass=SingletonMeta):
 
         async with aiohttp.ClientSession() as session:  # TODO: define the session in the __init__ - or better - a base class
             async with session.get(url, cookies={"access_token": access_token}) as resp:
-                return await resp.json().get("user_id") if resp.status == 200 else None
+                data = await resp.json()
+                return data.get("user_id") if resp.status == 200 else None

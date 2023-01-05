@@ -3,17 +3,17 @@ service_name = "aristaeus"
 [development]
 database_host = "localhost"
 database_port = 5432
-database_user = "akingbee"
+database_user = "sa_aristaeus"
 database_password = "123"
 database_dbname = "aristaeus"
 
-cerbes_api_endpoint = "localhost"
+cerbes_api_endpoint = "cerbes"
 cerbes_api_port = 9001
 
 [test]
 database_host = "localhost"
 database_port = 5432
-database_user = "akingbee"
+database_user = "sa_aristaeus"
 database_password = "123"
-database_dbname = "akb_dev"
+database_dbname = "aristaeus"
 

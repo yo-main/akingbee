@@ -19,6 +19,12 @@ coverage = {version = "*", extras = ["toml"]}
 ipython = "*"
 pyright = "^1.1.269"
 
+[tool.poetry.group.dev.dependencies]
+python-lsp-server = "^1.7.0"
+pylsp-mypy = "^0.6.4"
+pyls-isort = "^0.2.2"
+python-lsp-black = "^1.2.1"
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
