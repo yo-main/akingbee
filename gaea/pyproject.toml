@@ -5,9 +5,9 @@ description = "A microservice chassis for akingbee.com !"
 authors = ["rarnal <arnal.romain@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9"
 redis = "^3"
-sqlalchemy = "^1"
+sqlalchemy = ">=1"
 alembic = "^1"
 dynaconf = "^3"
 psycopg2-binary = "^2"
