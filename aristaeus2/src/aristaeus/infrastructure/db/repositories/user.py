@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 from aristaeus.domain.entities.user import UserEntity
@@ -21,7 +22,11 @@ class UserRespository:
         return result.scalar_one().to_entity()
 
     @error_handler
-    async def save(self, user: UserEntity) -> None:
+    async def save(self, user: UserEntity, session: AsyncSession | None) -> None:
         data = get_data_from_entity(user)
         query = insert(UserModel).values(data)
-        await self.database.execute(query)
+
+        if session is not None:
+            await session.execute(query)
+        else:
+            await self.database.execute(query)

@@ -17,16 +17,13 @@ from aristaeus.utils.singleton import SingletonMeta
 
 
 class AsyncDatabase(Protocol):
-    async def save(self, entity: BaseModel) -> None:
-        ...
-
-    async def scalar_one(self, query: Executable) -> Any:
-        ...
-
     async def execute(self, query: Executable) -> Result:
         ...
 
     async def get_session(self) -> AsyncIterator[AsyncSession]:
+        ...
+
+    async def reset(self) -> None:
         ...
 
 
@@ -38,11 +35,6 @@ class PostgresAsync(metaclass=SingletonMeta):
     def init(self):
         self._engine = create_async_engine(get_database_uri())
         self._session_maker = async_sessionmaker(self._engine)
-
-    async def save(self, entity: BaseModel) -> None:
-        async with self._session_maker() as session:
-            session.add(entity)
-            await session.commit()
 
     async def execute(self, query: Executable) -> Result:
         async with self._session_maker() as session:

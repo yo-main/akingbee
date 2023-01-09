@@ -1,8 +1,7 @@
 from aristaeus.domain.adapters.repositories.swarm import (
     SwarmRepositoryAdapter,
 )
-from aristaeus.domain.applications.base import BaseApplication
-from aristaeus.domain.commands.create_swarm import CreateSwarmCommand
+from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.entities.swarm import SwarmEntity
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.injector import InjectorMixin

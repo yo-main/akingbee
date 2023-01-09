@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from aristaeus.controllers.api.dtos.swarm import SwarmIn, SwarmOut
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.applications.swarm import SwarmApplication
-from aristaeus.domain.commands.create_swarm import CreateSwarmCommand
+from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.domain.queries.swarm import SwarmQuery
 
