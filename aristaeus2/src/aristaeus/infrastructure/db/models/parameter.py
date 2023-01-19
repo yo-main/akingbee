@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from aristaeus.domain.entities.parameter import ParameterEntity
@@ -12,6 +13,8 @@ class ParameterModel(BaseModel):
     key: Mapped[str]
     value: Mapped[str]
     organization_id: Mapped[UUID]
+
+    __table_args__ = (UniqueConstraint("key", "value", "organization_id"),)
 
     def to_entity(self) -> ParameterEntity:
         return ParameterEntity(

@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.sql.expression import Executable
 
-from aristaeus.infrastructure.db.models.base import BaseModel
 from aristaeus.infrastructure.db.utils import get_database_uri
 from aristaeus.injector import Injector
 from aristaeus.utils.singleton import SingletonMeta
@@ -20,6 +19,7 @@ class AsyncDatabase(Protocol):
     async def execute(self, query: Executable) -> Result:
         ...
 
+    @asynccontextmanager
     async def get_session(self) -> AsyncIterator[AsyncSession]:
         ...
 

@@ -10,10 +10,12 @@ database_dbname = "aristaeus"
 cerbes_api_endpoint = "cerbes"
 cerbes_api_port = 9001
 
+rbmq_url = "here"
+
 [test]
 database_host = "localhost"
 database_port = 5432
-database_user = "sa_aristaeus"
+database_user = "postgres"
 database_password = "123"
-database_dbname = "aristaeus"
+database_dbname = "postgres"
 

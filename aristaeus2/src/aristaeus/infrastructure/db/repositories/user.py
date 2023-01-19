@@ -22,11 +22,8 @@ class UserRespository:
         return result.scalar_one().to_entity()
 
     @error_handler
-    async def save(self, user: UserEntity, session: AsyncSession | None) -> None:
+    async def save(self, user: UserEntity) -> None:
         data = get_data_from_entity(user)
         query = insert(UserModel).values(data)
 
-        if session is not None:
-            await session.execute(query)
-        else:
-            await self.database.execute(query)
+        await self.database.execute(query)

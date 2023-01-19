@@ -1,38 +1,23 @@
-import json
 import logging
 
-from aristaeus.controllers.consumers.dtos.users import UserCreated
+import uuid
+
+from aristaeus.domain.applications.user import UserApplication
+from aristaeus.domain.commands.user import CreateUserCommand
 
 logger = logging.getLogger(__name__)
 
 
-def on_user_created(properties, body):
-    payload = UserCreated(**json.loads(body))
+async def on_user_created(properties, body):
+    user_id = body["user"]["id"]
+    organization_id = str(uuid.uuid4())
+    language = body["language"]
 
+    user_application = UserApplication()
+    await user_application.create(command=CreateUserCommand(
+        public_id=user_id,
+        organization_id=organization_id,
+        language=language,
+    ))
 
-    objects = [
-        HiveConditions(name=item[language], user_id=user_id)
-        for item in DEFAULT_HIVE_CONDITIONS
-    ]
-    objects.extend(
-        HoneyTypes(name=item[language], user_id=user_id) for item in DEFAULT_HONEY_TYPES
-    )
-    objects.extend(
-        SwarmHealthStatuses(name=item[language], user_id=user_id)
-        for item in DEFAULT_SWARM_HEALTH_STATUSES
-    )
-    objects.extend(
-        EventTypes(name=item[language], user_id=user_id) for item in DEFAULT_EVENT_TYPES
-    )
-    objects.extend(
-        EventStatuses(name=item[language], user_id=user_id)
-        for item in DEFAULT_EVENT_STATUSES
-    )
-
-    db_client = db()
-    with db_client as session:
-        session.bulk_save_objects(objects)
-        session.commit()
-
-    logger.info("Default data created for user", user_id=user_id)
-    return True
+    logger.info("User %s initialized", user_id)

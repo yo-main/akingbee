@@ -1,10 +1,9 @@
 from uuid import UUID
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, select, update
+from sqlalchemy.dialects.postgresql import insert
 
-from aristaeus.domain.adapters.repositories.parameter import (
-    ParameterRepositoryAdapter,
-)
+from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.entities.parameter import ParameterEntity
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.parameter import ParameterModel
@@ -25,7 +24,7 @@ class ParameterRespository:
     @error_handler
     async def save(self, parameter: ParameterEntity) -> None:
         data = get_data_from_entity(parameter)
-        query = insert(ParameterModel).values(data)
+        query = insert(ParameterModel).values(data).on_conflict_do_nothing()
         await self.database.execute(query)
 
     @error_handler
