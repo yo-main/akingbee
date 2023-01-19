@@ -43,6 +43,7 @@ class Dispatcher():
     @classmethod
     def stop(cls):
         cls._queue.put_nowait("terminate")
+        cls._started = False
 
     @classmethod
     async def consume(cls):

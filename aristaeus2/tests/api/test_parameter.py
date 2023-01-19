@@ -43,10 +43,9 @@ async def test_get_parameter__unknown(async_app):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_get_parameter(async_app):
-    hive_id = str(uuid.uuid4())
     data = {
-        "key": "key",
-        "value": "value",
+        "key": "key2",
+        "value": "value2",
     }
     response = await async_app.post("/parameter", json=data)
     assert response.status_code == 200, response.text
