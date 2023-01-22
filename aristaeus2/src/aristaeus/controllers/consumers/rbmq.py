@@ -2,21 +2,24 @@ import asyncio
 import logging
 from typing import Callable
 
-from pika import URLParameters
+from pika import ConnectionParameters, PlainCredentials, URLParameters
 from pika.adapters.asyncio_connection import AsyncioConnection
 
 from aristaeus.config import settings
+
+logging.basicConfig(level=logging.INFO)
+
 
 logger = logging.getLogger(__name__)
 
 
 class AsyncRabbitMQConsumer:
-
-    def __init__(self, exchange: str, exchange_type: str, queue: str, callback: Callable):
+    def __init__(self, exchange: str, exchange_type: str, queue: str, callback: Callable, routing_keys: list[str]):
         self.exchange = exchange
         self.exchange_type = exchange_type
         self.queue = queue
         self.callback = callback
+        self.routing_keys = list(routing_keys)
 
         self.should_reconnect = False
         self.was_consuming = False
@@ -25,7 +28,6 @@ class AsyncRabbitMQConsumer:
         self._channel = None
         self._closing = False
         self._consumer_tag = None
-        self._url = settings.RBMQ_URL
         self._consuming = False
         self._prefetch_count = 5
 
@@ -34,7 +36,17 @@ class AsyncRabbitMQConsumer:
         This method connects to RabbitMQ, returning the connection handle.
         When the connection is established, the on_connection_open method will be invoked by pika.
         """
-        return AsyncioConnection(parameters=URLParameters(self.url))
+        credentials = PlainCredentials(settings.rbmq_user, settings.rbmq_password)
+        return AsyncioConnection(
+            parameters=ConnectionParameters(
+                host=settings.rbmq_host,
+                port=settings.rbmq_port,
+                virtual_host=settings.rbmq_vhost,
+                credentials=credentials,
+            ),
+            on_open_callback=self.on_connection_open,
+            on_open_error_callback=self.on_connection_open_error,
+        )
 
     def on_connection_open(self, _unused_connection):
         """
@@ -88,14 +100,22 @@ class AsyncRabbitMQConsumer:
         logger.warning("Channel %i was closed: %s", channel, reason)
         self.close_connection()
 
+    def close_connection(self):
+        self._consuming = False
+        if self._connection.is_closing or self._connection.is_closed:
+            logger.info("Connection is closing or already closed")
+        else:
+            logger.info("Closing connection")
+            self._connection.close()
+
     def setup_exchange(self):
         """
         Setup the exchange on RabbitMQ by invoking the Exchange.Declare RPC command. When it is complete,
         the on_exchange declareok method will be invoked by pika.
         """
-        logger.info("Declaring exchange: %s", self.exchange_name)
+        logger.info("Declaring exchange: %s", self.exchange)
         self._channel.exchange_declare(
-            exchange=self.exchange_name, exchange_type=self.exchange_type, callback=self.on_exchange_declareok
+            exchange=self.exchange, exchange_type=self.exchange_type, callback=self.on_exchange_declareok, durable=True
         )
 
     def on_exchange_declareok(self, _unused_frame):
@@ -110,8 +130,8 @@ class AsyncRabbitMQConsumer:
         Setup the queue on RabbitMQ by invoking the Queue.Declare RPC command. When it is complete,
         the on_queue_declareok method will be invoked by pika.
         """
-        logger.info("Declaring queue %s", self.queue_name)
-        self._channel.queue_declare(queue=self.queue_name, callback=self.on_queue_declareok)
+        logger.info("Declaring queue %s", self.queue)
+        self._channel.queue_declare(queue=self.queue, callback=self.on_queue_declareok)
 
     def on_queue_declareok(self, _unused_frame):
         """
@@ -119,8 +139,9 @@ class AsyncRabbitMQConsumer:
         will bind the queue and exchange together with the routing key by issuing the Queue.Bind RPC command.
         When this command is complete, the on_bindok method will be invoked by pika.
         """
-        logger.info("Binding %s to %s with %s", self.exchange, self.queue_name, self.routing_key)
-        self._channel.queue_bind(self.queue_name, self.exchange, routing_key=self.routing_key, callback=self.on_bindok)
+        logger.info("Binding %s to %s with %s", self.exchange, self.queue, self.routing_keys)
+        for routing_key in self.routing_keys:
+            self._channel.queue_bind(self.queue, self.exchange, routing_key=routing_key, callback=self.on_bindok)
 
     def on_bindok(self, _unused_frame):
         """

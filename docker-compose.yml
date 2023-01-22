@@ -15,6 +15,8 @@ services:
     container_name: cerbes
     environment:
       - AKB_DATABASE_HOST=db
+      - AKB_DATABASE_DBNAME=cerbes
+      - AKB_DATABASE_USER=sa_cerbes
       - AKB_RBMQ_USER=akingbee
       - AKB_RBMQ_PASSWORD=password
       - AKB_RBMQ_HOST=rbmq
@@ -45,20 +47,23 @@ services:
       - akb
 
   aristaeus-listener:
-    image: yomain/aristaeus:latest
+    image: yomain/aristaeus2:latest
     container_name: aristeaus-listener
     environment:
       - SERVICE_NAME=aristaeus-listener
       - AKB_DATABASE_HOST=db
-      - AKB_DATABASE_USER=akingbee
+      - AKB_DATABASE_USER=sa_aristaeus
       - AKB_DATABASE_PASSWORD=123
-      - AKB_DATABASE_DBNAME=akb_dev
-      - AKB_RBMQ_USER=akingbee
-      - AKB_RBMQ_PASSWORD=password
+      - AKB_DATABASE_DBNAME=aristaeus
       - AKB_RBMQ_HOST=rbmq
       - AKB_RBMQ_PORT=5672
+      - AKB_RBMQ_USER=akingbee
+      - AKB_RBMQ_PASSWORD=password
       - AKB_RBMQ_VHOST=/
-    command: python ./aristaeus/listener.py
+      - AKB_RBMQ_EXCHANGE=akingbee.main_exchange
+      - AKB_RBMQ_EXCHANGE_TYPE=topic
+      - AKB_RBMQ_QUEUE=aristaeus-main-queue
+    command: python aristaeus/controllers/consumers/app.py
     depends_on: [db, rbmq]
     restart: always
     networks:

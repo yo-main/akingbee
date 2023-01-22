@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-import aristaeus.infrastructure.db.repositories
 from aristaeus.domain.errors import EntityNotFound
 
 from .middlewares.cors import configure_cors_middleware
@@ -19,7 +18,7 @@ def configure_error_handlers(app):
     async def entity_not_found_exception_handler(request: Request, exc: EntityNotFound):
         return JSONResponse(
             status_code=404,
-            content={"message": "Not Found"},
+            content={"message": "Not Found ohoh"},
         )
 
 

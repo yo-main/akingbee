@@ -12,23 +12,34 @@ from aristaeus.controllers.consumers.resources.users import on_user_created
 logger = logging.getLogger(__name__)
 
 
+ROUTING_KEYS = {
+    "user.created": on_user_created,
+}
+
+
 def handler(basic_deliver: Basic.Deliver, properties: BasicProperties, body: bytes):
     content = json.loads(body.decode())
     routing_key = basic_deliver.routing_key
 
-    match routing_key:
-        case "user.created":
-            asyncio.ensure_future(on_user_created(properties, content))
-        case _:
-            logger.warning("Unknown routing key: %s", routing_key)
+    handler = ROUTING_KEYS.get(routing_key)
+
+    if not handler:
+        logger.warning("Unknown routing key: %s", routing_key)
+    else:
+        asyncio.ensure_future(handler(properties, content))
 
 
 def create_app():
     consumer = AsyncRabbitMQConsumer(
-        exchange=settings.RBMQ_EXCHANGE,
-        exchange_type=settings.RBMQ_EXCHANGE_TYPE,
-        queue=settings.RBMQ_QUEUE,
+        exchange=settings.rbmq_exchange,
+        exchange_type=settings.rbmq_exchange_type,
+        queue=settings.rbmq_queue,
+        routing_keys=ROUTING_KEYS.keys(),
         callback=handler,
     )
 
     consumer.run()
+
+
+if __name__ == "__main__":
+    create_app()

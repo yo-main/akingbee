@@ -26,7 +26,9 @@ class UserManager(InjectorMixin, metaclass=SingletonMeta):
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid access token")
 
+        print(user_id)
         user = await self.user_repository.get(UUID(user_id))
+        print("NICEEEE")
 
         return user
 
