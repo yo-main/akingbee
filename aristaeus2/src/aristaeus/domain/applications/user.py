@@ -27,6 +27,7 @@ class UserApplication(InjectorMixin):
         return user
 
     async def initialize_user(self, user: UserEntity, language: str) -> None:
+        print("Yay")
         parameters: list[Any] = HiveCondition.get_defaults(language)
         parameters.extend(HoneyType.get_defaults(language))
         parameters.extend(SwarmHealth.get_defaults(language))

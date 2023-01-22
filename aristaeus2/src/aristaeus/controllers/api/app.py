@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from aristaeus.domain.errors import EntityNotFound
+from aristaeus.dispatcher import Dispatcher
 
 from .middlewares.cors import configure_cors_middleware
 from .resources.apiary import router as apiary_router
@@ -41,4 +42,5 @@ def create_app():
         allow_credentials=True,
     )
 
+    Dispatcher.init()
     return app

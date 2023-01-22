@@ -8,6 +8,7 @@ from pika import BasicProperties
 from aristaeus.config import settings
 from aristaeus.controllers.consumers.rbmq import AsyncRabbitMQConsumer
 from aristaeus.controllers.consumers.resources.users import on_user_created
+from aristaeus.dispatcher import Dispatcher
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,7 @@ def handler(basic_deliver: Basic.Deliver, properties: BasicProperties, body: byt
 
 
 def create_app():
+    Dispatcher.init()
     consumer = AsyncRabbitMQConsumer(
         exchange=settings.rbmq_exchange,
         exchange_type=settings.rbmq_exchange_type,

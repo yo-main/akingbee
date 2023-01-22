@@ -1,6 +1,7 @@
 from uuid import UUID
 
-from sqlalchemy import insert, select
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
@@ -24,6 +25,6 @@ class UserRespository:
     @error_handler
     async def save(self, user: UserEntity) -> None:
         data = get_data_from_entity(user)
-        query = insert(UserModel).values(data)
+        query = insert(UserModel).values(data).on_conflict_do_nothing()
 
         await self.database.execute(query)
