@@ -1,4 +1,6 @@
 from typing import Any
+from uuid import UUID
+
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.commands.user import CreateUserCommand
@@ -23,11 +25,11 @@ class UserApplication(InjectorMixin):
         )
 
         await self.user_repository.save(user)
-        Dispatcher.publish("user.created", user=user, language=command.language)
+        Dispatcher.publish("user.created", user_public_id=user.public_id, language=command.language)
         return user
 
-    async def initialize_user(self, user: UserEntity, language: str) -> None:
-        print("Yay")
+    async def initialize_user(self, user_public_id: UUID, language: str) -> None:
+        user = await self.user_repository.get(public_id=user_public_id)
         parameters: list[Any] = HiveCondition.get_defaults(language)
         parameters.extend(HoneyType.get_defaults(language))
         parameters.extend(SwarmHealth.get_defaults(language))
