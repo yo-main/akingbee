@@ -15,3 +15,6 @@ class BaseModel(DeclarativeBase):
     def __tablename__(cls) -> str:
         tablename = cls.__name__[:-5] if cls.__name__.endswith("Model") else cls.__name__
         return re.sub(r"(?<!^)(?=[A-Z])", "_", tablename).lower()
+
+    def to_dict(self):
+        return {k: v for k, v in self.__dict__.items() if not k.startswith("_")}

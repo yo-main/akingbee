@@ -12,8 +12,11 @@ class ApiaryEntity(Entity):
     honey_kind: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
+    hive_count: int | None = field(default=None)
 
-    def update(self, organization_id: str = None, public_id: str = None, **kwargs) -> tuple["ApiaryEntity", list[str]]:
+    def update(
+        self, organization_id: str | None = None, public_id: str | None = None, **kwargs
+    ) -> tuple["ApiaryEntity", list[str]]:
         data = {k: v for k, v in kwargs.items() if v is not None}
         new_apiary = replace(self, **data)
 

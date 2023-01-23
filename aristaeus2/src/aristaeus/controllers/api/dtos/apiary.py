@@ -21,3 +21,4 @@ class ApiaryOut(BaseModel):
     location: str
     honey_kind: str
     organization_id: UUID
+    hive_count: int

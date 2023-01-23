@@ -1,7 +1,7 @@
 import uuid
 import pytest
 
-from tests.factories import ApiaryModelFactory
+from tests.factories import ApiaryModelFactory, HiveModelFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -15,6 +15,7 @@ async def test_create_apiary(async_app):
     assert data["location"] == "everywhere", data
     assert data["honey_kind"] == "too good", data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
+    assert data["hive_count"] == 0, data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -51,15 +52,20 @@ async def test_get_apiary__get(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
-async def test_list_hives(async_app, session):
+async def test_list_apiaries(async_app, session):
     apiaries = ApiaryModelFactory.build_batch(5, organization_id="22222222-2222-2222-2222-222222222222")
+    hives = [HiveModelFactory.create(apiary=apiary) for apiary in apiaries]
     session.add_all(apiaries)
+    session.add_all(hives)
     await session.commit()
 
     response = await async_app.get("/apiary")
 
     assert response.status_code == 200, response.text
     assert len(response.json()) == 5, response.text
+    data = response.json()
+    for apiary in data:
+        assert apiary["hive_count"] == 1
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)

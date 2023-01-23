@@ -22,7 +22,7 @@ class HiveModel(BaseModel):
     apiary_id: Mapped[int | None] = mapped_column(ForeignKey("apiary.id"))
 
     swarm: Mapped[Optional["SwarmModel"]] = relationship(back_populates="hive", lazy="joined")
-    apiary: Mapped[Optional["ApiaryModel"]] = relationship(back_populates="hive", lazy="joined")
+    apiary: Mapped[Optional["ApiaryModel"]] = relationship(back_populates="hives", lazy="joined")
     events: Mapped[List["EventModel"]] = relationship(back_populates="hive", lazy="joined")
     comments: Mapped[List["CommentModel"]] = relationship(back_populates="hive", lazy="joined")
 

@@ -18,6 +18,7 @@ class ApiaryApplication(InjectorMixin):
             location=command.location,
             honey_kind=command.honey_kind,
             organization_id=command.organization_id,
+            hive_count=0,
         )
         await self.apiary_repository.save(apiary)
         return apiary

@@ -1,4 +1,3 @@
-from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -15,7 +14,7 @@ class ApiaryModel(BaseModel):
     honey_kind: Mapped[str]
     organization_id: Mapped[UUID]
 
-    hive: Mapped[Optional["HiveModel"]] = relationship(back_populates="apiary")
+    hives: Mapped[list["HiveModel"]] = relationship(back_populates="apiary")
 
     def to_entity(self) -> ApiaryEntity:
         return ApiaryEntity(
@@ -24,6 +23,7 @@ class ApiaryModel(BaseModel):
             location=self.location,
             honey_kind=self.honey_kind,
             organization_id=self.organization_id,
+            hive_count=len(self.hives)
         )
 
     @staticmethod
