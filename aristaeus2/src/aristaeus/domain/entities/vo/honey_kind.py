@@ -7,10 +7,10 @@ TRANSLATIONS = {
 
 
 @dataclass(frozen=True, slots=True)
-class HoneyType:
+class HoneyKind:
     value: str
 
     @staticmethod
-    def get_defaults(language: str) -> list["HoneyType"]:
+    def get_defaults(language: str) -> list["HoneyKind"]:
         values = TRANSLATIONS[language]
-        return list(map(HoneyType, values))
+        return list(map(HoneyKind, values))

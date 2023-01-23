@@ -5,14 +5,14 @@ from uuid import UUID
 
 from aristaeus.domain.entities.vo.event_status import EventStatus
 from aristaeus.domain.entities.vo.event_type import EventType
-from aristaeus.domain.entities.vo.honey_type import HoneyType
+from aristaeus.domain.entities.vo.honey_kind import HoneyKind
 from aristaeus.domain.entities.vo.swarm_health import SwarmHealth
 
 from .base import Entity
 
 ParameterType = TypeVar(
     "ParameterType",
-    HoneyType,
+    HoneyKind,
     SwarmHealth,
     EventType,
     EventStatus,
@@ -32,8 +32,8 @@ class ParameterEntity(Entity):
         match entity.__class__.__name__:
             case "HiveCondition":
                 key = "hive_condition"
-            case "HoneyType":
-                key = "honey_type"
+            case "HoneyKind":
+                key = "honey_kind"
             case "SwarmHealth":
                 key = "swarm_health"
             case "EventType":

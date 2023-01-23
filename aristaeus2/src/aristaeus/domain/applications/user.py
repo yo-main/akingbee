@@ -8,7 +8,7 @@ from aristaeus.domain.entities.user import UserEntity
 from aristaeus.injector import InjectorMixin
 from aristaeus.domain.entities.parameter import ParameterEntity
 from aristaeus.domain.entities.vo.hive_condition import HiveCondition
-from aristaeus.domain.entities.vo.honey_type import HoneyType
+from aristaeus.domain.entities.vo.honey_kind import HoneyKind
 from aristaeus.domain.entities.vo.swarm_health import SwarmHealth
 from aristaeus.domain.entities.vo.event_type import EventType
 from aristaeus.dispatcher import Dispatcher
@@ -31,7 +31,7 @@ class UserApplication(InjectorMixin):
     async def initialize_user(self, user_public_id: UUID, language: str) -> None:
         user = await self.user_repository.get(public_id=user_public_id)
         parameters: list[Any] = HiveCondition.get_defaults(language)
-        parameters.extend(HoneyType.get_defaults(language))
+        parameters.extend(HoneyKind.get_defaults(language))
         parameters.extend(SwarmHealth.get_defaults(language))
         parameters.extend(EventType.get_defaults(language))
 
