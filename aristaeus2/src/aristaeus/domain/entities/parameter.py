@@ -40,6 +40,8 @@ class ParameterEntity(Entity):
                 key = "event_type"
             case "EventStatus":
                 key = "event_status"
+            case "Owner":
+                key = "owner"
             case _:
                 raise Exception("Unknown parameter type")
 

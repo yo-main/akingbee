@@ -7,3 +7,4 @@ class CreateUserCommand:
     public_id: UUID
     organization_id: UUID
     language: str
+    username: str

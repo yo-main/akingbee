@@ -23,6 +23,7 @@ async def test_user_created(session):
         {
             "user": {
                 "id": user_id,
+                "username": "kikoo",
             },
             "language": "fr",
         }
@@ -37,4 +38,4 @@ async def test_user_created(session):
 
     result = await session.execute(select(ParameterModel).where(ParameterModel.organization_id == user.organization_id))
     parameters = result.scalars().all()
-    assert len(parameters) == 16
+    assert len(parameters) == 17

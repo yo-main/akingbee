@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 async def on_user_created(properties, body):
     user_id = body["user"]["id"]
     organization_id = str(uuid.uuid4())
+    username = body["user"]["username"]
     language = body["language"]
 
     user_application = UserApplication()
@@ -18,6 +19,7 @@ async def on_user_created(properties, body):
         public_id=user_id,
         organization_id=organization_id,
         language=language,
+        username=username,
     ))
 
     logger.info("User %s initialized", user_id)
