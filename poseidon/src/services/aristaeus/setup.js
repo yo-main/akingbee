@@ -11,7 +11,7 @@ export async function listSetupData(type) {
 }
 
 export async function postSetupData(type, value) {
-  let response = await aristaeusApi.post('/parameter', {params : {key: type, value: value}});
+  let response = await aristaeusApi.post('/parameter', {key: type, value: value});
   return response.data;
 }
 

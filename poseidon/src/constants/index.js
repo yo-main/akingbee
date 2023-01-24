@@ -28,7 +28,7 @@ export const sections = {
 
 export const setupData = {
   swarm_health_status: "swarm_health",
-  hive_beekeeper: "hive_beekeeper",
+  hive_beekeeper: "owner",
   hive_condition: "hive_condition",
   apiary_honey_kind: "honey_kind",
   event_type: "event_type",
