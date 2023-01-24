@@ -84,6 +84,7 @@ def send_event_user_created(user, language):
         "user": {
             "id": user.id,
             "email": user.email,
+            "username": user.credentials[0].username
         },
         "language": language,
     }
