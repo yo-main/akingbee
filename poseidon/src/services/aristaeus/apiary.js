@@ -5,14 +5,14 @@ export async function getApiaries() {
   return response.data;
 }
 
-export async function createApiary({name, location, honey_type}) {
-  let response = await aristaeusApi.post(`/apiary`, {name, location, honey_type});
+export async function createApiary({name, location, honey_kind}) {
+  let response = await aristaeusApi.post(`/apiary`, {name, location, honey_kind});
   return response.data;
 }
 
 
-export async function updateApiary(apiary_id, {name, location, honey_type_id}) {
-  let response = await aristaeusApi.put(`/apiary/${apiary_id}`, {name, location, honey_type_id});
+export async function updateApiary(apiary_id, {name, location, honey_kind}) {
+  let response = await aristaeusApi.put(`/apiary/${apiary_id}`, {name, location, honey_kind});
   return response.data;
 }
 

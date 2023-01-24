@@ -5,7 +5,7 @@ import { PlusOutlined } from '@ant-design/icons'
 
 import { FormButtonModal, FormLinkModal } from '../components';
 import { dealWithError, notificate } from '../lib/common';
-import { getSetupData, postSetupData, updateSetupData, deleteSetupData } from '../services/aristaeus/setup';
+import { getSetupData, listSetupData, postSetupData, updateSetupData, deleteSetupData } from '../services/aristaeus/setup';
 import { ERROR_STATUS, LOADING_STATUS, getGenericPage } from './generic';
 
 
@@ -59,8 +59,8 @@ export class SetupPage extends React.Component {
     const tableData = data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,
-        id: val.id,
-        name: val.name,
+        id: val.public_id,
+        name: val.value,
       });
       return acc;
     }, []);
@@ -69,7 +69,7 @@ export class SetupPage extends React.Component {
 
   async componentDidMount() {
     try {
-      let data = await getSetupData(this.props.dataType);
+      let data = await listSetupData(this.props.dataType);
       let tableData = this.getTableData(data);
       let pageStatus = 'OK';
 
@@ -93,7 +93,7 @@ export class SetupPage extends React.Component {
 
     try {
       await postSetupData(this.props.dataType, value);
-      let data = await getSetupData(this.props.dataType);
+      let data = await listSetupData(this.props.dataType);
       let tableData = this.getTableData(data);
       this.setState((state) => {
         state['tableData'] = tableData;
@@ -120,8 +120,8 @@ export class SetupPage extends React.Component {
     }
 
     try {
-      await updateSetupData(this.props.dataType, newValue, objectId);
-      let data = await getSetupData(this.props.dataType);
+      await updateSetupData(newValue, objectId);
+      let data = await listSetupData(this.props.dataType);
       let tableData = this.getTableData(data);
       this.setState((state) => {
         state['tableData'] = tableData;
@@ -134,8 +134,8 @@ export class SetupPage extends React.Component {
 
   deleteData = async(objectId) => {
     try {
-      await deleteSetupData(this.props.dataType, objectId);
-      let data = await getSetupData(this.props.dataType);
+      await deleteSetupData(objectId);
+      let data = await listSetupData(this.props.dataType);
       let tableData = this.getTableData(data);
       this.setState((state) => {
         state['tableData'] = tableData;

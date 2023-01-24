@@ -10,7 +10,7 @@ import { formItemLayout, tailFormItemLayout } from '../../constants';
 
 import { ReactComponent as queenSVG } from '../../images/queen.svg';
 
-import { getSetupData } from '../../services/aristaeus/setup';
+import { listSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
 import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm, updateSwarm } from '../../services/aristaeus/swarm';
@@ -197,9 +197,9 @@ export class HivePage extends React.Component {
   async componentDidMount() {
     try {
       let hives = await getHives();
-      let hiveBeekeeper = await getSetupData('hive_beekeeper');
-      let hiveCondition = await getSetupData('hive_condition');
-      let swarmHealths = await getSetupData('swarm_health_status');
+      let hiveBeekeeper = await listSetupData('hive_beekeeper');
+      let hiveCondition = await listSetupData('hive_condition');
+      let swarmHealths = await listSetupData('swarm_health_status');
       let tableData = this.getTableData(hives);
       let pageStatus = 'OK';
 
@@ -349,9 +349,9 @@ export class HiveCreationPage extends React.Component {
 
   async componentDidMount() {
     try {
-      let hiveBeekeeper = await getSetupData('hive_beekeeper');
-      let hiveCondition = await getSetupData('hive_condition');
-      let swarmHealthStatus = await getSetupData('swarm_health_status');
+      let hiveBeekeeper = await listSetupData('hive_beekeeper');
+      let hiveCondition = await listSetupData('hive_condition');
+      let swarmHealthStatus = await listSetupData('swarm_health_status');
       let apiaries = await getApiaries();
       let pageStatus = "OK";
 
@@ -468,9 +468,9 @@ export class HiveDetailsPage extends React.Component {
 
     try {
       let apiaries = await getApiaries('apiaries');
-      let hiveBeekeeper = await getSetupData('hive_beekeeper');
-      let hiveCondition = await getSetupData('hive_condition');
-      let swarmHealthStatus = await getSetupData('swarm_health_status');
+      let hiveBeekeeper = await listSetupData('hive_beekeeper');
+      let hiveCondition = await listSetupData('hive_condition');
+      let swarmHealthStatus = await listSetupData('swarm_health_status');
 
       let pageStatus = "OK"
       this.setState({hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
