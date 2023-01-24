@@ -9,7 +9,7 @@ from .base import Entity
 class HiveEntity(Entity):
     name: str
     condition: str
-    owner_id: UUID
+    owner: str
     organization_id: UUID
     apiary_id: UUID | None
     swarm_id: UUID | None

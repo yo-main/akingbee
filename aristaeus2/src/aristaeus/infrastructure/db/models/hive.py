@@ -8,15 +8,12 @@ from aristaeus.domain.entities.hive import HiveEntity
 
 from .base import BaseModel
 
-# from aristaeus.infrastructure.db.models.apiary import ApiaryModel
-# from aristaeus.infrastructure.db.models.swarm import SwarmModel
-
 
 class HiveModel(BaseModel):
     public_id: Mapped[UUID] = mapped_column(unique=True)
     name: Mapped[str]
     condition: Mapped[str]
-    owner_id: Mapped[UUID]
+    owner: Mapped[str]
     organization_id: Mapped[UUID]
     swarm_id: Mapped[int | None] = mapped_column(ForeignKey("swarm.id"))
     apiary_id: Mapped[int | None] = mapped_column(ForeignKey("apiary.id"))
@@ -31,7 +28,7 @@ class HiveModel(BaseModel):
             public_id=self.public_id,
             name=self.name,
             condition=self.condition,
-            owner_id=self.owner_id,
+            owner=self.owner,
             organization_id=self.organization_id,
             swarm_id=self.swarm.public_id if self.swarm else None,
             apiary_id=self.apiary.public_id if self.apiary else None,

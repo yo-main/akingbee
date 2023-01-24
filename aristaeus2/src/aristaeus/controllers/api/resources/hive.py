@@ -17,7 +17,7 @@ async def post_hive(input: PostHiveIn, user: UserEntity = Depends(auth_user)):
     command = CreateHiveCommand(
         name=input.name,
         condition=input.condition,
-        owner_id=input.owner_id,
+        owner=input.owner,
         apiary_id=input.apiary_id,
         swarm_id=input.swarm_id,
         organization_id=user.organization_id,
@@ -43,7 +43,7 @@ async def get_hive(hive_id: UUID, user: UserEntity = Depends(auth_user)):
 @router.put("/{hive_id}", response_model=HiveOut)
 async def put_hive(hive_id: UUID, input: PutHiveIn, user: UserEntity = Depends(auth_user)):
     command = PutHiveCommand(
-        hive_id=hive_id, name=input.name, condition=input.condition, apiary_id=input.apiary_id, owner_id=input.owner_id
+        hive_id=hive_id, name=input.name, condition=input.condition, apiary_id=input.apiary_id, owner=input.owner
     )
     hive_application = HiveApplication()
     hive_entity = await hive_application.put(command=command)

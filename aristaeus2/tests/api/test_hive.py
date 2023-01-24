@@ -6,27 +6,25 @@ from tests.factories import ApiaryModelFactory, HiveModelFactory
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_create_hive__no_apiary(async_app):
-    owner_id = str(uuid.uuid4())
-    data = {"name": "a name", "condition": "too good", "owner_id": owner_id}
+    data = {"name": "a name", "condition": "too good", "owner": "owner"}
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
 
     data = response.json()
     assert data["name"] == "a name", data
     assert data["condition"] == "too good", data
-    assert data["owner_id"] == owner_id, data
+    assert data["owner"] == "owner", data
     assert data["apiary_id"] is None, data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_create_hive__with_apiary(async_app):
-    owner_id = str(uuid.uuid4())
     apiary_id = str(uuid.uuid4())
     data = {
         "name": "a name",
         "condition": "too good",
-        "owner_id": owner_id,
+        "owner": "owner",
         "apiary_id": apiary_id,
     }
     response = await async_app.post("/hive", json=data)
@@ -35,7 +33,7 @@ async def test_create_hive__with_apiary(async_app):
     data = response.json()
     assert data["name"] == "a name", data
     assert data["condition"] == "too good", data
-    assert data["owner_id"] == owner_id, data
+    assert data["owner"] == "owner", data
     assert data["apiary_id"] == apiary_id, data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
@@ -46,11 +44,6 @@ async def test_create_hive__with_apiary(async_app):
     (
         {"name": "a name"},
         {"name": "a name", "condition": "too good"},
-        {
-            "name": "a name",
-            "condition": "too good",
-            "owner_id": "coucou",
-        },
         {
             "name": "a name",
             "condition": "too good",
@@ -71,13 +64,12 @@ async def test_get_hive__unknown(async_app):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_get_hive__with_apiary(async_app):
-    owner_id = str(uuid.uuid4())
     apiary_id = str(uuid.uuid4())
 
     data = {
         "name": "a name",
         "condition": "too good",
-        "owner_id": owner_id,
+        "owner": "owner",
         "apiary_id": apiary_id,
     }
     response = await async_app.post("/hive", json=data)
@@ -90,9 +82,7 @@ async def test_get_hive__with_apiary(async_app):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_get_hive__no_apiary(async_app):
-    owner_id = str(uuid.uuid4())
-
-    data = {"name": "a name", "condition": "too good", "owner_id": owner_id}
+    data = {"name": "a name", "condition": "too good", "owner": "owner"}
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
 
@@ -119,7 +109,7 @@ async def test_list_hives(async_app, session):
     (
         {"condition": "new condition"},
         {"name": "new name"},
-        {"owner_id": str(uuid.uuid4())},
+        {"owner": "owner"},
     ),
 )
 async def test_put_hive__success(async_app, session, payload):
@@ -128,13 +118,11 @@ async def test_put_hive__success(async_app, session, payload):
     await session.commit()
     await session.refresh(apiary)
 
-    owner_id = str(uuid.uuid4())
-
     data = {
         "name": "a name",
         "condition": "too good",
         "apiary_id": str(apiary.public_id),
-        "owner_id": owner_id,
+        "owner": "owner",
     }
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
@@ -150,7 +138,7 @@ async def test_put_hive__success(async_app, session, payload):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_delete_hive__success(async_app):
-    data = {"name": "a name", "condition": "too good", "owner_id": str(uuid.uuid4())}
+    data = {"name": "a name", "condition": "too good", "owner": "owner"}
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
     hive_id = response.json()["public_id"]

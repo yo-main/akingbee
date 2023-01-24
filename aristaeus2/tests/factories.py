@@ -16,7 +16,7 @@ class HiveModelFactory(factory.Factory):
     public_id = factory.LazyFunction(uuid.uuid4)
     name = factory.Faker("word")
     condition = factory.Faker("word")
-    owner_id = factory.LazyFunction(uuid.uuid4)
+    owner = factory.Faker("word")
     organization_id = factory.LazyFunction(uuid.uuid4)
 
 
