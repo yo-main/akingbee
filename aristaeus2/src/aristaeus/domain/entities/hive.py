@@ -4,6 +4,9 @@ from uuid import UUID
 
 from .base import Entity
 
+from .apiary import ApiaryEntity
+from .swarm import SwarmEntity
+
 
 @dataclass(frozen=True, slots=True)
 class HiveEntity(Entity):
@@ -15,7 +18,7 @@ class HiveEntity(Entity):
     swarm_id: UUID | None
     public_id: UUID = field(default_factory=uuid.uuid4)
 
-    def update(self, organization_id: str = None, public_id: str = None, **kwargs) -> tuple["HiveEntity", list[str]]:
+    def update(self, organization_id: str = "", public_id: str = "", **kwargs) -> tuple["HiveEntity", list[str]]:
         data = {k: v for k, v in kwargs.items() if v is not None}
         new_hive = replace(self, **data)
 
@@ -24,3 +27,13 @@ class HiveEntity(Entity):
         ]
 
         return new_hive, updated_fields
+
+
+@dataclass(frozen=True, slots=True)
+class DetailedHiveEntity(Entity):
+    name: str
+    condition: str
+    owner: str
+    apiary: ApiaryEntity | None
+    swarm: SwarmEntity | None
+    public_id: UUID

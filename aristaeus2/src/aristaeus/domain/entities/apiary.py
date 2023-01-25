@@ -12,7 +12,6 @@ class ApiaryEntity(Entity):
     honey_kind: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
-    hive_count: int | None = field(default=None)
 
     def update(
         self, organization_id: str | None = None, public_id: str | None = None, **kwargs
@@ -25,3 +24,14 @@ class ApiaryEntity(Entity):
         ]
 
         return new_apiary, updated_fields
+
+
+@dataclass(frozen=True, slots=True)
+class DetailedApiaryEntity(Entity):
+    name: str
+    location: str
+    honey_kind: str
+    organization_id: UUID
+    public_id: UUID
+    hive_count: int
+

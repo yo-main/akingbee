@@ -5,6 +5,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.hive import DetailedHiveEntity
 
 from .base import BaseModel
 
@@ -32,4 +33,14 @@ class HiveModel(BaseModel):
             organization_id=self.organization_id,
             swarm_id=self.swarm.public_id if self.swarm else None,
             apiary_id=self.apiary.public_id if self.apiary else None,
+        )
+
+    def to_detailed_entity(self) -> DetailedHiveEntity:
+        return DetailedHiveEntity(
+            public_id=self.public_id,
+            name=self.name,
+            condition=self.condition,
+            owner=self.owner,
+            swarm=self.swarm.to_entity() if self.swarm else None,
+            apiary=self.apiary.to_entity() if self.apiary else None,
         )

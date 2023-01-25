@@ -2,6 +2,7 @@ import uuid
 
 import factory
 
+from aristaeus.infrastructure.db.models.swarm import SwarmModel
 from aristaeus.infrastructure.db.models.apiary import ApiaryModel
 from aristaeus.infrastructure.db.models.comment import CommentModel
 from aristaeus.infrastructure.db.models.event import EventModel
@@ -63,3 +64,12 @@ class ParameterModelFactory(factory.Factory):
     key = factory.Faker("word")
     value = factory.Faker("word")
     organization_id = factory.LazyFunction(uuid.uuid4)
+
+
+class SwarmModelFactory(factory.Factory):
+    class Meta:
+        model = SwarmModel
+
+    public_id = factory.LazyFunction(uuid.uuid4)
+    health = factory.Faker("word")
+    queen_year = factory.Faker("random_int")

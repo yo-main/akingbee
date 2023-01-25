@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
 from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.hive import DetailedHiveEntity
 
 if TYPE_CHECKING:
     Base = object
@@ -22,5 +23,5 @@ class HiveRepositoryAdapter(Base):
     async def delete(self, hive: HiveEntity) -> None:
         ...
 
-    async def list(self, organization_id: UUID) -> list[HiveEntity]:
+    async def list(self, organization_id: UUID) -> list[DetailedHiveEntity]:
         ...

@@ -15,7 +15,6 @@ async def test_create_apiary(async_app):
     assert data["location"] == "everywhere", data
     assert data["honey_kind"] == "too good", data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
-    assert data["hive_count"] == 0, data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)

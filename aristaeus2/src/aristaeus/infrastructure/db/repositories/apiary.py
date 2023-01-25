@@ -4,7 +4,7 @@ from sqlalchemy import delete, insert, select, update
 from sqlalchemy.orm import joinedload
 
 from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
-from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.apiary import ApiaryEntity, DetailedApiaryEntity
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.apiary import ApiaryModel
 from aristaeus.infrastructure.db.utils import error_handler
@@ -38,14 +38,14 @@ class ApiaryRespository:
         return await self.get(apiary.public_id)
 
     @error_handler
-    async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
+    async def list(self, organization_id: UUID) -> list[DetailedApiaryEntity]:
         query = (
             select(ApiaryModel)
             .options(joinedload(ApiaryModel.hives))
             .where(ApiaryModel.organization_id == organization_id)
         )
         result = await self.database.execute(query)
-        return [model.to_entity() for model in result.unique().scalars()]
+        return [model.to_detailed_entity() for model in result.unique().scalars()]
 
     @error_handler
     async def delete(self, apiary: ApiaryEntity) -> None:

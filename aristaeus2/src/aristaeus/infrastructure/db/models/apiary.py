@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.apiary import ApiaryEntity, DetailedApiaryEntity
 
 from .base import BaseModel
 
@@ -23,7 +23,16 @@ class ApiaryModel(BaseModel):
             location=self.location,
             honey_kind=self.honey_kind,
             organization_id=self.organization_id,
-            hive_count=len(self.hives)
+        )
+
+    def to_detailed_entity(self) -> DetailedApiaryEntity:
+        return DetailedApiaryEntity(
+            public_id=self.public_id,
+            name=self.name,
+            location=self.location,
+            honey_kind=self.honey_kind,
+            organization_id=self.organization_id,
+            hive_count=len(self.hives),
         )
 
     @staticmethod

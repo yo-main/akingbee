@@ -1,7 +1,7 @@
 import uuid
 
 import pytest
-from tests.factories import ApiaryModelFactory, HiveModelFactory
+from tests.factories import ApiaryModelFactory, HiveModelFactory, SwarmModelFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -93,14 +93,24 @@ async def test_get_hive__no_apiary(async_app):
 
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
 async def test_list_hives(async_app, session):
-    hives = HiveModelFactory.build_batch(5, organization_id="22222222-2222-2222-2222-222222222222")
+    apiary = ApiaryModelFactory.build(organization_id="22222222-2222-2222-2222-222222222222", name="apiary_name")
+    swarms = SwarmModelFactory.create_batch(5, queen_year=2000)
+    hives = [
+        HiveModelFactory.create(organization_id="22222222-2222-2222-2222-222222222222", apiary=apiary, swarm=swarm)
+        for swarm in swarms
+    ]
+    session.add(apiary)
+    session.add_all(swarms)
     session.add_all(hives)
     await session.commit()
 
     response = await async_app.get("/hive")
 
     assert response.status_code == 200, response.text
-    assert len(response.json()) == 5, response.text
+    data = response.json()
+    assert len(data) == 5, response.text
+    assert data[0]["apiary"]["name"] == "apiary_name"
+    assert data[0]["swarm"]["queen_year"] == 2000
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)

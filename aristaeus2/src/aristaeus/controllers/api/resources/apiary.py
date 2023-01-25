@@ -4,15 +4,13 @@ from fastapi import APIRouter, Depends
 
 from aristaeus.controllers.api.dtos.apiary import (
     ApiaryOut,
+    DetailedApiaryOut,
     PostApiaryIn,
     PutApiaryIn,
 )
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.applications.apiary import ApiaryApplication
-from aristaeus.domain.commands.apiary import (
-    CreateApiaryCommand,
-    PutApiaryCommand,
-)
+from aristaeus.domain.commands.apiary import CreateApiaryCommand, PutApiaryCommand
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.domain.queries.apiary import ApiaryQuery
 
@@ -30,7 +28,7 @@ async def post_apiary(input: PostApiaryIn, user: UserEntity = Depends(auth_user)
     return apiary_entity.asdict()
 
 
-@router.get("", response_model=list[ApiaryOut])
+@router.get("", response_model=list[DetailedApiaryOut])
 async def list_apiary(user: UserEntity = Depends(auth_user)):
     apiary_entities = await ApiaryQuery().list_apiary_query(user.organization_id)
     return [apiary.asdict() for apiary in apiary_entities]

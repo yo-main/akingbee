@@ -2,7 +2,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends
 
-from aristaeus.controllers.api.dtos.hive import HiveOut, PostHiveIn, PutHiveIn
+from aristaeus.controllers.api.dtos.hive import (
+    DetailedHiveOut,
+    HiveOut,
+    PostHiveIn,
+    PutHiveIn,
+)
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.applications.hive import HiveApplication
 from aristaeus.domain.commands.hive import CreateHiveCommand, PutHiveCommand
@@ -28,7 +33,7 @@ async def post_hive(input: PostHiveIn, user: UserEntity = Depends(auth_user)):
     return hive_entity.asdict()
 
 
-@router.get("", response_model=list[HiveOut])
+@router.get("", response_model=list[DetailedHiveOut])
 async def list_hives(user: UserEntity = Depends(auth_user)):
     hive_entities = await HiveQuery().list_hives(organization_id=user.organization_id)
     return [hive.asdict() for hive in hive_entities]

@@ -1,9 +1,10 @@
 from uuid import UUID
 
 from sqlalchemy import delete, insert, select, update
+from sqlalchemy.orm import joinedload
 
 from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
-from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.hive import DetailedHiveEntity, HiveEntity
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.apiary import ApiaryModel
 from aristaeus.infrastructure.db.models.hive import HiveModel
@@ -53,7 +54,12 @@ class HiveRepository:
         await self.database.execute(query)
 
     @error_handler
-    async def list(self, organization_id: UUID) -> list[HiveEntity]:
-        query = select(HiveModel).where(HiveModel.organization_id == organization_id)
+    async def list(self, organization_id: UUID) -> list[DetailedHiveEntity]:
+        query = (
+            select(HiveModel)
+            .options(joinedload(HiveModel.apiary), joinedload(HiveModel.swarm))
+            .where(HiveModel.organization_id == organization_id)
+        )
+
         result = await self.database.execute(query)
-        return [model.to_entity() for model in result.unique().scalars()]
+        return [model.to_detailed_entity() for model in result.unique().scalars()]
