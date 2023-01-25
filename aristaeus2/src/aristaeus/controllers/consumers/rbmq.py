@@ -2,7 +2,9 @@ import asyncio
 import logging
 from typing import Callable
 
-from pika import ConnectionParameters, PlainCredentials, URLParameters
+from pika import ConnectionParameters
+from pika import PlainCredentials
+from pika import URLParameters
 from pika.adapters.asyncio_connection import AsyncioConnection
 
 from aristaeus.config import settings

@@ -1,5 +1,6 @@
 import inspect
-from typing import Type, TypeVar
+from typing import Type
+from typing import TypeVar
 
 from aristaeus.config import settings
 

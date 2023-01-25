@@ -1,13 +1,16 @@
 from uuid import UUID
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete
+from sqlalchemy import select
+from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
 
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.entities.parameter import ParameterEntity
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.parameter import ParameterModel
-from aristaeus.infrastructure.db.utils import error_handler, get_data_from_entity
+from aristaeus.infrastructure.db.utils import error_handler
+from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
 
 

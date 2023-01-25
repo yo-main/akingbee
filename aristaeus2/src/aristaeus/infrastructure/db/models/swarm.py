@@ -1,7 +1,9 @@
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 
 from aristaeus.domain.entities.swarm import SwarmEntity
 

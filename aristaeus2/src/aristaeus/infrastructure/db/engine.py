@@ -1,13 +1,13 @@
 from contextlib import asynccontextmanager
-from typing import Any, AsyncIterator, Protocol
+from typing import Any
+from typing import AsyncIterator
+from typing import Protocol
 
 from sqlalchemy import Result
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    async_scoped_session,
-    async_sessionmaker,
-    create_async_engine,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import async_scoped_session
+from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.sql.expression import Executable
 
 from aristaeus.infrastructure.db.utils import get_database_uri

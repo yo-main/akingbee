@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING
+from typing import Protocol
 from uuid import UUID
 
 from aristaeus.domain.entities.parameter import ParameterEntity

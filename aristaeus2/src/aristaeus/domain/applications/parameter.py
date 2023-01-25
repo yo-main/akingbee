@@ -1,12 +1,8 @@
 from uuid import UUID
 
-from aristaeus.domain.adapters.repositories.parameter import (
-    ParameterRepositoryAdapter,
-)
-from aristaeus.domain.commands.parameter import (
-    CreateParameterCommand,
-    PutParameterCommand,
-)
+from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
+from aristaeus.domain.commands.parameter import CreateParameterCommand
+from aristaeus.domain.commands.parameter import PutParameterCommand
 from aristaeus.domain.entities.parameter import ParameterEntity
 from aristaeus.injector import InjectorMixin
 

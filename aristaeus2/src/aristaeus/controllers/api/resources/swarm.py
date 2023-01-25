@@ -1,8 +1,10 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
+from fastapi import Depends
 
-from aristaeus.controllers.api.dtos.swarm import SwarmIn, SwarmOut
+from aristaeus.controllers.api.dtos.swarm import SwarmIn
+from aristaeus.controllers.api.dtos.swarm import SwarmOut
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.applications.swarm import SwarmApplication
 from aristaeus.domain.commands.swarm import CreateSwarmCommand

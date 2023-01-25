@@ -1,6 +1,7 @@
 from uuid import UUID
 
-from aristaeus.domain.entities.apiary import ApiaryEntity, DetailedApiaryEntity
+from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.apiary import DetailedApiaryEntity
 from aristaeus.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.injector import InjectorMixin
 

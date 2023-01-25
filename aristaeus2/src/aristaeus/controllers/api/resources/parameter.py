@@ -1,18 +1,15 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
+from fastapi import Depends
 
-from aristaeus.controllers.api.dtos.parameter import (
-    ParameterOut,
-    PostParameterIn,
-    PutParameterIn,
-)
+from aristaeus.controllers.api.dtos.parameter import ParameterOut
+from aristaeus.controllers.api.dtos.parameter import PostParameterIn
+from aristaeus.controllers.api.dtos.parameter import PutParameterIn
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.applications.parameter import ParameterApplication
-from aristaeus.domain.commands.parameter import (
-    CreateParameterCommand,
-    PutParameterCommand,
-)
+from aristaeus.domain.commands.parameter import CreateParameterCommand
+from aristaeus.domain.commands.parameter import PutParameterCommand
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.domain.queries.parameter import ParameterQuery
 

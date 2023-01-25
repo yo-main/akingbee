@@ -1,7 +1,6 @@
 from uuid import UUID
-from aristaeus.domain.adapters.repositories.event import (
-    EventRepositoryAdapter,
-)
+
+from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.commands.event import CreateEventCommand
 from aristaeus.domain.commands.event import PutEventCommand
 from aristaeus.domain.entities.event import EventEntity

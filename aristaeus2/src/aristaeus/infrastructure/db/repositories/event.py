@@ -1,15 +1,17 @@
 from uuid import UUID
 
-from sqlalchemy import insert, select, update, delete
+from sqlalchemy import delete
+from sqlalchemy import insert
+from sqlalchemy import select
+from sqlalchemy import update
 
-from aristaeus.domain.adapters.repositories.event import (
-    EventRepositoryAdapter,
-)
+from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.entities.event import EventEntity
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.event import EventModel
 from aristaeus.infrastructure.db.models.hive import HiveModel
-from aristaeus.infrastructure.db.utils import error_handler, get_data_from_entity
+from aristaeus.infrastructure.db.utils import error_handler
+from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
 
 

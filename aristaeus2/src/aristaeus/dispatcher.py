@@ -6,7 +6,7 @@ from typing import Callable
 logger = logging.getLogger(__name__)
 
 
-class Dispatcher():
+class Dispatcher:
 
     _registry: dict[str, Any] = {}
     _queue: asyncio.Queue = asyncio.Queue()

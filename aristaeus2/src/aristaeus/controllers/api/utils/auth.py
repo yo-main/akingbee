@@ -1,6 +1,8 @@
 from uuid import UUID
 
-from fastapi import Cookie, Depends, HTTPException
+from fastapi import Cookie
+from fastapi import Depends
+from fastapi import HTTPException
 
 from aristaeus.config import settings
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter

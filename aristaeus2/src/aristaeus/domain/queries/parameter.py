@@ -1,7 +1,9 @@
 from uuid import UUID
 
 from aristaeus.domain.entities.parameter import ParameterEntity
-from aristaeus.infrastructure.db.repositories.parameter import ParameterRepositoryAdapter
+from aristaeus.infrastructure.db.repositories.parameter import (
+    ParameterRepositoryAdapter,
+)
 from aristaeus.injector import InjectorMixin
 
 

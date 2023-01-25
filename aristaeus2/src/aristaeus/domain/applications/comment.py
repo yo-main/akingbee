@@ -1,12 +1,8 @@
 from uuid import UUID
 
-from aristaeus.domain.adapters.repositories.comment import (
-    CommentRepositoryAdapter,
-)
-from aristaeus.domain.commands.comment import (
-    CreateCommentCommand,
-    PutCommentCommand,
-)
+from aristaeus.domain.adapters.repositories.comment import CommentRepositoryAdapter
+from aristaeus.domain.commands.comment import CreateCommentCommand
+from aristaeus.domain.commands.comment import PutCommentCommand
 from aristaeus.domain.entities.comment import CommentEntity
 from aristaeus.injector import InjectorMixin
 

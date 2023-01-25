@@ -1,9 +1,7 @@
 from uuid import UUID
 
-from aristaeus.domain.commands.apiary import (
-    CreateApiaryCommand,
-    PutApiaryCommand,
-)
+from aristaeus.domain.commands.apiary import CreateApiaryCommand
+from aristaeus.domain.commands.apiary import PutApiaryCommand
 from aristaeus.domain.entities.apiary import ApiaryEntity
 from aristaeus.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.injector import InjectorMixin

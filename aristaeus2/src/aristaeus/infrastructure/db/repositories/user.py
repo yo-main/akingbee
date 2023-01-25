@@ -8,7 +8,8 @@ from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.user import UserModel
-from aristaeus.infrastructure.db.utils import error_handler, get_data_from_entity
+from aristaeus.infrastructure.db.utils import error_handler
+from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
 
 

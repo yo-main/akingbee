@@ -2,8 +2,8 @@ import asyncio
 import json
 import logging
 
-from pika.spec import Basic
 from pika import BasicProperties
+from pika.spec import Basic
 
 from aristaeus.config import settings
 from aristaeus.controllers.consumers.rbmq import AsyncRabbitMQConsumer

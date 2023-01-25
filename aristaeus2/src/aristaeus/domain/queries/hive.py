@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from aristaeus.domain.entities.hive import HiveEntity
 from aristaeus.domain.entities.hive import DetailedHiveEntity
+from aristaeus.domain.entities.hive import HiveEntity
 from aristaeus.infrastructure.db.repositories.hive import HiveRepositoryAdapter
 from aristaeus.injector import InjectorMixin
 

@@ -1,6 +1,4 @@
-from aristaeus.domain.adapters.repositories.swarm import (
-    SwarmRepositoryAdapter,
-)
+from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
 from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.entities.swarm import SwarmEntity
 from aristaeus.domain.entities.user import UserEntity

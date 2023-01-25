@@ -1,5 +1,6 @@
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from dataclasses import field
 from typing import TypeVar
 from uuid import UUID
 

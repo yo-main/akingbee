@@ -1,7 +1,8 @@
 from uuid import UUID
 
 from sqlalchemy import UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
 from aristaeus.domain.entities.parameter import ParameterEntity
 

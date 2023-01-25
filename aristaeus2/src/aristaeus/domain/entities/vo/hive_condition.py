@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-
 TRANSLATIONS = {
     "fr": ("Neuve", "Bon état", "Usagée", "Inutilisable"),
     "en": ("Brand new", "Good state", "Used", "Broken"),

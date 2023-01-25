@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from .apiary import ApiaryOut
 from .swarm import SwarmOut
 
+
 class PostHiveIn(BaseModel):
     name: str
     condition: str

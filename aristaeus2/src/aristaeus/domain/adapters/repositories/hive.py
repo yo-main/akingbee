@@ -1,8 +1,9 @@
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING
+from typing import Protocol
 from uuid import UUID
 
-from aristaeus.domain.entities.hive import HiveEntity
 from aristaeus.domain.entities.hive import DetailedHiveEntity
+from aristaeus.domain.entities.hive import HiveEntity
 
 if TYPE_CHECKING:
     Base = object

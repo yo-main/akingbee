@@ -1,16 +1,16 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
+from fastapi import Depends
 
-from aristaeus.controllers.api.dtos.apiary import (
-    ApiaryOut,
-    DetailedApiaryOut,
-    PostApiaryIn,
-    PutApiaryIn,
-)
+from aristaeus.controllers.api.dtos.apiary import ApiaryOut
+from aristaeus.controllers.api.dtos.apiary import DetailedApiaryOut
+from aristaeus.controllers.api.dtos.apiary import PostApiaryIn
+from aristaeus.controllers.api.dtos.apiary import PutApiaryIn
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.applications.apiary import ApiaryApplication
-from aristaeus.domain.commands.apiary import CreateApiaryCommand, PutApiaryCommand
+from aristaeus.domain.commands.apiary import CreateApiaryCommand
+from aristaeus.domain.commands.apiary import PutApiaryCommand
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.domain.queries.apiary import ApiaryQuery
 

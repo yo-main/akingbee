@@ -1,11 +1,14 @@
-from typing import List, Optional
+from typing import List
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 
-from aristaeus.domain.entities.hive import HiveEntity
 from aristaeus.domain.entities.hive import DetailedHiveEntity
+from aristaeus.domain.entities.hive import HiveEntity
 
 from .base import BaseModel
 

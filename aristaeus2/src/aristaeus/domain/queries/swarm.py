@@ -1,8 +1,6 @@
 from uuid import UUID
 
-from aristaeus.domain.adapters.repositories.swarm import (
-    SwarmRepositoryAdapter,
-)
+from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
 from aristaeus.domain.entities.swarm import SwarmEntity
 from aristaeus.injector import InjectorMixin
 

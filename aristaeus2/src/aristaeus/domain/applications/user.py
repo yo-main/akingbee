@@ -23,7 +23,9 @@ class UserApplication(InjectorMixin):
         user = UserEntity(public_id=command.public_id, organization_id=command.organization_id)
 
         await self.user_repository.save(user)
-        Dispatcher.publish("user.created", user_public_id=user.public_id, language=command.language, username=command.username)
+        Dispatcher.publish(
+            "user.created", user_public_id=user.public_id, language=command.language, username=command.username
+        )
         return user
 
     async def initialize_user(self, user_public_id: UUID, language: str, username: str) -> None:

@@ -1,5 +1,8 @@
 import uuid
-from dataclasses import dataclass, field, fields, replace
+from dataclasses import dataclass
+from dataclasses import field
+from dataclasses import fields
+from dataclasses import replace
 from datetime import datetime
 from uuid import UUID
 

@@ -1,5 +1,8 @@
 import uuid
-from dataclasses import dataclass, field, fields, replace
+from dataclasses import dataclass
+from dataclasses import field
+from dataclasses import fields
+from dataclasses import replace
 from uuid import UUID
 
 from .base import Entity
@@ -34,4 +37,3 @@ class DetailedApiaryEntity(Entity):
     organization_id: UUID
     public_id: UUID
     hive_count: int
-
