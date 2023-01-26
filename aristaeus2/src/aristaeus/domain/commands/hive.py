@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from dataclasses import field
 from uuid import UUID
 
 
@@ -15,7 +16,7 @@ class CreateHiveCommand:
 @dataclass(frozen=True, slots=True)
 class PutHiveCommand:
     hive_id: UUID
-    name: str | None
-    condition: str | None
-    apiary_id: UUID | None
-    owner: str | None
+    name: str | None = field(default=None)
+    condition: str | None = field(default=None)
+    apiary_id: UUID | None = field(default=None)
+    owner: str | None = field(default=None)

@@ -47,9 +47,15 @@ async def get_hive(hive_id: UUID, user: UserEntity = Depends(auth_user)):
 
 @router.put("/{hive_id}", response_model=HiveOut)
 async def put_hive(hive_id: UUID, input: PutHiveIn, user: UserEntity = Depends(auth_user)):
-    command = PutHiveCommand(
-        hive_id=hive_id, name=input.name, condition=input.condition, apiary_id=input.apiary_id, owner=input.owner
-    )
+    command = PutHiveCommand(hive_id=hive_id, name=input.name, condition=input.condition, owner=input.owner)
+    hive_application = HiveApplication()
+    hive_entity = await hive_application.put(command=command)
+    return hive_entity.asdict()
+
+
+@router.put("/{hive_id}/move/{apiary_id}", response_model=HiveOut)
+async def move_hive(hive_id: UUID, apiary_id: UUID, user: UserEntity = Depends(auth_user)):
+    command = PutHiveCommand(hive_id=hive_id, apiary_id=apiary_id)
     hive_application = HiveApplication()
     hive_entity = await hive_application.put(command=command)
     return hive_entity.asdict()

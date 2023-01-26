@@ -18,7 +18,6 @@ class PutHiveIn(BaseModel):
     name: str | None
     condition: str | None
     owner: str | None
-    apiary_id: UUID | None
     swarm_id: UUID | None
 
 

@@ -124,9 +124,12 @@ async def test_list_hives(async_app, session):
 )
 async def test_put_hive__success(async_app, session, payload):
     apiary = ApiaryModelFactory.create()
+    hive = HiveModelFactory.create()
     session.add(apiary)
+    session.add(hive)
     await session.commit()
     await session.refresh(apiary)
+    await session.refresh(hive)
 
     data = {
         "name": "a name",
@@ -134,11 +137,8 @@ async def test_put_hive__success(async_app, session, payload):
         "apiary_id": str(apiary.public_id),
         "owner": "owner",
     }
-    response = await async_app.post("/hive", json=data)
-    assert response.status_code == 201, response.text
-    hive_id = response.json()["public_id"]
 
-    response = await async_app.put(f"/hive/{hive_id}", json=payload)
+    response = await async_app.put(f"/hive/{hive.public_id}", json=payload)
     assert response.status_code == 200, response.text
 
     data = response.json()
@@ -147,14 +147,31 @@ async def test_put_hive__success(async_app, session, payload):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_delete_hive__success(async_app):
-    data = {"name": "a name", "condition": "too good", "owner": "owner"}
-    response = await async_app.post("/hive", json=data)
-    assert response.status_code == 201, response.text
-    hive_id = response.json()["public_id"]
+async def test_delete_hive__success(async_app, session):
+    hive = HiveModelFactory.create()
+    session.add(hive)
+    await session.commit()
+    await session.refresh(hive)
 
-    response = await async_app.delete(f"/hive/{hive_id}")
+    response = await async_app.delete(f"/hive/{hive.public_id}")
     assert response.status_code == 204, response.text
 
-    response = await async_app.get(f"/hive/{hive_id}")
+    response = await async_app.get(f"/hive/{hive.public_id}")
     assert response.status_code == 404, response.text
+
+
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_move_hive(async_app, session):
+    apiary = ApiaryModelFactory.create()
+    hive = HiveModelFactory.create()
+    session.add(apiary)
+    session.add(hive)
+    await session.commit()
+    await session.refresh(apiary)
+    await session.refresh(hive)
+
+    response = await async_app.put(f"/hive/{hive.public_id}/move/{apiary.public_id}")
+    assert response.status_code == 200, response.text
+    assert response.json()["public_id"] == str(hive.public_id)
+    assert response.json()["apiary_id"] == str(apiary.public_id)
+

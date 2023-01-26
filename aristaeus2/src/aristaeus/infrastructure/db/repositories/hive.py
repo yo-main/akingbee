@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import delete
@@ -33,11 +34,11 @@ class HiveRepository:
         data = get_data_from_entity(hive)
 
         if "apiary_id" in data:
-            sub_query = select(ApiaryModel.id).where(ApiaryModel.public_id == data["apiary_id"])
+            sub_query = select(ApiaryModel.id).where(ApiaryModel.public_id == data["apiary_id"]).scalar_subquery()
             data["apiary_id"] = sub_query
 
         if "swarm_id" in data:
-            sub_query = select(SwarmModel.id).where(SwarmModel.public_id == data["swarm_id"])
+            sub_query = select(SwarmModel.id).where(SwarmModel.public_id == data["swarm_id"]).scalar_subquery()
             data["swarm_id"] = sub_query
 
         query = insert(HiveModel).values(data)
@@ -45,11 +46,17 @@ class HiveRepository:
 
     @error_handler
     async def update(self, hive: HiveEntity, fields: list[str]) -> HiveEntity:
-        query = (
-            update(HiveModel)
-            .values({field: getattr(hive, field) for field in fields})
-            .where(HiveModel.public_id == hive.public_id)
-        )
+
+        values: dict[Any, Any] = {}
+        for field in fields:
+            if field == "apiary_id":
+                values[field] = select(ApiaryModel.id).filter(ApiaryModel.public_id == hive.apiary_id).scalar_subquery()
+            elif field == "swarm_id":
+                values[field] = select(SwarmModel.id).filter(SwarmModel.public_id == hive.swarm_id).scalar_subquery()
+            else:
+                values[field] = getattr(hive, field)
+
+        query = update(HiveModel).values(values).where(HiveModel.public_id == hive.public_id)
         await self.database.execute(query)
         return await self.get(hive.public_id)
 
