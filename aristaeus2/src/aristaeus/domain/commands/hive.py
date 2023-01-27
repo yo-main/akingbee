@@ -19,4 +19,5 @@ class PutHiveCommand:
     name: str | None = field(default=None)
     condition: str | None = field(default=None)
     apiary_id: UUID | None = field(default=None)
+    swarm_id: UUID | None = field(default=None)
     owner: str | None = field(default=None)

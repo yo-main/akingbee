@@ -47,7 +47,9 @@ async def get_hive(hive_id: UUID, user: UserEntity = Depends(auth_user)):
 
 @router.put("/{hive_id}", response_model=DetailedHiveOut)
 async def put_hive(hive_id: UUID, input: PutHiveIn, user: UserEntity = Depends(auth_user)):
-    command = PutHiveCommand(hive_id=hive_id, name=input.name, condition=input.condition, owner=input.owner)
+    command = PutHiveCommand(
+        hive_id=hive_id, name=input.name, condition=input.condition, owner=input.owner, swarm_id=input.swarm_id
+    )
     hive_application = HiveApplication()
     hive_entity = await hive_application.put(command=command)
     return hive_entity.asdict()

@@ -28,7 +28,7 @@ class HiveApplication(InjectorMixin):
     async def put(self, command: PutHiveCommand) -> DetailedHiveEntity:
         hive = await self.hive_repository.get(command.hive_id)
         new_hive, updated_fields = hive.update(
-            name=command.name, condition=command.condition, owner=command.owner, apiary_id=command.apiary_id
+            name=command.name, condition=command.condition, owner=command.owner, apiary_id=command.apiary_id, swarm_id=command.swarm_id
         )
 
         result = await self.hive_repository.update(hive=new_hive, fields=updated_fields)
