@@ -1,7 +1,9 @@
 import uuid
 
 import pytest
-from tests.factories import ApiaryModelFactory, HiveModelFactory, SwarmModelFactory
+from tests.factories import ApiaryModelFactory
+from tests.factories import HiveModelFactory
+from tests.factories import SwarmModelFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -173,5 +175,4 @@ async def test_move_hive(async_app, session):
     response = await async_app.put(f"/hive/{hive.public_id}/move/{apiary.public_id}")
     assert response.status_code == 200, response.text
     assert response.json()["public_id"] == str(hive.public_id)
-    assert response.json()["apiary_id"] == str(apiary.public_id)
-
+    assert response.json()["apiary"]["public_id"] == str(apiary.public_id)

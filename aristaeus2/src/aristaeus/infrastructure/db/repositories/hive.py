@@ -30,6 +30,16 @@ class HiveRepository:
         return result.unique().scalar_one().to_entity()
 
     @error_handler
+    async def get_detailed(self, public_id: UUID) -> DetailedHiveEntity:
+        query = (
+            select(HiveModel)
+            .options(joinedload(HiveModel.apiary), joinedload(HiveModel.swarm))
+            .where(HiveModel.public_id == public_id)
+        )
+        result = await self.database.execute(query)
+        return result.unique().scalar_one().to_detailed_entity()
+
+    @error_handler
     async def save(self, hive: HiveEntity) -> None:
         data = get_data_from_entity(hive)
 
@@ -45,7 +55,7 @@ class HiveRepository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, hive: HiveEntity, fields: list[str]) -> HiveEntity:
+    async def update(self, hive: HiveEntity, fields: list[str]) -> DetailedHiveEntity:
 
         values: dict[Any, Any] = {}
         for field in fields:
@@ -58,7 +68,7 @@ class HiveRepository:
 
         query = update(HiveModel).values(values).where(HiveModel.public_id == hive.public_id)
         await self.database.execute(query)
-        return await self.get(hive.public_id)
+        return await self.get_detailed(hive.public_id)
 
     @error_handler
     async def delete(self, hive: HiveEntity) -> None:

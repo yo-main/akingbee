@@ -19,6 +19,7 @@ from aristaeus.injector import Injector
 
 pytestmark = pytest.mark.anyio
 
+
 @pytest.fixture(scope="session")
 def anyio_backend():
     return "asyncio"
@@ -89,7 +90,7 @@ async def async_app(provision_database, anyio_backend, request):
     async with AsyncClient(app=create_app(), base_url="http://testserver") as client:
         if hasattr(request, "param"):
             access_token = request.param
-            
+
             async with provision_database.begin() as conn:
                 params = {"test_id": access_token, "date": datetime.now()}
                 await conn.execute(

@@ -1,8 +1,10 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 import pytest
-from tests.factories import EventModelFactory, HiveModelFactory
+from tests.factories import EventModelFactory
+from tests.factories import HiveModelFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -92,9 +94,7 @@ async def test_get_event(async_app, session):
 @pytest.mark.parametrize("async_app", ["33333333-3333-3333-3333-333333333333"], indirect=True)
 async def test_list_events(async_app, session):
     hive_public_id = str(uuid.uuid4())
-    hive = HiveModelFactory.build(
-        organization_id="33333333-3333-3333-3333-333333333333", public_id=hive_public_id
-    )
+    hive = HiveModelFactory.build(organization_id="33333333-3333-3333-3333-333333333333", public_id=hive_public_id)
     session.add(hive)
     await session.commit()
     await session.refresh(hive)

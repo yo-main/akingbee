@@ -5,9 +5,9 @@ import uuid
 from sqlalchemy import select
 
 from aristaeus.controllers.consumers.app import handler
+from aristaeus.dispatcher import Dispatcher
 from aristaeus.infrastructure.db.models.parameter import ParameterModel
 from aristaeus.infrastructure.db.models.user import UserModel
-from aristaeus.dispatcher import Dispatcher
 
 
 class FakeDeliver:

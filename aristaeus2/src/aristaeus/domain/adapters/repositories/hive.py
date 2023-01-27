@@ -18,7 +18,7 @@ class HiveRepositoryAdapter(Base):
     async def get(self, public_id: UUID) -> HiveEntity:
         ...
 
-    async def update(self, hive: HiveEntity, fields: list[str]) -> HiveEntity:
+    async def update(self, hive: HiveEntity, fields: list[str]) -> DetailedHiveEntity:
         ...
 
     async def delete(self, hive: HiveEntity) -> None:

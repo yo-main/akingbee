@@ -2,12 +2,12 @@ import uuid
 
 import factory
 
-from aristaeus.infrastructure.db.models.swarm import SwarmModel
 from aristaeus.infrastructure.db.models.apiary import ApiaryModel
 from aristaeus.infrastructure.db.models.comment import CommentModel
 from aristaeus.infrastructure.db.models.event import EventModel
 from aristaeus.infrastructure.db.models.hive import HiveModel
 from aristaeus.infrastructure.db.models.parameter import ParameterModel
+from aristaeus.infrastructure.db.models.swarm import SwarmModel
 
 
 class HiveModelFactory(factory.Factory):

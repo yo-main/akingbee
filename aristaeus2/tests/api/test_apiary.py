@@ -1,7 +1,8 @@
 import uuid
-import pytest
 
-from tests.factories import ApiaryModelFactory, HiveModelFactory
+import pytest
+from tests.factories import ApiaryModelFactory
+from tests.factories import HiveModelFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
