@@ -13,8 +13,8 @@ export async function getHive(hiveId) {
 
 export async function createHive({name, condition, owner, apiary_id, swarm_id, swarm_health}) {
   if (swarm_id === undefined && swarm_health !== undefined) {
-    let swarm = await createSwarm({health_status: swarm_health, queen_year: new Date().getFullYear()});
-    swarm_id = swarm.id;
+    let swarm = await createSwarm({health: swarm_health, queen_year: new Date().getFullYear()});
+    swarm_id = swarm.public_id;
   }
 
   let data = {name, condition, owner};

@@ -150,7 +150,7 @@ function CreateHiveForm(props) {
           }
         </Select>
       </Form.Item>
-      <OptionalFormItem buttonName={window.i18n("form.addToApiary")} label={window.i18n("word.apiary")} name="apiary" rules={[{required: true, message: window.i18n('form.selectHiveApiary')}]}>
+      <OptionalFormItem buttonName={window.i18n("form.addToApiary")} label={window.i18n("word.apiary")} name="apiary_id" rules={[{required: true, message: window.i18n('form.selectHiveApiary')}]}>
         <Select>
           {
             props.apiaries.map(data => {
