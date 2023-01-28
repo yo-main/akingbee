@@ -31,7 +31,7 @@ async def test_user_created(session):
 
     handler(FakeDeliver("user.created"), None, payload.encode())
 
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.3)
     result = await session.execute(select(UserModel).where(UserModel.public_id == user_id))
     user = result.scalar()
     assert user and str(user.public_id) == user_id
