@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "aristaeus/**"
+      - ".github/workflows/aristaeus.yaml"
 
 defaults:
   run:
