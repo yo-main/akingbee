@@ -47,17 +47,17 @@ export function UpdateHiveForm(props) {
   const [form] = Form.useForm();
 
   form.setFieldsValue({
-    "hiveId": props.hive.id,
+    "hiveId": props.hive.public_id,
     "name": props.hive.name,
-    "owner": props.hive.owner.id,
-    "condition": props.hive.condition.id,
+    "owner": props.hive.owner,
+    "condition": props.hive.condition,
   })
 
   let swarmMenuItems = <></>;
   if (props.hive.swarm) {
     form.setFieldsValue({
-      "swarmId": props.hive.swarm.id,
-      "health": props.hive.swarm.health.id,
+      "swarmId": props.hive.swarm.public_id,
+      "health": props.hive.swarm.health,
       "queenYear": props.hive.swarm.queen_year,
     })
 
@@ -68,7 +68,7 @@ export function UpdateHiveForm(props) {
             {
               props.healths.map(data => {
                 return (
-                  <Select.Option key={data.id}>{data.name}</Select.Option>
+                  <Select.Option key={data.value}>{data.value}</Select.Option>
                 )
               })
             }
@@ -92,7 +92,7 @@ export function UpdateHiveForm(props) {
           {
             props.owners.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.value}>{data.value}</Select.Option>
               )
             })
           }
@@ -103,7 +103,7 @@ export function UpdateHiveForm(props) {
           {
             props.conditions.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.value}>{data.value}</Select.Option>
               )
             })
           }
@@ -116,50 +116,57 @@ export function UpdateHiveForm(props) {
 }
 
 function CreateHiveForm(props) {
+  let initialValues = {
+    'owner': window.i18n('form.selectAValue'),
+    'condition': window.i18n('form.selectAValue'),
+    'apiary': window.i18n('form.selectAValue'),
+    'swarm_health': window.i18n('form.selectAValue'),
+  };
+  
   return (
-    <Form {...formItemLayout} onFinish={props.callback} onFailed={onFailed} requiredMark={false}>
+    <Form {...formItemLayout} onFinish={props.callback} onFailed={onFailed} requiredMark={false} initialValues={initialValues}>
       <Form.Item label={window.i18n("word.name")} name="name" rules={[{required: true, message: window.i18n('form.insertHiveName')}]}>
         <Input />
       </Form.Item>
-      <Form.Item label={window.i18n("word.owner")} name="owner_id" rules={[{required: true, message: window.i18n('form.insertHiveOwner')}]}>
-        <Select defaultValue={window.i18n('form.selectAValue')}>
+      <Form.Item label={window.i18n("word.owner")} name="owner" rules={[{required: true, message: window.i18n('form.insertHiveOwner')}]}>
+        <Select>
           {
-            props.beekeepers.map(data => {
+            props.owners.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.value}>{data.value}</Select.Option>
               )
             })
           }
         </Select>
       </Form.Item>
-      <Form.Item label={window.i18n("word.condition")} name="condition_id" rules={[{required: true, message: window.i18n('form.selectHiveCondition')}]}>
-        <Select defaultValue={window.i18n('form.selectAValue')}>
+      <Form.Item label={window.i18n("word.condition")} name="condition" rules={[{required: true, message: window.i18n('form.selectHiveCondition')}]}>
+        <Select>
           {
             props.conditions.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.value}>{data.value}</Select.Option>
               )
             })
           }
         </Select>
       </Form.Item>
-      <OptionalFormItem buttonName={window.i18n("form.addToApiary")} label={window.i18n("word.apiary")} name="apiary_id" rules={[{required: true, message: window.i18n('form.selectHiveApiary')}]}>
-        <Select defaultValue={window.i18n('form.selectAValue')}>
+      <OptionalFormItem buttonName={window.i18n("form.addToApiary")} label={window.i18n("word.apiary")} name="apiary" rules={[{required: true, message: window.i18n('form.selectHiveApiary')}]}>
+        <Select>
           {
             props.apiaries.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.public_id}>{data.name}</Select.Option>
               )
             })
           }
         </Select>
       </OptionalFormItem>
-      <OptionalFormItem buttonName={window.i18n("form.addSwarm")} label={window.i18n("word.swarmHealth")} name="swarm_health_id" rules={[{required: true, message: window.i18n('form.selectSwarmHealth')}]}>
-        <Select defaultValue={window.i18n('form.selectAValue')}>
+      <OptionalFormItem buttonName={window.i18n("form.addSwarm")} label={window.i18n("word.swarmHealth")} name="swarm_health" rules={[{required: true, message: window.i18n('form.selectSwarmHealth')}]}>
+        <Select>
           {
             props.swarmHealths.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.value}>{data.value}</Select.Option>
               )
             })
           }
@@ -183,7 +190,7 @@ export class HivePage extends React.Component {
     return data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,
-        id: val.id,
+        public_id: val.public_id,
         name: val.name,
         owner: val.owner,
         condition: val.condition,
@@ -197,9 +204,9 @@ export class HivePage extends React.Component {
   async componentDidMount() {
     try {
       let hives = await getHives();
-      let hiveBeekeeper = await listSetupData('hive_beekeeper');
+      let hiveBeekeeper = await listSetupData('owner');
       let hiveCondition = await listSetupData('hive_condition');
-      let swarmHealths = await listSetupData('swarm_health_status');
+      let swarmHealths = await listSetupData('swarm_health');
       let tableData = this.getTableData(hives);
       let pageStatus = 'OK';
 
@@ -236,11 +243,11 @@ export class HivePage extends React.Component {
     const swarmId = form.swarmId;
     const hiveData = {
       name: form.name,
-      owner_id: form.owner,
-      condition_id: form.condition
+      owner: form.owner,
+      condition: form.condition
     }
     const swarmData = {
-      swarm_health_id: form.health,
+      health: form.health,
       queen_year: form.queenYear
     }
 
@@ -284,15 +291,15 @@ export class HivePage extends React.Component {
       },
       {
         title: window.i18n('word.owner'),
-        dataIndex: ['owner', 'name'],
+        dataIndex: 'owner',
       },
       {
         title: window.i18n('word.condition'),
-        dataIndex: ['condition', 'name']
+        dataIndex: 'condition'
       },
       {
         title: window.i18n('word.swarmHealth'),
-        dataIndex: ['swarm', 'health', 'name']
+        dataIndex: ['swarm', 'health']
       },
       {
         title: window.i18n('word.queenYear'),
@@ -349,13 +356,13 @@ export class HiveCreationPage extends React.Component {
 
   async componentDidMount() {
     try {
-      let hiveBeekeeper = await listSetupData('hive_beekeeper');
-      let hiveCondition = await listSetupData('hive_condition');
-      let swarmHealthStatus = await listSetupData('swarm_health_status');
+      let owners = await listSetupData('owner');
+      let hiveConditions = await listSetupData('hive_condition');
+      let swarmHealths = await listSetupData('swarm_health');
       let apiaries = await getApiaries();
       let pageStatus = "OK";
 
-      this.setState({apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
+      this.setState({apiaries, owners, hiveConditions, swarmHealths, pageStatus});
     } catch (error) {
       let status = dealWithError(error);
       this.setState((state) => {
@@ -394,9 +401,9 @@ export class HiveCreationPage extends React.Component {
           <Col span={8}>
             <CreateHiveForm
               callback={this.postData}
-              beekeepers={this.state['hiveBeekeeper']}
-              conditions={this.state['hiveCondition']}
-              swarmHealths={this.state['swarmHealthStatus']}
+              owners={this.state['owners']}
+              conditions={this.state['hiveConditions']}
+              swarmHealths={this.state['swarmHealths']}
               apiaries={this.state['apiaries']}
             />
           </Col>
@@ -426,11 +433,11 @@ export class HiveDetailsPage extends React.Component {
     const swarmId = form.swarmId;
     const hiveData = {
       name: form.name,
-      owner_id: form.owner,
-      condition_id: form.condition
+      owner: form.owner,
+      condition: form.condition
     }
     const swarmData = {
-      health_status_id: form.health,
+      health_status: form.health,
       queen_year: form.queenYear
     }
 
@@ -468,9 +475,9 @@ export class HiveDetailsPage extends React.Component {
 
     try {
       let apiaries = await getApiaries('apiaries');
-      let hiveBeekeeper = await listSetupData('hive_beekeeper');
+      let hiveBeekeeper = await listSetupData('owner');
       let hiveCondition = await listSetupData('hive_condition');
-      let swarmHealthStatus = await listSetupData('swarm_health_status');
+      let swarmHealthStatus = await listSetupData('swarm_health');
 
       let pageStatus = "OK"
       this.setState({hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus});
@@ -496,9 +503,9 @@ export class HiveDetailsPage extends React.Component {
       label: window.i18n('form.moveHive'),
       value: "newApiary",
       children: apiaries.reduce((acc, val) => {
-        if (!current_apiary || current_apiary.id !== val.id) {
+        if (!current_apiary || current_apiary.public_id !== val.public_id) {
           acc.push({
-            value: val.id,
+            value: val.public_id,
             label: val.name,
           });
         }
@@ -521,8 +528,8 @@ export class HiveDetailsPage extends React.Component {
         value: "addSwarm",
         children: health_statuses.reduce((acc, val) => {
           acc.push({
-            value: val.id,
-            label: val.name,
+            value: val.value,
+            label: val.value,
           });
           return acc;
         }, [])
@@ -548,8 +555,8 @@ export class HiveDetailsPage extends React.Component {
       case 'newApiary':
         let apiary_id = action[1];
         try {
-          await moveHive(this.state.hive.id, apiary_id);
-          let hive = await getHive(this.state.hive.id)
+          await moveHive(this.state.hive.public_id, apiary_id);
+          let hive = await getHive(this.state.hive.public_id)
           this.setState((state) => {
             state['hive'] = hive;
             return state;
@@ -561,7 +568,7 @@ export class HiveDetailsPage extends React.Component {
         break;
       case 'deleteHive':
         try {
-          await deleteHive(this.state.hive.id);
+          await deleteHive(this.state.hive.public_id);
           notificate('success', window.i18n('form.hiveDeletedSuccess'));
           this.props.history.push("/manage/hive");
         } catch(error) {
@@ -570,8 +577,8 @@ export class HiveDetailsPage extends React.Component {
         break;
       case 'deleteSwarm':
         try {
-          await deleteSwarm({swarm_id: this.state.hive.swarm.id});
-          let hive = await getHive(this.state.hive.id)
+          await deleteSwarm({swarm_id: this.state.hive.swarm.public_id});
+          let hive = await getHive(this.state.hive.public_id)
           this.setState((state) => {
             state['hive'] = hive;
             return state;
@@ -583,9 +590,8 @@ export class HiveDetailsPage extends React.Component {
         break;
       case 'addSwarm':
         try {
-          let swarm = await createSwarm({health_status_id: action[1], queen_year: new Date().getFullYear()});
-          await updateHive(this.state.hive.id, {swarm_id: swarm.id})
-          let hive = await getHive(this.state.hive.id)
+          let swarm = await createSwarm({health: action[1], queen_year: new Date().getFullYear()});
+          let hive = await updateHive(this.state.hive.public_id, {swarm_id: swarm.public_id})
           this.setState((state) => {
             state['hive'] = hive;
             return state;
@@ -609,12 +615,12 @@ export class HiveDetailsPage extends React.Component {
     }
 
     let name = this.state.hive.name;
-    let owner = cardItems(window.i18n('word.owner'), this.state.hive.owner.name);
-    let condition = cardItems(window.i18n('form.hiveCondition'), this.state.hive.condition.name);
+    let owner = cardItems(window.i18n('word.owner'), this.state.hive.owner);
+    let condition = cardItems(window.i18n('form.hiveCondition'), this.state.hive.condition);
 
     let health, apiary;
     if (this.state.hive.swarm) {
-      health = cardItems(window.i18n('word.swarmHealth'), this.state.hive.swarm.health.name);
+      health = cardItems(window.i18n('word.swarmHealth'), this.state.hive.swarm.health);
     };
     if (this.state.hive.apiary) {
       apiary = cardItems(window.i18n('word.apiary'), this.state.hive.apiary.name);
@@ -622,7 +628,14 @@ export class HiveDetailsPage extends React.Component {
 
     let updateHiveForm = (
       <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
-        <UpdateHiveForm formId='updateHiveFormId' hive={this.state.hive} owners={this.state.hiveBeekeeper} healths={this.state.swarmHealthStatus} conditions={this.state.hiveCondition} onFinish={this.updateHiveData} />
+        <UpdateHiveForm 
+          formId='updateHiveFormId' 
+          hive={this.state.hive} 
+          owners={this.state.hiveBeekeeper} 
+          healths={this.state.swarmHealthStatus}
+          conditions={this.state.hiveCondition} 
+          onFinish={this.updateHiveData} 
+        />
       </FormLinkModal>
     );
 
@@ -666,10 +679,10 @@ export class HiveDetailsPage extends React.Component {
             <div className="card-container">
               <Tabs defaultActiveKey="1" type="card">
                 <Tabs.TabPane tab={window.i18n("word.history")} key="1">
-                  <CommentTableComponent hiveId={this.state.hive.id} />
+                  <CommentTableComponent hiveId={this.state.hive.public_id} />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab={window.i18n("word.events")} key="2">
-                  <EventTableComponent hiveId={this.state.hive.id} />
+                  <EventTableComponent hiveId={this.state.hive.public_id} />
                 </Tabs.TabPane>
               </Tabs>
             </div>
