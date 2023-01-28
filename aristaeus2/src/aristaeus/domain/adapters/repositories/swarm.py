@@ -2,8 +2,6 @@ from typing import TYPE_CHECKING
 from typing import Protocol
 from uuid import UUID
 
-from sqlalchemy import select
-
 from aristaeus.domain.entities.swarm import SwarmEntity
 
 __all__ = ["SwarmRepositoryAdapter"]
@@ -20,4 +18,10 @@ class SwarmRepositoryAdapter(Base):
         ...
 
     async def get(self, public_id: UUID) -> SwarmEntity:
+        ...
+
+    async def update(self, swarm: SwarmEntity, fields: list[str]) -> SwarmEntity:
+        ...
+
+    async def delete(self, swarm: SwarmEntity) -> None:
         ...

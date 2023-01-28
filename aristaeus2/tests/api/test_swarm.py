@@ -2,6 +2,7 @@ import uuid
 
 import pytest
 
+from tests.factories import SwarmModelFactory
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_create_swarm(async_app):
@@ -45,3 +46,34 @@ async def test_get_swarm__get(async_app):
     swarm_id = response.json()["public_id"]
     response = await async_app.get(f"/swarm/{swarm_id}")
     assert response.status_code == 200, response.text
+
+
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_put_swarm(async_app, session):
+    swarm = SwarmModelFactory()
+    session.add(swarm)
+    await session.commit()
+    await session.refresh(swarm)
+
+    data = {"health": "COUCOU"}
+
+    response = await async_app.put(f"/swarm/{swarm.public_id}", json=data)
+    assert response.status_code == 200, response.text
+    assert response.json()["health"] == "COUCOU"
+
+    
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_delete_swarm(async_app, session):
+    swarm = SwarmModelFactory()
+    session.add(swarm)
+    await session.commit()
+    await session.refresh(swarm)
+
+    response = await async_app.get(f"/swarm/{swarm.public_id}")
+    assert response.status_code == 200, response.text
+
+    response = await async_app.delete(f"/swarm/{swarm.public_id}")
+    assert response.status_code == 200, response.text
+
+    response = await async_app.get(f"/swarm/{swarm.public_id}")
+    assert response.status_code == 404, response.text
