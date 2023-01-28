@@ -45,9 +45,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: install poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          echo "~/.poetry/bin" >> $GITHUB_PATH
+        run: pip install poetry
       - name: setup env
         run: poetry install
       - name: black
