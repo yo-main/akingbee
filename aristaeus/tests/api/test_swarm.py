@@ -1,8 +1,8 @@
 import uuid
 
 import pytest
-
 from tests.factories import SwarmModelFactory
+
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_create_swarm(async_app):
@@ -61,7 +61,7 @@ async def test_put_swarm(async_app, session):
     assert response.status_code == 200, response.text
     assert response.json()["health"] == "COUCOU"
 
-    
+
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_delete_swarm(async_app, session):
     swarm = SwarmModelFactory()

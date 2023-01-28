@@ -33,9 +33,7 @@ async def get_swarm(swarm_id: UUID, user: UserEntity = Depends(auth_user)):
 
 @router.put("/{swarm_id}", response_model=SwarmOut)
 async def put_swarm(swarm_id: UUID, input: PutSwarmIn, user: UserEntity = Depends(auth_user)):
-    command = PutSwarmCommand(
-        swarm_id=swarm_id, health_status=input.health, queen_year=input.queen_year
-    )
+    command = PutSwarmCommand(swarm_id=swarm_id, health_status=input.health, queen_year=input.queen_year)
     swarm_application = SwarmApplication()
     swarm_entity = await swarm_application.put(command=command)
     return swarm_entity.asdict()

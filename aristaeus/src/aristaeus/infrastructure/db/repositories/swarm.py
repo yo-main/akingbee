@@ -1,9 +1,9 @@
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import delete
 from sqlalchemy import insert
 from sqlalchemy import select
-from sqlalchemy import delete
 from sqlalchemy import update
 
 from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter

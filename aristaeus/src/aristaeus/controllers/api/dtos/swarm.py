@@ -9,7 +9,7 @@ class PostSwarmIn(BaseModel):
 
 
 class PutSwarmIn(BaseModel):
-    queen_year: int | None 
+    queen_year: int | None
     health: str | None
 
 

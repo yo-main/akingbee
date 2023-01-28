@@ -1,8 +1,8 @@
 import uuid
 from dataclasses import dataclass
 from dataclasses import field
-from dataclasses import replace
 from dataclasses import fields
+from dataclasses import replace
 from uuid import UUID
 
 from .base import Entity
@@ -23,4 +23,3 @@ class SwarmEntity(Entity):
         ]
 
         return new_swarm, updated_fields
-
