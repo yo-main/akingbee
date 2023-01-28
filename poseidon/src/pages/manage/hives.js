@@ -281,7 +281,7 @@ export class HivePage extends React.Component {
         defaultSortOrder: 'ascend',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record) => {
-          let url = `${window.location.pathname}/${record.id}`
+          let url = `${window.location.pathname}/${record.public_id}`
           return <Link to={url}>{text}</Link>;
         }
       },
@@ -322,7 +322,7 @@ export class HivePage extends React.Component {
               <FormLinkModal formId={formId} title={window.i18n('title.hiveUpdate')} linkContent={window.i18n('word.edit')}>
                 <UpdateHiveForm formId={formId} hive={record} owners={this.state.hiveBeekeeper} conditions={this.state.hiveCondition} healths={this.state.swarmHealths} onFinish={this.updateData} />
               </FormLinkModal>
-              <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteHive")}>
+              <Popconfirm onConfirm={() => this.deleteData(record.public_id)} title={window.i18n("confirm.deleteHive")}>
                 <Button type="link">{window.i18n('word.delete')}</Button>
               </Popconfirm>
             </Space>
@@ -437,7 +437,7 @@ export class HiveDetailsPage extends React.Component {
       condition: form.condition
     }
     const swarmData = {
-      health_status: form.health,
+      health: form.health,
       queen_year: form.queenYear
     }
 
