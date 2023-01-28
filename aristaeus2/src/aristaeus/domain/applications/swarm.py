@@ -1,5 +1,6 @@
 from uuid import UUID
 from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
+from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.commands.swarm import PutSwarmCommand
 from aristaeus.domain.entities.swarm import SwarmEntity
@@ -8,6 +9,7 @@ from aristaeus.injector import InjectorMixin
 
 
 class SwarmApplication(InjectorMixin):
+    hive_repository: HiveRepositoryAdapter
     swarm_repository: SwarmRepositoryAdapter
 
     async def create_swarm(self, command: CreateSwarmCommand, user: UserEntity = None) -> SwarmEntity:

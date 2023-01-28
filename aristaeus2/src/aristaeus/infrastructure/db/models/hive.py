@@ -19,7 +19,7 @@ class HiveModel(BaseModel):
     condition: Mapped[str]
     owner: Mapped[str]
     organization_id: Mapped[UUID]
-    swarm_id: Mapped[int | None] = mapped_column(ForeignKey("swarm.id"))
+    swarm_id: Mapped[int | None] = mapped_column(ForeignKey("swarm.id", ondelete="SET NULL"))
     apiary_id: Mapped[int | None] = mapped_column(ForeignKey("apiary.id"))
 
     swarm: Mapped[Optional["SwarmModel"]] = relationship(back_populates="hive", lazy="joined")
