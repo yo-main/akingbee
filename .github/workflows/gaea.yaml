@@ -71,6 +71,8 @@ jobs:
           ref: 'master'
       - name: install node
         uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: install dependencies
         run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec
       - name: git pull
