@@ -104,12 +104,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: install poetry
+        run: pip install poetry
       - name: git latest tag
         run: |
           git fetch --tags --prune --unshallow
           tag=$(git describe --tags --abbrev=0 --match 'hermes-*')
           version=$(echo $tag | cut -d'-' -f2 | cut -d'v' -f2)
           echo "image_version=${version}" >> $GITHUB_ENV
+      - name: Export requirements
+        run: poetry export --with-credentials -o requirements.txt
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
