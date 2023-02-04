@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "hermes/**"
+      - ".github/workflows/hermes.yaml"
 
 defaults:
   run:
@@ -91,9 +92,9 @@ jobs:
         with:
           ref: 'master'
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -110,6 +111,7 @@ jobs:
         with:
           context: hermes
           push: true
+          platforms: linux/amd64,linux/arm/v7
           tags: |
             yomain/hermes:${{ env.image_version }}
             yomain/hermes:latest

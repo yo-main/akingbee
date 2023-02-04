@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "cerbes/**"
+      - ".github/workflows/cerbes.yaml"
 
 defaults:
   run:
@@ -91,9 +92,9 @@ jobs:
         with:
           ref: 'master'
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -106,9 +107,10 @@ jobs:
           version=$(echo $tag | cut -d'-' -f2 | cut -d'v' -f2)
           echo "image_version=${version}" >> $GITHUB_ENV
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: cerbes
+          platforms: linux/amd64,linux/arm/v7
           push: true
           tags: |
             yomain/cerbes:${{ env.image_version }}
