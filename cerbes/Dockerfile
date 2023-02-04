@@ -1,25 +1,21 @@
-FROM python:3.9.1-slim-buster as build
+FROM python:3.9.15-buster as build
 ENV PIP_NO_CACHE_DIR=on \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     TZ=Europe/Paris \
-    POETRY_PATH=/opt/poetry \
     VENV_PATH=/opt/venv
 
-ENV PATH="$POETRY_PATH/bin:$VENV_PATH/bin:$PATH"
+COPY requirements.txt .
 
-COPY poetry.lock pyproject.toml ./
-
-RUN pip install --upgrade pip && \
-    python -m venv $VENV_PATH && \
-    $VENV_PATH/bin/pip install poetry && \
-    $VENV_PATH/bin/poetry config virtualenvs.create false && \
-    $VENV_PATH/bin/poetry install --no-interaction --no-ansi --no-dev -vvv
+RUN python -m venv $VENV_PATH && $VENV_PATH/bin/pip install wheel && \
+    $VENV_PATH/bin/pip install -r requirements.txt
 
 
-FROM python:3.9.1-slim-buster as runtime
-ENV PYTHONPATH=/app \
-    VENV_PATH=/opt/venv
-ENV PATH="$VENV_PATH/bin:$PATH"
+FROM python:3.9.15-slim-buster as runtime
+
+ENV VENV_PATH=/opt/venv \
+    TZ=Europe/Paris \
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH="/app:$PYHTONPATH"
 
 WORKDIR /app
 

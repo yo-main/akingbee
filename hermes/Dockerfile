@@ -4,8 +4,6 @@ ENV PIP_NO_CACHE_DIR=off \
     TZ=Europe/Paris \
     VENV_PATH=/opt/venv
 
-WORKDIR /app
-
 COPY requirements.txt .
 
 RUN python -m venv $VENV_PATH && $VENV_PATH/bin/pip install wheel && \
@@ -24,7 +22,5 @@ WORKDIR /app
 COPY --from=build $VENV_PATH $VENV_PATH
 COPY ./src/hermes ./hermes
 COPY config.yaml .
-
-EXPOSE 80
 
 CMD ["python", "hermes/consumer.py"]
