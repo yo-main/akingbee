@@ -1,10 +1,22 @@
 import datetime
 import uuid
 
-from gaea.models import (Apiaries, Comments, Credentials, Events,
-                         EventStatuses, EventTypes, HiveConditions, Hives,
-                         HoneyTypes, Owners, Permissions, SwarmHealthStatuses,
-                         Swarms, Users)
+from gaea.models import (
+    Apiaries,
+    Comments,
+    Credentials,
+    Events,
+    EventStatuses,
+    EventTypes,
+    HiveConditions,
+    Hives,
+    HoneyTypes,
+    Owners,
+    Permissions,
+    SwarmHealthStatuses,
+    Swarms,
+    Users,
+)
 
 
 def generate_uuid(nb):

@@ -84,7 +84,7 @@ def send_event_user_created(user, language):
         "user": {
             "id": user.id,
             "email": user.email,
-            "username": user.credentials[0].username
+            "username": user.credentials[0].username,
         },
         "language": language,
     }
@@ -94,6 +94,7 @@ def send_event_user_created(user, language):
         content["activation_link"] = activation_link
 
     return send_rbmq_message(routing_key="user.created", content=content)
+
 
 def send_event_user_password_reset(user, reset_id, language):
     reset_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/password-reset/{str(user.id)}/{str(reset_id)}"
