@@ -11,8 +11,9 @@ WORKDIR /app
 COPY poetry.lock pyproject.toml ./
 
 RUN pip install --upgrade pip && \
+    apt update && apt install -y gcc libffi-dev && \
     python -m venv $VENV_PATH && \
-    $VENV_PATH/bin/pip install poetry && \
+    $VENV_PATH/bin/pip install poetry wheel && \
     $VENV_PATH/bin/poetry install --no-interaction --no-cache --no-root --without dev -vvv
 
 

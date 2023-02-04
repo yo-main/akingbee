@@ -8,7 +8,7 @@ authors = ["Yomain <arnal.romain@gmail.com>"]
 python = "^3.9"
 gaea = "^1.8.3"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "*"
 ipython = "*"
 pylint = "*"

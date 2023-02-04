@@ -115,7 +115,7 @@ jobs:
         with:
           context: hermes
           push: true
-          platforms: linux/amd64,linux/arm/v7
+          platforms: linux/arm/v7
           tags: |
             yomain/hermes:${{ env.image_version }}
             yomain/hermes:latest
