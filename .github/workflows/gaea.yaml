@@ -70,7 +70,7 @@ jobs:
         with:
           ref: 'master'
       - name: install node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
       - name: install dependencies
         run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec
       - name: git pull

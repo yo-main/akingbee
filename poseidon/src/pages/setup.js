@@ -5,7 +5,7 @@ import { PlusOutlined } from '@ant-design/icons'
 
 import { FormButtonModal, FormLinkModal } from '../components';
 import { dealWithError, notificate } from '../lib/common';
-import { getSetupData, listSetupData, postSetupData, updateSetupData, deleteSetupData } from '../services/aristaeus/setup';
+import { listSetupData, postSetupData, updateSetupData, deleteSetupData } from '../services/aristaeus/setup';
 import { ERROR_STATUS, LOADING_STATUS, getGenericPage } from './generic';
 
 
