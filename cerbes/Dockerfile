@@ -23,6 +23,6 @@ COPY --from=build $VENV_PATH $VENV_PATH
 COPY ./cerbes ./cerbes
 COPY config.yaml ./
 
-EXPOSE 9001
+EXPOSE 80
 
-CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "9001", "--access-log", "--log-level", "debug"]
+CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "80", "--access-log", "--log-level", "debug"]
