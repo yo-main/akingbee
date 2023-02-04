@@ -1,12 +1,11 @@
 # pylint: disable=redefined-outer-name,unused-import
 import base64
-import jwt
-import uuid
 import time
+import uuid
 
+import jwt
 import pytest
-
-from gaea.models import Users, Permissions
+from gaea.models import Permissions, Users
 from gaea.rbmq import RBMQPublisher
 from gaea.rbmq.utils.tests import MockRBMQConnectionManager
 

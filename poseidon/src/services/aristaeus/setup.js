@@ -1,21 +1,26 @@
 import { aristaeusApi } from '../../lib/common';
 
-export async function getSetupData(type) {
-  let response = await aristaeusApi.get(`/setup/${type}`)
+export async function getSetupData(objectId) {
+  let response = await aristaeusApi.get(`/parameter/${objectId}`)
+  return response.data;
+}
+
+export async function listSetupData(type) {
+  let response = await aristaeusApi.get('/parameter', {params: {key: type}})
   return response.data;
 }
 
 export async function postSetupData(type, value) {
-  let response = await aristaeusApi.post(`/setup/${type}`, {value});
+  let response = await aristaeusApi.post('/parameter', {key: type, value: value});
   return response.data;
 }
 
-export async function updateSetupData(type, value, objectId) {
-  let response = await aristaeusApi.put(`/setup/${type}/${objectId}`, {value});
+export async function updateSetupData(value, objectId) {
+  let response = await aristaeusApi.put(`/parameter/${objectId}`, {value});
   return response.data;
 }
 
-export async function deleteSetupData(type, objectId) {
-  let response = await aristaeusApi.delete(`/setup/${type}/${objectId}`);
+export async function deleteSetupData(objectId) {
+  let response = await aristaeusApi.delete(`/parameter/${objectId}`);
   return response.data;
 }

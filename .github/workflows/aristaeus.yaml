@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "aristaeus/**"
+      - ".github/workflows/aristaeus.yaml"
 
 defaults:
   run:
@@ -38,16 +39,14 @@ jobs:
       AKB_DATABASE_DBNAME: dbtest
 
     steps:
-      - name: install python3.9
-        uses: actions/setup-python@v2
+      - name: install python3.11
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.11'
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: install poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          echo "~/.poetry/bin" >> $GITHUB_PATH
+        run: pip install poetry
       - name: setup env
         run: poetry install
       - name: black
@@ -68,7 +67,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: 'master'
       - name: install node
@@ -88,7 +87,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: 'master'
       - name: Set up QEMU

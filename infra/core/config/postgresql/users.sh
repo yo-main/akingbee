@@ -18,6 +18,10 @@ function setup_app {
   local APP_NAME="${1}"
   local PWD="${2}"
 
+  if [[ -z "$APP_NAME" ]]; then
+    return 
+  fi
+
   # create database
   psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -tc "SELECT 1 FROM pg_database WHERE datname = '${APP_NAME}'" | grep -q 1 || exec_sql ${POSTGRES_USER} ${POSTGRES_DB} "CREATE DATABASE ${APP_NAME}"
 
@@ -41,6 +45,8 @@ function setup_app {
 }
 
 function main() {
+  setup_app ${ARISTAEUS_USERNAME} ${ARISTAEUS_PASSWORD}
+  setup_app ${CERBES_USERNAME} ${CERBES_PASSWORD}
   setup_app ${FIREFLY_USERNAME} ${FIREFLY_PASSWORD}
 }
 

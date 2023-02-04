@@ -4,6 +4,7 @@
 *.swp
 __pycache__
 var/
+.mypy_cache
 
 # dev env
 .vscode/

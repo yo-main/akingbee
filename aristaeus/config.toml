@@ -1,0 +1,29 @@
+service_name = "aristaeus"
+
+[development]
+database_host = "localhost"
+database_port = 5432
+database_user = "sa_aristaeus"
+database_password = "123"
+database_dbname = "aristaeus"
+
+cerbes_api_endpoint = "cerbes"
+cerbes_api_port = 9001
+
+rbmq_host = "localhost"
+rbmq_port = 5672
+rbmq_user = "akingbee"
+rbmq_password = "password"
+rbmq_vhost = "/"
+rbmq_exchange = "akingbee.main_exchange"
+rbmq_exchange_type = "topic"
+rbmq_queue = "aristaeus-main-queue"
+
+
+[test]
+database_host = "localhost"
+database_port = 5432
+database_user = "postgres"
+database_password = "123"
+database_dbname = "postgres"
+

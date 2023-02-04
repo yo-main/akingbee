@@ -1,5 +1,5 @@
-from gaea.webapp import AppClient, MiddleWare
 from gaea.database import db
+from gaea.webapp import AppClient, MiddleWare
 
 from cerbes.views import router
 

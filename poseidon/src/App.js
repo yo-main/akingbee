@@ -55,8 +55,8 @@ class App extends React.Component {
 
             <PrivateFrame exact path="/setup" languageCallback={this.changeLanguage} />
 
-            <PrivateFrame exact path="/setup/apiary/honey_type" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_apiary} submenuItem={sections.submenu_setup_apiary_honey_type} childUpdate={this.updateChild}>
-              <SetupPage dataType={setupData.apiary_honey_type} key={setupData.apiary_honey_type} />
+            <PrivateFrame exact path="/setup/apiary/honey_kind" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_apiary} submenuItem={sections.submenu_setup_apiary_honey_kind} childUpdate={this.updateChild}>
+              <SetupPage dataType={setupData.apiary_honey_kind} key={setupData.apiary_honey_kind} />
             </PrivateFrame>
 
             <PrivateFrame exact path="/setup/swarm/health" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_setup_swarm} submenuItem={sections.submenu_setup_swarm_health} childUpdate={this.updateChild}>

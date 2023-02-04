@@ -1,13 +1,15 @@
 import base64
-from collections import namedtuple
 import datetime
 import hashlib
-import jwt
 import re
+from collections import namedtuple
 
+import jwt
 from gaea.config import CONFIG
 from gaea.log import logger
 from gaea.rbmq import RBMQPublisher
+from gaea.models import Users
+from gaea.database import db
 
 CREDENTIALS = namedtuple("credentials", "username, password")
 
@@ -78,18 +80,20 @@ def send_rbmq_message(routing_key, content):
 
 
 def send_event_user_created(user, language):
-    activation_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/activate/{str(user.id)}/{str(user.activation_id)}"
     content = {
         "user": {
             "id": user.id,
             "email": user.email,
+            "username": user.credentials[0].username
         },
         "language": language,
-        "activation_link": activation_link,
     }
 
-    return send_rbmq_message(routing_key="user.created", content=content)
+    if not user.activated:
+        activation_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/activate/{str(user.id)}/{str(user.activation_id)}"
+        content["activation_link"] = activation_link
 
+    return send_rbmq_message(routing_key="user.created", content=content)
 
 def send_event_user_password_reset(user, reset_id, language):
     reset_link = f"https://{CONFIG.MAIN_HOSTED_ZONE}/password-reset/{str(user.id)}/{str(reset_id)}"
@@ -103,3 +107,10 @@ def send_event_user_password_reset(user, reset_id, language):
     }
 
     return send_rbmq_message(routing_key="user.reset_password", content=content)
+
+
+def resync_users():
+    session = db().get_session()
+    users = session.query(Users).all()
+    for user in users:
+        send_event_user_created(user, "en")

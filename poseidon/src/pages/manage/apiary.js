@@ -6,7 +6,7 @@ import { FormLinkModal } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
-import { getSetupData } from '../../services/aristaeus/setup';
+import { listSetupData } from '../../services/aristaeus/setup';
 import { createApiary, getApiaries, updateApiary, deleteApiary } from '../../services/aristaeus/apiary';
 import { LOADING_STATUS, getGenericPage } from '../generic';
 
@@ -22,7 +22,7 @@ export function UpdateApiaryForm(props) {
     "apiaryId": props.apiaryId,
     "name": props.record.name,
     "location": props.record.location,
-    "honey_type": props.record.honeyTypeId,
+    "honey_kind": props.record.honeyKind,
   })
 
   return (
@@ -33,12 +33,12 @@ export function UpdateApiaryForm(props) {
       <Form.Item label={window.i18n("word.location")} name="location" rules={[{type: 'string', min: 1, message: window.i18n('form.insertApiaryLocation')}]}>
         <Input defaultValue={props.record.location} />
       </Form.Item>
-      <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{message: window.i18n('form.insertApiaryHoneyType')}]}>
-        <Select defaultValue={props.record.honeyTypeId}>
+      <Form.Item label={window.i18n("word.honeyKind")} name="honey_kind" rules={[{message: window.i18n('form.insertApiaryHoneyType')}]}>
+        <Select defaultValue={props.record.honeyKind}>
           {
-            props.honey_types.map(data => {
+            props.honeyKinds.map(data => {
               return (
-                <Select.Option key={data.id}>{data.name}</Select.Option>
+                <Select.Option key={data.value}>{data.value}</Select.Option>
               )
             })
           }
@@ -51,18 +51,17 @@ export function UpdateApiaryForm(props) {
 
 
 export class ApiaryPage extends React.Component {
-  state = {tableData: [], apiaryHoneyType: [], pageStatus: LOADING_STATUS}
+  state = {tableData: [], apiaryHoneyKind: [], pageStatus: LOADING_STATUS}
 
   getTableContent = (data) => {
     const tableData = data.reduce((acc, val, index) => {
         acc.push({
           key: index+1,
-          id: val.id,
+          id: val.public_id,
           name: val.name,
           location: val.location,
-          honeyType: val.honey_type.name,
-          honeyTypeId: val.honey_type.id,
-          nb_hives: val.nb_hives,
+          honeyKind: val.honey_kind,
+          nbHives: val.hive_count,
         });
         return acc;
       }, []);
@@ -73,11 +72,11 @@ export class ApiaryPage extends React.Component {
   async componentDidMount() {
     try {
       let apiaries = await getApiaries();
-      let apiaryHoneyType = await getSetupData('apiary_honey_type');
+      let apiaryHoneyKind = await listSetupData('honey_kind');
       let tableData = this.getTableContent(apiaries);
       let pageStatus = 'OK';
 
-      this.setState({tableData, apiaryHoneyType, pageStatus})
+      this.setState({tableData, apiaryHoneyKind, pageStatus})
 
     } catch (error) {
       let status = dealWithError(error);
@@ -108,7 +107,7 @@ export class ApiaryPage extends React.Component {
     const data = {
       name: form.name,
       location: form.location,
-      honey_type_id: form.honey_type
+      honey_kind: form.honey_kind
     }
 
     try {
@@ -145,13 +144,13 @@ export class ApiaryPage extends React.Component {
       },
       {
         title: window.i18n('word.hives'),
-        dataIndex: 'nb_hives',
-        key: 'nb_hives',
+        dataIndex: 'nbHives',
+        key: 'nbHives',
       },
       {
-        title: window.i18n('word.honeyType'),
-        dataIndex: 'honeyType',
-        key: 'honeyType',
+        title: window.i18n('word.honeyKind'),
+        dataIndex: 'honeyKind',
+        key: 'honeyKind',
       },
       {
         title: window.i18n('word.actions'),
@@ -159,7 +158,7 @@ export class ApiaryPage extends React.Component {
         render: (text, record) => (
           <Space size='middle'>
             <FormLinkModal title={window.i18n('title.apiaryUpdate')} formId='updateApiaryFormId' linkContent={window.i18n('word.edit')}>
-              <UpdateApiaryForm apiaryId={record.id} record={record} honey_types={this.state.apiaryHoneyType} onFinish={this.updateData} />
+              <UpdateApiaryForm apiaryId={record.id} record={record} honeyKinds={this.state.apiaryHoneyKind} onFinish={this.updateData} />
             </FormLinkModal>
             <Popconfirm onConfirm={() => this.deleteData(record.id)} title={window.i18n("confirm.deleteApiary")}>
               <Button type="link">{window.i18n('word.delete')}</Button>
@@ -186,15 +185,15 @@ export class ApiaryPage extends React.Component {
 export class ApiaryCreationPage extends React.Component {
   state = {
     pageStatus: LOADING_STATUS,
-    apiaryHoneyType: []
+    apiaryHoneyKind: []
   }
 
   async componentDidMount() {
     try {
-      let apiaryHoneyType = await getSetupData('apiary_honey_type');
+      let apiaryHoneyKind = await listSetupData('honey_kind');
       let pageStatus = 'OK';
 
-      this.setState({apiaryHoneyType, pageStatus})
+      this.setState({apiaryHoneyKind, pageStatus})
     } catch (error) {
       let status = dealWithError(error);
       this.setState((state) => {
@@ -239,12 +238,12 @@ export class ApiaryCreationPage extends React.Component {
               <Form.Item label={window.i18n("word.location")} name="location" rules={[{required: true, message: window.i18n('form.insertApiaryLocation')}]}>
                 <Input />
               </Form.Item>
-              <Form.Item label={window.i18n("word.honeyType")} name="honey_type" rules={[{required: true, message: window.i18n('form.selectApiaryHoneyType')}]}>
+              <Form.Item label={window.i18n("word.honeyKind")} name="honey_kind" rules={[{required: true, message: window.i18n('form.selectApiaryHoneyType')}]}>
                 <Select defaultValue={window.i18n('form.selectAValue')}>
                   {
-                    this.state['apiaryHoneyType'].map(data => {
+                    this.state['apiaryHoneyKind'].map(data => {
                       return (
-                        <Select.Option key={data.id}>{data.name}</Select.Option>
+                        <Select.Option key={data.value}>{data.value}</Select.Option>
                       )
                     })
                   }

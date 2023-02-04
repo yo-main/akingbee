@@ -1,12 +1,15 @@
 import pytest
-from mock import Mock, MagicMock
+from gaea.config import CONFIG
+from mock import MagicMock, Mock
+
+CONFIG.setenv("test")
 
 from fastapi.testclient import TestClient
 from gaea.database import db
 from gaea.database.utils.test import get_temporary_database
-from gaea.rbmq.base import RBMQConnectionManager
 from gaea.models.base import Base
-from gaea.webapp import MiddleWare, AppClient
+from gaea.rbmq.base import RBMQConnectionManager
+from gaea.webapp import AppClient, MiddleWare
 
 from cerbes.views import router
 

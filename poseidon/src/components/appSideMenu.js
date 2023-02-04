@@ -59,7 +59,7 @@ export function SetupSideMenu(props) {
           <Menu.Item key={sections.submenu_setup_hive_condition}><Link to='/setup/hive/condition'>{window.i18n("word.conditions")}</Link></Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_setup_apiary} icon={apiaryMenuIcon} title={window.i18n("action.setupApiary")}>
-          <Menu.Item key={sections.submenu_setup_apiary_honey_type}><Link to='/setup/apiary/honey_type'>{window.i18n("word.honeyTypes")}</Link></Menu.Item>
+          <Menu.Item key={sections.submenu_setup_apiary_honey_kind}><Link to='/setup/apiary/honey_kind'>{window.i18n("word.honeyKinds")}</Link></Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_setup_event} icon={eventMenuIcon} title={window.i18n("action.setupEvent")}>
           <Menu.Item key={sections.submenu_setup_event_type}><Link to='/setup/event/type'>{window.i18n("word.types")}</Link></Menu.Item>

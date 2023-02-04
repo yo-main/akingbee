@@ -9,16 +9,11 @@ ENV PATH="$POETRY_PATH/bin:$VENV_PATH/bin:$PATH"
 
 COPY poetry.lock pyproject.toml ./
 
-RUN apt-get update && \
-    apt-get install -y gcc curl && \
-    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python && \
-    mv /root/.poetry $POETRY_PATH && \
+RUN pip install --upgrade pip && \
     python -m venv $VENV_PATH && \
-    pip install --upgrade pip && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi --no-dev -vvv && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    $VENV_PATH/bin/pip install poetry && \
+    $VENV_PATH/bin/poetry config virtualenvs.create false && \
+    $VENV_PATH/bin/poetry install --no-interaction --no-ansi --no-dev -vvv
 
 
 FROM python:3.9.1-slim-buster as runtime
@@ -34,4 +29,4 @@ COPY config.yaml ./
 
 EXPOSE 9001
 
-CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "9001"]
+CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "9001", "--access-log", "--log-level", "debug"]
