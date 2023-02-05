@@ -1,4 +1,4 @@
-#!/usr/bin/bin sh
+#!/usr/bin/env sh
 
 alembic upgrade head
 
