@@ -12,7 +12,7 @@ export async function getCommentsForHive(hive_id) {
 }
 
 export async function postCommentForHive(hive_id, { comment, date }) {
-  let response = await aristaeusApi.post(`/comment/hive/${hive_id}`, { comment, date });
+  let response = await aristaeusApi.post(`/comment/${hive_id}`, { body: comment, date });
   return response.data;
 }
 
