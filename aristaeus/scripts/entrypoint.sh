@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
-alembic upgrade head
+if [ "$EXECUTE_MIGRATION" ]; then
+  alembic upgrade head
+fi
 
 exec "$@"
