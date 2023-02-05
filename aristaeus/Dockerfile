@@ -28,4 +28,6 @@ COPY config.toml .
 
 EXPOSE 80
 
+RUN ./scripts/entrypoint.sh
+
 CMD ["uvicorn", "aristaeus.controllers.api.app:create_app", "--host", "0.0.0.0", "--port", "80"]

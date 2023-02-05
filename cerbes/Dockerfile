@@ -27,4 +27,6 @@ COPY config.yaml ./
 
 EXPOSE 80
 
+RUN ./scripts/entrypoint.sh
+
 CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "80", "--access-log", "--log-level", "debug"]
