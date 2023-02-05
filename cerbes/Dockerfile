@@ -22,11 +22,14 @@ RUN apt update && apt install -y libpq-dev
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY ./cerbes ./cerbes
-COPY config.yaml ./
+COPY cerbes cerbes
+COPY config.yaml config.yaml
+COPY alembic.ini alembic.ini
+COPY migratons migrations
+COPY scripts/entrypoint.sh /entrypoint.sh
 
 EXPOSE 80
 
-ENTRYPOINT ["./scripts/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["uvicorn", "cerbes.app:app", "--host", "0.0.0.0", "--port", "80", "--access-log", "--log-level", "debug"]

@@ -23,11 +23,14 @@ RUN apt update && apt install -y libpq-dev
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY ./src/aristaeus ./aristaeus
-COPY config.toml .
+COPY src/aristaeus aristaeus
+COPY config.toml config.toml
+COPY alembic.ini alembic.ini
+COPY migrations migrations
+COPY scripts/entrypoint.sh /entrypoint.sh
 
 EXPOSE 80
 
-ENTRYPOINT ["./scripts/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["uvicorn", "aristaeus.controllers.api.app:create_app", "--host", "0.0.0.0", "--port", "80"]
