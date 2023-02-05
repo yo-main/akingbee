@@ -26,7 +26,7 @@ COPY --from=build $VENV_PATH $VENV_PATH
 COPY cerbes cerbes
 COPY config.yaml config.yaml
 COPY alembic.ini alembic.ini
-COPY migratons migrations
+COPY migrations migrations
 COPY scripts/entrypoint.sh /entrypoint.sh
 
 EXPOSE 80
