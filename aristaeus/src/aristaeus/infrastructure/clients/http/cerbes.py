@@ -18,7 +18,7 @@ class TestClient(metaclass=SingletonMeta):
         return access_token
 
 
-@Injector.bind(CerbesClientAsyncAdapter, "development", "production")
+@Injector.bind(CerbesClientAsyncAdapter)
 class HttpClient(metaclass=SingletonMeta):
     def __init__(self):
         self.base_url = f"{settings.CERBES_API_ENDPOINT}:{settings.CERBES_API_PORT}"

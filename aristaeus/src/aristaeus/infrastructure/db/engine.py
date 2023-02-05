@@ -27,7 +27,7 @@ class AsyncDatabase(Protocol):
         ...
 
 
-@Injector.bind(AsyncDatabase, "development", "test")
+@Injector.bind(AsyncDatabase)
 class PostgresAsync(metaclass=SingletonMeta):
     def __init__(self):
         self.init()
