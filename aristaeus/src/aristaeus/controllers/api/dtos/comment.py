@@ -7,9 +7,7 @@ from pydantic import validator
 
 class PostCommentIn(BaseModel):
     date: datetime
-    type: str
     body: str
-    hive_id: UUID
     event_id: UUID | None
 
     @validator("date")

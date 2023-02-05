@@ -14,20 +14,16 @@ async def test_create_comment(async_app, session):
     await session.commit()
     await session.refresh(hive)
     data = {
-        "type": "type",
         "body": "body",
         "date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
-        "type": "type",
-        "hive_id": str(hive.public_id),
     }
-    response = await async_app.post("/comment", json=data)
+    response = await async_app.post(f"/comment/{hive.public_id}", json=data)
     assert response.status_code == 200, response.text
 
     data = response.json()
-    assert data["type"] == "type", data
+    assert data["type"] == "user", data
     assert data["body"] == "body", data
     assert data["date"] == "2022-01-01T00:00:00", data
-    assert data["type"] == "type", data
     assert data["hive_id"] == str(hive.public_id), data
 
 
@@ -35,13 +31,9 @@ async def test_create_comment(async_app, session):
 @pytest.mark.parametrize(
     "payload",
     (
-        {"type": None},
         {"body": None},
-        {"type": None},
-        {"hive_id": None},
         {"date": None},
         {"date": "i_am_not_a_date"},
-        {"hive_id": "i_am_not_a_uuid"},
     ),
 )
 async def test_create_comment__wrong_payload(async_app, payload):
@@ -49,12 +41,10 @@ async def test_create_comment__wrong_payload(async_app, payload):
         "type": "type",
         "body": "description",
         "date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
-        "type": "type",
-        "hive_id": str(uuid.uuid4()),
     }
     data.update(payload)
     data = {k: v for k, v in data.items() if v is not None}
-    response = await async_app.post("/comment", json=data)
+    response = await async_app.post(f"/comment/{uuid.uuid4()}", json=data)
     assert response.status_code == 422, response.text
 
 
@@ -72,13 +62,10 @@ async def test_get_comment(async_app, session):
     await session.refresh(hive)
 
     data = {
-        "type": "type",
         "body": "description",
         "date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
-        "type": "type",
-        "hive_id": str(hive.public_id),
     }
-    response = await async_app.post("/comment", json=data)
+    response = await async_app.post(f"/comment/{hive.public_id}", json=data)
     assert response.status_code == 200, response.text
 
     comment_id = response.json()["public_id"]

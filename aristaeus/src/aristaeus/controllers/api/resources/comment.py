@@ -16,13 +16,13 @@ from aristaeus.domain.queries.comment import CommentQuery
 router = APIRouter()
 
 
-@router.post("", response_model=CommentOut)
-async def post_comment(input: PostCommentIn, user: UserEntity = Depends(auth_user)):
+@router.post("/{hive_id}", response_model=CommentOut)
+async def post_comment(hive_id: UUID, input: PostCommentIn, user: UserEntity = Depends(auth_user)):
     command = CreateCommentCommand(
-        hive_id=input.hive_id,
-        event_id=input.hive_id,
+        hive_id=hive_id,
+        event_id=input.event_id,
         date=input.date,
-        type=input.type,
+        type="user",
         body=input.body,
     )
     comment_application = CommentApplication()
