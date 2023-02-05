@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
+from aristaeus.config import settings
 from aristaeus.dispatcher import Dispatcher
 from aristaeus.domain.errors import EntityNotFound
 
@@ -37,9 +38,14 @@ def create_app():
 
     configure_error_handlers(app)
 
+    if settings.get("DISABLE_CORS", False):
+        origin_regex = r"^https?://.*$"
+    else:
+        origin_regex = r"^https?://(.*\.)?((aristaeus\.(com|test))|localhost)(:\d+)?$"
+
     configure_cors_middleware(
         app=app,
-        allow_origin_regex=r"^https?://(.*\.)?((aristaeus\.(com|test))|localhost)(:\d+)?$",
+        allow_origin_regex=origin_regex,
         allow_credentials=True,
     )
 
