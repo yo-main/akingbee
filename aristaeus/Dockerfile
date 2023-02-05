@@ -18,6 +18,8 @@ ENV VENV_PATH=/opt/venv \
     PATH="/opt/venv/bin:$PATH" \
     PYTHONPATH="/app:$PYHTONPATH"
 
+RUN apt update && apt install -y libpq-dev
+
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH

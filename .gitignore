@@ -15,6 +15,9 @@ var/
 tags
 .ropeproject
 
+# due to my strange workflow
+requirements.txt
+
 # dockercompose
 docker-compose.override.yml
 
