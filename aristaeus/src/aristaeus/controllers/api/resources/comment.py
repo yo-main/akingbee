@@ -40,6 +40,7 @@ async def get_comment(comment_id: UUID, user: UserEntity = Depends(auth_user)):
 @router.get("", response_model=list[CommentOut])
 async def list_comment(hive_id: UUID, user: UserEntity = Depends(auth_user)):
     comments = await CommentQuery().list_comment_query(hive_id)
+    comments.sort(key=lambda c: c.date, reverse=True)
     return [comment.asdict() for comment in comments]
 
 
