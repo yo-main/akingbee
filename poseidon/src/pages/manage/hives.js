@@ -446,6 +446,7 @@ export class HiveDetailsPage extends React.Component {
       await updateSwarm(swarmId, swarmData);
 
       let hive = await getHive(hiveId);
+      form.resetFields();
       this.setState((state) => {
         state['hive'] = hive;
         return state;

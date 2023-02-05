@@ -95,6 +95,7 @@ export class SetupPage extends React.Component {
       await postSetupData(this.props.dataType, value);
       let data = await listSetupData(this.props.dataType);
       let tableData = this.getTableData(data);
+      form.resetFields();
       this.setState((state) => {
         state['tableData'] = tableData;
         return state;
@@ -123,6 +124,7 @@ export class SetupPage extends React.Component {
       await updateSetupData(newValue, objectId);
       let data = await listSetupData(this.props.dataType);
       let tableData = this.getTableData(data);
+      form.resetFields();
       this.setState((state) => {
         state['tableData'] = tableData;
         return state;
@@ -131,7 +133,6 @@ export class SetupPage extends React.Component {
       dealWithError(error);
     }
 
-    form.resetFields();
   }
 
   deleteData = async(objectId) => {

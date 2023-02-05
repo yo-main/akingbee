@@ -2,7 +2,7 @@ import { aristaeusApi } from '../../lib/common';
 import moment from 'moment';
 
 export async function getCommentsForHive(hive_id) {
-  let response = await aristaeusApi.get(`/comments?hive_id=${hive_id}`);
+  let response = await aristaeusApi.get(`/comment?hive_id=${hive_id}`);
   let data = response.data;
   return data.reduce((acc, val) => {
     val['date'] = moment(val.date);
@@ -12,16 +12,16 @@ export async function getCommentsForHive(hive_id) {
 }
 
 export async function postCommentForHive(hive_id, { comment, date }) {
-  let response = await aristaeusApi.post(`/comments/hive/${hive_id}`, { comment, date });
+  let response = await aristaeusApi.post(`/comment/hive/${hive_id}`, { comment, date });
   return response.data;
 }
 
 export async function putComment(commentId, { comment, date }) {
-  let response = await aristaeusApi.put(`/comments/${commentId}`, { comment, date });
+  let response = await aristaeusApi.put(`/comment/${commentId}`, { comment, date });
   return response.data;
 }
 
 export async function deleteComment(commentId) {
-  let response = await aristaeusApi.delete(`/comments/${commentId}`);
+  let response = await aristaeusApi.delete(`/comment/${commentId}`);
   return response.data;
 }
