@@ -130,6 +130,8 @@ export class SetupPage extends React.Component {
     } catch (error) {
       dealWithError(error);
     }
+
+    form.resetFields();
   }
 
   deleteData = async(objectId) => {
