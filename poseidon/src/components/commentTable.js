@@ -93,7 +93,7 @@ export class CommentTableComponent extends React.Component {
       acc.push({
         key: index+1,
         id: val.id,
-        comment: val.comment,
+        comment: val.body,
         date: val.date,
         type: val.type,
         event: val.event
