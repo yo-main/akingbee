@@ -7,6 +7,7 @@ import { getCommentsForHive, postCommentForHive, putComment, deleteComment } fro
 import { LOADING_STATUS, getGenericPage } from '../pages/generic';
 import { dealWithError, notificate } from '../lib/common';
 
+
 import { FormLinkModal, FormButtonModal, RichEditor } from '.';
 
 function CreateCommentForm(props) {
@@ -92,7 +93,7 @@ export class CommentTableComponent extends React.Component {
     return data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,
-        id: val.id,
+        id: val.public_id,
         comment: val.body,
         date: val.date,
         type: val.type,
