@@ -10,7 +10,7 @@ google-api-python-client = "^2.9.0"
 google-auth = "^1.31.0"
 google-auth-oauthlib = "^0.4.4"
 google-auth-httplib2 = "^0.1.0"
-cryptography = "^3.4.7"
+cryptography = "^39.0.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.6b0"
