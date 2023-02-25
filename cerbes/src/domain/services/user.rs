@@ -1,0 +1,42 @@
+use crate::domain::adapters::database::CredentialsRepositoryTrait;
+use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::adapters::publisher::PublisherTrait;
+use crate::domain::errors::CerbesError;
+use crate::domain::models::User;
+use crate::domain::services::credentials;
+
+pub async fn create_user<R, D, Q>(
+    email: String,
+    username: String,
+    password: String,
+    user_repo: &R,
+    cred_repo: &D,
+    publisher: &Q,
+) -> Result<User, CerbesError>
+where
+    R: UserRepositoryTrait,
+    D: CredentialsRepositoryTrait,
+    Q: PublisherTrait,
+{
+    let mut user = User::new(email);
+    let credentials = credentials::create_credentials(username, password);
+
+    // TODO: find a way to wrap those 2 operations in the same transaction
+    user_repo.create_user(&user).await?;
+    cred_repo.create_credentials(&user, &credentials).await?;
+
+    user.credentials = Some(credentials);
+    publisher
+        .publish("user.created", &user.to_json().to_string())
+        .await?;
+
+    return Ok(user);
+}
+
+pub async fn get_login_user<R>(username: String, repo: &R) -> Result<User, CerbesError>
+where
+    R: CredentialsRepositoryTrait,
+{
+    let user = repo.get_by_username(&username).await?;
+    return Ok(user);
+}
