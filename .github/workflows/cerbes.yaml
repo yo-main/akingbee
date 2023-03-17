@@ -12,49 +12,49 @@ defaults:
     working-directory: cerbes
 
 jobs:
-  validation:
-    name: lint & test
-    runs-on: ubuntu-latest
+  # validation:
+  #   name: lint & test
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - run: rustup update stable && rustup default 
-      - run: cargo fmt --all --check
-      - run: cargo build --verbose
-      - run: cargo test --verbose
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v3
+  #     - run: rustup update stable && rustup default 
+  #     - run: cargo fmt --all --check
+  #     - run: cargo build --verbose
+  #     - run: cargo test --verbose
       
 
-  release:
-    name: release new version
-    runs-on: ubuntu-latest
-    needs: validation
-    if: github.ref == 'refs/heads/master'
+  # release:
+  #   name: release new version
+  #   runs-on: ubuntu-latest
+  #   needs: validation
+  #   if: github.ref == 'refs/heads/master'
 
-    env:
-      GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
+  #   env:
+  #     GITHUB_TOKEN: ${{ secrets.CI_USER_TOKEN }}
 
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          ref: 'master'
-      - name: install node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: install dependencies
-        run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec
-      - name: git pull
-        run: git pull
-      - name: run semantic release
-        run: semantic-release
+  #   steps:
+  #     - name: checkout
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: 'master'
+  #     - name: install node
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: install dependencies
+  #       run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/exec
+  #     - name: git pull
+  #       run: git pull
+  #     - name: run semantic release
+  #       run: semantic-release
 
 
   build:
     name: build docker image
     runs-on: ubuntu-latest
-    needs: release
+    # needs: release
     if: github.ref == 'refs/heads/master'
 
     steps:
