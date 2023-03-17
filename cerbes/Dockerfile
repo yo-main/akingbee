@@ -13,7 +13,7 @@ COPY Cargo.toml Cargo.lock ./
 RUN cargo install --path . 
 
 
-FROM debian:bullseye-slim
+FROM --platform=$TARGETPLATFORM debian:bullseye-slim
 RUN apt update && apt install libssl-dev
 COPY ./config ./config
 COPY --from=builder /usr/local/cargo/bin/* /usr/local/bin
