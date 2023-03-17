@@ -21,6 +21,12 @@ function decodeJWT(jwt) {
   return JSON.parse(atob(jwt.split('.')[1]))
 }
 
+export function getAuthorizationHeader() {
+  return {
+    'Authorization': `Bearer ${getJWT()}`,
+  }
+}
+
 export function storeJWT(jwt) {
   let content = decodeJWT(jwt)
   let expiry_date = new Date(content.exp * 1000);
@@ -51,7 +57,7 @@ export async function registrationRequest({email, username, password, password_b
 
   // request server to register user
   const data = {email, username, password, language}
-  await cerbesApi.post("/user", data)
+  await cerbesApi.post("/users", data)
     .then((response) => {
       notificate("success", window.i18n("success.registrationSuccessful"));
       history.push("/login");
@@ -150,16 +156,22 @@ export async function resetPassword({userId, resetId, password}) {
 }
 
 export async function getAllUsers() {
-  let response = await cerbesApi.get('/users')
+  let response = await cerbesApi.get('/users', {
+    headers: getAuthorizationHeader()
+  })
   return response;
 }
 
 export async function impersonate({ userId }) {
-  let response = await cerbesApi.post(`/impersonate/${userId}`)
+  let response = await cerbesApi.post(`/impersonate/${userId}`, {
+    headers: getAuthorizationHeader()
+  })
   return response.data.access_token;
 }
 
 export async function desimpersonate() {
-  let response = await cerbesApi.post(`/desimpersonate`)
+  let response = await cerbesApi.post(`/desimpersonate`, {
+    headers: getAuthorizationHeader()
+  })
   return response.data.access_token;
 }

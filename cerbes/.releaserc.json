@@ -26,13 +26,13 @@
   "prepare": [
     ["@semantic-release/exec",
       {
-      "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" pyproject.toml"
+      "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" Cargo.toml"
       }
     ],
     ["@semantic-release/git",
     {
       "message": "release(cerbes): ${nextRelease.version} - ${nextRelease.notes}",
-      "assets": ["pyproject.toml"]
+      "assets": ["Cargo.toml"]
     }]
   ],
   "publish": [

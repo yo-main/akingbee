@@ -1,0 +1,14 @@
+env = "test"
+hash_key = "very_super_secret_key"
+jwt_key = "very_super_secret_key"
+
+[database]
+url = "sqlite::memory:"
+
+[rabbitmq]
+host = "test"
+port = 1111
+user = "user"
+password = "password"
+exchange = "exchange"
+vhost = "/"

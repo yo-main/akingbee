@@ -1,0 +1,14 @@
+env = "local"
+hash_key = "very_super_secret_key"
+jwt_key = "very_super_secret_key"
+
+[database]
+url = "postgres://admin:admin@localhost:5432/admin"
+
+[rabbitmq]
+host = "localhost"
+port = 5672
+user = "rabbitmq"
+password = "rabbitmq"
+exchange = "akingbee.main_exchange"
+vhost = "/"

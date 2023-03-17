@@ -1,10 +1,13 @@
 from typing import Protocol
 
 import aiohttp
+import logging
 
 from aristaeus.config import settings
 from aristaeus.injector import Injector
 from aristaeus.utils.singleton import SingletonMeta
+
+logger = logging.getLogger(__name__)
 
 
 class CerbesClientAsyncAdapter(Protocol):
@@ -29,6 +32,6 @@ class HttpClient(metaclass=SingletonMeta):
         url = f"{self.base_url}/check"
 
         async with aiohttp.ClientSession() as session:  # TODO: define the session in the __init__ - or better - a base class
-            async with session.get(url, cookies={"access_token": access_token}) as resp:
+            async with session.get(url, headers={"Authorization": f"Bearer {access_token}"}) as resp:
                 data = await resp.json()
                 return data.get("user_id") if resp.status == 200 else None
