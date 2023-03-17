@@ -1,4 +1,4 @@
-FROM rust:slim-bullseye as builder
+FROM --platform=$BUILDPLATFORM rust:slim-bullseye as builder
 
 WORKDIR /app
 
