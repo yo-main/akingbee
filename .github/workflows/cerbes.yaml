@@ -13,48 +13,17 @@ defaults:
 
 jobs:
   validation:
-    name: lint & pytest
+    name: lint & test
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: dbtest
-          POSTGRES_USER: dbtest
-          POSTGRES_PASSWORD: dbtest
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      AKB_DATABASE_HOST: localhost
-      AKB_DATABASE_PORT: 5432
-      AKB_DATABASE_USER: dbtest
-      AKB_DATABASE_PASSWORD: dbtest
-      AKB_DATABASE_DBNAME: dbtest
-
     steps:
-      - name: install python3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
       - name: checkout
         uses: actions/checkout@v3
-      - name: install poetry
-        run: pip install poetry
-      - name: setup env
-        run: poetry install
-      - name: black
-        run: poetry run black . --check
-      - name: pytest
-        run: poetry run coverage run -m pytest
-      - name: coverage report
-        run: poetry run coverage report
+      - run: rustup update stable && rustup default 
+      - run: cargo fmt --all --check
+      - run: cargo build --verbose
+      - run: cargo test --verbose
+      
 
   release:
     name: release new version
@@ -102,16 +71,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: install poetry
-        run: pip install poetry
       - name: git latest tag
         run: |
           git fetch --tags --prune --unshallow
           tag=$(git describe --tags --abbrev=0 --match 'cerbes-*')
           version=$(echo $tag | cut -d'-' -f2 | cut -d'v' -f2)
           echo "image_version=${version}" >> $GITHUB_ENV
-      - name: export requirements
-        run: poetry export -o requirements.txt
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
