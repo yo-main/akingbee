@@ -142,7 +142,7 @@ where
                     "email": user.email,
                     "id": user.public_id,
                 },
-                "reset_link": format!("https://www.akingbee.com/password-reset/{}/{}", user.public_id, credentials.password_reset_id.unwrap())
+                "reset_link": format!("https://akingbee.com/password-reset/{}/{}", user.public_id, credentials.password_reset_id.unwrap())
             })
             .to_string(),
         )
