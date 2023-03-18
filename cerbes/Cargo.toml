@@ -1,6 +1,6 @@
 [package]
 name = "cerbes"
-version = "1.15.1"
+version = "1.15.2"
 edition = "2021"
 include = ["src/**/*", "README.md"]
 
