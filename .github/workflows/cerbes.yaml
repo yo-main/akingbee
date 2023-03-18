@@ -94,7 +94,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: cerbes
-          platforms: linux/amd64,linux/arm/v7
+          platforms: ${{ matrix.PLATFORM }}
           push: true
           build-args: |
             TARGET=${{ matrix.TARGET }}
