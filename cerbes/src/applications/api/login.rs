@@ -3,6 +3,7 @@ use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::adapters::publisher::PublisherTrait;
+use crate::domain::errors::CerbesError;
 use crate::domain::services::credentials::generate_jwt_for_impersonator;
 use crate::domain::services::credentials::generate_jwt_for_user;
 use crate::domain::services::credentials::impersonate_user;
@@ -13,6 +14,9 @@ use crate::domain::services::credentials::register_password_reset_request;
 use crate::domain::services::credentials::validate_token;
 use crate::domain::services::credentials::validate_user_credentials;
 use crate::domain::services::user::get_login_user;
+use crate::infrastructure::rabbitmq::client::RbmqClient;
+use crate::infrastructure::rabbitmq::client::TestRbmqClient;
+use crate::settings::SETTINGS;
 
 use axum::extract::Json;
 use axum::extract::Query;
@@ -112,17 +116,32 @@ pub async fn refresh_jwt(
 pub async fn reset_password_request<R, D, P>(
     state: State<AppState<R, D, P>>,
     Json(payload): Json<PasswordResetRequestInput>,
-) -> StatusCode
+) -> Result<StatusCode, StatusCode>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    match register_password_reset_request(&payload.username, &state.credentials_repo).await {
-        Ok(_) => StatusCode::OK,
-        Err(CerbesError) => StatusCode::NOT_FOUND,
-        Err(_) => StatusCode::BAD_REQUEST,
-    }
+    match SETTINGS.env.as_str() {
+        "test" => {
+            register_password_reset_request(
+                &payload.username,
+                &state.credentials_repo,
+                &TestRbmqClient::new(),
+            )
+            .await?
+        }
+        _ => {
+            register_password_reset_request(
+                &payload.username,
+                &state.credentials_repo,
+                &RbmqClient::new().await,
+            )
+            .await?
+        }
+    };
+
+    Ok(StatusCode::OK)
 }
 
 pub async fn reset_password_validate<R, D, P>(

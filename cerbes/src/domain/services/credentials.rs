@@ -1,6 +1,7 @@
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::adapters::publisher::PublisherTrait;
 use crate::domain::errors::CerbesError;
 use crate::domain::models::Credentials;
 use crate::domain::models::User;
@@ -116,20 +117,35 @@ pub fn regenerate_jwt(token: JwtData) -> String {
     return token;
 }
 
-pub async fn register_password_reset_request<R>(username: &str, repo: &R) -> Result<(), CerbesError>
+pub async fn register_password_reset_request<R, P>(
+    username: &str,
+    repo: &R,
+    publisher: &P,
+) -> Result<(), CerbesError>
 where
     R: CredentialsRepositoryTrait,
+    P: PublisherTrait,
 {
     let user = repo
         .get_by_username(username)
         .await
-        .or(repo.get_by_user_email(username).await);
+        .or(repo.get_by_user_email(username).await)?;
 
-    if user.is_err() {
-        return Err(CerbesError::user_not_found());
-    }
+    let credentials = repo.reset_request(user.credentials.unwrap()).await?;
 
-    repo.reset_request(user.unwrap().credentials.unwrap())
+    publisher
+        .publish(
+            "user.reset_password",
+            &serde_json::json!({
+                "language": "fr",
+                "user": {
+                    "email": user.email,
+                    "id": user.public_id,
+                },
+                "reset_link": format!("https://www.akingbee.com/password-reset/{}/{}", user.public_id, credentials.password_reset_id.unwrap())
+            })
+            .to_string(),
+        )
         .await?;
 
     return Ok(());
@@ -167,7 +183,7 @@ where
         return Err(CerbesError::user_not_found());
     }
 
-    repo.update_password(&credentials.username, &password)
+    repo.update_password(&credentials.username, &get_hash(password))
         .await?;
 
     return Ok(());
