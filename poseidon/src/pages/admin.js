@@ -15,10 +15,10 @@ export class AdminPage extends React.Component {
     const tableData = data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,
-        id: val.id,
+        id: val.public_id,
         email: val.email,
         activationId: val.activation_id,
-        createdAt: val.created_at,
+        lastSeen: val.last_seen,
       });
       return acc;
     }, []);
@@ -32,7 +32,7 @@ export class AdminPage extends React.Component {
   async refreshData() {
     try {
       let data = await getAllUsers();
-      let tableData = this.getTableData(data.data["users"]);
+      let tableData = this.getTableData(data);
       let pageStatus = 'OK';
 
       this.setState({tableData, pageStatus});
@@ -92,6 +92,11 @@ export class AdminPage extends React.Component {
         title: window.i18n(`title.activationId`),
         dataIndex: 'activationId',
         key: 'activationId',
+      },
+      {
+        title: window.i18n(`title.lastSeen`),
+        dataIndex: 'lastSeen',
+        key: 'lastSeen',
       },
       {
         title: window.i18n('word.actions'),

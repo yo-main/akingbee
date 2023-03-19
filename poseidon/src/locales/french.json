@@ -129,6 +129,7 @@
     "title.email": "Email",
     "title.id": "ID",
     "title.activationId": "Activation ID",
+    "title.lastSeen": "Dernière connexion",
     "word.impersonate": "Impersonifier",
     "confirm.impersonate": "Se connecter en tant que cet utilisateur",
     "word.desimpersonate": "Desimpersonifier",
