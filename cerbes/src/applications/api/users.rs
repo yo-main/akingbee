@@ -3,7 +3,6 @@ use super::AppState;
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
-use crate::domain::adapters::publisher::PublisherTrait;
 use crate::domain::models::User;
 use crate::domain::services::credentials::validate_token;
 use crate::domain::services::user::create_user;
@@ -33,6 +32,7 @@ pub struct InputPostUser {
 pub struct OutputUser {
     email: String,
     public_id: Uuid,
+    activation_id: Option<Uuid>,
     username: Option<String>,
     last_seen: Option<NaiveDateTime>,
 }
@@ -42,6 +42,7 @@ impl Into<OutputUser> for User {
         OutputUser {
             email: self.email,
             public_id: self.public_id,
+            activation_id: self.activation_id,
             username: self
                 .credentials
                 .as_ref()
