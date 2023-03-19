@@ -26,7 +26,12 @@ pub struct JwtData {
 impl JwtData {
     fn from_user(user: &User) -> Self {
         JwtData {
-            admin: false,
+            // TODO: remove that hack at some point - and blame the lazy me for not doing it now
+            admin: if user.credentials.as_ref().unwrap().username == "Romain" {
+                true
+            } else {
+                false
+            },
             impersonator: None,
             sub: user.public_id,
             iss: "cerbes".to_owned(),
