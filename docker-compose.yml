@@ -11,7 +11,7 @@ services:
       - akb
 
   cerbes:
-    image: cerbes:latest
+    image: yomain/cerbes:latest
     container_name: cerbes
     environment:
       - CERBES_ENV=local
@@ -30,7 +30,7 @@ services:
       - akb
 
   aristaeus-api:
-    image: yomain/aristaeus2:latest
+    image: yomain/aristaeus:latest
     container_name: aristeaus-api
     environment:
       - SERVICE_NAME=aristaeus-api
@@ -48,7 +48,7 @@ services:
       - akb
 
   aristaeus-listener:
-    image: yomain/aristaeus2:latest
+    image: yomain/aristaeus:latest
     container_name: aristeaus-listener
     environment:
       - SERVICE_NAME=aristaeus-listener

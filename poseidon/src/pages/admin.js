@@ -11,6 +11,7 @@ export class AdminPage extends React.Component {
   state = {tableData: [], pageStatus: LOADING_STATUS}
 
   getTableData = (data) => {
+    console.log(data);
 
     const tableData = data.reduce((acc, val, index) => {
       acc.push({
@@ -32,7 +33,7 @@ export class AdminPage extends React.Component {
   async refreshData() {
     try {
       let data = await getAllUsers();
-      let tableData = this.getTableData(data);
+      let tableData = this.getTableData(data.data);
       let pageStatus = 'OK';
 
       this.setState({tableData, pageStatus});
