@@ -86,7 +86,7 @@ pub fn validate_token(token: String) -> Result<JwtData, CerbesError> {
     }
 }
 
-pub fn generate_jwt_for_user(user: User) -> String {
+pub fn generate_jwt_for_user(user: &User) -> String {
     let data = JwtData::from_user(&user);
     let token = jsonwebtoken::encode(
         &jsonwebtoken::Header::default(),
@@ -219,6 +219,15 @@ where
     return Ok(generate_jwt_for_impersonator(impersonator, user));
 }
 
+pub async fn register_user_login<C>(repo: &C, creds: &Credentials) -> Result<(), CerbesError>
+where
+    C: CredentialsRepositoryTrait,
+{
+    repo.register_login(creds, chrono::Utc::now().naive_utc())
+        .await?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -241,7 +250,7 @@ mod tests {
             "username".to_owned(),
             "password".to_owned(),
         ));
-        let token = generate_jwt_for_user(user);
+        let token = generate_jwt_for_user(&user);
         assert!(validate_token(token.to_string()).is_ok());
     }
 

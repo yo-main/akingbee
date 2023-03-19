@@ -124,4 +124,18 @@ impl CredentialsRepositoryTrait for CredentialsRepository {
 
         return Ok(());
     }
+
+    async fn register_login(
+        &self,
+        creds: &Credentials,
+        date: chrono::NaiveDateTime,
+    ) -> Result<(), CerbesError> {
+        CredentialsModel::Entity::update_many()
+            .filter(CredentialsModel::Column::Username.eq(&creds.username))
+            .col_expr(CredentialsModel::Column::LastSeen, Expr::value(date))
+            .exec(&self.conn)
+            .await?;
+
+        Ok(())
+    }
 }

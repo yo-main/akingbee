@@ -11,6 +11,7 @@ use crate::domain::services::credentials::password_reset;
 use crate::domain::services::credentials::password_reset_validate;
 use crate::domain::services::credentials::regenerate_jwt;
 use crate::domain::services::credentials::register_password_reset_request;
+use crate::domain::services::credentials::register_user_login;
 use crate::domain::services::credentials::validate_token;
 use crate::domain::services::credentials::validate_user_credentials;
 use crate::domain::services::user::get_login_user;
@@ -82,7 +83,8 @@ where
         return Err(StatusCode::FORBIDDEN);
     }
 
-    let token = generate_jwt_for_user(user);
+    let token = generate_jwt_for_user(&user);
+    register_user_login(&state.credentials_repo, user.credentials.as_ref().unwrap()).await?;
 
     return Ok((
         StatusCode::OK,
@@ -224,7 +226,7 @@ where
         .get_by_user_public_id(token.impersonator.unwrap())
         .await?;
 
-    let jwt = generate_jwt_for_user(user);
+    let jwt = generate_jwt_for_user(&user);
 
     return Ok((StatusCode::OK, Json(LoginOutput { access_token: jwt })));
 }

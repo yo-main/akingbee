@@ -25,6 +25,11 @@ pub trait CredentialsRepositoryTrait {
     async fn get_by_username(&self, username: &str) -> Result<User, CerbesError>;
     async fn get_by_user_email(&self, user_email: &str) -> Result<User, CerbesError>;
     async fn reset_request(&self, creds: Credentials) -> Result<Credentials, CerbesError>;
+    async fn register_login(
+        &self,
+        creds: &Credentials,
+        date: chrono::NaiveDateTime,
+    ) -> Result<(), CerbesError>;
 
     async fn update_password(&self, username: &str, password: &str) -> Result<(), CerbesError>;
 }
