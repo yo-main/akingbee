@@ -72,9 +72,9 @@ export class AdminPage extends React.Component {
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
 
-    let userId = getLoggerUserData("user_id");
+    let userId = getLoggerUserData("sub");
     let isAdmin = getLoggerUserData("admin");
-    let impersonatorId = getLoggerUserData("impersonator_id");
+    let impersonatorId = getLoggerUserData("impersonator");
 
     const columns = [
       {
