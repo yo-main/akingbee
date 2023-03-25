@@ -20,6 +20,7 @@ use crate::infrastructure::rabbitmq::client::TestRbmqClient;
 use crate::settings::SETTINGS;
 
 use axum::extract::Json;
+use axum::extract::Path;
 use axum::extract::Query;
 use axum::extract::State;
 use axum::extract::TypedHeader;
@@ -185,7 +186,7 @@ where
 
 pub async fn impersonate<R, D, P>(
     state: State<AppState<R, D, P>>,
-    params: Query<ImpersonateInput>,
+    Path(user_id): Path<Uuid>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), StatusCode>
 where
@@ -196,7 +197,7 @@ where
     let token = validate_token(auth.token().to_owned()).unwrap();
 
     let jwt = impersonate_user(
-        params.user_id,
+        user_id,
         token.sub,
         &state.user_repo,
         &state.credentials_repo,

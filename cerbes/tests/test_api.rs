@@ -543,7 +543,7 @@ async fn test_impersonate() {
         .clone()
         .oneshot(
             Request::builder()
-                .uri(format!("/impersonate?user_id={}", impersonated.public_id))
+                .uri(format!("/impersonate/{}", impersonated.public_id))
                 .header(
                     http::header::CONTENT_TYPE,
                     http::header::HeaderValue::from_str("application/json").unwrap(),

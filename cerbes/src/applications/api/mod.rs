@@ -55,7 +55,7 @@ pub async fn create_app(conn: DatabaseConnection) -> axum::Router {
             routing::get(login::reset_password_validate),
         )
         .route("/password-reset", routing::post(login::reset_password))
-        .route("/impersonate", routing::post(login::impersonate))
+        .route("/impersonate/:user_id", routing::post(login::impersonate))
         .route("/desimpersonate", routing::post(login::desimpersonate))
         .layer(cors)
         .with_state(state)
