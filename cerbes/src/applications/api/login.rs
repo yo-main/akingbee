@@ -28,6 +28,7 @@ use axum::headers;
 use axum::http::StatusCode;
 use serde::Deserialize;
 use serde::Serialize;
+use tracing::info;
 use uuid::Uuid;
 
 #[derive(Serialize)]
@@ -74,6 +75,8 @@ where
 {
     let username = auth.username().to_owned();
     let password = auth.password().to_owned();
+
+    info!("Login request from {}", username);
 
     let user = match get_login_user(username, &state.credentials_repo).await {
         Ok(user) => user,
@@ -125,6 +128,7 @@ where
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
+    info!("Password reset request from {}", payload.username);
     match SETTINGS.env.as_str() {
         "test" => {
             register_password_reset_request(
@@ -179,7 +183,13 @@ where
     )
     .await
     {
-        Ok(()) => StatusCode::OK,
+        Ok(()) => {
+            info!(
+                "Successfuly reseted password from user {}, reset id {}",
+                payload.user_id, payload.reset_id
+            );
+            StatusCode::OK
+        }
         Err(_) => StatusCode::BAD_REQUEST,
     }
 }
@@ -188,13 +198,17 @@ pub async fn impersonate<R, D, P>(
     state: State<AppState<R, D, P>>,
     Path(user_id): Path<Uuid>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
-) -> Result<(StatusCode, Json<LoginOutput>), StatusCode>
+) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     let token = validate_token(auth.token().to_owned()).unwrap();
+    info!(
+        "Request to impersonate user {} from user {}",
+        user_id, token.sub
+    );
 
     let jwt = impersonate_user(
         user_id,
