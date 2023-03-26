@@ -163,14 +163,14 @@ export async function getAllUsers() {
 }
 
 export async function impersonate({ userId }) {
-  let response = await cerbesApi.post(`/impersonate/${userId}`, Null, {
+  let response = await cerbesApi.post(`/impersonate/${userId}`, null, {
     headers: getAuthorizationHeader()
   })
   return response.data.access_token;
 }
 
 export async function desimpersonate() {
-  let response = await cerbesApi.post(`/desimpersonate`, Null, {
+  let response = await cerbesApi.post(`/desimpersonate`, null, {
     headers: getAuthorizationHeader()
   })
   return response.data.access_token;
