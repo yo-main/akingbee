@@ -5,7 +5,11 @@ use crate::domain::models::User;
 use crate::infrastructure::database::entities::permissions as PermissionModel;
 use crate::infrastructure::database::entities::user as UserModel;
 use async_trait::async_trait;
+use migration::JoinType;
 use sea_orm::entity::prelude::*;
+use sea_orm::query::QuerySelect;
+use sea_orm::sea_query::query::IntoCondition;
+use sea_orm::sea_query::Expr;
 use sea_orm::Set;
 use sea_query::Query;
 
@@ -23,15 +27,25 @@ impl PermissionsRepository {
 #[async_trait]
 impl PermissionsRepositoryTrait for PermissionsRepository {
     async fn get_permissions_for_user(&self, user: &User) -> Result<Vec<Permissions>, CerbesError> {
+        // let public_id: Uuid = user.public_id.clone();
         let permissions = PermissionModel::Entity::find()
-            .filter(
-                PermissionModel::Column::UserId.in_subquery(
-                    Query::select()
-                        .expr(UserModel::Column::PublicId.eq(user.public_id))
-                        .from(UserModel::Entity)
-                        .to_owned(),
-                ),
+            .join(
+                JoinType::LeftJoin,
+                PermissionModel::Relation::User.def(), // .on_condition(|left, right| {
+                                                       //     Expr::tbl(right, UserModel::Column::PublicId)
+                                                       //         .eq(public_id)
+                                                       //         .into_condition()
+                                                       // Expr::col(UserModel::Column::PublicId).eq(user.public_id)
+                                                       // }), // .filter(
+                                                       //     PermissionModel::Column::UserId.in_subquery(
+                                                       //         Query::select()
+                                                       //             .expr(UserModel::Column::PublicId.eq(user.public_id))
+                                                       //             .from(UserModel::Entity)
+                                                       //             .to_owned(),
+                                                       //     ),
+                                                       // )
             )
+            .filter(UserModel::Column::PublicId.eq(user.public_id))
             .all(&self.conn)
             .await?;
 
