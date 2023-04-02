@@ -1,10 +1,15 @@
 FROM --platform=$BUILDPLATFORM rust:slim-bullseye as builder
 
-ARG TARGET="x86_64-unknown-linux-gnu"
-ARG BUILDPLATFORM="linux/amd64"
 WORKDIR /app
 
-RUN apt update && apt install -y libssl-dev pkg-config crossbuild-essential-arm64 crossbuild-essential-armhf && rustup target add $TARGET
+ARG TARGETPLATFORM
+RUN case "$TARGETPLATFORM" in \
+  "linux/arm/v7") echo armv7-unknown-linux-gnueabihf > /rust_target.txt ;; \
+  "linux/amd64") echo x86_64-unknown-linux-gnu > /rust_target.txt ;; \
+  *) exit 1 ;; \
+esac
+
+RUN apt update && apt install -y libssl-dev pkg-config crossbuild-essential-arm64 crossbuild-essential-armhf && rustup target add $(cat /rust_target.txt)
 ENV CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=/usr/bin/arm-linux-gnueabihf-gcc
 
 RUN cargo init
@@ -13,7 +18,7 @@ COPY ./migration ./migration
 COPY ./src ./src
 COPY Cargo.toml Cargo.lock .cargo ./
 
-RUN cargo install --path . --target $TARGET
+RUN cargo install --path . --target $(cat /rust_target.txt)
 
 
 FROM debian:bullseye-slim
