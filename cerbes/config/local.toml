@@ -2,8 +2,11 @@ env = "local"
 hash_key = "very_super_secret_key"
 jwt_key = "very_super_secret_key"
 
+[app]
+port = 8000
+
 [database]
-url = "postgres://admin:admin@localhost:5432/admin"
+url = "postgres://sa_cerbes:123@localhost:5432/cerbes"
 
 [rabbitmq]
 host = "localhost"

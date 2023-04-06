@@ -12,9 +12,13 @@ use std::net::SocketAddr;
 pub async fn create_app() {
     let conn = get_connection(&SETTINGS.database.url).await.unwrap();
     let app = applications::api::create_app(conn).await;
+    let port = &SETTINGS.app.port;
 
-    axum::Server::bind(&SocketAddr::new(IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), 80))
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    axum::Server::bind(&SocketAddr::new(
+        IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
+        *port,
+    ))
+    .serve(app.into_make_service())
+    .await
+    .unwrap();
 }
