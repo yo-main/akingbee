@@ -69,8 +69,21 @@ pub fn create_credentials(username: String, password: String) -> Credentials {
     return credentials;
 }
 
-pub fn validate_user_credentials(credentials: &Credentials, password: String) -> bool {
-    credentials.password == get_hash(password)
+pub async fn validate_user_credentials<R>(
+    username: String,
+    password: String,
+    credentials_repo: &R,
+) -> Result<User, CerbesError>
+where
+    R: CredentialsRepositoryTrait,
+{
+    if let user = credentials_repo.get_by_username(&username).await? {
+        if user.credentials.as_ref().unwrap().password == get_hash(password) {
+            return Ok(user);
+        }
+    }
+
+    return Err(CerbesError::not_enough_permissions());
 }
 
 pub fn validate_token(token: String) -> Result<JwtData, CerbesError> {

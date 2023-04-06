@@ -32,11 +32,3 @@ where
 
     return Ok(user);
 }
-
-pub async fn get_login_user<R>(username: String, repo: &R) -> Result<User, CerbesError>
-where
-    R: CredentialsRepositoryTrait,
-{
-    let user = repo.get_by_username(&username).await?;
-    return Ok(user);
-}

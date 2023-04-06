@@ -14,7 +14,6 @@ use crate::domain::services::credentials::register_password_reset_request;
 use crate::domain::services::credentials::register_user_login;
 use crate::domain::services::credentials::validate_token;
 use crate::domain::services::credentials::validate_user_credentials;
-use crate::domain::services::user::get_login_user;
 use crate::infrastructure::rabbitmq::client::RbmqClient;
 use crate::infrastructure::rabbitmq::client::TestRbmqClient;
 use crate::settings::SETTINGS;
@@ -78,14 +77,9 @@ where
 
     info!("Login request from {}", username);
 
-    let user = match get_login_user(username, &state.credentials_repo).await {
-        Ok(user) => user,
-        Err(_) => return Err(StatusCode::FORBIDDEN),
-    };
-
-    if !validate_user_credentials(user.credentials.as_ref().unwrap(), password) {
-        return Err(StatusCode::FORBIDDEN);
-    }
+    let user = validate_user_credentials(username, password, &state.credentials_repo)
+        .await
+        .or_else(|_| Err(StatusCode::FORBIDDEN))?;
 
     let token = generate_jwt_for_user(&user);
     register_user_login(&state.credentials_repo, user.credentials.as_ref().unwrap()).await?;
