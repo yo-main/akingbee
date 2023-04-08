@@ -1,0 +1,23 @@
+CERBES_ENV := "local"
+
+DB_URL := "postgres://sa_cerbes:password@localhost:5432/cerbes"
+
+
+db:
+	docker-compose up -d db
+
+test:
+	@cargo test
+
+build: 
+	@cargo build
+
+migrate: db
+	cd migration && DATABASE_URL={{DB_URL}} cargo run -- -s cerbes up
+
+serve: db
+	CERBES_ENV={{CERBES_ENV}} DATABASE_URL={{DB_URL}} cargo run
+
+
+
+

@@ -1,0 +1,6 @@
+
+init:
+	npm install
+	
+serve:
+	npm run start

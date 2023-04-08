@@ -1,0 +1,23 @@
+DB_URL := "postgres://sa_aristaeus:password@localhost:5432/cerbes"
+
+
+db:
+	docker-compose up -d db
+
+rbmq:
+	docker-compose up -d rbmq
+
+init:
+	poetry install
+
+test: init
+	poetry run pytest
+
+migrate: db
+	poetry run alembic upgrade head
+
+serve: db rbmq migrate
+	poetry run uvicorn --host 0.0.0.0 --port 8001 --reload src.aristaeus.controllers.api.app:create_app
+
+listen: db rbmq migrate
+	poetry run python src/aristaeus/controllers/consumers/app.py
