@@ -15,7 +15,7 @@ build:
 migrate: db
 	cd migration && DATABASE_URL={{DB_URL}} cargo run -- -s cerbes up
 
-serve: db
+serve: migrate
 	CERBES_ENV={{CERBES_ENV}} DATABASE_URL={{DB_URL}} cargo run
 
 

@@ -18,4 +18,4 @@ run-all:
 	alacritty -e just poseidon/serve  &
 
 clean:
-	kill $(ps u | grep -e 'just .*' | awk '{print $2}')
+	sudo kill -9 $(ps aux | grep -e 'just .*' | awk '{print $2}')

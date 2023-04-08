@@ -26,7 +26,7 @@
   "prepare": [
     ["@semantic-release/exec",
       {
-      "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" Cargo.toml && sed -i \"/name = \\\"cerbes\\\"/{n;s/version = \\\"${nextRelease.version}\\\"/}\""
+      "prepareCmd": "git pull && sed -i \"s/\\(^version *= *\\).*/\\1\\\"${nextRelease.version}\\\"/\" Cargo.toml && sed -i \"/name = \\\"cerbes\\\"/{n;s/.*/version = \\\"${nextRelease.version}\\\"/}\" Cargo.lock"
       }
     ],
     ["@semantic-release/git",

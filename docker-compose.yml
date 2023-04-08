@@ -15,6 +15,7 @@ services:
     container_name: cerbes
     environment:
       - CERBES_ENV=local
+      - EXECUTE_MIGRATION=true
       - CERBES__DATABASE__URL=postgres://sa_cerbes:password@db/cerbes
       - CERBES__RABBITMQ__USER=akingbee
       - CERBES__RABBITMQ__PASSWORD=password
@@ -33,6 +34,7 @@ services:
     image: yomain/aristaeus:latest
     container_name: aristeaus-api
     environment:
+      - EXECUTE_MIGRATION=true
       - SERVICE_NAME=aristaeus-api
       - AKB_DATABASE_HOST=db
       - AKB_DATABASE_USER=sa_aristaeus
