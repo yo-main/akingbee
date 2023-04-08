@@ -2,6 +2,7 @@ FROM --platform=$BUILDPLATFORM rust:slim-bullseye as builder
 
 WORKDIR /app
 
+
 ARG TARGETPLATFORM
 RUN case "$TARGETPLATFORM" in \
   "linux/arm/v7") echo armv7-unknown-linux-gnueabihf > /rust_target.txt ;; \
