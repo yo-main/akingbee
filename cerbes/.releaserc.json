@@ -32,7 +32,7 @@
     ["@semantic-release/git",
     {
       "message": "release(cerbes): ${nextRelease.version} - ${nextRelease.notes}",
-      "assets": ["Cargo.toml"]
+      "assets": ["Cargo.toml", "Cargo.lock"]
     }]
   ],
   "publish": [
