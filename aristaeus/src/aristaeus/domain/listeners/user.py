@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from aristaeus.dispatcher import Dispatcher
-from aristaeus.domain.applications.user import UserApplication
+from aristaeus.domain.services.user import UserApplication
 
 
 @Dispatcher.subscribe("user.created")

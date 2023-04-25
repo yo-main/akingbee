@@ -1,8 +1,8 @@
+from functools import wraps
 from typing import TYPE_CHECKING
 from typing import Protocol
 from uuid import UUID
 
-from aristaeus.domain.entities.hive import DetailedHiveEntity
 from aristaeus.domain.entities.hive import HiveEntity
 
 if TYPE_CHECKING:
@@ -15,17 +15,15 @@ class HiveRepositoryAdapter(Base):
     async def save(self, hive: HiveEntity) -> None:
         ...
 
+    @wraps(lambda x: 1)
     async def get(self, public_id: UUID) -> HiveEntity:
         ...
 
-    async def get_detailed(self, public_id: UUID) -> DetailedHiveEntity:
-        ...
-
-    async def update(self, hive: HiveEntity, fields: list[str]) -> DetailedHiveEntity:
+    async def update(self, hive: HiveEntity) -> None:
         ...
 
     async def delete(self, hive: HiveEntity) -> None:
         ...
 
-    async def list(self, organization_id: UUID) -> list[DetailedHiveEntity]:
+    async def list(self, organization_id: UUID) -> list[HiveEntity]:
         ...

@@ -1,7 +1,7 @@
 import logging
 import uuid
 
-from aristaeus.domain.applications.user import UserApplication
+from aristaeus.domain.services.user import UserApplication
 from aristaeus.domain.commands.user import CreateUserCommand
 
 logger = logging.getLogger(__name__)

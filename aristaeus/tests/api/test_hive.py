@@ -16,18 +16,22 @@ async def test_create_hive__no_apiary(async_app):
     assert data["name"] == "a name", data
     assert data["condition"] == "too good", data
     assert data["owner"] == "owner", data
-    assert data["apiary_id"] is None, data
+    assert data["apiary"] is None, data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_create_hive__with_apiary(async_app):
-    apiary_id = str(uuid.uuid4())
+async def test_create_hive__with_apiary(async_app, session):
+    apiary = ApiaryModelFactory.create()
+    session.add(apiary)
+    await session.commit()
+    await session.refresh(apiary)
+
     data = {
         "name": "a name",
         "condition": "too good",
         "owner": "owner",
-        "apiary_id": apiary_id,
+        "apiary_id": str(apiary.public_id),
     }
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
@@ -36,7 +40,7 @@ async def test_create_hive__with_apiary(async_app):
     assert data["name"] == "a name", data
     assert data["condition"] == "too good", data
     assert data["owner"] == "owner", data
-    assert data["apiary_id"] == apiary_id, data
+    assert data["apiary"]["public_id"] == str(apiary.public_id), data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
 
@@ -65,14 +69,17 @@ async def test_get_hive__unknown(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_get_hive__with_apiary(async_app):
-    apiary_id = str(uuid.uuid4())
+async def test_get_hive__with_apiary(async_app, session):
+    apiary = ApiaryModelFactory.create()
+    session.add(apiary)
+    await session.commit()
+    await session.refresh(apiary)
 
     data = {
         "name": "a name",
         "condition": "too good",
         "owner": "owner",
-        "apiary_id": apiary_id,
+        "apiary_id": str(apiary.public_id),
     }
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
@@ -164,8 +171,8 @@ async def test_delete_hive__success(async_app, session):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_move_hive(async_app, session):
-    apiary = ApiaryModelFactory.create()
-    hive = HiveModelFactory.create()
+    apiary = ApiaryModelFactory.create(organization_id="11111111-1111-1111-1111-111111111111")
+    hive = HiveModelFactory.create(organization_id="11111111-1111-1111-1111-111111111111")
     session.add(apiary)
     session.add(hive)
     await session.commit()
