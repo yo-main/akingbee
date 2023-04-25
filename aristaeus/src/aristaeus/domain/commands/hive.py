@@ -18,6 +18,11 @@ class PutHiveCommand:
     hive_id: UUID
     name: str | None = field(default=None)
     condition: str | None = field(default=None)
-    apiary_id: UUID | None = field(default=None)
     swarm_id: UUID | None = field(default=None)
     owner: str | None = field(default=None)
+
+
+@dataclass(frozen=True, slots=True)
+class MoveHiveCommand:
+    hive_id: UUID
+    apiary_id: UUID

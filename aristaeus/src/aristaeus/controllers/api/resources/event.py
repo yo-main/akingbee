@@ -7,7 +7,7 @@ from aristaeus.controllers.api.dtos.event import EventOut
 from aristaeus.controllers.api.dtos.event import PostEventIn
 from aristaeus.controllers.api.dtos.event import PutEventIn
 from aristaeus.controllers.api.utils.auth import auth_user
-from aristaeus.domain.applications.event import EventApplication
+from aristaeus.domain.services.event import EventApplication
 from aristaeus.domain.commands.event import CreateEventCommand
 from aristaeus.domain.commands.event import PutEventCommand
 from aristaeus.domain.entities.user import UserEntity

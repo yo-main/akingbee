@@ -1,8 +1,6 @@
 import uuid
 from dataclasses import dataclass
 from dataclasses import field
-from dataclasses import fields
-from dataclasses import replace
 from uuid import UUID
 
 from .apiary import ApiaryEntity
@@ -10,32 +8,40 @@ from .base import Entity
 from .swarm import SwarmEntity
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class HiveEntity(Entity):
     name: str
     condition: str
     owner: str
     organization_id: UUID
-    apiary_id: UUID | None
-    swarm_id: UUID | None
     public_id: UUID = field(default_factory=uuid.uuid4)
+    apiary: ApiaryEntity | None = None
+    swarm: SwarmEntity | None = None
 
-    def update(self, organization_id: str = "", public_id: str = "", **kwargs) -> tuple["HiveEntity", list[str]]:
-        data = {k: v for k, v in kwargs.items() if v is not None}
-        new_hive = replace(self, **data)
+    def transfer_ownership(self, new_owner: str):
+        self.owner = new_owner
 
-        updated_fields = [
-            field.name for field in fields(new_hive) if getattr(self, field.name) != getattr(new_hive, field.name)
-        ]
+    def update_condition(self, new_condition: str):
+        self.condition = new_condition
 
-        return new_hive, updated_fields
+    def rename(self, new_name: str):
+        self.name = new_name
 
+    def attach_swarm(self, swarm: SwarmEntity):
+        if self.swarm:
+            raise ValueError("A swarm already exists")  # TODO: refacto that
+        self.swarm = swarm
 
-@dataclass(frozen=True, slots=True)
-class DetailedHiveEntity(Entity):
-    name: str
-    condition: str
-    owner: str
-    apiary: ApiaryEntity | None
-    swarm: SwarmEntity | None
-    public_id: UUID
+    def move(self, new_apiary: ApiaryEntity):
+        if new_apiary.organization_id != self.organization_id:
+            raise ValueError("Permission error")  # TODO: refacto that
+
+        self.apiary = new_apiary
+
+    def __repr__(self):
+        return f"<Hive {self.public_id}>"
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, HiveEntity):
+            raise ValueError(f"{other} is not a HiveEntity")
+        return self.public_id == other.public_id

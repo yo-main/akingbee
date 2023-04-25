@@ -7,7 +7,7 @@ from aristaeus.controllers.api.dtos.comment import CommentOut
 from aristaeus.controllers.api.dtos.comment import PostCommentIn
 from aristaeus.controllers.api.dtos.comment import PutCommentIn
 from aristaeus.controllers.api.utils.auth import auth_user
-from aristaeus.domain.applications.comment import CommentApplication
+from aristaeus.domain.services.comment import CommentApplication
 from aristaeus.domain.commands.comment import CreateCommentCommand
 from aristaeus.domain.commands.comment import PutCommentCommand
 from aristaeus.domain.entities.user import UserEntity

@@ -7,7 +7,7 @@ from aristaeus.controllers.api.dtos.swarm import PostSwarmIn
 from aristaeus.controllers.api.dtos.swarm import PutSwarmIn
 from aristaeus.controllers.api.dtos.swarm import SwarmOut
 from aristaeus.controllers.api.utils.auth import auth_user
-from aristaeus.domain.applications.swarm import SwarmApplication
+from aristaeus.domain.services.swarm import SwarmApplication
 from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.commands.swarm import PutSwarmCommand
 from aristaeus.domain.entities.user import UserEntity
