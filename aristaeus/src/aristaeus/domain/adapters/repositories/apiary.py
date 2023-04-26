@@ -20,7 +20,7 @@ class ApiaryRepositoryAdapter(Base):
     async def get(self, public_id: UUID) -> ApiaryEntity:
         ...
 
-    async def update(self, apiary: ApiaryEntity, fields: list[str]) -> list[ApiaryEntity]:
+    async def update(self, apiary: ApiaryEntity) -> None:
         ...
 
     async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
