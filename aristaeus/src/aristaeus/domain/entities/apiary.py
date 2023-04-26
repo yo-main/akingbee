@@ -1,39 +1,33 @@
 import uuid
 from dataclasses import dataclass
 from dataclasses import field
-from dataclasses import fields
-from dataclasses import replace
 from uuid import UUID
 
 from .base import Entity
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class ApiaryEntity(Entity):
     name: str
     location: str
     honey_kind: str
     organization_id: UUID
+    hive_count: int = 0
     public_id: UUID = field(default_factory=uuid.uuid4)
 
-    def update(
-        self, organization_id: str | None = None, public_id: str | None = None, **kwargs
-    ) -> tuple["ApiaryEntity", list[str]]:
-        data = {k: v for k, v in kwargs.items() if v is not None}
-        new_apiary = replace(self, **data)
+    def change_location(self, new_location: str):
+        self.location = new_location
 
-        updated_fields = [
-            field.name for field in fields(new_apiary) if getattr(self, field.name) != getattr(new_apiary, field.name)
-        ]
+    def change_honey_kind(self, new_honey_kind: str):
+        self.honey_kind = new_honey_kind
 
-        return new_apiary, updated_fields
+    def rename(self, new_name: str):
+        self.name = new_name
 
+    def __repr__(self):
+        return f"<Hive {self.public_id}>"
 
-@dataclass(frozen=True, slots=True)
-class DetailedApiaryEntity(Entity):
-    name: str
-    location: str
-    honey_kind: str
-    organization_id: UUID
-    public_id: UUID
-    hive_count: int
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, ApiaryEntity):
+            raise ValueError(f"{other} is not a ApiaryEntity")
+        return self.public_id == other.public_id
