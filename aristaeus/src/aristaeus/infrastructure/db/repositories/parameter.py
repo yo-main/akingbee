@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import delete
@@ -31,12 +32,10 @@ class ParameterRespository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, parameter: ParameterEntity, new_value: str) -> ParameterEntity:
-        query = (
-            update(ParameterModel).values({"value": new_value}).where(ParameterModel.public_id == parameter.public_id)
-        )
+    async def update(self, parameter: ParameterEntity) -> None:
+        data: dict[Any, Any] = {"value": parameter.value}
+        query = update(ParameterModel).values(data).where(ParameterModel.public_id == parameter.public_id)
         await self.database.execute(query)
-        return await self.get(parameter.public_id)
 
     @error_handler
     async def delete(self, parameter: ParameterEntity) -> None:

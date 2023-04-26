@@ -21,8 +21,10 @@ class ParameterApplication(InjectorMixin):
 
     async def put(self, command: PutParameterCommand) -> ParameterEntity:
         parameter = await self.parameter_repository.get(command.parameter_id)
-        new_parameter = await self.parameter_repository.update(parameter=parameter, new_value=command.value)
-        return new_parameter
+        parameter.change_value(command.value)
+
+        await self.parameter_repository.update(parameter=parameter)
+        return parameter
 
     async def delete(self, public_id: UUID) -> None:
         parameter = await self.parameter_repository.get(public_id)
