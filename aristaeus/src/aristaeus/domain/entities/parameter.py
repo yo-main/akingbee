@@ -20,12 +20,15 @@ ParameterType = TypeVar(
 )
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class ParameterEntity(Entity):
     key: str
     value: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
+
+    def change_value(self, new_value):
+        self.value = new_value
 
     @staticmethod
     def of(entity: ParameterType, organization_id: UUID) -> "ParameterEntity":

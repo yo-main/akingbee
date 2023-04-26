@@ -17,7 +17,7 @@ class ParameterRepositoryAdapter(Base):
     async def get(self, public_id: UUID) -> ParameterEntity:
         ...
 
-    async def update(self, parameter: ParameterEntity, new_value: str) -> ParameterEntity:
+    async def update(self, parameter: ParameterEntity) -> None:
         ...
 
     async def delete(self, parameter: ParameterEntity) -> None:
