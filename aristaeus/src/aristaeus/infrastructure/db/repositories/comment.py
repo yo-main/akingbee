@@ -8,6 +8,7 @@ from sqlalchemy import update
 
 from aristaeus.domain.adapters.repositories.comment import CommentRepositoryAdapter
 from aristaeus.domain.entities.comment import CommentEntity
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.comment import CommentModel
 from aristaeus.infrastructure.db.models.event import EventModel
@@ -15,6 +16,35 @@ from aristaeus.infrastructure.db.models.hive import HiveModel
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
+
+
+@Injector.bind(CommentRepositoryAdapter, "test")
+class FakeCommentRepository:
+    _comments: set[CommentEntity] = set()
+
+    @error_handler
+    async def get(self, public_id: UUID) -> CommentEntity:
+        try:
+            return next(comment for comment in self._comments if comment.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("Comment not found")
+
+    @error_handler
+    async def save(self, comment: CommentEntity) -> None:
+        self._comments.add(comment)
+
+    @error_handler
+    async def update(self, comment: CommentEntity) -> None:
+        self._comments.discard(comment)
+        self._comments.add(comment)
+
+    @error_handler
+    async def list(self, hive_id: UUID) -> list[CommentEntity]:
+        return [comment for comment in self._comments if comment.hive_id == hive_id]
+
+    @error_handler
+    async def delete(self, comment: CommentEntity) -> None:
+        self._comments.discard(comment)
 
 
 @Injector.bind(CommentRepositoryAdapter)

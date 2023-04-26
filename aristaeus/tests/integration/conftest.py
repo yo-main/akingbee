@@ -8,6 +8,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from aristaeus.config import settings
+from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 
 settings.setenv("test")
 

@@ -9,35 +9,33 @@ from sqlalchemy.orm import joinedload
 
 from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.apiary import ApiaryModel
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
 
-@Injector.bind(ApiaryRepositoryAdapter, "todotest")
-class FakeApiaryRespository:
+@Injector.bind(ApiaryRepositoryAdapter, "test")
+class FakeApiaryRepository:
     _apiaries: set[ApiaryEntity] = set()
 
-    @error_handler
     async def get(self, public_id: UUID) -> ApiaryEntity:
-        return next(apiary for apiary in self._apiaries if apiary.public_id == public_id)
+        try:
+            return next(apiary for apiary in self._apiaries if apiary.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("Apiary not found")
 
-    @error_handler
     async def save(self, apiary: ApiaryEntity) -> None:
         self._apiaries.add(apiary)
 
-    @error_handler
     async def update(self, apiary: ApiaryEntity) -> None:
-        existing = self.get(apiary)
-        for field, value in apiary.asdict():
-            setattr(existing, field, value)
+        self._apiaries.discard(apiary)
+        self._apiaries.add(apiary)
 
-    @error_handler
     async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
         return [apiary for apiary in self._apiaries if apiary.organization_id == organization_id]
 
-    @error_handler
     async def delete(self, apiary: ApiaryEntity) -> None:
         self._apiaries.discard(apiary)
 

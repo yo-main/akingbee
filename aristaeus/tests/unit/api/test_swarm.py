@@ -1,7 +1,9 @@
 import uuid
 
 import pytest
-from tests.factories import SwarmModelFactory
+from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
+from aristaeus.injector import Injector
+from tests.factories import SwarmEntityFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -49,11 +51,9 @@ async def test_get_swarm__get(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_put_swarm(async_app, session):
-    swarm = SwarmModelFactory()
-    session.add(swarm)
-    await session.commit()
-    await session.refresh(swarm)
+async def test_put_swarm(async_app):
+    swarm = SwarmEntityFactory()
+    await Injector.get(SwarmRepositoryAdapter).save(swarm)
 
     data = {"health": "COUCOU"}
 
@@ -63,11 +63,9 @@ async def test_put_swarm(async_app, session):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_delete_swarm(async_app, session):
-    swarm = SwarmModelFactory()
-    session.add(swarm)
-    await session.commit()
-    await session.refresh(swarm)
+async def test_delete_swarm(async_app):
+    swarm = SwarmEntityFactory()
+    await Injector.get(SwarmRepositoryAdapter).save(swarm)
 
     response = await async_app.get(f"/swarm/{swarm.public_id}")
     assert response.status_code == 200, response.text

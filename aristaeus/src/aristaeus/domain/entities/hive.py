@@ -45,3 +45,6 @@ class HiveEntity(Entity):
         if not isinstance(other, HiveEntity):
             raise ValueError(f"{other} is not a HiveEntity")
         return self.public_id == other.public_id
+
+    def __hash__(self) -> int:
+        return hash(self.public_id)

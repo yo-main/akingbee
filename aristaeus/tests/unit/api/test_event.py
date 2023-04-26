@@ -3,23 +3,26 @@ from datetime import datetime
 from datetime import timezone
 
 import pytest
-from tests.factories import EventModelFactory
-from tests.factories import HiveModelFactory
+from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
+from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
+from aristaeus.injector import Injector
+from tests.factories import EventEntityFactory
+from tests.factories import HiveEntityFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_create_event(async_app, session):
-    public_id = str(uuid.uuid4())
-    hive = HiveModelFactory.build(public_id=public_id)
-    session.add(hive)
-    await session.commit()
+async def test_create_event(async_app):
+    public_id = uuid.uuid4()
+    hive = HiveEntityFactory.build(public_id=public_id)
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+
     data = {
         "title": "title",
         "description": "description",
         "due_date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
         "status": "status",
         "type": "type",
-        "hive_id": public_id,
+        "hive_id": str(public_id),
     }
     response = await async_app.post("/event", json=data)
     assert response.status_code == 200, response.text
@@ -30,7 +33,7 @@ async def test_create_event(async_app, session):
     assert data["due_date"] == "2022-01-01T00:00:00", data
     assert data["status"] == "status", data
     assert data["type"] == "type", data
-    assert data["hive_id"] == public_id, data
+    assert data["hive_id"] == str(public_id), data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -69,19 +72,18 @@ async def test_get_event__unknown(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_get_event(async_app, session):
-    public_id = str(uuid.uuid4())
-    hive = HiveModelFactory.build(public_id=public_id)
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
+async def test_get_event(async_app):
+    public_id = uuid.uuid4()
+    hive = HiveEntityFactory.build(public_id=public_id)
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+
     data = {
         "title": "title",
         "description": "description",
         "due_date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
         "status": "status",
         "type": "type",
-        "hive_id": public_id,
+        "hive_id": str(public_id),
     }
     response = await async_app.post("/event", json=data)
     assert response.status_code == 200, response.text
@@ -92,15 +94,13 @@ async def test_get_event(async_app, session):
 
 
 @pytest.mark.parametrize("async_app", ["33333333-3333-3333-3333-333333333333"], indirect=True)
-async def test_list_events(async_app, session):
-    hive_public_id = str(uuid.uuid4())
-    hive = HiveModelFactory.build(organization_id="33333333-3333-3333-3333-333333333333", public_id=hive_public_id)
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
-    events = EventModelFactory.create_batch(5, hive_id=hive.id)
-    session.add_all(events)
-    await session.commit()
+async def test_list_events(async_app):
+    hive_public_id = uuid.uuid4()
+    hive = HiveEntityFactory.build(organization_id=uuid.UUID("33333333-3333-3333-3333-333333333333"), public_id=hive_public_id)
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+
+    for event in EventEntityFactory.create_batch(5, hive_id=hive.public_id):
+        await Injector.get(EventRepositoryAdapter).save(event)
 
     response = await async_app.get("/event", params={"hive_id": hive_public_id})
 
@@ -118,15 +118,11 @@ async def test_list_events(async_app, session):
         {"due_date": "2022-02-01T00:00:00"},
     ),
 )
-async def test_put_event__success(async_app, session, payload):
-    hive = HiveModelFactory.build(organization_id="11111111-1111-1111-1111-111111111111")
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
-    event = EventModelFactory.create(hive_id=hive.id)
-    session.add(event)
-    await session.commit()
-    await session.refresh(event)
+async def test_put_event__success(async_app, payload):
+    hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+    event = EventEntityFactory.create(hive_id=hive.public_id)
+    await Injector.get(EventRepositoryAdapter).save(event)
 
     response = await async_app.put(f"/event/{event.public_id}", json=payload)
     assert response.status_code == 200, response.text
@@ -137,15 +133,11 @@ async def test_put_event__success(async_app, session, payload):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_delete_hive__success(async_app, session):
-    hive = HiveModelFactory.build(organization_id="11111111-1111-1111-1111-111111111111")
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
-    event = EventModelFactory.create(hive_id=hive.id)
-    session.add(event)
-    await session.commit()
-    await session.refresh(event)
+async def test_delete_hive__success(async_app):
+    hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+    event = EventEntityFactory.create(hive_id=hive.public_id)
+    await Injector.get(EventRepositoryAdapter).save(event)
 
     response = await async_app.delete(f"/event/{event.public_id}")
     assert response.status_code == 204, response.text

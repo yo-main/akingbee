@@ -36,3 +36,6 @@ class EventEntity(Entity):
         if not isinstance(other, EventEntity):
             raise ValueError(f"{other} is not a EventEntity")
         return self.public_id == other.public_id
+
+    def __hash__(self) -> int:
+        return hash(self.public_id)

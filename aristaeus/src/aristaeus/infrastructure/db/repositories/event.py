@@ -8,12 +8,37 @@ from sqlalchemy import update
 
 from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.entities.event import EventEntity
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.event import EventModel
 from aristaeus.infrastructure.db.models.hive import HiveModel
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
+
+
+@Injector.bind(EventRepositoryAdapter, "test")
+class FakeEventRepository:
+    _events: set[EventEntity] = set()
+
+    async def get(self, public_id: UUID) -> EventEntity:
+        try:
+            return next(event for event in self._events if event.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("Event not found")
+
+    async def save(self, event: EventEntity) -> None:
+        self._events.add(event)
+
+    async def update(self, event: EventEntity) -> None:
+        self._events.discard(event)
+        self._events.add(event)
+
+    async def list(self, hive_id: UUID) -> list[EventEntity]:
+        return [event for event in self._events if event.hive_id == hive_id]
+
+    async def delete(self, event: EventEntity) -> None:
+        self._events.discard(event)
 
 
 @Injector.bind(EventRepositoryAdapter)

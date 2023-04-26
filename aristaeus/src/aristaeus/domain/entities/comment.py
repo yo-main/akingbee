@@ -14,7 +14,7 @@ class CommentEntity(Entity):
     body: str
 
     hive_id: UUID
-    event_id: UUID | None
+    event_id: UUID | None = None
     public_id: UUID = field(default_factory=uuid.uuid4)
 
     def change_date(self, new_date: datetime):
@@ -30,3 +30,6 @@ class CommentEntity(Entity):
         if not isinstance(other, CommentEntity):
             raise ValueError(f"{other} is not a CommentEntity")
         return self.public_id == other.public_id
+
+    def __hash__(self) -> int:
+        return hash(self.public_id)

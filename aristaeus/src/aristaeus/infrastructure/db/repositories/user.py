@@ -2,15 +2,29 @@ from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 from aristaeus.domain.entities.user import UserEntity
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.user import UserModel
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
+
+
+@Injector.bind(UserRepositoryAdapter, "test")
+class FakeUserRepository:
+    _users: set[UserEntity] = set()
+
+    async def get(self, public_id: UUID) -> UserEntity:
+        try:
+            return next(user for user in self._users if user.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("User not found")
+
+    async def save(self, user: UserEntity) -> None:
+        self._users.add(user)
 
 
 @Injector.bind(UserRepositoryAdapter)
