@@ -32,13 +32,10 @@ class SwarmRespository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, swarm: SwarmEntity, fields: list[str]) -> SwarmEntity:
-
-        values: dict[Any, Any] = {field: getattr(swarm, field) for field in fields}
-
-        query = update(SwarmModel).values(values).where(SwarmModel.public_id == swarm.public_id)
+    async def update(self, swarm: SwarmEntity) -> None:
+        data: dict[Any, Any] = {"queen_year": swarm.queen_year, "health": swarm.health}
+        query = update(SwarmModel).values(data).where(SwarmModel.public_id == swarm.public_id)
         await self.database.execute(query)
-        return await self.get(swarm.public_id)
 
     @error_handler
     async def delete(self, swarm: SwarmEntity) -> None:

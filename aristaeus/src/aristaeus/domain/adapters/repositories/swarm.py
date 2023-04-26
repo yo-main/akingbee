@@ -20,7 +20,7 @@ class SwarmRepositoryAdapter(Base):
     async def get(self, public_id: UUID) -> SwarmEntity:
         ...
 
-    async def update(self, swarm: SwarmEntity, fields: list[str]) -> SwarmEntity:
+    async def update(self, swarm: SwarmEntity) -> None:
         ...
 
     async def delete(self, swarm: SwarmEntity) -> None:
