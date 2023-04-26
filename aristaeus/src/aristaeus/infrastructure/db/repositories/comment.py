@@ -1,5 +1,4 @@
-import asyncio
-import functools
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import delete
@@ -44,14 +43,10 @@ class CommentRepository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, comment: CommentEntity, fields: list[str]) -> CommentEntity:
-        query = (
-            update(CommentModel)
-            .values({field: getattr(comment, field) for field in fields})
-            .where(CommentModel.public_id == comment.public_id)
-        )
+    async def update(self, comment: CommentEntity) -> None:
+        data: dict[Any, Any] = {"date": comment.date, "body": comment.body}
+        query = update(CommentModel).values(data).where(CommentModel.public_id == comment.public_id)
         await self.database.execute(query)
-        return await self.get(comment.public_id)
 
     @error_handler
     async def delete(self, comment: CommentEntity) -> None:

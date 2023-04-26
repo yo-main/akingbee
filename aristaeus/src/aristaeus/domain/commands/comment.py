@@ -16,5 +16,4 @@ class CreateCommentCommand:
 class PutCommentCommand:
     comment_id: UUID
     date: datetime | None
-    type: str | None
     body: str | None

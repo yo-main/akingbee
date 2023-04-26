@@ -2,8 +2,6 @@ from typing import TYPE_CHECKING
 from typing import Protocol
 from uuid import UUID
 
-from sqlalchemy import select
-
 from aristaeus.domain.entities.comment import CommentEntity
 
 __all__ = ["CommentRepositoryAdapter"]
@@ -22,7 +20,7 @@ class CommentRepositoryAdapter(Base):
     async def get(self, public_id: UUID) -> CommentEntity:
         ...
 
-    async def update(self, comment: CommentEntity, fields: list[str]) -> CommentEntity:
+    async def update(self, comment: CommentEntity) -> None:
         ...
 
     async def delete(self, comment: CommentEntity) -> None:

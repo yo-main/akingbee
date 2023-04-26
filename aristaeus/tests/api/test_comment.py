@@ -97,7 +97,6 @@ async def test_list_comments(async_app, session):
     (
         {"body": "new body"},
         {"date": "2022-02-01T00:00:00"},
-        {"type": "new type"},
     ),
 )
 async def test_put_comment__success(async_app, session, payload):

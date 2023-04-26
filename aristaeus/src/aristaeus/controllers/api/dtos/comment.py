@@ -17,10 +17,7 @@ class PostCommentIn(BaseModel):
 
 class PutCommentIn(BaseModel):
     date: datetime | None
-    type: str | None
     body: str | None
-    hive_id: UUID | None
-    event_id: UUID | None
 
     @validator("date")
     def make_due_date_naive(cls, value: datetime):
