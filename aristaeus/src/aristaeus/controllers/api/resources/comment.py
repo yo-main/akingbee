@@ -46,7 +46,7 @@ async def list_comment(hive_id: UUID, user: UserEntity = Depends(auth_user)):
 
 @router.put("/{comment_id}", response_model=CommentOut)
 async def put_comment(comment_id: UUID, input: PutCommentIn, user: UserEntity = Depends(auth_user)):
-    command = PutCommentCommand(comment_id=comment_id, date=input.date, type=input.type, body=input.body)
+    command = PutCommentCommand(comment_id=comment_id, date=input.date, body=input.body)
     comment_application = CommentApplication()
     comment_entity = await comment_application.put(command=command)
     return comment_entity.asdict()
