@@ -24,15 +24,18 @@ class EventApplication(InjectorMixin):
 
     async def put(self, command: PutEventCommand) -> EventEntity:
         event = await self.event_repository.get(command.event_id)
-        new_event, updated_fields = event.update(
-            due_date=command.due_date,
-            status=command.status,
-            title=command.title,
-            description=command.description,
-        )
 
-        await self.event_repository.update(event=new_event, fields=updated_fields)
-        return new_event
+        if title := command.title:
+            event.change_title(title)
+        if due_date := command.due_date:
+            event.change_due_date(due_date)
+        if description := command.description:
+            event.change_description(description)
+        if status := command.status:
+            event.new_status(status)
+
+        await self.event_repository.update(event=event)
+        return event
 
     async def delete(self, event_id: UUID) -> None:
         event = await self.event_repository.get(event_id)

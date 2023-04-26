@@ -17,7 +17,7 @@ class EventRepositoryAdapter(Base):
     async def get(self, public_id: UUID) -> EventEntity:
         ...
 
-    async def update(self, event: EventEntity, fields: list[str]) -> EventEntity:
+    async def update(self, event: EventEntity) -> None:
         ...
 
     async def delete(self, event: EventEntity) -> None:

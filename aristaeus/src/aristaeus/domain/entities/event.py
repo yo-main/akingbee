@@ -1,15 +1,13 @@
 import uuid
 from dataclasses import dataclass
 from dataclasses import field
-from dataclasses import fields
-from dataclasses import replace
 from datetime import datetime
 from uuid import UUID
 
 from .base import Entity
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class EventEntity(Entity):
     hive_id: UUID
     title: str
@@ -19,14 +17,22 @@ class EventEntity(Entity):
     status: str
     public_id: UUID = field(default_factory=uuid.uuid4)
 
-    def update(
-        self, public_id: str = None, hive_id: str = None, event_id: str = None, **kwargs
-    ) -> tuple["EventEntity", list[str]]:
-        data = {k: v for k, v in kwargs.items() if v is not None}
-        new_event = replace(self, **data)
+    def change_title(self, new_title: str):
+        self.title = new_title
 
-        updated_fields = [
-            field.name for field in fields(new_event) if getattr(self, field.name) != getattr(new_event, field.name)
-        ]
+    def change_description(self, new_description: str):
+        self.description = new_description
 
-        return new_event, updated_fields
+    def change_due_date(self, new_date: datetime):
+        self.due_date = new_date
+
+    def new_status(self, new_status: str):
+        self.status = new_status
+
+    def __repr__(self):
+        return f"<Event {self.public_id}>"
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, EventEntity):
+            raise ValueError(f"{other} is not a EventEntity")
+        return self.public_id == other.public_id

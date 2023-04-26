@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import delete
@@ -37,14 +38,15 @@ class EventRepository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, event: EventEntity, fields: list[str]) -> EventEntity:
-        query = (
-            update(EventModel)
-            .values({field: getattr(event, field) for field in fields})
-            .where(EventModel.public_id == event.public_id)
-        )
+    async def update(self, event: EventEntity) -> None:
+        data: dict[Any, Any] = {
+            "title": event.title,
+            "description": event.description,
+            "status": event.status,
+            "due_date": event.due_date,
+        }
+        query = update(EventModel).values(data).where(EventModel.public_id == event.public_id)
         await self.database.execute(query)
-        return await self.get(event.public_id)
 
     @error_handler
     async def delete(self, event: EventEntity) -> None:
