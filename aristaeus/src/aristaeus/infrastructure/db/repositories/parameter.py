@@ -8,11 +8,45 @@ from sqlalchemy.dialects.postgresql import insert
 
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.entities.parameter import ParameterEntity
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.parameter import ParameterModel
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
+
+
+@Injector.bind(ParameterRepositoryAdapter, "test")
+class FakeParameterRepository:
+    _parameters: set[ParameterEntity] = set()
+
+    @error_handler
+    async def get(self, public_id: UUID) -> ParameterEntity:
+        try:
+            return next(parameter for parameter in self._parameters if parameter.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("Parameter not found")
+
+    @error_handler
+    async def save(self, parameter: ParameterEntity) -> None:
+        self._parameters.add(parameter)
+
+    @error_handler
+    async def update(self, parameter: ParameterEntity) -> None:
+        self._parameters.discard(parameter)
+        self._parameters.add(parameter)
+
+    @error_handler
+    async def list(self, organization_id: UUID, key: str | None = None) -> list[ParameterEntity]:
+        return [
+            parameter
+            for parameter in self._parameters
+            if parameter.organization_id == organization_id and (parameter.key == key if key else True)
+        ]
+
+    @error_handler
+    async def delete(self, parameter: ParameterEntity) -> None:
+        self._parameters.discard(parameter)
 
 
 @Injector.bind(ParameterRepositoryAdapter)

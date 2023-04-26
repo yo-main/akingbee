@@ -10,8 +10,11 @@ rbmq:
 init:
 	poetry install
 
-test: init
-	poetry run pytest
+test-unit: init
+	poetry run pytest tests/unit
+
+test-integration: init
+	poetry run pytest tests/integration
 
 migrate: db
 	poetry run alembic upgrade head

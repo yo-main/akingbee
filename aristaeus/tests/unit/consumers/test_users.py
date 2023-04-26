@@ -2,12 +2,11 @@ import asyncio
 import json
 import uuid
 
-from sqlalchemy import select
-
 from aristaeus.controllers.consumers.app import handler
 from aristaeus.dispatcher import Dispatcher
-from aristaeus.infrastructure.db.models.parameter import ParameterModel
-from aristaeus.infrastructure.db.models.user import UserModel
+from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
+from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
+from aristaeus.injector import Injector
 
 
 class FakeDeliver:
@@ -15,7 +14,7 @@ class FakeDeliver:
         self.routing_key = routing_key
 
 
-async def test_user_created(session):
+async def test_user_created():
     Dispatcher.init()
 
     user_id = str(uuid.uuid4())
@@ -32,10 +31,9 @@ async def test_user_created(session):
     handler(FakeDeliver("user.created"), None, payload.encode())
 
     await asyncio.sleep(0.3)
-    result = await session.execute(select(UserModel).where(UserModel.public_id == user_id))
-    user = result.scalar()
+
+    user = await Injector.get(UserRepositoryAdapter).get(user_id)
     assert user and str(user.public_id) == user_id
 
-    result = await session.execute(select(ParameterModel).where(ParameterModel.organization_id == user.organization_id))
-    parameters = result.scalars().all()
+    parameters = await Injector.get(ParameterRepositoryAdapter).list(organization_id=user.organization_id)
     assert len(parameters) == 17

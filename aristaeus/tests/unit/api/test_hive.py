@@ -1,9 +1,13 @@
 import uuid
 
 import pytest
-from tests.factories import ApiaryModelFactory
-from tests.factories import HiveModelFactory
-from tests.factories import SwarmModelFactory
+from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
+from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
+from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
+from aristaeus.injector import Injector
+from tests.factories import ApiaryEntityFactory
+from tests.factories import HiveEntityFactory
+from tests.factories import SwarmEntityFactory
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -21,11 +25,9 @@ async def test_create_hive__no_apiary(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_create_hive__with_apiary(async_app, session):
-    apiary = ApiaryModelFactory.create()
-    session.add(apiary)
-    await session.commit()
-    await session.refresh(apiary)
+async def test_create_hive__with_apiary(async_app):
+    apiary = ApiaryEntityFactory.create()
+    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
 
     data = {
         "name": "a name",
@@ -69,11 +71,9 @@ async def test_get_hive__unknown(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_get_hive__with_apiary(async_app, session):
-    apiary = ApiaryModelFactory.create()
-    session.add(apiary)
-    await session.commit()
-    await session.refresh(apiary)
+async def test_get_hive__with_apiary(async_app):
+    apiary = ApiaryEntityFactory.create()
+    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
 
     data = {
         "name": "a name",
@@ -101,17 +101,18 @@ async def test_get_hive__no_apiary(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
-async def test_list_hives(async_app, session):
-    apiary = ApiaryModelFactory.build(organization_id="22222222-2222-2222-2222-222222222222", name="apiary_name")
-    swarms = SwarmModelFactory.create_batch(5, queen_year=2000)
+async def test_list_hives(async_app):
+    apiary = ApiaryEntityFactory.build(organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222"), name="apiary_name")
+    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
+    swarms = SwarmEntityFactory.create_batch(5, queen_year=2000)
     hives = [
-        HiveModelFactory.create(organization_id="22222222-2222-2222-2222-222222222222", apiary=apiary, swarm=swarm)
+        HiveEntityFactory.create(organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222"), apiary=apiary, swarm=swarm)
         for swarm in swarms
     ]
-    session.add(apiary)
-    session.add_all(swarms)
-    session.add_all(hives)
-    await session.commit()
+    for swarm in swarms:
+        await Injector.get(SwarmRepositoryAdapter).save(swarm)
+    for hive in hives:
+        await Injector.get(HiveRepositoryAdapter).save(hive)
 
     response = await async_app.get("/hive")
 
@@ -131,14 +132,11 @@ async def test_list_hives(async_app, session):
         {"owner": "owner"},
     ),
 )
-async def test_put_hive__success(async_app, session, payload):
-    apiary = ApiaryModelFactory.create()
-    hive = HiveModelFactory.create()
-    session.add(apiary)
-    session.add(hive)
-    await session.commit()
-    await session.refresh(apiary)
-    await session.refresh(hive)
+async def test_put_hive__success(async_app, payload):
+    apiary = ApiaryEntityFactory.create()
+    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
+    hive = HiveEntityFactory.create()
+    await Injector.get(HiveRepositoryAdapter).save(hive)
 
     data = {
         "name": "a name",
@@ -156,11 +154,9 @@ async def test_put_hive__success(async_app, session, payload):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_delete_hive__success(async_app, session):
-    hive = HiveModelFactory.create()
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
+async def test_delete_hive__success(async_app):
+    hive = HiveEntityFactory.create()
+    await Injector.get(HiveRepositoryAdapter).save(hive)
 
     response = await async_app.delete(f"/hive/{hive.public_id}")
     assert response.status_code == 204, response.text
@@ -170,14 +166,11 @@ async def test_delete_hive__success(async_app, session):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_move_hive(async_app, session):
-    apiary = ApiaryModelFactory.create(organization_id="11111111-1111-1111-1111-111111111111")
-    hive = HiveModelFactory.create(organization_id="11111111-1111-1111-1111-111111111111")
-    session.add(apiary)
-    session.add(hive)
-    await session.commit()
-    await session.refresh(apiary)
-    await session.refresh(hive)
+async def test_move_hive(async_app):
+    apiary = ApiaryEntityFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
+    hive = HiveEntityFactory.create(organization_id=apiary.organization_id)
+    await Injector.get(HiveRepositoryAdapter).save(hive)
 
     response = await async_app.put(f"/hive/{hive.public_id}/move/{apiary.public_id}")
     assert response.status_code == 200, response.text

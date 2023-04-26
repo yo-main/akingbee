@@ -9,12 +9,37 @@ from sqlalchemy.orm import joinedload
 
 from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.models.apiary import ApiaryModel
 from aristaeus.infrastructure.db.models.hive import HiveModel
 from aristaeus.infrastructure.db.models.swarm import SwarmModel
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
+
+
+@Injector.bind(HiveRepositoryAdapter, "test")
+class FakeHiveRepository:
+    _hives: set[HiveEntity] = set()
+
+    async def get(self, public_id: UUID) -> HiveEntity:
+        try:
+            return next(hive for hive in self._hives if hive.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("Hive not found")
+
+    async def save(self, hive: HiveEntity) -> None:
+        self._hives.add(hive)
+
+    async def update(self, hive: HiveEntity) -> None:
+        self._hives.discard(hive)
+        self._hives.add(hive)
+
+    async def list(self, organization_id: UUID) -> list[HiveEntity]:
+        return [hive for hive in self._hives if hive.organization_id == organization_id]
+
+    async def delete(self, hive: HiveEntity) -> None:
+        self._hives.discard(hive)
 
 
 @Injector.bind(HiveRepositoryAdapter)

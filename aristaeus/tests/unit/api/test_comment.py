@@ -3,16 +3,19 @@ from datetime import datetime
 from datetime import timezone
 
 import pytest
-from tests.factories import CommentModelFactory
-from tests.factories import HiveModelFactory
+from tests.factories import CommentEntityFactory
+from tests.factories import HiveEntityFactory
+
+from aristaeus.domain.adapters.repositories.comment import CommentRepositoryAdapter
+from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
+from aristaeus.injector import Injector
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_create_comment(async_app, session):
-    hive = HiveModelFactory.build()
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
+async def test_create_comment(async_app):
+    hive = HiveEntityFactory.build()
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+
     data = {
         "body": "body",
         "date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
@@ -55,11 +58,9 @@ async def test_get_comment__unknown(async_app):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_get_comment(async_app, session):
-    hive = HiveModelFactory.build()
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
+async def test_get_comment(async_app):
+    hive = HiveEntityFactory.build()
+    await Injector.get(HiveRepositoryAdapter).save(hive)
 
     data = {
         "body": "description",
@@ -74,16 +75,15 @@ async def test_get_comment(async_app, session):
 
 
 @pytest.mark.parametrize("async_app", ["33333333-3333-3333-3333-333333333333"], indirect=True)
-async def test_list_comments(async_app, session):
-    hive = HiveModelFactory.build(
-        organization_id="33333333-3333-3333-3333-333333333333", public_id="44444444-4444-4444-4444-444444444444"
+async def test_list_comments(async_app):
+    hive = HiveEntityFactory.build(
+        organization_id=uuid.UUID("33333333-3333-3333-3333-333333333333"),
+        public_id=uuid.UUID("44444444-4444-4444-4444-444444444444"),
     )
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
-    comments = CommentModelFactory.create_batch(5, hive_id=hive.id)
-    session.add_all(comments)
-    await session.commit()
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+
+    for comment in CommentEntityFactory.create_batch(5, hive_id=hive.public_id):
+        await Injector.get(CommentRepositoryAdapter).save(comment)
 
     response = await async_app.get("/comment", params={"hive_id": "44444444-4444-4444-4444-444444444444"})
 
@@ -99,15 +99,11 @@ async def test_list_comments(async_app, session):
         {"date": "2022-02-01T00:00:00"},
     ),
 )
-async def test_put_comment__success(async_app, session, payload):
-    hive = HiveModelFactory.build(organization_id="11111111-1111-1111-1111-111111111111")
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
-    comment = CommentModelFactory.create(hive_id=hive.id)
-    session.add(comment)
-    await session.commit()
-    await session.refresh(comment)
+async def test_put_comment__success(async_app, payload):
+    hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+    comment = CommentEntityFactory.create(hive_id=hive.public_id)
+    await Injector.get(CommentRepositoryAdapter).save(comment)
 
     data = {"body": "body", "date": "2022-01-01T00:00:00", "type": "type"}
 
@@ -120,15 +116,11 @@ async def test_put_comment__success(async_app, session, payload):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
-async def test_delete_hive__success(async_app, session):
-    hive = HiveModelFactory.build(organization_id="11111111-1111-1111-1111-111111111111")
-    session.add(hive)
-    await session.commit()
-    await session.refresh(hive)
-    comment = CommentModelFactory.create(hive_id=hive.id)
-    session.add(comment)
-    await session.commit()
-    await session.refresh(comment)
+async def test_delete_hive__success(async_app):
+    hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    await Injector.get(HiveRepositoryAdapter).save(hive)
+    comment = CommentEntityFactory.create(hive_id=hive.public_id)
+    await Injector.get(CommentRepositoryAdapter).save(comment)
 
     response = await async_app.delete(f"/comment/{comment.public_id}")
     assert response.status_code == 204, response.text
