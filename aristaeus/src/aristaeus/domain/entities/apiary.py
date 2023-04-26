@@ -25,7 +25,7 @@ class ApiaryEntity(Entity):
         self.name = new_name
 
     def __repr__(self):
-        return f"<Hive {self.public_id}>"
+        return f"<Apiary {self.public_id}>"
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, ApiaryEntity):
