@@ -9,9 +9,9 @@ from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
-from aristaeus.domain.entities.comment import CommentEntity
-from aristaeus.domain.entities.hive import HiveEntity
-from aristaeus.domain.entities.event import EventEntity
+from aristaeus.domain.entities.comment import Comment
+from aristaeus.domain.entities.hive import Hive
+from aristaeus.domain.entities.event import Event
 
 from .base import mapper_registry
 
@@ -29,7 +29,11 @@ comment_table = Table(
     Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
 )
 
-mapper_registry.map_imperatively(CommentEntity, comment_table, properties={
-    "hive": relationship(HiveEntity, lazy="joined"),
-    "event": relationship(EventEntity, lazy="joined"),
-})
+mapper_registry.map_imperatively(
+    Comment,
+    comment_table,
+    properties={
+        "hive": relationship(Hive, lazy="joined"),
+        "event": relationship(Event, lazy="joined"),
+    },
+)

@@ -5,7 +5,7 @@ from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.commands.comment import CreateCommentCommand
 from aristaeus.domain.commands.comment import PutCommentCommand
-from aristaeus.domain.entities.comment import CommentEntity
+from aristaeus.domain.entities.comment import Comment
 from aristaeus.injector import InjectorMixin
 
 
@@ -14,13 +14,13 @@ class CommentApplication(InjectorMixin):
     hive_repository: HiveRepositoryAdapter
     event_repository: EventRepositoryAdapter
 
-    async def create(self, command: CreateCommentCommand) -> CommentEntity:
+    async def create(self, command: CreateCommentCommand) -> Comment:
         event = None
         hive = await self.hive_repository.get(command.hive_id)
         if event_id := command.event_id:
             event = await self.event_repository.get(event_id)
 
-        comment = CommentEntity(
+        comment = Comment(
             body=command.body,
             type=command.type,
             date=command.date,
@@ -30,7 +30,7 @@ class CommentApplication(InjectorMixin):
         await self.comment_repository.save(comment)
         return comment
 
-    async def put(self, command: PutCommentCommand) -> CommentEntity:
+    async def put(self, command: PutCommentCommand) -> Comment:
         comment = await self.comment_repository.get(command.comment_id)
 
         if date := command.date:

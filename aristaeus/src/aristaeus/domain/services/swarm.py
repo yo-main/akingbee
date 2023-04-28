@@ -4,7 +4,7 @@ from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
 from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.commands.swarm import PutSwarmCommand
-from aristaeus.domain.entities.swarm import SwarmEntity
+from aristaeus.domain.entities.swarm import Swarm
 from aristaeus.injector import InjectorMixin
 
 
@@ -12,12 +12,12 @@ class SwarmApplication(InjectorMixin):
     hive_repository: HiveRepositoryAdapter
     swarm_repository: SwarmRepositoryAdapter
 
-    async def create_swarm(self, command: CreateSwarmCommand) -> SwarmEntity:
-        swarm = SwarmEntity(queen_year=command.queen_year, health=command.health_status)
+    async def create_swarm(self, command: CreateSwarmCommand) -> Swarm:
+        swarm = Swarm(queen_year=command.queen_year, health=command.health_status)
         await self.swarm_repository.save(swarm)
         return swarm
 
-    async def put(self, command: PutSwarmCommand) -> SwarmEntity:
+    async def put(self, command: PutSwarmCommand) -> Swarm:
         swarm = await self.swarm_repository.get(command.swarm_id)
 
         if health := command.health_status:

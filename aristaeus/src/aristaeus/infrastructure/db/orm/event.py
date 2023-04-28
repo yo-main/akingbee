@@ -9,9 +9,9 @@ from sqlalchemy import Text
 from sqlalchemy import Uuid
 from sqlalchemy.orm import relationship
 
-from aristaeus.domain.entities.comment import CommentEntity
-from aristaeus.domain.entities.event import EventEntity
-from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.comment import Comment
+from aristaeus.domain.entities.event import Event
+from aristaeus.domain.entities.hive import Hive
 
 from .base import mapper_registry
 
@@ -31,10 +31,10 @@ event_table = Table(
 )
 
 mapper_registry.map_imperatively(
-    EventEntity,
+    Event,
     event_table,
     properties={
-        "hive": relationship(HiveEntity, lazy="joined"),
-        "comment": relationship(CommentEntity, lazy="joined"),
+        "hive": relationship(Hive, lazy="joined"),
+        "comment": relationship(Comment, lazy="joined"),
     },
 )

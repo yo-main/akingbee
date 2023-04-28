@@ -2,7 +2,7 @@ from uuid import UUID
 
 from aristaeus.domain.commands.apiary import CreateApiaryCommand
 from aristaeus.domain.commands.apiary import PutApiaryCommand
-from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.apiary import Apiary
 from aristaeus.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.injector import InjectorMixin
 
@@ -10,8 +10,8 @@ from aristaeus.injector import InjectorMixin
 class ApiaryApplication(InjectorMixin):
     apiary_repository: ApiaryRepositoryAdapter
 
-    async def create(self, command: CreateApiaryCommand) -> ApiaryEntity:
-        apiary = ApiaryEntity(
+    async def create(self, command: CreateApiaryCommand) -> Apiary:
+        apiary = Apiary(
             name=command.name,
             location=command.location,
             honey_kind=command.honey_kind,
@@ -20,7 +20,7 @@ class ApiaryApplication(InjectorMixin):
         await self.apiary_repository.save(apiary)
         return apiary
 
-    async def put(self, command: PutApiaryCommand) -> ApiaryEntity:
+    async def put(self, command: PutApiaryCommand) -> Apiary:
         apiary = await self.apiary_repository.get(command.apiary_id)
 
         if name := command.name:

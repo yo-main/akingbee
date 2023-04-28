@@ -8,7 +8,7 @@ from sqlalchemy import Uuid
 from sqlalchemy import DateTime
 from sqlalchemy import UniqueConstraint
 
-from aristaeus.domain.entities.parameter import ParameterEntity
+from aristaeus.domain.entities.parameter import Parameter
 
 from .base import mapper_registry
 
@@ -25,5 +25,4 @@ parameter_table = Table(
     UniqueConstraint("key", "value", "organization_id"),
 )
 
-mapper_registry.map_imperatively(ParameterEntity, parameter_table)
-
+mapper_registry.map_imperatively(Parameter, parameter_table)

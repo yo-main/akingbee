@@ -7,7 +7,7 @@ from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
 
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
-from aristaeus.domain.entities.parameter import ParameterEntity
+from aristaeus.domain.entities.parameter import Parameter
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
@@ -17,26 +17,26 @@ from aristaeus.injector import Injector
 
 @Injector.bind(ParameterRepositoryAdapter, "test")
 class FakeParameterRepository:
-    _parameters: set[ParameterEntity] = set()
+    _parameters: set[Parameter] = set()
 
     @error_handler
-    async def get(self, public_id: UUID) -> ParameterEntity:
+    async def get(self, public_id: UUID) -> Parameter:
         try:
             return next(parameter for parameter in self._parameters if parameter.public_id == public_id)
         except StopIteration:
             raise EntityNotFound("Parameter not found")
 
     @error_handler
-    async def save(self, parameter: ParameterEntity) -> None:
+    async def save(self, parameter: Parameter) -> None:
         self._parameters.add(parameter)
 
     @error_handler
-    async def update(self, parameter: ParameterEntity) -> None:
+    async def update(self, parameter: Parameter) -> None:
         self._parameters.discard(parameter)
         self._parameters.add(parameter)
 
     @error_handler
-    async def list(self, organization_id: UUID, key: str | None = None) -> list[ParameterEntity]:
+    async def list(self, organization_id: UUID, key: str | None = None) -> list[Parameter]:
         return [
             parameter
             for parameter in self._parameters
@@ -44,7 +44,7 @@ class FakeParameterRepository:
         ]
 
     @error_handler
-    async def delete(self, parameter: ParameterEntity) -> None:
+    async def delete(self, parameter: Parameter) -> None:
         self._parameters.discard(parameter)
 
 
@@ -53,13 +53,13 @@ class ParameterRespository:
     database: AsyncDatabase
 
     @error_handler
-    async def get(self, public_id: UUID) -> ParameterEntity:
-        query = select(ParameterEntity).where(orm.parameter_table.c.public_id == public_id)
+    async def get(self, public_id: UUID) -> Parameter:
+        query = select(Parameter).where(orm.parameter_table.c.public_id == public_id)
         result = await self.database.execute(query)
         return result.scalar_one()
 
     @error_handler
-    async def save(self, parameter: ParameterEntity) -> None:
+    async def save(self, parameter: Parameter) -> None:
         data = {
             "key": parameter.key,
             "value": parameter.value,
@@ -70,19 +70,19 @@ class ParameterRespository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, parameter: ParameterEntity) -> None:
+    async def update(self, parameter: Parameter) -> None:
         data: dict[Any, Any] = {"value": parameter.value}
         query = update(orm.parameter_table).values(data).where(orm.parameter_table.c.public_id == parameter.public_id)
         await self.database.execute(query)
 
     @error_handler
-    async def delete(self, parameter: ParameterEntity) -> None:
+    async def delete(self, parameter: Parameter) -> None:
         query = delete(orm.parameter_table).where(orm.parameter_table.c.public_id == parameter.public_id)
         await self.database.execute(query)
 
     @error_handler
-    async def list(self, organization_id: UUID, key: str | None = None) -> list[ParameterEntity]:
-        query = select(ParameterEntity).where(orm.parameter_table.c.organization_id == organization_id)
+    async def list(self, organization_id: UUID, key: str | None = None) -> list[Parameter]:
+        query = select(Parameter).where(orm.parameter_table.c.organization_id == organization_id)
         if key is not None:
             query = query.where(orm.parameter_table.c.key == key)
         result = await self.database.execute(query)

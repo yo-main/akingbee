@@ -10,7 +10,7 @@ from sqlalchemy import func
 from sqlalchemy import select
 from sqlalchemy.orm import column_property
 
-from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.apiary import Apiary
 
 from .base import mapper_registry
 from .hive import hive_table
@@ -29,7 +29,7 @@ apiary_table = Table(
 )
 
 mapper_registry.map_imperatively(
-    ApiaryEntity,
+    Apiary,
     apiary_table,
     properties={
         "hive_count": column_property(

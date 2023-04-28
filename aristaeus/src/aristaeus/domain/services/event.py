@@ -4,7 +4,7 @@ from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.commands.event import CreateEventCommand
 from aristaeus.domain.commands.event import PutEventCommand
-from aristaeus.domain.entities.event import EventEntity
+from aristaeus.domain.entities.event import Event
 from aristaeus.injector import InjectorMixin
 
 
@@ -12,9 +12,9 @@ class EventApplication(InjectorMixin):
     event_repository: EventRepositoryAdapter
     hive_repository: HiveRepositoryAdapter
 
-    async def create(self, command: CreateEventCommand) -> EventEntity:
+    async def create(self, command: CreateEventCommand) -> Event:
         hive = await self.hive_repository.get(command.hive_id)
-        event = EventEntity(
+        event = Event(
             title=command.title,
             description=command.description,
             status=command.status,
@@ -25,7 +25,7 @@ class EventApplication(InjectorMixin):
         await self.event_repository.save(event)
         return event
 
-    async def put(self, command: PutEventCommand) -> EventEntity:
+    async def put(self, command: PutEventCommand) -> Event:
         event = await self.event_repository.get(command.event_id)
 
         if title := command.title:

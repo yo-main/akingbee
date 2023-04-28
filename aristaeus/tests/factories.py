@@ -2,17 +2,17 @@ import uuid
 
 import factory
 
-from aristaeus.domain.entities.apiary import ApiaryEntity
-from aristaeus.domain.entities.hive import HiveEntity
-from aristaeus.domain.entities.comment import CommentEntity
-from aristaeus.domain.entities.event import EventEntity
-from aristaeus.domain.entities.parameter import ParameterEntity
-from aristaeus.domain.entities.swarm import SwarmEntity
+from aristaeus.domain.entities.apiary import Apiary
+from aristaeus.domain.entities.hive import Hive
+from aristaeus.domain.entities.comment import Comment
+from aristaeus.domain.entities.event import Event
+from aristaeus.domain.entities.parameter import Parameter
+from aristaeus.domain.entities.swarm import Swarm
 
 
-class HiveEntityFactory(factory.Factory):
+class HiveFactory(factory.Factory):
     class Meta:
-        model = HiveEntity
+        model = Hive
 
     public_id = factory.LazyFunction(uuid.uuid4)
     name = factory.Faker("word")
@@ -21,9 +21,9 @@ class HiveEntityFactory(factory.Factory):
     organization_id = factory.LazyFunction(uuid.uuid4)
 
 
-class ApiaryEntityFactory(factory.Factory):
+class ApiaryFactory(factory.Factory):
     class Meta:
-        model = ApiaryEntity
+        model = Apiary
 
     public_id = factory.LazyFunction(uuid.uuid4)
     name = factory.Faker("word")
@@ -32,23 +32,23 @@ class ApiaryEntityFactory(factory.Factory):
     organization_id = factory.LazyFunction(uuid.uuid4)
 
 
-class CommentEntityFactory(factory.Factory):
+class CommentFactory(factory.Factory):
     class Meta:
-        model = CommentEntity
+        model = Comment
 
     public_id = factory.LazyFunction(uuid.uuid4)
-    hive = factory.SubFactory(HiveEntityFactory)
+    hive = factory.SubFactory(HiveFactory)
     body = factory.Faker("word")
     type = factory.Faker("word")
     date = factory.Faker("date_time")
 
 
-class EventEntityFactory(factory.Factory):
+class EventFactory(factory.Factory):
     class Meta:
-        model = EventEntity
+        model = Event
 
     public_id = factory.LazyFunction(uuid.uuid4)
-    hive = factory.SubFactory(HiveEntityFactory)
+    hive = factory.SubFactory(HiveFactory)
     title = factory.Faker("word")
     description = factory.Faker("word")
     status = factory.Faker("word")
@@ -56,9 +56,9 @@ class EventEntityFactory(factory.Factory):
     due_date = factory.Faker("date_time")
 
 
-class ParameterEntityFactory(factory.Factory):
+class ParameterFactory(factory.Factory):
     class Meta:
-        model = ParameterEntity
+        model = Parameter
 
     public_id = factory.LazyFunction(uuid.uuid4)
     key = factory.Faker("word")
@@ -66,9 +66,9 @@ class ParameterEntityFactory(factory.Factory):
     organization_id = factory.LazyFunction(uuid.uuid4)
 
 
-class SwarmEntityFactory(factory.Factory):
+class SwarmFactory(factory.Factory):
     class Meta:
-        model = SwarmEntity
+        model = Swarm
 
     public_id = factory.LazyFunction(uuid.uuid4)
     health = factory.Faker("word")

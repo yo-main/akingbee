@@ -63,4 +63,3 @@ async def test_hive_move(async_app):
     response = await async_app.put(f"hive/{hive_id}/move/{apiary_id}")
     assert response.status_code == 200, response.text
     assert response.json()["apiary"]["public_id"] == apiary_id, response.text
-

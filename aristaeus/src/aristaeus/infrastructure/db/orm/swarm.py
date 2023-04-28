@@ -7,7 +7,7 @@ from sqlalchemy import Table
 from sqlalchemy import Uuid
 from sqlalchemy import DateTime
 
-from aristaeus.domain.entities.swarm import SwarmEntity
+from aristaeus.domain.entities.swarm import Swarm
 
 from .base import mapper_registry
 
@@ -22,4 +22,4 @@ swarm_table = Table(
     Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
 )
 
-mapper_registry.map_imperatively(SwarmEntity, swarm_table)
+mapper_registry.map_imperatively(Swarm, swarm_table)

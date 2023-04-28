@@ -7,7 +7,7 @@ from .base import Entity
 
 
 @dataclass(slots=True)
-class SwarmEntity(Entity):
+class Swarm(Entity):
     health: str
     queen_year: int
     public_id: UUID = field(default_factory=uuid.uuid4)
@@ -22,8 +22,8 @@ class SwarmEntity(Entity):
         return f"<Swarm {self.public_id}>"
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, SwarmEntity):
-            raise ValueError(f"{other} is not a SwarmEntity")
+        if not isinstance(other, Swarm):
+            raise ValueError(f"{other} is not a Swarm")
         return self.public_id == other.public_id
 
     def __hash__(self) -> int:

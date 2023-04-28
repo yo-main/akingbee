@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from typing import Protocol
 from uuid import UUID
 
-from aristaeus.domain.entities.comment import CommentEntity
+from aristaeus.domain.entities.comment import Comment
 
 __all__ = ["CommentRepositoryAdapter"]
 
@@ -14,17 +14,17 @@ else:
 
 
 class CommentRepositoryAdapter(Base):
-    async def save(self, comment: CommentEntity) -> None:
+    async def save(self, comment: Comment) -> None:
         ...
 
-    async def get(self, public_id: UUID) -> CommentEntity:
+    async def get(self, public_id: UUID) -> Comment:
         ...
 
-    async def update(self, comment: CommentEntity) -> None:
+    async def update(self, comment: Comment) -> None:
         ...
 
-    async def delete(self, comment: CommentEntity) -> None:
+    async def delete(self, comment: Comment) -> None:
         ...
 
-    async def list(self, hive_id: UUID) -> list[CommentEntity]:
+    async def list(self, hive_id: UUID) -> list[Comment]:
         ...

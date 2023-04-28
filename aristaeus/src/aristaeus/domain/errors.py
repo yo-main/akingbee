@@ -10,4 +10,3 @@ class EntitySavingError(BaseException):
 
 class EntityNotFound(BaseException):
     pass
-
