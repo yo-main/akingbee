@@ -10,8 +10,7 @@ from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapte
 from aristaeus.domain.entities.apiary import ApiaryEntity
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
-from aristaeus.infrastructure.db.models.apiary import apiary_table
-from aristaeus.infrastructure.db.models.hive import hive_table
+from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
@@ -48,15 +47,15 @@ class ApiaryRespository:
     async def get(self, public_id: UUID) -> ApiaryEntity:
         query = (
             select(ApiaryEntity)
-            .join_from(apiary_table, hive_table, isouter=True)
-            .where(apiary_table.c.public_id == public_id)
+            .join_from(orm.apiary_table, orm.hive_table, isouter=True)
+            .where(orm.apiary_table.c.public_id == public_id)
         )
         result = await self.database.execute(query)
         return result.unique().scalar_one()
 
     @error_handler
     async def save(self, apiary: ApiaryEntity) -> None:
-        query = insert(apiary_table).values(
+        query = insert(orm.apiary_table).values(
             public_id=apiary.public_id,
             name=apiary.name,
             location=apiary.location,
@@ -72,20 +71,20 @@ class ApiaryRespository:
             "location": apiary.location,
             "honey_kind": apiary.honey_kind,
         }
-        query = update(apiary_table).values(data).where(apiary_table.c.public_id == apiary.public_id)
+        query = update(orm.apiary_table).values(data).where(orm.apiary_table.c.public_id == apiary.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
         query = (
             select(ApiaryEntity)
-            .join_from(apiary_table, hive_table, isouter=True)
-            .where(apiary_table.c.organization_id == organization_id)
+            .join_from(orm.apiary_table, orm.hive_table, isouter=True)
+            .where(orm.apiary_table.c.organization_id == organization_id)
         )
         result = await self.database.execute(query)
         return result.unique().scalars().all()
 
     @error_handler
     async def delete(self, apiary: ApiaryEntity) -> None:
-        query = delete(apiary_table).where(apiary_table.c.public_id == apiary.public_id)
+        query = delete(orm.apiary_table).where(orm.apiary_table.c.public_id == apiary.public_id)
         await self.database.execute(query)
