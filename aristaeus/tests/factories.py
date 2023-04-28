@@ -37,7 +37,7 @@ class CommentEntityFactory(factory.Factory):
         model = CommentEntity
 
     public_id = factory.LazyFunction(uuid.uuid4)
-    hive_id = factory.LazyFunction(uuid.uuid4)
+    hive = factory.SubFactory(HiveEntityFactory)
     body = factory.Faker("word")
     type = factory.Faker("word")
     date = factory.Faker("date_time")
@@ -48,7 +48,7 @@ class EventEntityFactory(factory.Factory):
         model = EventEntity
 
     public_id = factory.LazyFunction(uuid.uuid4)
-    hive_id = factory.LazyFunction(uuid.uuid4)
+    hive = factory.SubFactory(HiveEntityFactory)
     title = factory.Faker("word")
     description = factory.Faker("word")
     status = factory.Faker("word")

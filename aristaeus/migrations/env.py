@@ -2,11 +2,9 @@ import asyncio
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from aristaeus.infrastructure.db.models import BaseModel
+from aristaeus.infrastructure.db.models.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
 
 # this is the Alembic Config object, which provides
@@ -22,7 +20,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = BaseModel.metadata
+target_metadata = mapper_registry.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

@@ -1,32 +1,29 @@
-from uuid import UUID
+from datetime import datetime
 
+from sqlalchemy import Column
+from sqlalchemy import Integer
+from sqlalchemy import Text
+from sqlalchemy import Table
+from sqlalchemy import Uuid
+from sqlalchemy import DateTime
 from sqlalchemy import UniqueConstraint
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
 
 from aristaeus.domain.entities.parameter import ParameterEntity
 
-from .base import BaseModel
+from .base import mapper_registry
 
+parameter_table = Table(
+    "parameter",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("public_id", Uuid(as_uuid=True), unique=True, nullable=False),
+    Column("organization_id", Uuid(as_uuid=True), nullable=False),
+    Column("key", Text, nullable=False),
+    Column("value", Text, nullable=False),
+    Column("date_creation", DateTime, default=datetime.now, nullable=False),
+    Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
+    UniqueConstraint("key", "value", "organization_id"),
+)
 
-class ParameterModel(BaseModel):
-    public_id: Mapped[UUID] = mapped_column(unique=True)
-    key: Mapped[str]
-    value: Mapped[str]
-    organization_id: Mapped[UUID]
+mapper_registry.map_imperatively(ParameterEntity, parameter_table)
 
-    __table_args__ = (UniqueConstraint("key", "value", "organization_id"),)
-
-    def to_entity(self) -> ParameterEntity:
-        return ParameterEntity(
-            key=self.key, value=self.value, organization_id=self.organization_id, public_id=self.public_id
-        )
-
-    @staticmethod
-    def from_entity(entity: ParameterEntity) -> "ParameterModel":
-        return ParameterModel(
-            key=entity.key,
-            value=entity.value,
-            public_id=entity.public_id,
-            organization_id=entity.organization_id,
-        )

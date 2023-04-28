@@ -4,6 +4,8 @@ from uuid import UUID
 from pydantic import BaseModel
 from pydantic import validator
 
+from .hive import HiveOut
+
 
 class PostEventIn(BaseModel):
     title: str
@@ -36,4 +38,4 @@ class EventOut(BaseModel):
     due_date: datetime
     status: str
     type: str
-    hive_id: UUID
+    hive: HiveOut

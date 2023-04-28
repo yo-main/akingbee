@@ -4,6 +4,9 @@ from uuid import UUID
 from pydantic import BaseModel
 from pydantic import validator
 
+from .hive import HiveOut
+from .event import EventOut
+
 
 class PostCommentIn(BaseModel):
     date: datetime
@@ -29,5 +32,5 @@ class CommentOut(BaseModel):
     date: datetime
     type: str
     body: str
-    hive_id: UUID
-    event_id: UUID | None
+    hive: HiveOut
+    event: EventOut | None

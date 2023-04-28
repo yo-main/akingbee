@@ -5,11 +5,12 @@ from datetime import datetime
 from uuid import UUID
 
 from .base import Entity
+from .hive import HiveEntity
 
 
 @dataclass(slots=True)
 class EventEntity(Entity):
-    hive_id: UUID
+    hive: HiveEntity
     title: str
     description: str
     due_date: datetime
