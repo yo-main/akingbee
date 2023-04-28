@@ -5,7 +5,7 @@ from aristaeus.dispatcher import Dispatcher
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 from aristaeus.domain.commands.user import CreateUserCommand
-from aristaeus.domain.entities.parameter import ParameterEntity
+from aristaeus.domain.entities.parameter import Parameter
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.domain.entities.vo.event_type import EventType
 from aristaeus.domain.entities.vo.hive_condition import HiveCondition
@@ -37,4 +37,4 @@ class UserApplication(InjectorMixin):
         parameters.append(Owner(value=username))
 
         for parameter in parameters:
-            await self.parameter_repository.save(ParameterEntity.of(parameter, user.organization_id))
+            await self.parameter_repository.save(Parameter.of(parameter, user.organization_id))

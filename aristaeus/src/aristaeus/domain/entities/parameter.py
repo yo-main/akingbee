@@ -21,7 +21,7 @@ ParameterType = TypeVar(
 
 
 @dataclass(slots=True)
-class ParameterEntity(Entity):
+class Parameter(Entity):
     key: str
     value: str
     organization_id: UUID
@@ -31,7 +31,7 @@ class ParameterEntity(Entity):
         self.value = new_value
 
     @staticmethod
-    def of(entity: ParameterType, organization_id: UUID) -> "ParameterEntity":
+    def of(entity: ParameterType, organization_id: UUID) -> "Parameter":
 
         match entity.__class__.__name__:
             case "HiveCondition":
@@ -49,7 +49,7 @@ class ParameterEntity(Entity):
             case _:
                 raise Exception("Unknown parameter type")
 
-        return ParameterEntity(
+        return Parameter(
             key=key,
             value=entity.value,
             organization_id=organization_id,
@@ -59,8 +59,8 @@ class ParameterEntity(Entity):
         return f"<Parameter {self.public_id}>"
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, ParameterEntity):
-            raise ValueError(f"{other} is not a HiveEntity")
+        if not isinstance(other, Parameter):
+            raise ValueError(f"{other} is not a Hive")
         return self.public_id == other.public_id
 
     def __hash__(self) -> int:

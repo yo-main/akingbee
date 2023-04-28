@@ -1,8 +1,8 @@
 import uuid
 
 import pytest
-from tests.factories import ApiaryEntityFactory
-from tests.factories import HiveEntityFactory
+from tests.factories import ApiaryFactory
+from tests.factories import HiveFactory
 
 from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
@@ -60,13 +60,13 @@ async def test_list_apiaries(async_app):
     apiary_repo = Injector.get(ApiaryRepositoryAdapter)
     hive_repo = Injector.get(HiveRepositoryAdapter)
 
-    apiaries = ApiaryEntityFactory.build_batch(
+    apiaries = ApiaryFactory.build_batch(
         5, organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222"), hive_count=1
     )
     for apiary in apiaries:
         await apiary_repo.save(apiary)
     for hive in [
-        HiveEntityFactory.create(
+        HiveFactory.create(
             apiary=apiary,
         )
         for apiary in apiaries

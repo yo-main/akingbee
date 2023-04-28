@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy import update
 
 from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
-from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.hive import Hive
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
@@ -17,25 +17,25 @@ from aristaeus.injector import Injector
 
 @Injector.bind(HiveRepositoryAdapter, "test")
 class FakeHiveRepository:
-    _hives: set[HiveEntity] = set()
+    _hives: set[Hive] = set()
 
-    async def get(self, public_id: UUID) -> HiveEntity:
+    async def get(self, public_id: UUID) -> Hive:
         try:
             return next(hive for hive in self._hives if hive.public_id == public_id)
         except StopIteration:
             raise EntityNotFound("Hive not found")
 
-    async def save(self, hive: HiveEntity) -> None:
+    async def save(self, hive: Hive) -> None:
         self._hives.add(hive)
 
-    async def update(self, hive: HiveEntity) -> None:
+    async def update(self, hive: Hive) -> None:
         self._hives.discard(hive)
         self._hives.add(hive)
 
-    async def list(self, organization_id: UUID) -> list[HiveEntity]:
+    async def list(self, organization_id: UUID) -> list[Hive]:
         return [hive for hive in self._hives if hive.organization_id == organization_id]
 
-    async def delete(self, hive: HiveEntity) -> None:
+    async def delete(self, hive: Hive) -> None:
         self._hives.discard(hive)
 
 
@@ -44,9 +44,9 @@ class HiveRepository:
     database: AsyncDatabase
 
     @error_handler
-    async def get(self, public_id: UUID) -> HiveEntity:
+    async def get(self, public_id: UUID) -> Hive:
         query = (
-            select(HiveEntity)
+            select(Hive)
             .join_from(orm.hive_table, orm.apiary_table, isouter=True)
             .join_from(orm.hive_table, orm.swarm_table, isouter=True)
             .where(orm.hive_table.c.public_id == public_id)
@@ -54,7 +54,7 @@ class HiveRepository:
         result = await self.database.execute(query)
         return result.unique().scalar_one()
 
-    def _get_relation_queries(self, hive: HiveEntity) -> dict:
+    def _get_relation_queries(self, hive: Hive) -> dict:
         data = {}
         apiary_id = hive.apiary.public_id if hive.apiary else None
         swarm_id = hive.swarm.public_id if hive.swarm else None
@@ -70,7 +70,7 @@ class HiveRepository:
         return data
 
     @error_handler
-    async def save(self, hive: HiveEntity) -> None:
+    async def save(self, hive: Hive) -> None:
         data: dict[Any, Any] = {
             "name": hive.name,
             "condition": hive.condition,
@@ -84,7 +84,7 @@ class HiveRepository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, hive: HiveEntity) -> None:
+    async def update(self, hive: Hive) -> None:
         data: dict[Any, Any] = {
             "name": hive.name,
             "condition": hive.condition,
@@ -95,14 +95,14 @@ class HiveRepository:
         await self.database.execute(query)
 
     @error_handler
-    async def delete(self, hive: HiveEntity) -> None:
+    async def delete(self, hive: Hive) -> None:
         query = delete(orm.hive_table).where(orm.hive_table.c.public_id == hive.public_id)
         await self.database.execute(query)
 
     @error_handler
-    async def list(self, organization_id: UUID) -> list[HiveEntity]:
+    async def list(self, organization_id: UUID) -> list[Hive]:
         query = (
-            select(HiveEntity)
+            select(Hive)
             .join_from(orm.hive_table, orm.apiary_table, isouter=True)
             .join_from(orm.hive_table, orm.swarm_table, isouter=True)
             .where(orm.hive_table.c.organization_id == organization_id)

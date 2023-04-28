@@ -5,18 +5,18 @@ from datetime import datetime
 from uuid import UUID
 
 from .base import Entity
-from .hive import HiveEntity
-from .event import EventEntity
+from .hive import Hive
+from .event import Event
 
 
 @dataclass(slots=True)
-class CommentEntity(Entity):
+class Comment(Entity):
     date: datetime
     type: str  # choice
     body: str
 
-    hive: HiveEntity
-    event: EventEntity | None = None
+    hive: Hive
+    event: Event | None = None
     public_id: UUID = field(default_factory=uuid.uuid4)
 
     def change_date(self, new_date: datetime):
@@ -29,8 +29,8 @@ class CommentEntity(Entity):
         return f"<Comment {self.public_id}>"
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, CommentEntity):
-            raise ValueError(f"{other} is not a CommentEntity")
+        if not isinstance(other, Comment):
+            raise ValueError(f"{other} is not a Comment")
         return self.public_id == other.public_id
 
     def __hash__(self) -> int:

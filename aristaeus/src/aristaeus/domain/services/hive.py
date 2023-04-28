@@ -6,7 +6,7 @@ from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
 from aristaeus.domain.commands.hive import CreateHiveCommand
 from aristaeus.domain.commands.hive import PutHiveCommand
 from aristaeus.domain.commands.hive import MoveHiveCommand
-from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.hive import Hive
 from aristaeus.injector import InjectorMixin
 
 
@@ -15,7 +15,7 @@ class HiveApplication(InjectorMixin):
     apiary_repository: ApiaryRepositoryAdapter
     swarm_repository: SwarmRepositoryAdapter
 
-    async def create(self, command: CreateHiveCommand) -> HiveEntity:
+    async def create(self, command: CreateHiveCommand) -> Hive:
         apiary = swarm = None
 
         if apiary_id := command.apiary_id:
@@ -23,7 +23,7 @@ class HiveApplication(InjectorMixin):
         if swarm_id := command.swarm_id:
             swarm = await self.swarm_repository.get(swarm_id)
 
-        hive = HiveEntity(
+        hive = Hive(
             name=command.name,
             condition=command.condition,
             owner=command.owner,
@@ -34,7 +34,7 @@ class HiveApplication(InjectorMixin):
         await self.hive_repository.save(hive)
         return hive
 
-    async def put(self, command: PutHiveCommand) -> HiveEntity:
+    async def put(self, command: PutHiveCommand) -> Hive:
         hive = await self.hive_repository.get(command.hive_id)
 
         if owner := command.owner:
@@ -53,7 +53,7 @@ class HiveApplication(InjectorMixin):
         await self.hive_repository.update(hive=hive)
         return hive
 
-    async def move_hive(self, command: MoveHiveCommand) -> HiveEntity:
+    async def move_hive(self, command: MoveHiveCommand) -> Hive:
         hive = await self.hive_repository.get(command.hive_id)
         apiary = await self.apiary_repository.get(command.apiary_id)
 

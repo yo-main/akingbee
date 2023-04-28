@@ -3,20 +3,20 @@ from dataclasses import dataclass
 from dataclasses import field
 from uuid import UUID
 
-from .apiary import ApiaryEntity
+from .apiary import Apiary
 from .base import Entity
-from .swarm import SwarmEntity
+from .swarm import Swarm
 
 
 @dataclass(slots=True)
-class HiveEntity(Entity):
+class Hive(Entity):
     name: str
     condition: str
     owner: str
     organization_id: UUID
     public_id: UUID = field(default_factory=uuid.uuid4)
-    apiary: ApiaryEntity | None = None
-    swarm: SwarmEntity | None = None
+    apiary: Apiary | None = None
+    swarm: Swarm | None = None
 
     def transfer_ownership(self, new_owner: str):
         self.owner = new_owner
@@ -27,12 +27,12 @@ class HiveEntity(Entity):
     def rename(self, new_name: str):
         self.name = new_name
 
-    def attach_swarm(self, swarm: SwarmEntity):
+    def attach_swarm(self, swarm: Swarm):
         if self.swarm:
             raise ValueError("A swarm already exists")  # TODO: refacto that
         self.swarm = swarm
 
-    def move(self, new_apiary: ApiaryEntity):
+    def move(self, new_apiary: Apiary):
         if new_apiary.organization_id != self.organization_id:
             raise ValueError("Permission error")  # TODO: refacto that
 
@@ -42,8 +42,8 @@ class HiveEntity(Entity):
         return f"<Hive {self.public_id}>"
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, HiveEntity):
-            raise ValueError(f"{other} is not a HiveEntity")
+        if not isinstance(other, Hive):
+            raise ValueError(f"{other} is not a Hive")
         return self.public_id == other.public_id
 
     def __hash__(self) -> int:

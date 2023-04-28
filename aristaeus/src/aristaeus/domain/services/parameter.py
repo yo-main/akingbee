@@ -3,15 +3,15 @@ from uuid import UUID
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.commands.parameter import CreateParameterCommand
 from aristaeus.domain.commands.parameter import PutParameterCommand
-from aristaeus.domain.entities.parameter import ParameterEntity
+from aristaeus.domain.entities.parameter import Parameter
 from aristaeus.injector import InjectorMixin
 
 
 class ParameterApplication(InjectorMixin):
     parameter_repository: ParameterRepositoryAdapter
 
-    async def create(self, command: CreateParameterCommand) -> ParameterEntity:
-        parameter = ParameterEntity(
+    async def create(self, command: CreateParameterCommand) -> Parameter:
+        parameter = Parameter(
             key=command.key,
             value=command.value,
             organization_id=command.organization_id,
@@ -19,7 +19,7 @@ class ParameterApplication(InjectorMixin):
         await self.parameter_repository.save(parameter)
         return parameter
 
-    async def put(self, command: PutParameterCommand) -> ParameterEntity:
+    async def put(self, command: PutParameterCommand) -> Parameter:
         parameter = await self.parameter_repository.get(command.parameter_id)
         parameter.change_value(command.value)
 

@@ -7,7 +7,7 @@ from .base import Entity
 
 
 @dataclass(slots=True)
-class ApiaryEntity(Entity):
+class Apiary(Entity):
     name: str
     location: str
     honey_kind: str
@@ -28,8 +28,8 @@ class ApiaryEntity(Entity):
         return f"<Apiary {self.public_id}>"
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, ApiaryEntity):
-            raise ValueError(f"{other} is not a ApiaryEntity")
+        if not isinstance(other, Apiary):
+            raise ValueError(f"{other} is not a Apiary")
         return self.public_id == other.public_id
 
     def __hash__(self) -> int:

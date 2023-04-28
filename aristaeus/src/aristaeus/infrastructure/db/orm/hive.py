@@ -9,9 +9,9 @@ from sqlalchemy import Text
 from sqlalchemy import Uuid
 from sqlalchemy.orm import relationship
 
-from aristaeus.domain.entities.hive import HiveEntity
-from aristaeus.domain.entities.apiary import ApiaryEntity
-from aristaeus.domain.entities.swarm import SwarmEntity
+from aristaeus.domain.entities.hive import Hive
+from aristaeus.domain.entities.apiary import Apiary
+from aristaeus.domain.entities.swarm import Swarm
 
 from .base import mapper_registry
 
@@ -31,9 +31,10 @@ hive_table = Table(
 )
 
 mapper_registry.map_imperatively(
-    HiveEntity, hive_table, properties={
-        "apiary": relationship(ApiaryEntity, lazy="joined"),
-        "swarm": relationship(SwarmEntity, lazy="joined"),
-    }
+    Hive,
+    hive_table,
+    properties={
+        "apiary": relationship(Apiary, lazy="joined"),
+        "swarm": relationship(Swarm, lazy="joined"),
+    },
 )
-

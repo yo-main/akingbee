@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy import update
 
 from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
-from aristaeus.domain.entities.swarm import SwarmEntity
+from aristaeus.domain.entities.swarm import Swarm
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
@@ -17,26 +17,26 @@ from aristaeus.injector import Injector
 
 @Injector.bind(SwarmRepositoryAdapter, "test")
 class FakeSwarmRepository:
-    _swarms: set[SwarmEntity] = set()
+    _swarms: set[Swarm] = set()
 
     @error_handler
-    async def get(self, public_id: UUID) -> SwarmEntity:
+    async def get(self, public_id: UUID) -> Swarm:
         try:
             return next(swarm for swarm in self._swarms if swarm.public_id == public_id)
         except StopIteration:
             raise EntityNotFound("Swarm not found")
 
     @error_handler
-    async def save(self, swarm: SwarmEntity) -> None:
+    async def save(self, swarm: Swarm) -> None:
         self._swarms.add(swarm)
 
     @error_handler
-    async def update(self, swarm: SwarmEntity) -> None:
+    async def update(self, swarm: Swarm) -> None:
         self._swarms.discard(swarm)
         self._swarms.add(swarm)
 
     @error_handler
-    async def delete(self, swarm: SwarmEntity) -> None:
+    async def delete(self, swarm: Swarm) -> None:
         self._swarms.discard(swarm)
 
 
@@ -45,13 +45,13 @@ class SwarmRespository:
     database: AsyncDatabase
 
     @error_handler
-    async def get(self, public_id: UUID) -> SwarmEntity:
-        query = select(SwarmEntity).where(orm.swarm_table.c.public_id == public_id)
+    async def get(self, public_id: UUID) -> Swarm:
+        query = select(Swarm).where(orm.swarm_table.c.public_id == public_id)
         result = await self.database.execute(query)
         return result.scalar_one()
 
     @error_handler
-    async def save(self, swarm: SwarmEntity) -> None:
+    async def save(self, swarm: Swarm) -> None:
         data = {
             "health": swarm.health,
             "queen_year": swarm.queen_year,
@@ -61,12 +61,12 @@ class SwarmRespository:
         await self.database.execute(query)
 
     @error_handler
-    async def update(self, swarm: SwarmEntity) -> None:
+    async def update(self, swarm: Swarm) -> None:
         data: dict[Any, Any] = {"queen_year": swarm.queen_year, "health": swarm.health}
         query = update(orm.swarm_table).values(data).where(orm.swarm_table.c.public_id == swarm.public_id)
         await self.database.execute(query)
 
     @error_handler
-    async def delete(self, swarm: SwarmEntity) -> None:
+    async def delete(self, swarm: Swarm) -> None:
         query = delete(orm.swarm_table).where(orm.swarm_table.c.public_id == swarm.public_id)
         await self.database.execute(query)

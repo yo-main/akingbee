@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from typing import Protocol
 from uuid import UUID
 
-from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.apiary import Apiary
 
 __all__ = ["ApiaryRepositoryAdapter"]
 
@@ -14,17 +14,17 @@ else:
 
 
 class ApiaryRepositoryAdapter(Base):
-    async def save(self, apiary: ApiaryEntity) -> None:
+    async def save(self, apiary: Apiary) -> None:
         ...
 
-    async def get(self, public_id: UUID) -> ApiaryEntity:
+    async def get(self, public_id: UUID) -> Apiary:
         ...
 
-    async def update(self, apiary: ApiaryEntity) -> None:
+    async def update(self, apiary: Apiary) -> None:
         ...
 
-    async def list(self, organization_id: UUID) -> list[ApiaryEntity]:
+    async def list(self, organization_id: UUID) -> list[Apiary]:
         ...
 
-    async def delete(self, apiary: ApiaryEntity) -> None:
+    async def delete(self, apiary: Apiary) -> None:
         ...

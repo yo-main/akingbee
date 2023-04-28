@@ -5,12 +5,12 @@ from datetime import datetime
 from uuid import UUID
 
 from .base import Entity
-from .hive import HiveEntity
+from .hive import Hive
 
 
 @dataclass(slots=True)
-class EventEntity(Entity):
-    hive: HiveEntity
+class Event(Entity):
+    hive: Hive
     title: str
     description: str
     due_date: datetime
@@ -34,8 +34,8 @@ class EventEntity(Entity):
         return f"<Event {self.public_id}>"
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, EventEntity):
-            raise ValueError(f"{other} is not a EventEntity")
+        if not isinstance(other, Event):
+            raise ValueError(f"{other} is not a Event")
         return self.public_id == other.public_id
 
     def __hash__(self) -> int:

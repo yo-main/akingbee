@@ -27,11 +27,7 @@ async def test_comment_endpoints(async_app):
     event_id = response.json()["public_id"]
 
     # POST
-    data = {
-        "body": "body",
-        "date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(),
-        "event_id": event_id
-    }
+    data = {"body": "body", "date": datetime(2022, 1, 1, tzinfo=timezone.utc).isoformat(), "event_id": event_id}
     response = await async_app.post(f"/comment/{hive_id}", json=data)
     assert response.status_code == 200, response.text
 
