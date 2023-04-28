@@ -27,7 +27,7 @@ async def test_create_comment(async_app):
     assert data["type"] == "user", data
     assert data["body"] == "body", data
     assert data["date"] == "2022-01-01T00:00:00", data
-    assert data["hive_id"] == str(hive.public_id), data
+    assert data["hive"]["public_id"] == str(hive.public_id), data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -82,7 +82,7 @@ async def test_list_comments(async_app):
     )
     await Injector.get(HiveRepositoryAdapter).save(hive)
 
-    for comment in CommentEntityFactory.create_batch(5, hive_id=hive.public_id):
+    for comment in CommentEntityFactory.create_batch(5, hive=hive):
         await Injector.get(CommentRepositoryAdapter).save(comment)
 
     response = await async_app.get("/comment", params={"hive_id": "44444444-4444-4444-4444-444444444444"})
@@ -102,7 +102,7 @@ async def test_list_comments(async_app):
 async def test_put_comment__success(async_app, payload):
     hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
     await Injector.get(HiveRepositoryAdapter).save(hive)
-    comment = CommentEntityFactory.create(hive_id=hive.public_id)
+    comment = CommentEntityFactory.create(hive=hive)
     await Injector.get(CommentRepositoryAdapter).save(comment)
 
     data = {"body": "body", "date": "2022-01-01T00:00:00", "type": "type"}
@@ -119,7 +119,7 @@ async def test_put_comment__success(async_app, payload):
 async def test_delete_hive__success(async_app):
     hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
     await Injector.get(HiveRepositoryAdapter).save(hive)
-    comment = CommentEntityFactory.create(hive_id=hive.public_id)
+    comment = CommentEntityFactory.create(hive=hive)
     await Injector.get(CommentRepositoryAdapter).save(comment)
 
     response = await async_app.delete(f"/comment/{comment.public_id}")

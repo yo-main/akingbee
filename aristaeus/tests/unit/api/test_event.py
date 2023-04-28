@@ -33,7 +33,7 @@ async def test_create_event(async_app):
     assert data["due_date"] == "2022-01-01T00:00:00", data
     assert data["status"] == "status", data
     assert data["type"] == "type", data
-    assert data["hive_id"] == str(public_id), data
+    assert data["hive"]["public_id"] == str(public_id), data
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -99,7 +99,7 @@ async def test_list_events(async_app):
     hive = HiveEntityFactory.build(organization_id=uuid.UUID("33333333-3333-3333-3333-333333333333"), public_id=hive_public_id)
     await Injector.get(HiveRepositoryAdapter).save(hive)
 
-    for event in EventEntityFactory.create_batch(5, hive_id=hive.public_id):
+    for event in EventEntityFactory.create_batch(5, hive=hive):
         await Injector.get(EventRepositoryAdapter).save(event)
 
     response = await async_app.get("/event", params={"hive_id": hive_public_id})
@@ -121,7 +121,7 @@ async def test_list_events(async_app):
 async def test_put_event__success(async_app, payload):
     hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
     await Injector.get(HiveRepositoryAdapter).save(hive)
-    event = EventEntityFactory.create(hive_id=hive.public_id)
+    event = EventEntityFactory.create(hive=hive)
     await Injector.get(EventRepositoryAdapter).save(event)
 
     response = await async_app.put(f"/event/{event.public_id}", json=payload)
@@ -136,7 +136,7 @@ async def test_put_event__success(async_app, payload):
 async def test_delete_hive__success(async_app):
     hive = HiveEntityFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
     await Injector.get(HiveRepositoryAdapter).save(hive)
-    event = EventEntityFactory.create(hive_id=hive.public_id)
+    event = EventEntityFactory.create(hive=hive)
     await Injector.get(EventRepositoryAdapter).save(event)
 
     response = await async_app.delete(f"/event/{event.public_id}")

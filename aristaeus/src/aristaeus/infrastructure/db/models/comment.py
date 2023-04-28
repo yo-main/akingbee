@@ -1,34 +1,35 @@
 from datetime import datetime
-from typing import Optional
-from uuid import UUID
 
+from sqlalchemy import Column
+from sqlalchemy import Integer
+from sqlalchemy import Text
+from sqlalchemy import Table
+from sqlalchemy import Uuid
+from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from aristaeus.domain.entities.comment import CommentEntity
+from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.event import EventEntity
 
-from .base import BaseModel
+from .base import mapper_registry
 
+comment_table = Table(
+    "comment",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("public_id", Uuid(as_uuid=True), unique=True, nullable=False),
+    Column("hive_id", Integer, ForeignKey("hive.id"), nullable=False),
+    Column("event_id", Integer, ForeignKey("event.id"), nullable=True),
+    Column("date", DateTime, nullable=False),
+    Column("body", Text, nullable=False),
+    Column("type", Text, nullable=False),
+    Column("date_creation", DateTime, default=datetime.now, nullable=False),
+    Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
+)
 
-class CommentModel(BaseModel):
-    public_id: Mapped[UUID] = mapped_column(unique=True)
-    hive_id: Mapped[int] = mapped_column(ForeignKey("hive.id"))
-    event_id: Mapped[int | None] = mapped_column(ForeignKey("event.id"))
-    date: Mapped[datetime]
-    body: Mapped[str]
-    type: Mapped[str]
-
-    hive: Mapped["HiveModel"] = relationship(back_populates="comments", lazy="joined")
-    event: Mapped[Optional["EventModel"]] = relationship(back_populates="comments", lazy="joined")
-
-    def to_entity(self) -> CommentEntity:
-        return CommentEntity(
-            public_id=self.public_id,
-            date=self.date,
-            body=self.body,
-            type=self.type,
-            event_id=self.event.public_id if self.event else None,
-            hive_id=self.hive.public_id,
-        )
+mapper_registry.map_imperatively(CommentEntity, comment_table, properties={
+    "hive": relationship(HiveEntity, lazy="joined"),
+    "event": relationship(EventEntity, lazy="joined"),
+})

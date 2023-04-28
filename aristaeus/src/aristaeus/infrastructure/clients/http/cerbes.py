@@ -15,7 +15,7 @@ class CerbesClientAsyncAdapter(Protocol):
         ...
 
 
-@Injector.bind(CerbesClientAsyncAdapter, "test")
+@Injector.bind(CerbesClientAsyncAdapter, "test", "integration")
 class TestClient(metaclass=SingletonMeta):
     async def validate(self, access_token: str) -> str | None:
         return access_token

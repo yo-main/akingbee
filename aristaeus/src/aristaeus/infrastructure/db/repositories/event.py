@@ -10,10 +10,9 @@ from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.entities.event import EventEntity
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
-from aristaeus.infrastructure.db.models.event import EventModel
-from aristaeus.infrastructure.db.models.hive import HiveModel
+from aristaeus.infrastructure.db.models.event import event_table
+from aristaeus.infrastructure.db.models.hive import hive_table
 from aristaeus.infrastructure.db.utils import error_handler
-from aristaeus.infrastructure.db.utils import get_data_from_entity
 from aristaeus.injector import Injector
 
 
@@ -35,7 +34,7 @@ class FakeEventRepository:
         self._events.add(event)
 
     async def list(self, hive_id: UUID) -> list[EventEntity]:
-        return [event for event in self._events if event.hive_id == hive_id]
+        return [event for event in self._events if event.hive.public_id == hive_id]
 
     async def delete(self, event: EventEntity) -> None:
         self._events.discard(event)
@@ -47,19 +46,23 @@ class EventRepository:
 
     @error_handler
     async def get(self, public_id: UUID) -> EventEntity:
-        query = select(EventModel).where(EventModel.public_id == public_id)
+        query = select(EventEntity).where(event_table.c.public_id == public_id)
         result = await self.database.execute(query)
-        return result.unique().scalar_one().to_entity()
+        return result.unique().scalar_one()
 
     @error_handler
     async def save(self, event: EventEntity) -> None:
-        data = get_data_from_entity(event)
+        data = {
+            "title": event.title,
+            "description": event.description,
+            "due_date": event.due_date,
+            "type": event.type,
+            "status": event.status,
+            "public_id": event.public_id,
+            "hive_id": select(hive_table.c.id).where(hive_table.c.public_id == event.hive.public_id)
+        }
 
-        if "hive_id" in data:
-            sub_query = select(HiveModel.id).where(HiveModel.public_id == data["hive_id"])
-            data["hive_id"] = sub_query
-
-        query = insert(EventModel).values(data)
+        query = insert(event_table).values(data)
         await self.database.execute(query)
 
     @error_handler
@@ -70,18 +73,20 @@ class EventRepository:
             "status": event.status,
             "due_date": event.due_date,
         }
-        query = update(EventModel).values(data).where(EventModel.public_id == event.public_id)
+        query = update(event_table).values(data).where(event_table.c.public_id == event.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def delete(self, event: EventEntity) -> None:
-        query = delete(EventModel).where(EventModel.public_id == event.public_id)
+        query = delete(event_table).where(event_table.c.public_id == event.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def list(self, hive_id: UUID) -> list[EventEntity]:
         query = (
-            select(EventModel).join(HiveModel, HiveModel.id == EventModel.hive_id).where(HiveModel.public_id == hive_id)
+            select(EventEntity)
+            .join_from(hive_table, event_table)
+            .where(hive_table.c.public_id == hive_id)
         )
         result = await self.database.execute(query)
-        return [model.to_entity() for model in result.unique().scalars()]
+        return result.unique().scalars().all()

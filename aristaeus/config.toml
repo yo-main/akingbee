@@ -20,7 +20,7 @@ rbmq_exchange_type = "topic"
 rbmq_queue = "aristaeus-main-queue"
 
 
-[test]
+[integration]
 database_host = "localhost"
 database_port = 5432
 database_user = "postgres"

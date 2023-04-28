@@ -1,39 +1,39 @@
-from typing import List
-from typing import Optional
-from uuid import UUID
+from datetime import datetime
 
+from sqlalchemy import Column
+from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import Integer
+from sqlalchemy import Table
+from sqlalchemy import Text
+from sqlalchemy import Uuid
 from sqlalchemy.orm import relationship
 
 from aristaeus.domain.entities.hive import HiveEntity
+from aristaeus.domain.entities.apiary import ApiaryEntity
+from aristaeus.domain.entities.swarm import SwarmEntity
 
-from .base import BaseModel
+from .base import mapper_registry
 
+hive_table = Table(
+    "hive",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("name", Text, nullable=False),
+    Column("condition", Text, nullable=False),
+    Column("owner", Text, nullable=False),
+    Column("organization_id", Uuid(as_uuid=True), nullable=False),
+    Column("public_id", Uuid(as_uuid=True), unique=True, nullable=False),
+    Column("swarm_id", Integer, ForeignKey("swarm.id", ondelete="SET NULL"), nullable=True),
+    Column("apiary_id", Integer, ForeignKey("apiary.id"), nullable=True),
+    Column("date_creation", DateTime, default=datetime.now, nullable=False),
+    Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
+)
 
-class HiveModel(BaseModel):
-    public_id: Mapped[UUID] = mapped_column(unique=True)
-    name: Mapped[str]
-    condition: Mapped[str]
-    owner: Mapped[str]
-    organization_id: Mapped[UUID]
-    swarm_id: Mapped[int | None] = mapped_column(ForeignKey("swarm.id", ondelete="SET NULL"))
-    apiary_id: Mapped[int | None] = mapped_column(ForeignKey("apiary.id"))
-
-    swarm: Mapped[Optional["SwarmModel"]] = relationship(back_populates="hive", lazy="joined")
-    apiary: Mapped[Optional["ApiaryModel"]] = relationship(back_populates="hives", lazy="joined")
-    events: Mapped[List["EventModel"]] = relationship(back_populates="hive", lazy="joined")
-    comments: Mapped[List["CommentModel"]] = relationship(back_populates="hive", lazy="joined")
-
-    def to_entity(self) -> HiveEntity:
-        return HiveEntity(
-            public_id=self.public_id,
-            name=self.name,
-            condition=self.condition,
-            owner=self.owner,
-            organization_id=self.organization_id,
-            swarm=self.swarm.to_entity() if self.swarm else None,
-            apiary=self.apiary.to_entity() if self.apiary else None,
-        )
+mapper_registry.map_imperatively(
+    HiveEntity, hive_table, properties={
+        "apiary": relationship(ApiaryEntity, lazy="joined"),
+        "swarm": relationship(SwarmEntity, lazy="joined"),
+    }
+)
 

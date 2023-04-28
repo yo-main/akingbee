@@ -1,29 +1,25 @@
-from typing import Optional
-from uuid import UUID
+from datetime import datetime
 
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column
+from sqlalchemy import Integer
+from sqlalchemy import Text
+from sqlalchemy import Table
+from sqlalchemy import Uuid
+from sqlalchemy import DateTime
 
 from aristaeus.domain.entities.swarm import SwarmEntity
 
-from .base import BaseModel
+from .base import mapper_registry
 
+swarm_table = Table(
+    "swarm",
+    mapper_registry.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("public_id", Uuid(as_uuid=True), unique=True, nullable=False),
+    Column("health", Text, nullable=False),
+    Column("queen_year", Integer, nullable=False),
+    Column("date_creation", DateTime, default=datetime.now, nullable=False),
+    Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
+)
 
-class SwarmModel(BaseModel):
-    health: Mapped[str]
-    queen_year: Mapped[int]
-    public_id: Mapped[UUID] = mapped_column(unique=True)
-
-    hive: Mapped[Optional["HiveModel"]] = relationship(back_populates="swarm")
-
-    def to_entity(self) -> SwarmEntity:
-        return SwarmEntity(
-            health=self.health,
-            queen_year=self.queen_year,
-            public_id=self.public_id,
-        )
-
-    @staticmethod
-    def from_entity(entity: SwarmEntity) -> "SwarmModel":
-        return SwarmModel(health=entity.health, queen_year=entity.queen_year, public_id=entity.public_id)
+mapper_registry.map_imperatively(SwarmEntity, swarm_table)

@@ -10,11 +10,11 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from aristaeus.config import settings
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 
-settings.setenv("test")
+settings.setenv("integration")
 
 from aristaeus.controllers.api.app import create_app
 from aristaeus.infrastructure.db.engine import AsyncDatabase
-from aristaeus.infrastructure.db.models.base import BaseModel
+from aristaeus.infrastructure.db.models.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
 from aristaeus.injector import Injector
 
@@ -57,7 +57,7 @@ async def provision_database(dbname, root_connection):
     engine = create_async_engine(url)
 
     async with engine.begin() as conn:
-        await conn.run_sync(BaseModel.metadata.create_all)
+        await conn.run_sync(mapper_registry.metadata.create_all)
         await conn.commit()
 
     yield engine

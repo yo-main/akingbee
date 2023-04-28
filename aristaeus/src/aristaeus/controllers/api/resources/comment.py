@@ -33,8 +33,8 @@ async def post_comment(hive_id: UUID, input: PostCommentIn, user: UserEntity = D
 
 @router.get("/{comment_id}", response_model=CommentOut)
 async def get_comment(comment_id: UUID, user: UserEntity = Depends(auth_user)):
-    omment_entity = await CommentQuery().get_comment_query(comment_id)
-    return omment_entity.asdict()
+    comment_entity = await CommentQuery().get_comment_query(comment_id)
+    return comment_entity.asdict()
 
 
 @router.get("", response_model=list[CommentOut])

@@ -1,6 +1,8 @@
 from uuid import UUID
 
 from aristaeus.domain.adapters.repositories.comment import CommentRepositoryAdapter
+from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
+from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.commands.comment import CreateCommentCommand
 from aristaeus.domain.commands.comment import PutCommentCommand
 from aristaeus.domain.entities.comment import CommentEntity
@@ -9,14 +11,21 @@ from aristaeus.injector import InjectorMixin
 
 class CommentApplication(InjectorMixin):
     comment_repository: CommentRepositoryAdapter
+    hive_repository: HiveRepositoryAdapter
+    event_repository: EventRepositoryAdapter
 
     async def create(self, command: CreateCommentCommand) -> CommentEntity:
+        event = None
+        hive = await self.hive_repository.get(command.hive_id)
+        if event_id := command.event_id:
+            event = await self.event_repository.get(event_id)
+
         comment = CommentEntity(
             body=command.body,
             type=command.type,
             date=command.date,
-            hive_id=command.hive_id,
-            event_id=command.event_id,
+            hive=hive,
+            event=event,
         )
         await self.comment_repository.save(comment)
         return comment

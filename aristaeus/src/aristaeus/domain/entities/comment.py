@@ -5,6 +5,8 @@ from datetime import datetime
 from uuid import UUID
 
 from .base import Entity
+from .hive import HiveEntity
+from .event import EventEntity
 
 
 @dataclass(slots=True)
@@ -13,8 +15,8 @@ class CommentEntity(Entity):
     type: str  # choice
     body: str
 
-    hive_id: UUID
-    event_id: UUID | None = None
+    hive: HiveEntity
+    event: EventEntity | None = None
     public_id: UUID = field(default_factory=uuid.uuid4)
 
     def change_date(self, new_date: datetime):
