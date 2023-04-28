@@ -10,8 +10,7 @@ from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.entities.event import EventEntity
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
-from aristaeus.infrastructure.db.models.event import event_table
-from aristaeus.infrastructure.db.models.hive import hive_table
+from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
@@ -46,7 +45,7 @@ class EventRepository:
 
     @error_handler
     async def get(self, public_id: UUID) -> EventEntity:
-        query = select(EventEntity).where(event_table.c.public_id == public_id)
+        query = select(EventEntity).where(orm.event_table.c.public_id == public_id)
         result = await self.database.execute(query)
         return result.unique().scalar_one()
 
@@ -59,10 +58,10 @@ class EventRepository:
             "type": event.type,
             "status": event.status,
             "public_id": event.public_id,
-            "hive_id": select(hive_table.c.id).where(hive_table.c.public_id == event.hive.public_id)
+            "hive_id": select(orm.hive_table.c.id).where(orm.hive_table.c.public_id == event.hive.public_id)
         }
 
-        query = insert(event_table).values(data)
+        query = insert(orm.event_table).values(data)
         await self.database.execute(query)
 
     @error_handler
@@ -73,20 +72,20 @@ class EventRepository:
             "status": event.status,
             "due_date": event.due_date,
         }
-        query = update(event_table).values(data).where(event_table.c.public_id == event.public_id)
+        query = update(orm.event_table).values(data).where(orm.event_table.c.public_id == event.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def delete(self, event: EventEntity) -> None:
-        query = delete(event_table).where(event_table.c.public_id == event.public_id)
+        query = delete(orm.event_table).where(orm.event_table.c.public_id == event.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def list(self, hive_id: UUID) -> list[EventEntity]:
         query = (
             select(EventEntity)
-            .join_from(hive_table, event_table)
-            .where(hive_table.c.public_id == hive_id)
+            .join_from(orm.hive_table, orm.event_table)
+            .where(orm.hive_table.c.public_id == hive_id)
         )
         result = await self.database.execute(query)
         return result.unique().scalars().all()

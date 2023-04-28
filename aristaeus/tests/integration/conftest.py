@@ -14,7 +14,7 @@ settings.setenv("integration")
 
 from aristaeus.controllers.api.app import create_app
 from aristaeus.infrastructure.db.engine import AsyncDatabase
-from aristaeus.infrastructure.db.models.base import mapper_registry
+from aristaeus.infrastructure.db.orm.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
 from aristaeus.injector import Injector
 

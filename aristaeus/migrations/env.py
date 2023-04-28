@@ -4,7 +4,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from aristaeus.infrastructure.db.models.base import mapper_registry
+from aristaeus.infrastructure.db.orm.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
 
 # this is the Alembic Config object, which provides

@@ -10,7 +10,7 @@ from aristaeus.domain.adapters.repositories.parameter import ParameterRepository
 from aristaeus.domain.entities.parameter import ParameterEntity
 from aristaeus.domain.errors import EntityNotFound
 from aristaeus.infrastructure.db.engine import AsyncDatabase
-from aristaeus.infrastructure.db.models.parameter import parameter_table
+from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
@@ -54,7 +54,7 @@ class ParameterRespository:
 
     @error_handler
     async def get(self, public_id: UUID) -> ParameterEntity:
-        query = select(ParameterEntity).where(parameter_table.c.public_id == public_id)
+        query = select(ParameterEntity).where(orm.parameter_table.c.public_id == public_id)
         result = await self.database.execute(query)
         return result.scalar_one()
 
@@ -66,24 +66,24 @@ class ParameterRespository:
             "public_id": parameter.public_id,
             "organization_id": parameter.organization_id,
         }
-        query = insert(parameter_table).values(data).on_conflict_do_nothing()
+        query = insert(orm.parameter_table).values(data).on_conflict_do_nothing()
         await self.database.execute(query)
 
     @error_handler
     async def update(self, parameter: ParameterEntity) -> None:
         data: dict[Any, Any] = {"value": parameter.value}
-        query = update(parameter_table).values(data).where(parameter_table.c.public_id == parameter.public_id)
+        query = update(orm.parameter_table).values(data).where(orm.parameter_table.c.public_id == parameter.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def delete(self, parameter: ParameterEntity) -> None:
-        query = delete(parameter_table).where(parameter_table.c.public_id == parameter.public_id)
+        query = delete(orm.parameter_table).where(orm.parameter_table.c.public_id == parameter.public_id)
         await self.database.execute(query)
 
     @error_handler
     async def list(self, organization_id: UUID, key: str | None = None) -> list[ParameterEntity]:
-        query = select(ParameterEntity).where(parameter_table.c.organization_id == organization_id)
+        query = select(ParameterEntity).where(orm.parameter_table.c.organization_id == organization_id)
         if key is not None:
-            query = query.where(parameter_table.c.key == key)
+            query = query.where(orm.parameter_table.c.key == key)
         result = await self.database.execute(query)
         return result.unique().scalars().all()
