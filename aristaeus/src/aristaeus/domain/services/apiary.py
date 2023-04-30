@@ -3,13 +3,11 @@ from uuid import UUID
 from aristaeus.domain.commands.apiary import CreateApiaryCommand
 from aristaeus.domain.commands.apiary import PutApiaryCommand
 from aristaeus.domain.entities.apiary import Apiary
-from aristaeus.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.injector import InjectorMixin
 
 
-class ApiaryApplication(InjectorMixin):
-    apiary_repository: ApiaryRepositoryAdapter
-
+class ApiaryService(InjectorMixin):
     async def create(self, command: CreateApiaryCommand) -> Apiary:
         apiary = Apiary(
             name=command.name,
@@ -17,22 +15,29 @@ class ApiaryApplication(InjectorMixin):
             honey_kind=command.honey_kind,
             organization_id=command.organization_id,
         )
-        await self.apiary_repository.save(apiary)
+        async with UnitOfWork() as uow:
+            await uow.apiary.save(apiary)
+            await uow.commit()
         return apiary
 
     async def put(self, command: PutApiaryCommand) -> Apiary:
-        apiary = await self.apiary_repository.get(command.apiary_id)
+        async with UnitOfWork() as uow:
+            apiary = await uow.apiary.get(command.apiary_id)
 
-        if name := command.name:
-            apiary.rename(name)
-        if location := command.location:
-            apiary.change_location(location)
-        if honey_kind := command.honey_kind:
-            apiary.change_honey_kind(honey_kind)
+            if name := command.name:
+                apiary.rename(name)
+            if location := command.location:
+                apiary.change_location(location)
+            if honey_kind := command.honey_kind:
+                apiary.change_honey_kind(honey_kind)
 
-        await self.apiary_repository.update(apiary=apiary)
+            await uow.apiary.update(apiary=apiary)
+            await uow.commit()
+
         return apiary
 
     async def delete(self, apiary_id: UUID) -> None:
-        apiary = await self.apiary_repository.get(apiary_id)
-        await self.apiary_repository.delete(apiary)
+        async with UnitOfWork() as uow:
+            apiary = await uow.apiary.get(apiary_id)
+            await uow.apiary.delete(apiary)
+            await uow.commit()

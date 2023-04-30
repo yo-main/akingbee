@@ -9,14 +9,15 @@ from sqlalchemy import update
 from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.domain.entities.apiary import Apiary
 from aristaeus.domain.errors import EntityNotFound
-from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
+from .base import BaseRepository
+
 
 @Injector.bind(ApiaryRepositoryAdapter, "test")
-class FakeApiaryRepository:
+class FakeApiaryRepository(BaseRepository):
     _apiaries: set[Apiary] = set()
 
     async def get(self, public_id: UUID) -> Apiary:
@@ -40,9 +41,7 @@ class FakeApiaryRepository:
 
 
 @Injector.bind(ApiaryRepositoryAdapter)
-class ApiaryRespository:
-    database: AsyncDatabase
-
+class ApiaryRespository(BaseRepository):
     @error_handler
     async def get(self, public_id: UUID) -> Apiary:
         query = (
@@ -50,7 +49,7 @@ class ApiaryRespository:
             .join_from(orm.apiary_table, orm.hive_table, isouter=True)
             .where(orm.apiary_table.c.public_id == public_id)
         )
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalar_one()
 
     @error_handler
@@ -62,7 +61,7 @@ class ApiaryRespository:
             honey_kind=apiary.honey_kind,
             organization_id=apiary.organization_id,
         )
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def update(self, apiary: Apiary) -> None:
@@ -72,7 +71,7 @@ class ApiaryRespository:
             "honey_kind": apiary.honey_kind,
         }
         query = update(orm.apiary_table).values(data).where(orm.apiary_table.c.public_id == apiary.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def list(self, organization_id: UUID) -> list[Apiary]:
@@ -81,10 +80,10 @@ class ApiaryRespository:
             .join_from(orm.apiary_table, orm.hive_table, isouter=True)
             .where(orm.apiary_table.c.organization_id == organization_id)
         )
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalars().all()
 
     @error_handler
     async def delete(self, apiary: Apiary) -> None:
         query = delete(orm.apiary_table).where(orm.apiary_table.c.public_id == apiary.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)

@@ -8,15 +8,12 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from aristaeus.config import settings
-from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
 
 settings.setenv("integration")
 
 from aristaeus.controllers.api.app import create_app
-from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db.orm.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
-from aristaeus.injector import Injector
 
 pytestmark = pytest.mark.anyio
 
@@ -108,10 +105,3 @@ async def async_app(provision_database, anyio_backend, request):
 
             client.cookies["access_token"] = access_token
         yield client
-
-
-@pytest.fixture(autouse=True)
-async def session():
-    database = Injector.get(AsyncDatabase)
-    async with database.get_session() as session:
-        yield session

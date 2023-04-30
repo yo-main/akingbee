@@ -1,8 +1,7 @@
 import uuid
 
 import pytest
-from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
-from aristaeus.injector import Injector
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 from tests.factories import ParameterFactory
 
 
@@ -62,8 +61,9 @@ async def test_list_parameters__without_key(async_app):
     parameters = ParameterFactory.build_batch(
         5, key="abc", organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222")
     )
-    for parameter in parameters:
-        await Injector.get(ParameterRepositoryAdapter).save(parameter)
+    async with UnitOfWork() as uow:
+        for parameter in parameters:
+            await uow.parameter.save(parameter)
 
     response = await async_app.get("/parameter")
 
@@ -76,8 +76,9 @@ async def test_list_parameters__with_key(async_app):
     parameters = ParameterFactory.build_batch(
         3, key="def", organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222")
     )
-    for parameter in parameters:
-        await Injector.get(ParameterRepositoryAdapter).save(parameter)
+    async with UnitOfWork() as uow:
+        for parameter in parameters:
+            await uow.parameter.save(parameter)
 
     response = await async_app.get("/parameter", params={"key": "def"})
 
@@ -88,7 +89,8 @@ async def test_list_parameters__with_key(async_app):
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_put_parameter__success(async_app):
     parameter = ParameterFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"), value="old")
-    await Injector.get(ParameterRepositoryAdapter).save(parameter)
+    async with UnitOfWork() as uow:
+        await uow.parameter.save(parameter)
 
     response = await async_app.put(f"/parameter/{parameter.public_id}", json={"value": "new"})
     assert response.status_code == 200, response.text
@@ -100,7 +102,8 @@ async def test_put_parameter__success(async_app):
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_delete_parameter__success(async_app):
     parameter = ParameterFactory.build(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"), value="old")
-    await Injector.get(ParameterRepositoryAdapter).save(parameter)
+    async with UnitOfWork() as uow:
+        await uow.parameter.save(parameter)
 
     response = await async_app.delete(f"/parameter/{parameter.public_id}")
     assert response.status_code == 204, response.text

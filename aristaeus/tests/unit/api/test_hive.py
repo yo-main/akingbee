@@ -1,13 +1,11 @@
 import uuid
 
 import pytest
-from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
-from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
-from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
-from aristaeus.injector import Injector
 from tests.factories import ApiaryFactory
 from tests.factories import HiveFactory
 from tests.factories import SwarmFactory
+
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -27,7 +25,9 @@ async def test_create_hive__no_apiary(async_app):
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_create_hive__with_apiary(async_app):
     apiary = ApiaryFactory.create()
-    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        await uow.commit()
 
     data = {
         "name": "a name",
@@ -73,7 +73,9 @@ async def test_get_hive__unknown(async_app):
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_get_hive__with_apiary(async_app):
     apiary = ApiaryFactory.create()
-    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        await uow.commit()
 
     data = {
         "name": "a name",
@@ -103,7 +105,6 @@ async def test_get_hive__no_apiary(async_app):
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
 async def test_list_hives(async_app):
     apiary = ApiaryFactory.build(organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222"), name="apiary_name")
-    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
     swarms = SwarmFactory.create_batch(5, queen_year=2000)
     hives = [
         HiveFactory.create(
@@ -111,10 +112,13 @@ async def test_list_hives(async_app):
         )
         for swarm in swarms
     ]
-    for swarm in swarms:
-        await Injector.get(SwarmRepositoryAdapter).save(swarm)
-    for hive in hives:
-        await Injector.get(HiveRepositoryAdapter).save(hive)
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        for swarm in swarms:
+            await uow.swarm.save(swarm)
+        for hive in hives:
+            await uow.hive.save(hive)
+        await uow.commit()
 
     response = await async_app.get("/hive")
 
@@ -136,9 +140,11 @@ async def test_list_hives(async_app):
 )
 async def test_put_hive__success(async_app, payload):
     apiary = ApiaryFactory.create()
-    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
     hive = HiveFactory.create()
-    await Injector.get(HiveRepositoryAdapter).save(hive)
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        await uow.hive.save(hive)
+        await uow.commit()
 
     data = {
         "name": "a name",
@@ -158,7 +164,8 @@ async def test_put_hive__success(async_app, payload):
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_delete_hive__success(async_app):
     hive = HiveFactory.create()
-    await Injector.get(HiveRepositoryAdapter).save(hive)
+    async with UnitOfWork() as uow:
+        await uow.hive.save(hive)
 
     response = await async_app.delete(f"/hive/{hive.public_id}")
     assert response.status_code == 204, response.text
@@ -170,9 +177,11 @@ async def test_delete_hive__success(async_app):
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_move_hive(async_app):
     apiary = ApiaryFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
-    await Injector.get(ApiaryRepositoryAdapter).save(apiary)
     hive = HiveFactory.create(organization_id=apiary.organization_id)
-    await Injector.get(HiveRepositoryAdapter).save(hive)
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        await uow.hive.save(hive)
+        await uow.commit()
 
     response = await async_app.put(f"/hive/{hive.public_id}/move/{apiary.public_id}")
     assert response.status_code == 200, response.text

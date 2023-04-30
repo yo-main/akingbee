@@ -36,7 +36,8 @@ mapper_registry.map_imperatively(
             select(func.count(hive_table.c.id))
             .where(hive_table.c.apiary_id == apiary_table.c.id)
             .correlate_except(hive_table)
-            .scalar_subquery()
+            .scalar_subquery(),
+            expire_on_flush=False,
         ),
     },
 )

@@ -9,14 +9,15 @@ from sqlalchemy.dialects.postgresql import insert
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.entities.parameter import Parameter
 from aristaeus.domain.errors import EntityNotFound
-from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
+from .base import BaseRepository
+
 
 @Injector.bind(ParameterRepositoryAdapter, "test")
-class FakeParameterRepository:
+class FakeParameterRepository(BaseRepository):
     _parameters: set[Parameter] = set()
 
     @error_handler
@@ -49,13 +50,11 @@ class FakeParameterRepository:
 
 
 @Injector.bind(ParameterRepositoryAdapter)
-class ParameterRespository:
-    database: AsyncDatabase
-
+class ParameterRespository(BaseRepository):
     @error_handler
     async def get(self, public_id: UUID) -> Parameter:
         query = select(Parameter).where(orm.parameter_table.c.public_id == public_id)
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.scalar_one()
 
     @error_handler
@@ -67,23 +66,23 @@ class ParameterRespository:
             "organization_id": parameter.organization_id,
         }
         query = insert(orm.parameter_table).values(data).on_conflict_do_nothing()
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def update(self, parameter: Parameter) -> None:
         data: dict[Any, Any] = {"value": parameter.value}
         query = update(orm.parameter_table).values(data).where(orm.parameter_table.c.public_id == parameter.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def delete(self, parameter: Parameter) -> None:
         query = delete(orm.parameter_table).where(orm.parameter_table.c.public_id == parameter.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def list(self, organization_id: UUID, key: str | None = None) -> list[Parameter]:
         query = select(Parameter).where(orm.parameter_table.c.organization_id == organization_id)
         if key is not None:
             query = query.where(orm.parameter_table.c.key == key)
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalars().all()
