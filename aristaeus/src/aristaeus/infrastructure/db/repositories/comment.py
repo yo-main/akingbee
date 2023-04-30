@@ -9,14 +9,15 @@ from sqlalchemy import update
 from aristaeus.domain.adapters.repositories.comment import CommentRepositoryAdapter
 from aristaeus.domain.entities.comment import Comment
 from aristaeus.domain.errors import EntityNotFound
-from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
+from .base import BaseRepository
+
 
 @Injector.bind(CommentRepositoryAdapter, "test")
-class FakeCommentRepository:
+class FakeCommentRepository(BaseRepository):
     _comments: set[Comment] = set()
 
     @error_handler
@@ -45,9 +46,7 @@ class FakeCommentRepository:
 
 
 @Injector.bind(CommentRepositoryAdapter)
-class CommentRepository:
-    database: AsyncDatabase
-
+class CommentRepository(BaseRepository):
     @error_handler
     async def get(self, comment_id: UUID) -> Comment:
         query = (
@@ -56,7 +55,7 @@ class CommentRepository:
             .join_from(orm.comment_table, orm.event_table, isouter=True)
             .where(orm.comment_table.c.public_id == comment_id)
         )
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalar_one()
 
     @error_handler
@@ -75,23 +74,23 @@ class CommentRepository:
             )
 
         query = insert(orm.comment_table).values(data)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def update(self, comment: Comment) -> None:
         data: dict[Any, Any] = {"date": comment.date, "body": comment.body}
         query = update(orm.comment_table).values(data).where(orm.comment_table.c.public_id == comment.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def delete(self, comment: Comment) -> None:
         query = delete(orm.comment_table).where(orm.comment_table.c.public_id == comment.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def list(self, hive_id: UUID) -> list[Comment]:
         query = (
             select(Comment).join_from(orm.comment_table, orm.hive_table).where(orm.hive_table.c.public_id == hive_id)
         )
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalars().all()

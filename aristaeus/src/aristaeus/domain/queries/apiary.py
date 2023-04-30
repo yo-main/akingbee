@@ -1,15 +1,15 @@
 from uuid import UUID
 
 from aristaeus.domain.entities.apiary import Apiary
-from aristaeus.infrastructure.db.repositories.apiary import ApiaryRepositoryAdapter
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.injector import InjectorMixin
 
 
 class ApiaryQuery(InjectorMixin):
-    apiary_repository: ApiaryRepositoryAdapter
-
     async def get_apiary_query(self, apiary_id: UUID) -> Apiary:
-        return await self.apiary_repository.get(apiary_id)
+        async with UnitOfWork() as uow:
+            return await uow.apiary.get(apiary_id)
 
     async def list_apiary_query(self, organization_id: UUID) -> list[Apiary]:
-        return await self.apiary_repository.list(organization_id)
+        async with UnitOfWork() as uow:
+            return await uow.apiary.list(organization_id)

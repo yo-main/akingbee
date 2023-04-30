@@ -1,46 +1,42 @@
 from uuid import UUID
 
-from aristaeus.domain.adapters.repositories.comment import CommentRepositoryAdapter
-from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
-from aristaeus.domain.adapters.repositories.event import EventRepositoryAdapter
 from aristaeus.domain.commands.comment import CreateCommentCommand
 from aristaeus.domain.commands.comment import PutCommentCommand
 from aristaeus.domain.entities.comment import Comment
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.injector import InjectorMixin
 
 
 class CommentApplication(InjectorMixin):
-    comment_repository: CommentRepositoryAdapter
-    hive_repository: HiveRepositoryAdapter
-    event_repository: EventRepositoryAdapter
-
     async def create(self, command: CreateCommentCommand) -> Comment:
-        event = None
-        hive = await self.hive_repository.get(command.hive_id)
-        if event_id := command.event_id:
-            event = await self.event_repository.get(event_id)
+        async with UnitOfWork() as uow:
+            comment = Comment(
+                body=command.body, type=command.type, date=command.date, hive=await uow.hive.get(command.hive_id)
+            )
 
-        comment = Comment(
-            body=command.body,
-            type=command.type,
-            date=command.date,
-            hive=hive,
-            event=event,
-        )
-        await self.comment_repository.save(comment)
+            if event_id := command.event_id:
+                comment.event = await uow.event.get(event_id)
+            await uow.comment.save(comment)
+            await uow.commit()
+
         return comment
 
     async def put(self, command: PutCommentCommand) -> Comment:
-        comment = await self.comment_repository.get(command.comment_id)
+        async with UnitOfWork() as uow:
+            comment = await uow.comment.get(command.comment_id)
 
-        if date := command.date:
-            comment.change_date(date)
-        if body := command.body:
-            comment.change_body(body)
+            if date := command.date:
+                comment.change_date(date)
+            if body := command.body:
+                comment.change_body(body)
 
-        await self.comment_repository.update(comment=comment)
+            await uow.comment.update(comment=comment)
+            await uow.commit()
+
         return comment
 
     async def delete(self, comment_id: UUID) -> None:
-        comment = await self.comment_repository.get(comment_id)
-        await self.comment_repository.delete(comment)
+        async with UnitOfWork() as uow:
+            comment = await uow.comment.get(comment_id)
+            await uow.comment.delete(comment)
+            await uow.commit()

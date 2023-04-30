@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.commands.parameter import CreateParameterCommand
 from aristaeus.domain.commands.parameter import PutParameterCommand
 from aristaeus.domain.entities.parameter import Parameter
@@ -8,24 +8,30 @@ from aristaeus.injector import InjectorMixin
 
 
 class ParameterApplication(InjectorMixin):
-    parameter_repository: ParameterRepositoryAdapter
-
     async def create(self, command: CreateParameterCommand) -> Parameter:
         parameter = Parameter(
             key=command.key,
             value=command.value,
             organization_id=command.organization_id,
         )
-        await self.parameter_repository.save(parameter)
+        async with UnitOfWork() as uow:
+            await uow.parameter.save(parameter)
+            await uow.commit()
+
         return parameter
 
     async def put(self, command: PutParameterCommand) -> Parameter:
-        parameter = await self.parameter_repository.get(command.parameter_id)
-        parameter.change_value(command.value)
+        async with UnitOfWork() as uow:
+            parameter = await uow.parameter.get(command.parameter_id)
+            parameter.change_value(command.value)
 
-        await self.parameter_repository.update(parameter=parameter)
+            await uow.parameter.update(parameter=parameter)
+            await uow.commit()
+
         return parameter
 
     async def delete(self, public_id: UUID) -> None:
-        parameter = await self.parameter_repository.get(public_id)
-        await self.parameter_repository.delete(parameter=parameter)
+        async with UnitOfWork() as uow:
+            parameter = await uow.parameter.get(public_id)
+            await uow.parameter.delete(parameter=parameter)
+            await uow.commit()

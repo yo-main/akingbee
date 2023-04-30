@@ -9,14 +9,15 @@ from sqlalchemy import update
 from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.entities.hive import Hive
 from aristaeus.domain.errors import EntityNotFound
-from aristaeus.infrastructure.db.engine import AsyncDatabase
 from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
 
+from .base import BaseRepository
+
 
 @Injector.bind(HiveRepositoryAdapter, "test")
-class FakeHiveRepository:
+class FakeHiveRepository(BaseRepository):
     _hives: set[Hive] = set()
 
     async def get(self, public_id: UUID) -> Hive:
@@ -40,9 +41,7 @@ class FakeHiveRepository:
 
 
 @Injector.bind(HiveRepositoryAdapter)
-class HiveRepository:
-    database: AsyncDatabase
-
+class HiveRepository(BaseRepository):
     @error_handler
     async def get(self, public_id: UUID) -> Hive:
         query = (
@@ -51,7 +50,7 @@ class HiveRepository:
             .join_from(orm.hive_table, orm.swarm_table, isouter=True)
             .where(orm.hive_table.c.public_id == public_id)
         )
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalar_one()
 
     def _get_relation_queries(self, hive: Hive) -> dict:
@@ -81,7 +80,7 @@ class HiveRepository:
         data.update(self._get_relation_queries(hive))
 
         query = insert(orm.hive_table).values(data)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def update(self, hive: Hive) -> None:
@@ -92,12 +91,12 @@ class HiveRepository:
         }
         data.update(self._get_relation_queries(hive))
         query = update(orm.hive_table).values(data).where(orm.hive_table.c.public_id == hive.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def delete(self, hive: Hive) -> None:
         query = delete(orm.hive_table).where(orm.hive_table.c.public_id == hive.public_id)
-        await self.database.execute(query)
+        await self.session.execute(query)
 
     @error_handler
     async def list(self, organization_id: UUID) -> list[Hive]:
@@ -108,5 +107,5 @@ class HiveRepository:
             .where(orm.hive_table.c.organization_id == organization_id)
         )
 
-        result = await self.database.execute(query)
+        result = await self.session.execute(query)
         return result.unique().scalars().all()

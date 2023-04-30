@@ -8,7 +8,7 @@ from aristaeus.controllers.api.dtos.apiary import DetailedApiaryOut
 from aristaeus.controllers.api.dtos.apiary import PostApiaryIn
 from aristaeus.controllers.api.dtos.apiary import PutApiaryIn
 from aristaeus.controllers.api.utils.auth import auth_user
-from aristaeus.domain.services.apiary import ApiaryApplication
+from aristaeus.domain.services.apiary import ApiaryService
 from aristaeus.domain.commands.apiary import CreateApiaryCommand
 from aristaeus.domain.commands.apiary import PutApiaryCommand
 from aristaeus.domain.entities.user import UserEntity
@@ -22,8 +22,8 @@ async def post_apiary(input: PostApiaryIn, user: UserEntity = Depends(auth_user)
     command = CreateApiaryCommand(
         name=input.name, location=input.location, honey_kind=input.honey_kind, organization_id=user.organization_id
     )
-    apiary_application = ApiaryApplication()
-    apiary_entity = await apiary_application.create(command=command)
+    apiary_service = ApiaryService()
+    apiary_entity = await apiary_service.create(command=command)
 
     return apiary_entity.asdict()
 
@@ -45,13 +45,13 @@ async def put_apiary(apiary_id: UUID, input: PutApiaryIn, user: UserEntity = Dep
     command = PutApiaryCommand(
         name=input.name, location=input.location, honey_kind=input.honey_kind, apiary_id=apiary_id
     )
-    apiary_application = ApiaryApplication()
-    apiary_entity = await apiary_application.put(command=command)
+    apiary_service = ApiaryService()
+    apiary_entity = await apiary_service.put(command=command)
     return apiary_entity.asdict()
 
 
 @router.delete("/{apiary_id}", status_code=204)
 async def delete_apiary(apiary_id: UUID, user: UserEntity = Depends(auth_user)):
-    apiary_application = ApiaryApplication()
-    await apiary_application.delete(apiary_id=apiary_id)
+    apiary_service = ApiaryService()
+    await apiary_service.delete(apiary_id=apiary_id)
     return 204

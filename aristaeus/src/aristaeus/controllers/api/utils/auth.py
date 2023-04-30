@@ -1,11 +1,9 @@
 from uuid import UUID
 
 from fastapi import Cookie
-from fastapi import Depends
 from fastapi import HTTPException
 
-from aristaeus.config import settings
-from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.entities.user import UserEntity
 from aristaeus.infrastructure.clients.http.cerbes import CerbesClientAsyncAdapter
 from aristaeus.injector import InjectorMixin
@@ -14,7 +12,6 @@ from aristaeus.utils.singleton import SingletonMeta
 
 class UserManager(InjectorMixin, metaclass=SingletonMeta):
     cerbes: CerbesClientAsyncAdapter
-    user_repository: UserRepositoryAdapter
 
     async def validate_access_token(self, access_token) -> str | None:
         return await self.cerbes.validate(access_token)
@@ -28,7 +25,8 @@ class UserManager(InjectorMixin, metaclass=SingletonMeta):
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid access token")
 
-        user = await self.user_repository.get(UUID(user_id))
+        async with UnitOfWork() as uow:
+            user = await uow.user.get(UUID(user_id))
 
         return user
 

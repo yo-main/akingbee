@@ -4,9 +4,7 @@ import uuid
 
 from aristaeus.controllers.consumers.app import handler
 from aristaeus.dispatcher import Dispatcher
-from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
-from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
-from aristaeus.injector import Injector
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 
 
 class FakeDeliver:
@@ -32,8 +30,9 @@ async def test_user_created():
 
     await asyncio.sleep(0.3)
 
-    user = await Injector.get(UserRepositoryAdapter).get(user_id)
-    assert user and str(user.public_id) == user_id
+    async with UnitOfWork() as uow:
+        user = await uow.user.get(user_id)
+        parameters = await uow.parameter.list(organization_id=user.organization_id)
 
-    parameters = await Injector.get(ParameterRepositoryAdapter).list(organization_id=user.organization_id)
+    assert user and str(user.public_id) == user_id
     assert len(parameters) == 17

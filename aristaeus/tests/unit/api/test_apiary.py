@@ -4,9 +4,7 @@ import pytest
 from tests.factories import ApiaryFactory
 from tests.factories import HiveFactory
 
-from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
-from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
-from aristaeus.injector import Injector
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -57,21 +55,16 @@ async def test_get_apiary__get(async_app):
 
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
 async def test_list_apiaries(async_app):
-    apiary_repo = Injector.get(ApiaryRepositoryAdapter)
-    hive_repo = Injector.get(HiveRepositoryAdapter)
-
     apiaries = ApiaryFactory.build_batch(
         5, organization_id=uuid.UUID("22222222-2222-2222-2222-222222222222"), hive_count=1
     )
-    for apiary in apiaries:
-        await apiary_repo.save(apiary)
-    for hive in [
-        HiveFactory.create(
-            apiary=apiary,
-        )
-        for apiary in apiaries
-    ]:
-        await hive_repo.save(hive)
+    hives = [HiveFactory.create(apiary=apiary) for apiary in apiaries]
+
+    async with UnitOfWork() as uow:
+        for apiary in apiaries:
+            await uow.apiary.save(apiary)
+        for hive in hives:
+            await uow.hive.save(hive)
 
     response = await async_app.get("/apiary")
 

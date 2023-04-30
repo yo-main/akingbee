@@ -13,9 +13,10 @@ class Injector:
     _registry: dict = {}
 
     @classmethod
-    def get(cls, protocol: Type[protocol], store: str = None) -> protocol:
+    def get(cls, protocol: Type[protocol], store: str = None, kwargs: dict = None) -> protocol:
         store = (store or getattr(settings, cls.default_store_key)).lower()
         handlers = cls._registry.get(protocol)
+        kwargs = kwargs or {}
 
         if not handlers:
             raise NotImplementedError(f"Protocol {protocol} not managed")
@@ -25,7 +26,7 @@ class Injector:
         if not klass:
             raise NotImplementedError(f"No binding found for protocol {protocol} and store {store}")
 
-        instance = cls.inject(klass(), store)
+        instance = cls.inject(klass(**kwargs), store)
         return instance
 
     @classmethod
