@@ -17,7 +17,7 @@ export async function postCommentForHive(hive_id, { comment, date }) {
 }
 
 export async function putComment(commentId, { comment, date }) {
-  let response = await aristaeusApi.put(`/comment/${commentId}`, { comment, date });
+  let response = await aristaeusApi.put(`/comment/${commentId}`, { body: comment, date });
   return response.data;
 }
 
