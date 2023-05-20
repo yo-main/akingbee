@@ -35,8 +35,9 @@ class FakeHiveRepository(BaseRepository):
 
     async def list(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
         return [
-            hive 
-            for hive in self._hives if hive.organization_id == organization_id
+            hive
+            for hive in self._hives
+            if hive.organization_id == organization_id
             if not with_apiary_only or hive.apiary is not None
         ]
 
@@ -65,10 +66,14 @@ class HiveRepository(BaseRepository):
         if apiary_id:
             sub_query = select(orm.apiary_table.c.id).where(orm.apiary_table.c.public_id == apiary_id).scalar_subquery()
             data["apiary_id"] = sub_query
+        else:
+            data["apiary_id"] = None
 
         if swarm_id:
             sub_query = select(orm.swarm_table.c.id).where(orm.swarm_table.c.public_id == swarm_id).scalar_subquery()
             data["swarm_id"] = sub_query
+        else:
+            data["swarm_id"] = None
 
         return data
 

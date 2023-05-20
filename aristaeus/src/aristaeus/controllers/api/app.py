@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from aristaeus.config import settings
 from aristaeus.dispatcher import Dispatcher
+from aristaeus.domain.errors import BaseException
 from aristaeus.domain.errors import EntityNotFound
 
 from .middlewares.cors import configure_cors_middleware
@@ -22,6 +23,13 @@ def configure_error_handlers(app):
         return JSONResponse(
             status_code=404,
             content={"message": "Not Found ohoh"},
+        )
+
+    @app.exception_handler(BaseException)
+    async def base_exception_handler(request: Request, exc: BaseException):
+        return JSONResponse(
+            status_code=400,
+            content={"message": exc.message},
         )
 
 

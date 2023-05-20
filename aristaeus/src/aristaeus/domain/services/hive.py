@@ -64,3 +64,13 @@ class HiveService(InjectorMixin):
         async with UnitOfWork() as uow:
             hive = await uow.hive.get(hive_id)
             await uow.hive.delete(hive)
+            await uow.commit()
+
+    async def remove_apiary(self, hive_id: UUID) -> Hive:
+        async with UnitOfWork() as uow:
+            hive = await uow.hive.get(hive_id)
+            hive.remove_apiary()
+            await uow.hive.update(hive=hive)
+            await uow.commit()
+
+        return hive

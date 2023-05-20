@@ -65,6 +65,13 @@ async def move_hive(hive_id: UUID, apiary_id: UUID, user: UserEntity = Depends(a
     return hive.asdict()
 
 
+@router.put("/{hive_id}/remove_apiary", response_model=HiveOut)
+async def remove_apiary(hive_id: UUID, user: UserEntity = Depends(auth_user)):
+    hive_service = HiveService()
+    hive = await hive_service.remove_apiary(hive_id)
+    return hive.asdict()
+
+
 @router.delete("/{hive_id}", status_code=204)
 async def delete_hive(hive_id: UUID, user: UserEntity = Depends(auth_user)):
     hive_service = HiveService()

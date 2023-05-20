@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from dataclasses import field
 from uuid import UUID
 
+from aristaeus.domain.errors import ApiaryCannotBeRemoved
+
 from .apiary import Apiary
 from .base import Entity
 from .swarm import Swarm
@@ -37,6 +39,15 @@ class Hive(Entity):
             raise ValueError("Permission error")  # TODO: refacto that
 
         self.apiary = new_apiary
+
+    def remove_apiary(self):
+        if not self.apiary:
+            return
+
+        if self.swarm:
+            raise ApiaryCannotBeRemoved(f"Can't remove apiary from {self} when a swarm exists: {self.swarm}")
+
+        self.apiary = None
 
     def __repr__(self):
         return f"<Hive {self.public_id}>"

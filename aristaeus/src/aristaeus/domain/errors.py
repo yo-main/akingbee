@@ -10,3 +10,7 @@ class EntitySavingError(BaseException):
 
 class EntityNotFound(BaseException):
     pass
+
+
+class ApiaryCannotBeRemoved(BaseException):
+    pass

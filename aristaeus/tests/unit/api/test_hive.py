@@ -221,3 +221,33 @@ async def test_move_hive(async_app):
     assert response.status_code == 200, response.text
     assert response.json()["public_id"] == str(hive.public_id)
     assert response.json()["apiary"]["public_id"] == str(apiary.public_id)
+
+
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_move_hive__success(async_app):
+    apiary = ApiaryFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    hive = HiveFactory.create(organization_id=apiary.organization_id, apiary=apiary)
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        await uow.hive.save(hive)
+        await uow.commit()
+
+    response = await async_app.put(f"/hive/{hive.public_id}/remove_apiary")
+    assert response.status_code == 200, response.text
+    assert response.json()["public_id"] == str(hive.public_id)
+    assert response.json()["apiary"] is None
+
+
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_move_hive__fail(async_app):
+    apiary = ApiaryFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    swarm = SwarmFactory.create()
+    hive = HiveFactory.create(organization_id=apiary.organization_id, apiary=apiary, swarm=swarm)
+    async with UnitOfWork() as uow:
+        await uow.swarm.save(swarm)
+        await uow.apiary.save(apiary)
+        await uow.hive.save(hive)
+        await uow.commit()
+
+    response = await async_app.put(f"/hive/{hive.public_id}/remove_apiary")
+    assert response.status_code == 400, response.text
