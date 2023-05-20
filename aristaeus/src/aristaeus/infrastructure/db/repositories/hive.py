@@ -33,12 +33,16 @@ class FakeHiveRepository(BaseRepository):
         self._hives.discard(hive)
         self._hives.add(hive)
 
-    async def list(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
+    async def list(self, organization_id: UUID, with_apiary_only: bool | None) -> list[Hive]:
         return [
             hive
             for hive in self._hives
             if hive.organization_id == organization_id
-            if not with_apiary_only or hive.apiary is not None
+            if (
+                with_apiary_only is None
+                or (hive.apiary is not None and with_apiary_only is True)
+                or (hive.apiary is None and with_apiary_only is False)
+            )
         ]
 
     async def delete(self, hive: Hive) -> None:
@@ -108,7 +112,7 @@ class HiveRepository(BaseRepository):
         await self.session.execute(query)
 
     @error_handler
-    async def list(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
+    async def list(self, organization_id: UUID, with_apiary_only: bool | None) -> list[Hive]:
         query = (
             select(Hive)
             .join_from(orm.hive_table, orm.apiary_table, isouter=True)
@@ -116,8 +120,10 @@ class HiveRepository(BaseRepository):
             .where(orm.hive_table.c.organization_id == organization_id)
         )
 
-        if with_apiary_only:
+        if with_apiary_only is True:
             query = query.where(orm.hive_table.c.apiary_id.not_(None))
+        elif with_apiary_only is False:
+            query = query.where(orm.hive_table.c.apiary_id.is_(None))
 
         result = await self.session.execute(query)
         return result.unique().scalars().all()

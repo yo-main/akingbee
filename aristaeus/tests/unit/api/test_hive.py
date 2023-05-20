@@ -129,19 +129,19 @@ async def test_list_hives(async_app):
     assert data[0]["swarm"]["queen_year"] == 2000
 
 
-@pytest.mark.parametrize("async_app", ["33333333-3333-3333-3333-333333333333"], indirect=True)
+@pytest.mark.parametrize("async_app", ["55555555-5555-5555-5555-555555555555"], indirect=True)
 async def test_list_hives__with_apiary_only(async_app):
-    apiary = ApiaryFactory.build(organization_id=uuid.UUID("33333333-3333-3333-3333-333333333333"), name="apiary_test")
+    apiary = ApiaryFactory.build(organization_id=uuid.UUID("55555555-5555-5555-5555-555555555555"), name="apiary_test")
     swarms = SwarmFactory.create_batch(5, queen_year=2001)
     hives_with_apiary = [
         HiveFactory.create(
-            organization_id=uuid.UUID("33333333-3333-3333-3333-333333333333"), apiary=apiary, swarm=swarm
+            organization_id=uuid.UUID("55555555-5555-5555-5555-555555555555"), apiary=apiary, swarm=swarm
         )
         for swarm in swarms
     ]
 
     hives_whitout_apiary = HiveFactory.create_batch(
-        5, organization_id=uuid.UUID("33333333-3333-3333-3333-333333333333")
+        5, organization_id=uuid.UUID("55555555-5555-5555-5555-555555555555")
     )
 
     async with UnitOfWork() as uow:
@@ -154,6 +154,10 @@ async def test_list_hives__with_apiary_only(async_app):
             await uow.hive.save(hive)
         await uow.commit()
 
+    response = await async_app.get("/hive")
+    data = response.json()
+    assert len(data) == 10, response.text
+
     response = await async_app.get("/hive", params={"with_apiary_only": True})
 
     assert response.status_code == 200, response.text
@@ -161,6 +165,14 @@ async def test_list_hives__with_apiary_only(async_app):
     assert len(data) == 5, response.text
     assert data[0]["apiary"]["name"] == "apiary_test"
     assert data[0]["swarm"]["queen_year"] == 2001
+
+    response = await async_app.get("/hive", params={"with_apiary_only": False})
+
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert len(data) == 5, response.text
+    assert data[0]["apiary"] is None
+    assert data[0]["swarm"] is None
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)

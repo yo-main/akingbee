@@ -10,6 +10,6 @@ class HiveQuery(InjectorMixin):
         async with UnitOfWork() as uow:
             return await uow.hive.get(hive_id)
 
-    async def list_hives(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
+    async def list_hives(self, organization_id: UUID, with_apiary_only: bool | None) -> list[Hive]:
         async with UnitOfWork() as uow:
             return await uow.hive.list(organization_id=organization_id, with_apiary_only=with_apiary_only)
