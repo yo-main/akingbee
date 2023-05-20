@@ -1,5 +1,5 @@
 import React from 'react';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 import { BrowserRouter, Switch, withRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import './services/localization';
