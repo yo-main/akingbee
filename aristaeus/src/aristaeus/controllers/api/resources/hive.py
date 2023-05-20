@@ -34,8 +34,10 @@ async def post_hive(input: PostHiveIn, user: UserEntity = Depends(auth_user)):
 
 
 @router.get("", response_model=list[HiveOut])
-async def list_hives(user: UserEntity = Depends(auth_user)):
-    hive_entities = await HiveQuery().list_hives(organization_id=user.organization_id)
+async def list_hives(with_apiary_only: bool = False, user: UserEntity = Depends(auth_user)):
+    hive_entities = await HiveQuery().list_hives(
+        organization_id=user.organization_id, with_apiary_only=with_apiary_only
+    )
     return [hive.asdict() for hive in hive_entities]
 
 

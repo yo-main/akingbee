@@ -25,5 +25,5 @@ class HiveRepositoryAdapter(Base):
     async def delete(self, hive: Hive) -> None:
         ...
 
-    async def list(self, organization_id: UUID) -> list[Hive]:
+    async def list(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
         ...

@@ -33,8 +33,12 @@ class FakeHiveRepository(BaseRepository):
         self._hives.discard(hive)
         self._hives.add(hive)
 
-    async def list(self, organization_id: UUID) -> list[Hive]:
-        return [hive for hive in self._hives if hive.organization_id == organization_id]
+    async def list(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
+        return [
+            hive 
+            for hive in self._hives if hive.organization_id == organization_id
+            if not with_apiary_only or hive.apiary is not None
+        ]
 
     async def delete(self, hive: Hive) -> None:
         self._hives.discard(hive)
@@ -99,13 +103,16 @@ class HiveRepository(BaseRepository):
         await self.session.execute(query)
 
     @error_handler
-    async def list(self, organization_id: UUID) -> list[Hive]:
+    async def list(self, organization_id: UUID, with_apiary_only: bool) -> list[Hive]:
         query = (
             select(Hive)
             .join_from(orm.hive_table, orm.apiary_table, isouter=True)
             .join_from(orm.hive_table, orm.swarm_table, isouter=True)
             .where(orm.hive_table.c.organization_id == organization_id)
         )
+
+        if with_apiary_only:
+            query = query.where(orm.hive_table.c.apiary_id.not_(None))
 
         result = await self.session.execute(query)
         return result.unique().scalars().all()
