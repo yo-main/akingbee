@@ -424,8 +424,6 @@ export class HiveDetailsPage extends React.Component {
       apiaries: [],
       swarmHealthStatus: [],
     }
-
-    this.refCascader = React.createRef();
   }
 
   updateHiveData = async(form) => {
@@ -545,8 +543,6 @@ export class HiveDetailsPage extends React.Component {
   }
 
   onCascaderSubmit = async({action}) => {
-    this.refCascader.current.reset();
-
     if (action === undefined) {
       return;
     }
@@ -666,7 +662,7 @@ export class HiveDetailsPage extends React.Component {
             </Card>
           </Col>
           <Col style={{paddingLeft: '10px'}}>
-            <CascaderForm ref={this.refCascader} title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
+            <CascaderForm title={window.i18n('form.manageHive')} options={cascaderOptions} onFinish={this.onCascaderSubmit}/>
           </Col>
           <Col offset={14}>
           </Col>

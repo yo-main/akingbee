@@ -50,17 +50,17 @@ export class OptionalFormItem extends React.Component {
               {this.props.buttonName}
             </Button>
           </Form.Item>
-        :
+          :
           <Row>
             <Col span='20'>
-              <Form.Item {...this.props} style={{paddingLeft: '10%'}}>
+              <Form.Item {...this.props} style={{ paddingLeft: '10%' }}>
                 {this.props.children}
               </Form.Item>
             </Col>
             <Col>
               <MinusCircleOutlined
-              onClick={this.setInative}
-              style={{paddingTop: '70%', paddingLeft: '50%'}}
+                onClick={this.setInative}
+                style={{ paddingTop: '70%', paddingLeft: '50%' }}
               />
             </Col>
           </Row>
@@ -72,48 +72,50 @@ export class OptionalFormItem extends React.Component {
 
 
 
-export class CascaderForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.refCascader = React.createRef();
-    this.state = {selected: false}
-  }
+export function CascaderForm(props) {
+  const [value, setValue] = React.useState([]);
+  const [selected, setSelected] = React.useState(false);
 
-  reset() {
-    this.refCascader.current.setValue([]);
-  }
+  const onChange = (v) => {
 
-  render() {
-    const onChange = (value) => {
-      if (value.length > 0 && !this.state.selected) {
-        this.setState({selected: true})
-      } else if (value.length === 0 && this.state.selected) {
-        this.setState({selected: false})
+    if (v) {
+      setValue(v);
+
+      if (v.length > 0 && !selected) {
+          setSelected(true);
+      } else if (v.length === 0 && selected) {
+        setSelected(false);
       }
     }
+  }
 
-    let buttons;
-    if (this.state.selected) {
-      buttons = (
-        <Form.Item>
-          <Button htmlType='submit' icon={<CheckCircleOutlined/>} type='text' />
-        </Form.Item>
-      )
-    }
+  const onFinish = (form) => {
+    setValue([]);
+    setSelected(false);
+    props.onFinish(form);
+  }
 
-    return (
-      <Form {...this.props}>
-        <Row>
-          <Col>
-            <Form.Item name="action">
-              <Cascader ref={this.refCascader} options={this.props.options} onChange={onChange} placeholder={this.props.title}/>
-            </Form.Item>
-          </Col>
-          <Col>
-            {buttons}
-          </Col>
-        </Row>
-      </Form>
+  let buttons;
+  if (selected) {
+    buttons = (
+      <Form.Item>
+        <Button htmlType='submit' icon={<CheckCircleOutlined />} type='text' />
+      </Form.Item>
     )
   }
+
+  return (
+    <Form onFinish={(e) => onFinish(e)}>
+      <Row>
+        <Col>
+          <Form.Item name="action">
+            <Cascader value={value} options={props.options} onChange={(e) => onChange(e)} placeholder={props.title} />
+          </Form.Item>
+        </Col>
+        <Col>
+          {buttons}
+        </Col>
+      </Row>
+    </Form>
+  )
 }
