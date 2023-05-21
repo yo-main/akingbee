@@ -12,5 +12,5 @@ class EntityNotFound(BaseException):
     pass
 
 
-class ApiaryCannotBeRemoved(BaseException):
+class ApiaryCannotBeRemovedSwarmExists(BaseException):
     pass

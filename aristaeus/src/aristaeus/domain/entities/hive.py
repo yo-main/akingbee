@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from dataclasses import field
 from uuid import UUID
 
-from aristaeus.domain.errors import ApiaryCannotBeRemoved
+from aristaeus.domain.errors import ApiaryCannotBeRemovedSwarmExists
 
 from .apiary import Apiary
 from .base import Entity
@@ -49,7 +49,7 @@ class Hive(Entity):
             return
 
         if self.swarm:
-            raise ApiaryCannotBeRemoved(f"Can't remove apiary from {self} when a swarm exists: {self.swarm}")
+            raise ApiaryCannotBeRemovedSwarmExists(f"Can't remove apiary from {self} when a swarm exists: {self.swarm}")
 
         self.apiary = None
 
