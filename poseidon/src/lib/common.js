@@ -76,7 +76,11 @@ export function dealWithError(error) {
       return `${e.loc[1]}: ${e.msg}`
     }).join(", ")
   } else {
-    msg = response.data.message;
+    let errorType = response.data.type;
+    msg = window.i18n(`error.${errorType}`);
+    if (!msg) {
+      msg = response.data.message;
+    }
   }
 
   notificate("error", msg)

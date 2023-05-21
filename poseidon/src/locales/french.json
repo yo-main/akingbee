@@ -139,5 +139,6 @@
     "word.welcome": "Bienvenue",
     "action.hiveStock": "Stock",
     "form.hiveApiaryRemovedSuccess": "Ruche mise en stock avec succès",
-    "form.removeApiary": "Mettre en stock"
+    "form.removeApiary": "Mettre en stock",
+    "error.ApiaryCannotBeRemovedSwarmExists": "Impossible de mettre en stock une ruche avec une essaim actif"
   }

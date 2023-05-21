@@ -139,5 +139,6 @@
     "word.welcome": "Welcome",
     "action.hiveStock": "Storage",
     "form.hiveApiaryRemovedSuccess": "Hive put in storage successfully",
-    "form.removeApiary": "Put in storage"
+    "form.removeApiary": "Put in storage",
+    "error.ApiaryCannotBeRemoved": "Cannot put in storage a hive with an active swarm"
   }
