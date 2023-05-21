@@ -7,8 +7,8 @@ database_user = "sa_aristaeus"
 database_password = "123"
 database_dbname = "aristaeus"
 
-cerbes_api_endpoint = "cerbes"
-cerbes_api_port = 9001
+cerbes_api_endpoint = "localhost"
+cerbes_api_port = 8000
 
 rbmq_host = "localhost"
 rbmq_port = 5672
@@ -19,6 +19,9 @@ rbmq_exchange = "akingbee.main_exchange"
 rbmq_exchange_type = "topic"
 rbmq_queue = "aristaeus-main-queue"
 
+[compose]
+cerbes_api_endpoint = "cerbes"
+cerbes_api_port = 9001
 
 [integration]
 database_host = "localhost"

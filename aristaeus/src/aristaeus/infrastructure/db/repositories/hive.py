@@ -121,7 +121,7 @@ class HiveRepository(BaseRepository):
         )
 
         if with_apiary_only is True:
-            query = query.where(orm.hive_table.c.apiary_id.not_(None))
+            query = query.where(orm.hive_table.c.apiary_id.isnot(None))
         elif with_apiary_only is False:
             query = query.where(orm.hive_table.c.apiary_id.is_(None))
 
