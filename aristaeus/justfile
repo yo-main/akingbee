@@ -24,3 +24,6 @@ serve: db rbmq migrate
 
 listen: db rbmq migrate
 	poetry run python src/aristaeus/controllers/consumers/app.py
+
+lint:
+	poetry run black src tests migrations
