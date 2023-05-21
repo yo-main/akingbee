@@ -19,9 +19,11 @@ class HiveService(InjectorMixin):
 
         async with UnitOfWork() as uow:
             if apiary_id := command.apiary_id:
-                hive.apiary = await uow.apiary.get(apiary_id)
+                apiary = await uow.apiary.get(apiary_id)
+                hive.move(apiary)
             if swarm_id := command.swarm_id:
-                hive.swarm = await uow.swarm.get(swarm_id)
+                swarm = await uow.swarm.get(swarm_id)
+                hive.attach_swarm(swarm)
             await uow.hive.save(hive)
             await uow.commit()
 
