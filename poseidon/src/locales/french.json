@@ -142,5 +142,5 @@
     "form.removeApiary": "Mettre en stock",
     "error.ApiaryCannotBeRemovedSwarmExists": "Impossible de mettre en stock une ruche avec une essaim actif",
     "error.CantAttachSwarmOneAlreadyExists": "Impossible - cette ruche est déjà rattaché à un essaim",
-    "error.CantAttachSwarmNoApiary": "Impossible d'ajouter un essaim sur une ruche présentement en stock"
+    "error.CantAttachSwarmNoApiary": "Impossible d'ajouter un essaim sur une ruche sans rucher"
   }
