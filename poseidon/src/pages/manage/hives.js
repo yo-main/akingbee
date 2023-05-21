@@ -116,20 +116,13 @@ export function UpdateHiveForm(props) {
 }
 
 function CreateHiveForm(props) {
-  let initialValues = {
-    'owner': window.i18n('form.selectAValue'),
-    'condition': window.i18n('form.selectAValue'),
-    'apiary': window.i18n('form.selectAValue'),
-    'swarm_health': window.i18n('form.selectAValue'),
-  };
-
   return (
-    <Form {...formItemLayout} onFinish={props.callback} onFailed={onFailed} requiredMark={false} initialValues={initialValues}>
+    <Form {...formItemLayout} onFinish={props.callback} onFailed={onFailed} requiredMark={false}>
       <Form.Item label={window.i18n("word.name")} name="name" rules={[{ required: true, message: window.i18n('form.insertHiveName') }]}>
         <Input />
       </Form.Item>
       <Form.Item label={window.i18n("word.owner")} name="owner" rules={[{ required: true, message: window.i18n('form.insertHiveOwner') }]}>
-        <Select>
+        <Select placeholder={window.i18n('form.selectAValue')}>
           {
             props.owners.map(data => {
               return (
@@ -140,7 +133,7 @@ function CreateHiveForm(props) {
         </Select>
       </Form.Item>
       <Form.Item label={window.i18n("word.condition")} name="condition" rules={[{ required: true, message: window.i18n('form.selectHiveCondition') }]}>
-        <Select>
+        <Select placeholder={window.i18n('form.selectAValue')}>
           {
             props.conditions.map(data => {
               return (
@@ -151,7 +144,7 @@ function CreateHiveForm(props) {
         </Select>
       </Form.Item>
       <OptionalFormItem buttonName={window.i18n("form.addToApiary")} label={window.i18n("word.apiary")} name="apiary_id" rules={[{ required: true, message: window.i18n('form.selectHiveApiary') }]}>
-        <Select>
+        <Select placeholder={window.i18n('form.selectAValue')}>
           {
             props.apiaries.map(data => {
               return (
@@ -162,7 +155,7 @@ function CreateHiveForm(props) {
         </Select>
       </OptionalFormItem>
       <OptionalFormItem buttonName={window.i18n("form.addSwarm")} label={window.i18n("word.swarmHealth")} name="swarm_health" rules={[{ required: true, message: window.i18n('form.selectSwarmHealth') }]}>
-        <Select>
+        <Select placeholder={window.i18n('form.selectAValue')}>
           {
             props.swarmHealths.map(data => {
               return (
@@ -505,10 +498,10 @@ export class HiveCreationPage extends React.Component {
   postData = async (data) => {
     try {
       await createHive(data);
-      if (data.apiary) {
-        this.props.history.push('/manage/hive');
-      } else {
+      if (data.apiary_id == undefined) {
         this.props.history.push('/manage/hive/stock');
+      } else {
+        this.props.history.push('/manage/hive');
       }
 
     } catch (error) {
