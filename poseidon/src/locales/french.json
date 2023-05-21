@@ -137,5 +137,7 @@
     "success.impersonationSuccessfull": "Impersonification faites avec succès",
     "success.desimpersonationSuccessfull": "Desimpersonification faites avec succès",
     "word.welcome": "Bienvenue",
-    "action.hiveStock": "Stock"
+    "action.hiveStock": "Stock",
+    "form.hiveApiaryRemovedSuccess": "Ruche mise en stock avec succès",
+    "form.removeApiary": "Mettre en stock"
   }

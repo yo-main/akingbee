@@ -12,7 +12,7 @@ import { ReactComponent as queenSVG } from '../../images/queen.svg';
 
 import { listSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { createHive, getHives, updateHive, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
+import { createHive, getHives, updateHive, removeApiary, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm, updateSwarm } from '../../services/aristaeus/swarm';
 
 import { LOADING_STATUS, getGenericPage } from '../generic';
@@ -646,6 +646,13 @@ export class HiveDetailsPage extends React.Component {
       options.push(apiaryConfig);
     }
 
+    if (this.state.hive.apiary) {
+      options.push({
+        label: window.i18n('form.removeApiary'),
+        value: "removeApiary"
+      });
+    }
+
     if (this.state.hive.swarm) {
       options.push({
         label: window.i18n('form.deleteSwarm'),
@@ -664,6 +671,7 @@ export class HiveDetailsPage extends React.Component {
         }, [])
       })
     }
+
 
     options.push({
       label: window.i18n('form.deleteHive'),
@@ -689,6 +697,19 @@ export class HiveDetailsPage extends React.Component {
             return state;
           })
           notificate('success', window.i18n('form.hiveMovedSuccess'))
+        } catch (error) {
+          dealWithError(error);
+        }
+        break;
+      case 'removeApiary':
+        try {
+          await removeApiary(this.state.hive.public_id);
+          let hive = await getHive(this.state.hive.public_id)
+          this.setState((state) => {
+            state['hive'] = hive;
+            return state;
+          })
+          notificate('success', window.i18n('form.hiveApiaryRemovedSuccess'))
         } catch (error) {
           dealWithError(error);
         }

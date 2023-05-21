@@ -76,7 +76,7 @@ export function dealWithError(error) {
       return `${e.loc[1]}: ${e.msg}`
     }).join(", ")
   } else {
-    msg = response.data.detail;
+    msg = response.data.message;
   }
 
   notificate("error", msg)

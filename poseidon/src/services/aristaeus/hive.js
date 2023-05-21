@@ -37,6 +37,11 @@ export async function updateHive(hive_id, {name, owner, condition, swarm_id, api
   return response.data;
 }
 
+export async function removeApiary(hiveId) {
+  let response = await aristaeusApi.put(`/hive/${hiveId}/remove_apiary`);
+  return response.data;
+}
+
 export async function deleteHive(hive_id) {
   let response = await aristaeusApi.delete(`/hive/${hive_id}`);
   return response.data;

@@ -137,5 +137,7 @@
     "success.impersonationSuccessfull": "Impersonation successfull",
     "success.desimpersonationSuccessfull": "Desimpersonation successfull",
     "word.welcome": "Welcome",
-    "action.hiveStock": "Storage"
+    "action.hiveStock": "Storage",
+    "form.hiveApiaryRemovedSuccess": "Hive put in storage successfully",
+    "form.removeApiary": "Put in storage"
   }
