@@ -148,7 +148,6 @@ export class SetupPage extends React.Component {
   }
 
   render() {
-    console.log(this.state);
     let genericPage = getGenericPage(this.state.pageStatus);
     if (genericPage) { return genericPage };
 

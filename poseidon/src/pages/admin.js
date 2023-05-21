@@ -11,8 +11,6 @@ export class AdminPage extends React.Component {
   state = {tableData: [], pageStatus: LOADING_STATUS}
 
   getTableData = (data) => {
-    console.log(data);
-
     const tableData = data.reduce((acc, val, index) => {
       acc.push({
         key: index+1,

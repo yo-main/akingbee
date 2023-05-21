@@ -52,14 +52,22 @@ export function LoggedInMenu({ languageCallback, section }) {
     logOff(history);
   }
 
-  let username = getLoggerUserData("username")
-  let is_admin = getLoggerUserData("admin") || getLoggerUserData("impersonator_id");
+  let username = getLoggerUserData("username");
+  let is_admin = getLoggerUserData("admin");
+  let is_impersonating = getLoggerUserData("impersonator");
 
   let admin_menu = <></>;
-  if (is_admin) {
+  let welcome;
+
+  if (is_admin || is_impersonating) {
     admin_menu = <Menu.Item key={constants.sections.menu_admin}><Link to={'/admin'}>{window.i18n("word.admin")}</Link></Menu.Item>
   }
 
+  if (is_impersonating) {
+    welcome = `Impersonating ${username}`
+  } else {
+    welcome = `${window.i18n('word.welcome')} ${username}`
+  }
 
   return (
     <Row justify="space-between">
@@ -78,7 +86,7 @@ export function LoggedInMenu({ languageCallback, section }) {
       <Col span={8}>
         <Row justify="end">
           <Col flex="none" push={11}>
-            <span style={{ color: 'white' }}>{window.i18n("word.welcome")} {username}</span>
+            <span style={{ color: 'white' }}>{welcome}</span>
           </Col>
           <Col flex="auto" push={12}>
             <Menu theme="dark" mode="horizontal">
@@ -86,7 +94,6 @@ export function LoggedInMenu({ languageCallback, section }) {
               <Menu.Item onClick={onClick}>{window.i18n("word.logout")}</Menu.Item>
             </Menu>
           </Col>
-
         </Row>
       </Col>
     </Row>
