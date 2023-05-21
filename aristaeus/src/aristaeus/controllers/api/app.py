@@ -29,7 +29,7 @@ def configure_error_handlers(app):
     async def base_exception_handler(request: Request, exc: BaseException):
         return JSONResponse(
             status_code=400,
-            content={"message": exc.message},
+            content={"message": exc.message, "type": exc.__class__.__name__},
         )
 
 
