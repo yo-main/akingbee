@@ -11,7 +11,7 @@ url = "postgres://sa_cerbes:123@localhost:5432/cerbes"
 [rabbitmq]
 host = "localhost"
 port = 5672
-user = "rabbitmq"
-password = "rabbitmq"
+user = "akingbee"
+password = "password"
 exchange = "akingbee.main_exchange"
 vhost = "/"
