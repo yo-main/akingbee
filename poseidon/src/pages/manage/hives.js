@@ -498,7 +498,7 @@ export class HiveCreationPage extends React.Component {
   postData = async (data) => {
     try {
       await createHive(data);
-      if (data.apiary_id == undefined) {
+      if (data.apiary_id === undefined) {
         this.props.history.push('/manage/hive/stock');
       } else {
         this.props.history.push('/manage/hive');

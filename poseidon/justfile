@@ -4,3 +4,6 @@ init:
 	
 serve:
 	npm run start
+
+lint:
+	npx eslint src/
