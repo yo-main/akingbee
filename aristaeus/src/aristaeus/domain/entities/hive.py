@@ -30,8 +30,12 @@ class Hive(Entity):
         self.name = new_name
 
     def attach_swarm(self, swarm: Swarm):
+        if self.apiary is None:
+            raise ValueError("Cannot attach a swarm to a hive that is not located on an apiary")  # TODO: refacto that
+
         if self.swarm:
             raise ValueError("A swarm already exists")  # TODO: refacto that
+
         self.swarm = swarm
 
     def move(self, new_apiary: Apiary):
