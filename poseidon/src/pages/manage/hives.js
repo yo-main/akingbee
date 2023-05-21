@@ -628,6 +628,13 @@ export class HiveDetailsPage extends React.Component {
     let apiaries = this.state.apiaries;
     let health_statuses = this.state.swarmHealthStatus;
 
+    if (this.state.hive.apiary) {
+      options.push({
+        label: window.i18n('form.removeApiary'),
+        value: "removeApiary"
+      });
+    }
+
     let apiaryConfig = {
       label: window.i18n('form.moveHive'),
       value: "newApiary",
@@ -639,18 +646,15 @@ export class HiveDetailsPage extends React.Component {
           });
         }
         return acc;
-      }, [])
+      }, [{
+        value: window.i18n("word.name"),
+        label: window.i18n("word.name"),
+        disabled: true
+      }])
     };
 
     if (apiaryConfig.children.length > 0) {
       options.push(apiaryConfig);
-    }
-
-    if (this.state.hive.apiary) {
-      options.push({
-        label: window.i18n('form.removeApiary'),
-        value: "removeApiary"
-      });
     }
 
     if (this.state.hive.swarm) {
@@ -668,7 +672,11 @@ export class HiveDetailsPage extends React.Component {
             label: val.value,
           });
           return acc;
-        }, [])
+        }, [{
+          value: window.i18n("word.health"),
+          label: window.i18n("word.health"),
+          disabled: true
+        }])
       })
     }
 
