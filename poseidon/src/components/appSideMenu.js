@@ -30,12 +30,13 @@ export function ManageSideMenu(props) {
         style={{ height: '100%' }}
       >
         <SubMenu key={sections.submenu_hive} icon={hiveMenuIcon} title={window.i18n("word.hives")}>
-          <Menu.Item key={sections.submenu_hive_list}><Link to='/manage/hive'>{window.i18n("action.myHives")}</Link></Menu.Item>
           <Menu.Item key={sections.submenu_hive_create}><Link to='/manage/hive/create'>{window.i18n("action.createHive")}</Link></Menu.Item>
+          <Menu.Item key={sections.submenu_hive_list}><Link to='/manage/hive'>{window.i18n("action.myHives")}</Link></Menu.Item>
+          <Menu.Item key={sections.submenu_hive_stock}><Link to='/manage/hive/stock'>{window.i18n("action.hiveStock")}</Link></Menu.Item>
         </SubMenu>
         <SubMenu key={sections.submenu_apiary} icon={apiaryMenuIcon} title={window.i18n("word.apiaries")}>
-          <Menu.Item key={sections.submenu_apiary_list}><Link to='/manage/apiary'>{window.i18n("action.myApiaries")}</Link></Menu.Item>
           <Menu.Item key={sections.submenu_apiary_create}><Link to='/manage/apiary/create'>{window.i18n("action.createApiary")}</Link></Menu.Item>
+          <Menu.Item key={sections.submenu_apiary_list}><Link to='/manage/apiary'>{window.i18n("action.myApiaries")}</Link></Menu.Item>
         </SubMenu>
       </Menu>
     </Sider>

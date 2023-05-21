@@ -10,6 +10,7 @@ export const sections = {
   menu_admin: 'admin',
   submenu_hive: 'submenu_hive',
   submenu_hive_list: 'submenu_hive_list',
+  submenu_hive_stock: 'submenu_hive_stock',
   submenu_hive_create: 'submenu_hive_create',
   submenu_apiary: 'submenu_apiary',
   submenu_apiary_list: 'submenu_apiary_list',

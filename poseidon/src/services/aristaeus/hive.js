@@ -1,8 +1,9 @@
 import { aristaeusApi } from '../../lib/common';
 import { createSwarm } from './swarm';
 
-export async function getHives() {
-  let response = await aristaeusApi.get(`/hive`);
+export async function getHives(withApiaryOnly) {
+  let data = {with_apiary_only: withApiaryOnly};
+  let response = await aristaeusApi.get(`/hive`, {params: data});
   return response.data;
 }
 

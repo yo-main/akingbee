@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, withRouter } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import './services/localization';
 
-import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, ProfilePage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage, AdminPage } from './pages';
+import { NotFound, PublicFrame, PrivateFrame, LoginPage, RegistrationPage, ProfilePage, WelcomePage, SetupPage, ApiaryPage, ApiaryCreationPage, HivePage, HiveStockPage, HiveCreationPage, HiveDetailsPage, ActivationPage, RequestPasswordResetPage, PasswordResetPage, AdminPage } from './pages';
 import { setupData, sections } from './constants';
 
 class App extends React.Component {
@@ -18,6 +18,7 @@ class App extends React.Component {
     const ApiaryCreationPageWithRouter = withRouter(ApiaryCreationPage);
     const HivePageWithRouter = withRouter(HivePage);
     const HiveCreationPageWithRouter = withRouter(HiveCreationPage);
+    const HiveStockPageWithRouter = withRouter(HiveStockPage);
     const HiveDetailsPageWithRouter = withRouter(HiveDetailsPage);
     const ActivationPageWithRouter = withRouter(ActivationPage);
     const RegistrationPageWithRouter = withRouter(RegistrationPage);
@@ -49,7 +50,11 @@ class App extends React.Component {
               <HiveCreationPageWithRouter />
             </PrivateFrame>
 
-            <PrivateFrame exact path="/manage/hive/:hiveId" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_list}>
+            <PrivateFrame exact path="/manage/hive/stock" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive} submenuItem={sections.submenu_hive_stock}>
+              <HiveStockPageWithRouter />
+            </PrivateFrame>
+
+            <PrivateFrame exact path="/manage/hive/:hiveId" languageCallback={this.changeLanguage} submenuTopic={sections.submenu_hive}>
               <HiveDetailsPageWithRouter />
             </PrivateFrame>
 
