@@ -12,5 +12,17 @@ class EntityNotFound(BaseException):
     pass
 
 
+class PermissionError(BaseException):
+    pass
+
+
 class ApiaryCannotBeRemovedSwarmExists(BaseException):
+    pass
+
+
+class CantAttachSwarmOneAlreadyExists(BaseException):
+    pass
+
+
+class CantAttachSwarmNoApiary(BaseException):
     pass

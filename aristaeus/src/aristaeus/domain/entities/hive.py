@@ -4,6 +4,9 @@ from dataclasses import field
 from uuid import UUID
 
 from aristaeus.domain.errors import ApiaryCannotBeRemovedSwarmExists
+from aristaeus.domain.errors import CantAttachSwarmOneAlreadyExists
+from aristaeus.domain.errors import CantAttachSwarmNoApiary
+from aristaeus.domain.errors import PermissionError
 
 from .apiary import Apiary
 from .base import Entity
@@ -31,16 +34,16 @@ class Hive(Entity):
 
     def attach_swarm(self, swarm: Swarm):
         if self.apiary is None:
-            raise ValueError("Cannot attach a swarm to a hive that is not located on an apiary")  # TODO: refacto that
+            raise CantAttachSwarmNoApiary(f"Cannot attach swarm to {self} as there's no apiary")
 
         if self.swarm:
-            raise ValueError("A swarm already exists")  # TODO: refacto that
+            raise CantAttachSwarmOneAlreadyExists(f"{self} is already attached to {self.swarm}")
 
         self.swarm = swarm
 
     def move(self, new_apiary: Apiary):
         if new_apiary.organization_id != self.organization_id:
-            raise ValueError("Permission error")  # TODO: refacto that
+            raise PermissionError("Permission error")
 
         self.apiary = new_apiary
 

@@ -6,6 +6,7 @@ from aristaeus.config import settings
 from aristaeus.dispatcher import Dispatcher
 from aristaeus.domain.errors import BaseException
 from aristaeus.domain.errors import EntityNotFound
+from aristaeus.domain.errors import PermissionError
 
 from .middlewares.cors import configure_cors_middleware
 from .resources.apiary import router as apiary_router
@@ -23,6 +24,13 @@ def configure_error_handlers(app):
         return JSONResponse(
             status_code=404,
             content={"message": "Not Found ohoh"},
+        )
+
+    @app.exception_handler(PermissionError)
+    async def permission_exception_handler(request: Request, exc: PermissionError):
+        return JSONResponse(
+            status_code=403,
+            content={"message": "Permission error"},
         )
 
     @app.exception_handler(BaseException)
