@@ -140,5 +140,7 @@
     "action.hiveStock": "Storage",
     "form.hiveApiaryRemovedSuccess": "Hive put in storage successfully",
     "form.removeApiary": "Put in storage",
-    "error.ApiaryCannotBeRemoved": "Cannot put in storage a hive with an active swarm"
+    "error.ApiaryCannotBeRemoved": "Cannot put in storage a hive with an active swarm",
+    "error.CantAttachSwarmOneAlreadyExists": "Cannot attach a swarm to that hive as one already exists",
+    "error.CantAttachSwarmNoApiary": "Cannot attach a swarm to a hive currently in storage"
   }
