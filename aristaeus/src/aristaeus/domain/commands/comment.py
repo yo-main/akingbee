@@ -6,10 +6,10 @@ from uuid import UUID
 @dataclass(frozen=True, slots=True)
 class CreateCommentCommand:
     hive_id: UUID
-    event_id: UUID | None
     date: datetime
     type: str
     body: str
+    event_id: UUID | None = None
 
 
 @dataclass(frozen=True, slots=True)

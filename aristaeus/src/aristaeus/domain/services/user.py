@@ -5,7 +5,7 @@ from aristaeus.dispatcher import Dispatcher
 from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.commands.user import CreateUserCommand
 from aristaeus.domain.entities.parameter import Parameter
-from aristaeus.domain.entities.user import UserEntity
+from aristaeus.domain.entities.user import User
 from aristaeus.domain.entities.vo.event_type import EventType
 from aristaeus.domain.entities.vo.hive_condition import HiveCondition
 from aristaeus.domain.entities.vo.honey_kind import HoneyKind
@@ -15,8 +15,8 @@ from aristaeus.injector import InjectorMixin
 
 
 class UserApplication(InjectorMixin):
-    async def create(self, command: CreateUserCommand) -> UserEntity:
-        user = UserEntity(public_id=command.public_id, organization_id=command.organization_id)
+    async def create(self, command: CreateUserCommand) -> User:
+        user = User(public_id=command.public_id, organization_id=command.organization_id)
 
         async with UnitOfWork() as uow:
             await uow.user.save(user)

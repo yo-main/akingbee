@@ -6,7 +6,8 @@ from httpx import AsyncClient
 
 from aristaeus.config import settings
 from aristaeus.domain.services.unit_of_work import UnitOfWork
-from aristaeus.domain.entities.user import UserEntity
+from aristaeus.domain.entities.user import User
+from aristaeus.dispatcher import Dispatcher
 
 settings.setenv("test")
 
@@ -33,7 +34,7 @@ async def async_app(anyio_backend, request):
         if hasattr(request, "param"):
             access_token = uuid.UUID(request.param)
             async with UnitOfWork() as uow:
-                user = UserEntity(public_id=access_token, organization_id=access_token)
+                user = User(public_id=access_token, organization_id=access_token)
                 await uow.user.save(user)
 
             client.cookies["access_token"] = str(access_token)

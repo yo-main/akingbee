@@ -10,7 +10,6 @@ class CreateHiveCommand:
     condition: str
     apiary_id: UUID | None
     swarm_id: UUID | None
-    organization_id: UUID
 
 
 @dataclass(frozen=True, slots=True)

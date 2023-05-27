@@ -6,7 +6,7 @@ from sqlalchemy import Integer
 from sqlalchemy import Table
 from sqlalchemy import Uuid
 
-from aristaeus.domain.entities.user import UserEntity
+from aristaeus.domain.entities.user import User
 
 from .base import mapper_registry
 
@@ -21,4 +21,4 @@ user_table = Table(
 )
 
 
-mapper_registry.map_imperatively(UserEntity, user_table)
+mapper_registry.map_imperatively(User, user_table)

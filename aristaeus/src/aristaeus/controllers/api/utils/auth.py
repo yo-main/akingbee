@@ -4,7 +4,7 @@ from fastapi import Cookie
 from fastapi import HTTPException
 
 from aristaeus.domain.services.unit_of_work import UnitOfWork
-from aristaeus.domain.entities.user import UserEntity
+from aristaeus.domain.entities.user import User
 from aristaeus.infrastructure.clients.http.cerbes import CerbesClientAsyncAdapter
 from aristaeus.injector import InjectorMixin
 from aristaeus.utils.singleton import SingletonMeta
@@ -16,7 +16,7 @@ class UserManager(InjectorMixin, metaclass=SingletonMeta):
     async def validate_access_token(self, access_token) -> str | None:
         return await self.cerbes.validate(access_token)
 
-    async def get_logged_in_user(self, access_token) -> UserEntity:
+    async def get_logged_in_user(self, access_token) -> User:
         if not access_token:
             raise HTTPException(status_code=401)
 
@@ -31,5 +31,8 @@ class UserManager(InjectorMixin, metaclass=SingletonMeta):
         return user
 
 
-async def auth_user(access_token=Cookie(None)) -> UserEntity:
-    return await UserManager().get_logged_in_user(access_token)
+async def auth_user(access_token=Cookie(None), language=Cookie(None)) -> User:
+    user = await UserManager().get_logged_in_user(access_token)
+    if language:
+        user.language = language
+    return user

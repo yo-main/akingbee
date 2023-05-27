@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 
 import pytest
@@ -21,10 +22,17 @@ async def test_create_hive__no_apiary(async_app):
     assert data["apiary"] is None, data
     assert data["organization_id"] == "11111111-1111-1111-1111-111111111111", data
 
+    await asyncio.sleep(0)
+
+    async with UnitOfWork() as uow:
+        comments = await uow.comment.list(hive_id=uuid.UUID(data["public_id"]))
+
+    assert len(comments) == 1
+
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_create_hive__with_apiary(async_app):
-    apiary = ApiaryFactory.create()
+    apiary = ApiaryFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
     async with UnitOfWork() as uow:
         await uow.apiary.save(apiary)
         await uow.commit()
@@ -72,7 +80,7 @@ async def test_get_hive__unknown(async_app):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_get_hive__with_apiary(async_app):
-    apiary = ApiaryFactory.create()
+    apiary = ApiaryFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
     async with UnitOfWork() as uow:
         await uow.apiary.save(apiary)
         await uow.commit()
@@ -234,6 +242,13 @@ async def test_move_hive(async_app):
     assert response.json()["public_id"] == str(hive.public_id)
     assert response.json()["apiary"]["public_id"] == str(apiary.public_id)
 
+    await asyncio.sleep(0)
+
+    async with UnitOfWork() as uow:
+        comments = await uow.comment.list(hive_id=hive.public_id)
+
+    assert len(comments) == 1
+
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_move_hive__success(async_app):
@@ -248,6 +263,13 @@ async def test_move_hive__success(async_app):
     assert response.status_code == 200, response.text
     assert response.json()["public_id"] == str(hive.public_id)
     assert response.json()["apiary"] is None
+
+    await asyncio.sleep(0)
+
+    async with UnitOfWork() as uow:
+        comments = await uow.comment.list(hive_id=hive.public_id)
+
+    assert len(comments) == 1
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)

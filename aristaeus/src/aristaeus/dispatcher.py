@@ -15,8 +15,7 @@ class Dispatcher:
     @classmethod
     def publish(cls, key: str, **kwargs) -> None:
         if key not in cls._registry:
-            logger.warning(f"No callback found for key {key}")
-            return
+            raise ValueError(f"No callback found for key {key}")
 
         cls._queue.put_nowait((key, kwargs))
 
