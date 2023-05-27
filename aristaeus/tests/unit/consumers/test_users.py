@@ -35,4 +35,4 @@ async def test_user_created():
         parameters = await uow.parameter.list(organization_id=user.organization_id)
 
     assert user and str(user.public_id) == user_id
-    assert len(parameters) == 17
+    assert len(parameters) == 21
