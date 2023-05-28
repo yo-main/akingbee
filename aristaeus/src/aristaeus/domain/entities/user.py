@@ -4,7 +4,7 @@ from uuid import UUID
 from .base import Entity
 
 
-@dataclass(slots=True)
+@dataclass
 class User(Entity):
     public_id: UUID
     organization_id: UUID

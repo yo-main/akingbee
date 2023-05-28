@@ -36,7 +36,7 @@ class Hive(Entity):
         if self.apiary is None:
             raise CantAttachSwarmNoApiary(f"Cannot attach swarm to {self} as there's no apiary")
 
-        if self.swarm:
+        if self.swarm and self.swarm.public_id != swarm.public_id:
             raise CantAttachSwarmOneAlreadyExists(f"{self} is already attached to {self.swarm}")
 
         self.swarm = swarm

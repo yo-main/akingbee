@@ -1,8 +1,12 @@
+import asyncio
 import uuid
 
 import pytest
-from aristaeus.domain.services.unit_of_work import UnitOfWork
+from tests.factories import ApiaryFactory
+from tests.factories import HiveFactory
 from tests.factories import SwarmFactory
+
+from aristaeus.domain.services.unit_of_work import UnitOfWork
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
@@ -64,9 +68,13 @@ async def test_put_swarm(async_app):
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_delete_swarm(async_app):
+    apiary = ApiaryFactory.create(organization_id=uuid.UUID("11111111-1111-1111-1111-111111111111"))
+    swarm = SwarmFactory()
+    hive = HiveFactory.create(organization_id=apiary.organization_id, apiary=apiary, swarm=swarm)
     async with UnitOfWork() as uow:
-        swarm = SwarmFactory()
+        await uow.apiary.save(apiary)
         await uow.swarm.save(swarm)
+        await uow.hive.save(hive)
 
     response = await async_app.get(f"/swarm/{swarm.public_id}")
     assert response.status_code == 200, response.text
@@ -76,3 +84,10 @@ async def test_delete_swarm(async_app):
 
     response = await async_app.get(f"/swarm/{swarm.public_id}")
     assert response.status_code == 404, response.text
+
+    await asyncio.sleep(0)
+
+    async with UnitOfWork() as uow:
+        comments = await uow.comment.list(hive_id=hive.public_id)
+
+    assert len(comments) == 1

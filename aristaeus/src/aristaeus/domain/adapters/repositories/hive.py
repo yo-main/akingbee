@@ -15,8 +15,10 @@ class HiveRepositoryAdapter(Base):
     async def save(self, hive: Hive) -> None:
         ...
 
-    @wraps(lambda x: 1)
     async def get(self, public_id: UUID) -> Hive:
+        ...
+
+    async def get_from_swarm_id(self, public_id: UUID) -> Hive:
         ...
 
     async def update(self, hive: Hive) -> None:

@@ -33,7 +33,7 @@ class HiveService(InjectorMixin):
 
         return hive
 
-    async def put(self, command: PutHiveCommand) -> Hive:
+    async def put(self, command: PutHiveCommand, requester: User) -> Hive:
         async with UnitOfWork() as uow:
             hive = await uow.hive.get(command.hive_id)
 
@@ -52,6 +52,9 @@ class HiveService(InjectorMixin):
 
             await uow.hive.update(hive=hive)
             await uow.commit()
+
+            if swarm_id:
+                Dispatcher.publish("hive.swarm.added", hive=hive, requester=requester)
 
         return hive
 

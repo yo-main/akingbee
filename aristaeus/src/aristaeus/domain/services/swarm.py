@@ -1,9 +1,12 @@
 from uuid import UUID
 
-from aristaeus.domain.services.unit_of_work import UnitOfWork
+from aristaeus.dispatcher import Dispatcher
 from aristaeus.domain.commands.swarm import CreateSwarmCommand
 from aristaeus.domain.commands.swarm import PutSwarmCommand
 from aristaeus.domain.entities.swarm import Swarm
+from aristaeus.domain.entities.user import User
+from aristaeus.domain.services.unit_of_work import UnitOfWork
+from aristaeus.domain.errors import EntityNotFound
 from aristaeus.injector import InjectorMixin
 
 
@@ -31,8 +34,18 @@ class SwarmApplication(InjectorMixin):
 
         return swarm
 
-    async def delete_swarm(self, swarm_id: UUID) -> None:
+    async def delete_swarm(self, swarm_id: UUID, requester: User) -> None:
+        hive = None
+
         async with UnitOfWork() as uow:
-            swarm = await uow.swarm.get(swarm_id)
+            try:
+                hive = await uow.hive.get_from_swarm_id(swarm_id)
+                swarm = hive.swarm
+            except EntityNotFound:
+                uow.rollback()
+                swarm = await uow.swarm.get(swarm_id)
             await uow.swarm.delete(swarm)
             await uow.commit()
+
+        if hive:
+            Dispatcher.publish("hive.swarm.removed", hive=hive, requester=requester)

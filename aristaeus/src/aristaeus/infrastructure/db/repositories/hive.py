@@ -26,6 +26,12 @@ class FakeHiveRepository(BaseRepository):
         except StopIteration:
             raise EntityNotFound("Hive not found")
 
+    async def get_from_swarm_id(self, public_id: UUID) -> Hive:
+        try:
+            return next(hive for hive in self._hives if hive.swarm and hive.swarm.public_id == public_id)
+        except StopIteration:
+            raise EntityNotFound("Hive not found")
+
     async def save(self, hive: Hive) -> None:
         self._hives.add(hive)
 
@@ -58,6 +64,17 @@ class HiveRepository(BaseRepository):
             .join_from(orm.hive_table, orm.apiary_table, isouter=True)
             .join_from(orm.hive_table, orm.swarm_table, isouter=True)
             .where(orm.hive_table.c.public_id == public_id)
+        )
+        result = await self.session.execute(query)
+        return result.unique().scalar_one()
+
+    @error_handler
+    async def get_from_swarm_id(self, public_id: UUID) -> Hive:
+        query = (
+            select(Hive)
+            .join_from(orm.hive_table, orm.apiary_table, isouter=True)
+            .join_from(orm.hive_table, orm.swarm_table, isouter=True)
+            .where(orm.swarm_table.c.public_id == public_id)
         )
         result = await self.session.execute(query)
         return result.unique().scalar_one()

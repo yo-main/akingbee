@@ -42,5 +42,5 @@ async def put_swarm(swarm_id: UUID, input: PutSwarmIn, user: User = Depends(auth
 @router.delete("/{swarm_id}")
 async def delete_swarm(swarm_id: UUID, user: User = Depends(auth_user)):
     swarm_application = SwarmApplication()
-    await swarm_application.delete_swarm(swarm_id=swarm_id)
+    await swarm_application.delete_swarm(swarm_id=swarm_id, requester=user)
     return 204

@@ -50,8 +50,8 @@ async def test_comment_endpoints(async_app):
     response = await async_app.get("/comment", params={"hive_id": hive_id})
     assert response.status_code == 200, response.text
     data = response.json()
-    assert len(data) == 1
-    assert data[0]["body"] == "new body", response.text
+    assert len(data) == 2
+    assert data[1]["body"] == "new body", response.text
 
     # DELETE
     response = await async_app.delete(f"/comment/{comment_id}")

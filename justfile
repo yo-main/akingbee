@@ -1,8 +1,8 @@
 db:
-	docker-compose up -d db
+	docker compose up -d db
 
 rbmq:
-	docker-compose up -d rbmq
+	docker compose up -d rbmq
 
 
 test-all:

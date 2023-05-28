@@ -3,7 +3,7 @@ CERBES_ENV := "local"
 DB_URL := "postgres://sa_cerbes:password@localhost:5432/cerbes"
 
 db:
-	docker-compose up -d db
+	docker compose up -d db
 
 test:
 	@cargo test

@@ -216,6 +216,31 @@ async def test_put_hive__success(async_app, payload):
 
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
+async def test_put_hive__add_swarm(async_app):
+    apiary = ApiaryFactory.create()
+    hive = HiveFactory.create(apiary=apiary)
+    swarm = SwarmFactory.create()
+    async with UnitOfWork() as uow:
+        await uow.apiary.save(apiary)
+        await uow.hive.save(hive)
+        await uow.swarm.save(swarm)
+        await uow.commit()
+
+    response = await async_app.put(f"/hive/{hive.public_id}", json={"swarm_id": str(swarm.public_id)})
+    assert response.status_code == 200, response.text
+
+    data = response.json()
+    assert data["swarm"]["public_id"] == str(swarm.public_id)
+
+    await asyncio.sleep(0)
+
+    async with UnitOfWork() as uow:
+        comments = await uow.comment.list(hive_id=hive.public_id)
+
+    assert len(comments) == 1
+
+
+@pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_delete_hive__success(async_app):
     hive = HiveFactory.create()
     async with UnitOfWork() as uow:

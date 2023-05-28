@@ -2,10 +2,10 @@ DB_URL := "postgres://sa_aristaeus:password@localhost:5432/cerbes"
 
 
 db:
-	docker-compose up -d db
+	docker compose up -d db
 
 rbmq:
-	docker-compose up -d rbmq
+	docker compose up -d rbmq
 
 init:
 	poetry install

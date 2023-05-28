@@ -52,7 +52,7 @@ async def put_hive(hive_id: UUID, input: PutHiveIn, user: User = Depends(auth_us
         hive_id=hive_id, name=input.name, condition=input.condition, owner=input.owner, swarm_id=input.swarm_id
     )
     hive_service = HiveService()
-    hive_entity = await hive_service.put(command=command)
+    hive_entity = await hive_service.put(command=command, requester=user)
     return hive_entity.asdict()
 
 
