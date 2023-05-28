@@ -570,7 +570,9 @@ export class HiveDetailsPage extends React.Component {
 
     try {
       await updateHive(hiveId, hiveData);
-      await updateSwarm(swarmId, swarmData);
+      if (swarmId) {
+        await updateSwarm(swarmId, swarmData);
+      }
 
       let hive = await getHive(hiveId);
       this.setState((state) => {
