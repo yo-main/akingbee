@@ -61,7 +61,7 @@ export class FormButtonModal extends BaseModal {
 export class FormLinkModal extends BaseModal {
   entrypoint() {
     return (
-      <Button onClick={this.showModal} type="link">
+      <Button onClick={this.showModal} type="link" disabled={this.props.disabled}>
         {this.props.linkContent}
       </Button>
     )

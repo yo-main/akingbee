@@ -135,7 +135,7 @@ export class CommentTableComponent extends React.Component {
           let formId = `updateComment${record.key}`
           return (
             <Space size='middle'>
-              <FormLinkModal formId={formId} title={window.i18n('title.editComment')} linkContent={window.i18n('word.edit')}>
+              <FormLinkModal formId={formId} title={window.i18n('title.editComment')} linkContent={window.i18n('word.edit')} disabled={record.type !== 'user'}>
                 <UpdateCommentForm formId={formId} onFinish={this.updateComment} commentId={record.id} date={record.date} content={record.comment} />
               </FormLinkModal>
               <Popconfirm onConfirm={async() => this.deleteComment(record.id)} title={window.i18n("confirm.deleteComment")}>
