@@ -8,7 +8,7 @@ from aristaeus.domain.services.comment import CommentApplication
 
 TRANSLATIONS = {
     "hive.created": {"fr": "Ruche créée", "en": "Hive created"},
-    "hive.moved": {"fr": "Ruche déménagée vers la ruche {name}", "en": "Hive moved to apiary {name}"},
+    "hive.moved": {"fr": "Ruche déménagée vers le rucher {name}", "en": "Hive moved to apiary {name}"},
     "hive.removed": {"fr": "Ruche mise en stock", "en": "Hive put in storage"},
     "hive.swarm.added": {"fr": "Essaim rajouté", "en": "Swarm added"},
     "hive.swarm.removed": {"fr": "Essaim enlevé", "en": "Swarm removed"},
