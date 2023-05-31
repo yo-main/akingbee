@@ -64,9 +64,7 @@ pub fn get_hash(password: String) -> String {
 }
 
 pub fn create_credentials(username: String, password: String) -> Credentials {
-    let credentials = Credentials::new(username, get_hash(password));
-
-    return credentials;
+    Credentials::new(username, get_hash(password))
 }
 
 pub async fn validate_user_credentials<R>(
