@@ -1,6 +1,6 @@
 use cerbes::domain::adapters::database::*;
-use cerbes::domain::models::Credentials;
-use cerbes::domain::models::User;
+use cerbes::domain::entities::Credentials;
+use cerbes::domain::entities::User;
 use cerbes::infrastructure::database::repository::CredentialsRepository;
 use cerbes::infrastructure::database::repository::UserRepository;
 

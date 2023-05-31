@@ -1,5 +1,5 @@
 use cerbes::domain::adapters::database::*;
-use cerbes::domain::models::User;
+use cerbes::domain::entities::User;
 use cerbes::infrastructure::database::repository::PermissionsRepository;
 use cerbes::infrastructure::database::repository::UserRepository;
 use sea_orm::DatabaseConnection;

@@ -3,7 +3,7 @@ use super::AppState;
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
-use crate::domain::models::User;
+use crate::domain::entities::User;
 use crate::domain::services::credentials::validate_token;
 use crate::domain::services::user::create_user;
 use crate::infrastructure::rabbitmq::client::RbmqClient;

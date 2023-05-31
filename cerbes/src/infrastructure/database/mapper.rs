@@ -1,9 +1,9 @@
-use crate::domain::models::Credentials;
-use crate::domain::models::Permissions;
-use crate::domain::models::User;
-use crate::infrastructure::database::entities::credentials as CredentialsEntity;
-use crate::infrastructure::database::entities::permissions as PermissionsEntity;
-use crate::infrastructure::database::entities::user as UserEntity;
+use crate::domain::entities::Credentials;
+use crate::domain::entities::Permissions;
+use crate::domain::entities::User;
+use crate::infrastructure::database::models::credentials as CredentialsEntity;
+use crate::infrastructure::database::models::permissions as PermissionsEntity;
+use crate::infrastructure::database::models::user as UserEntity;
 
 impl User {
     pub fn from_entity(

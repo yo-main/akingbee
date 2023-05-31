@@ -1,4 +1,4 @@
 pub mod connection;
-pub mod entities;
 mod mapper;
+pub mod models;
 pub mod repository;

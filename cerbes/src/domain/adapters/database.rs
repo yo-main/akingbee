@@ -1,7 +1,7 @@
+use crate::domain::entities::Credentials;
+use crate::domain::entities::Permissions;
+use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
-use crate::domain::models::Credentials;
-use crate::domain::models::Permissions;
-use crate::domain::models::User;
 use async_trait::async_trait;
 use uuid::Uuid;
 

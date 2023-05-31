@@ -1,8 +1,8 @@
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::adapters::publisher::PublisherTrait;
+use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
-use crate::domain::models::User;
 use crate::domain::services::credentials;
 
 pub async fn create_user<R, D, Q>(

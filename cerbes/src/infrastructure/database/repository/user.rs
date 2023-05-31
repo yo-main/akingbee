@@ -1,8 +1,8 @@
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
-use crate::domain::models::User;
-use crate::infrastructure::database::entities::credentials as CredentialsModel;
-use crate::infrastructure::database::entities::user as UserModel;
+use crate::infrastructure::database::models::credentials as CredentialsModel;
+use crate::infrastructure::database::models::user as UserModel;
 use async_trait::async_trait;
 use sea_orm::entity::prelude::*;
 use sea_orm::Set;

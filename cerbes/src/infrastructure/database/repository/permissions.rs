@@ -1,9 +1,9 @@
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
+use crate::domain::entities::Permissions;
+use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
-use crate::domain::models::Permissions;
-use crate::domain::models::User;
-use crate::infrastructure::database::entities::permissions as PermissionModel;
-use crate::infrastructure::database::entities::user as UserModel;
+use crate::infrastructure::database::models::permissions as PermissionModel;
+use crate::infrastructure::database::models::user as UserModel;
 use async_trait::async_trait;
 use migration::JoinType;
 use sea_orm::entity::prelude::*;
