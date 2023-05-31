@@ -22,8 +22,8 @@ where
     let credentials = credentials::create_credentials(username, password);
 
     // TODO: find a way to wrap those 2 operations in the same transaction
-    user_repo.create_user(&user).await?;
-    cred_repo.create_credentials(&user, &credentials).await?;
+    user_repo.save(&user).await?;
+    cred_repo.save(&user, &credentials).await?;
 
     user.credentials = Some(credentials);
     publisher

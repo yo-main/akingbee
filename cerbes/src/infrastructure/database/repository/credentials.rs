@@ -24,11 +24,7 @@ impl CredentialsRepository {
 
 #[async_trait]
 impl CredentialsRepositoryTrait for CredentialsRepository {
-    async fn create_credentials(
-        &self,
-        user: &User,
-        credentials: &Credentials,
-    ) -> Result<(), CerbesError> {
+    async fn save(&self, user: &User, credentials: &Credentials) -> Result<(), CerbesError> {
         // TODO: try to set this value through a subquery rather than querying the user object directly
         // This will allow to remove this useless `user` parameter
         let user = UserModel::Entity::find()

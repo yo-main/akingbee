@@ -9,7 +9,7 @@ mod common;
 async fn get_user(conn: DatabaseConnection) -> User {
     let rep = UserRepository::new(conn);
     let user = User::new("email".to_owned());
-    rep.create_user(&user).await.unwrap();
+    rep.save(&user).await.unwrap();
     return user;
 }
 

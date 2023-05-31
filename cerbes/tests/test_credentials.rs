@@ -13,10 +13,10 @@ async fn test_credentials_creation() {
     let creds_repo = CredentialsRepository::new(conn.clone());
 
     let user = User::new("email".to_owned());
-    user_repo.create_user(&user).await.unwrap();
+    user_repo.save(&user).await.unwrap();
 
     let creds = Credentials::new("username".to_owned(), "password".to_owned());
-    creds_repo.create_credentials(&user, &creds).await.unwrap();
+    creds_repo.save(&user, &creds).await.unwrap();
 
     let new_user = creds_repo
         .get_by_user_public_id(user.public_id)

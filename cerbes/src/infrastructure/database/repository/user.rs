@@ -31,7 +31,7 @@ impl UserRepository {
 
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
-    async fn create_user(&self, user: &User) -> Result<(), CerbesError> {
+    async fn save(&self, user: &User) -> Result<(), CerbesError> {
         UserModel::ActiveModel {
             email: Set(user.email.clone()),
             public_id: Set(user.public_id),

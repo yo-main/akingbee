@@ -9,7 +9,7 @@ async fn test_user_creation() {
 
     let user = cerbes::domain::models::User::new("email".to_owned());
     let repo = UserRepository::new(conn);
-    repo.create_user(&user).await.unwrap();
+    repo.save(&user).await.unwrap();
 
     let user_created = repo.get_by_public_id(user.public_id).await.unwrap();
 
