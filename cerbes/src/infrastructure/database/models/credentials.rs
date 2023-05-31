@@ -8,7 +8,6 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
 
-    pub user_id: i32,
     pub username: String,
     pub password: String,
     pub password_reset_id: Option<Uuid>,
@@ -20,11 +19,7 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id"
-    )]
+    #[sea_orm(has_one = "super::user::Entity")]
     User,
 }
 

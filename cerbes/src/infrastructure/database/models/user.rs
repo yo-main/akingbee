@@ -13,6 +13,7 @@ pub struct Model {
     pub email: String,
     pub public_id: Uuid,
     pub activation_id: Option<Uuid>,
+    pub credentials_id: i32,
 
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
@@ -20,7 +21,11 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_one = "super::credentials::Entity")]
+    #[sea_orm(
+        belongs_to = "super::credentials::Entity",
+        from = "Column::CredentialsId",
+        to = "super::credentials::Column::Id"
+    )]
     Credentials,
     #[sea_orm(has_many = "super::permissions::Entity")]
     Permissions,

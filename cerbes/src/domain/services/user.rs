@@ -23,7 +23,7 @@ where
 
     // TODO: find a way to wrap those 2 operations in the same transaction
     user_repo.save(&user).await?;
-    cred_repo.save(&user, &credentials).await?;
+    cred_repo.save(&credentials).await?;
 
     user.credentials = Some(credentials);
     publisher

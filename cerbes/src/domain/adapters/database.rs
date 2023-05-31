@@ -15,7 +15,7 @@ pub trait UserRepositoryTrait {
 
 #[async_trait]
 pub trait CredentialsRepositoryTrait {
-    async fn save(&self, user: &User, credentials: &Credentials) -> Result<(), CerbesError>;
+    async fn save(&self, credentials: &Credentials) -> Result<(), CerbesError>;
 
     async fn get_by_user_public_id(&self, user_public_id: Uuid) -> Result<User, CerbesError>;
     async fn get_by_username(&self, username: &str) -> Result<User, CerbesError>;
