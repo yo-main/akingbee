@@ -5,6 +5,10 @@ use crate::infrastructure::database::models::credentials as CredentialsModel;
 use crate::infrastructure::database::models::user as UserModel;
 use async_trait::async_trait;
 use sea_orm::entity::prelude::*;
+use sea_orm::sea_query::query::QueryStatementBuilder;
+use sea_orm::sea_query::Expr;
+use sea_orm::sea_query::Query;
+use sea_orm::sea_query::SimpleExpr;
 use sea_orm::Set;
 use uuid::Uuid;
 
@@ -42,16 +46,44 @@ impl UserRepository {
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
     async fn save(&self, user: &User) -> Result<(), CerbesError> {
-        UserModel::ActiveModel {
-            email: Set(user.email.clone()),
-            public_id: Set(user.public_id),
-            activation_id: Set(user.activation_id),
-            created_at: Set(chrono::Utc::now().naive_utc()),
-            updated_at: Set(chrono::Utc::now().naive_utc()),
-            ..Default::default()
-        }
-        .insert(&self.conn)
-        .await?;
+        let creds_select = SimpleExpr::SubQuery(
+            None,
+            Box::new(
+                Query::select()
+                    .column(CredentialsModel::Column::Id)
+                    .from(CredentialsModel::Entity)
+                    .and_where(
+                        Expr::col(CredentialsModel::Column::Username)
+                            .eq(user.credentials.username.as_str()),
+                    )
+                    .to_owned()
+                    .into_sub_query_statement(),
+            ),
+        );
+
+        let mut query = Query::insert();
+        query
+            .into_table(UserModel::Entity)
+            .columns(vec![
+                UserModel::Column::Email,
+                UserModel::Column::PublicId,
+                UserModel::Column::ActivationId,
+                UserModel::Column::CredentialsId,
+                UserModel::Column::CreatedAt,
+                UserModel::Column::UpdatedAt,
+            ])
+            .values(vec![
+                user.email.as_str().into(),
+                user.public_id.into(),
+                user.activation_id.into(),
+                creds_select,
+                chrono::Utc::now().naive_utc().into(),
+                chrono::Utc::now().naive_utc().into(),
+            ])
+            .unwrap();
+
+        let builder = self.conn.get_database_backend();
+        self.conn.execute(builder.build(&query)).await?;
 
         Ok(())
     }

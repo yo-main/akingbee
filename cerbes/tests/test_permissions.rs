@@ -1,6 +1,7 @@
 use cerbes::domain::adapters::database::*;
 use cerbes::domain::entities::Credentials;
 use cerbes::domain::entities::User;
+use cerbes::infrastructure::database::repository::CredentialsRepository;
 use cerbes::infrastructure::database::repository::PermissionsRepository;
 use cerbes::infrastructure::database::repository::UserRepository;
 use sea_orm::DatabaseConnection;
@@ -8,9 +9,12 @@ use sea_orm::DatabaseConnection;
 mod common;
 
 async fn get_user(conn: DatabaseConnection) -> User {
-    let rep = UserRepository::new(conn);
+    let rep = UserRepository::new(conn.clone());
+    let cred_rep = CredentialsRepository::new(conn);
     let creds = Credentials::new("user".to_owned(), "pwd".to_owned());
     let user = User::new("email".to_owned(), creds);
+
+    cred_rep.save(&user.credentials).await.unwrap();
     rep.save(&user).await.unwrap();
     return user;
 }
