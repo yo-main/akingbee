@@ -2,9 +2,6 @@ use super::AppState;
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
-use crate::domain::adapters::publisher::PublisherTrait;
-use crate::domain::errors::CerbesError;
-use crate::domain::services::credentials::generate_jwt_for_impersonator;
 use crate::domain::services::credentials::generate_jwt_for_user;
 use crate::domain::services::credentials::impersonate_user;
 use crate::domain::services::credentials::password_reset;
@@ -58,11 +55,6 @@ pub struct PasswordResetValidation {
     reset_id: Uuid,
 }
 
-#[derive(Deserialize)]
-pub struct ImpersonateInput {
-    user_id: Uuid,
-}
-
 pub async fn login<R, D, P>(
     state: State<AppState<R, D, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Basic>>,
@@ -82,7 +74,7 @@ where
         .or_else(|_| Err(StatusCode::FORBIDDEN))?;
 
     let token = generate_jwt_for_user(&user);
-    register_user_login(&state.credentials_repo, user.credentials.as_ref().unwrap()).await?;
+    register_user_login(&state.credentials_repo, &user.credentials).await?;
 
     return Ok((
         StatusCode::OK,

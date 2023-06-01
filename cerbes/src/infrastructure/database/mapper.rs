@@ -6,15 +6,12 @@ use crate::infrastructure::database::models::permissions as PermissionsEntity;
 use crate::infrastructure::database::models::user as UserEntity;
 
 impl User {
-    pub fn from_entity(
-        entity: UserEntity::Model,
-        credentials: Option<CredentialsEntity::Model>,
-    ) -> Self {
+    pub fn from_entity(entity: UserEntity::Model, credentials: CredentialsEntity::Model) -> Self {
         User {
             email: entity.email,
             public_id: entity.public_id,
             activation_id: entity.activation_id,
-            credentials: credentials.and_then(|creds| Some(Credentials::from_entity(creds))),
+            credentials: Credentials::from_entity(credentials),
         }
     }
 }

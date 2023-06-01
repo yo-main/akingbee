@@ -33,7 +33,7 @@ pub struct OutputUser {
     email: String,
     public_id: Uuid,
     activation_id: Option<Uuid>,
-    username: Option<String>,
+    username: String,
     last_seen: Option<NaiveDateTime>,
 }
 
@@ -43,11 +43,8 @@ impl Into<OutputUser> for User {
             email: self.email,
             public_id: self.public_id,
             activation_id: self.activation_id,
-            username: self
-                .credentials
-                .as_ref()
-                .and_then(|creds| Some(creds.username.clone())),
-            last_seen: self.credentials.as_ref().and_then(|creds| creds.last_seen),
+            username: self.credentials.username,
+            last_seen: self.credentials.last_seen,
         }
     }
 }

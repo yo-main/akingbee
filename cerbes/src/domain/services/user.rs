@@ -18,14 +18,13 @@ where
     D: CredentialsRepositoryTrait,
     Q: PublisherTrait,
 {
-    let mut user = User::new(email);
     let credentials = credentials::create_credentials(username, password);
+    let user = User::new(email, credentials);
 
     // TODO: find a way to wrap those 2 operations in the same transaction
+    cred_repo.save(&user.credentials).await?;
     user_repo.save(&user).await?;
-    cred_repo.save(&credentials).await?;
 
-    user.credentials = Some(credentials);
     publisher
         .publish("user.created", &user.to_json().to_string())
         .await?;

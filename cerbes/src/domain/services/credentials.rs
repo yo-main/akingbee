@@ -27,7 +27,7 @@ impl JwtData {
     fn from_user(user: &User) -> Self {
         JwtData {
             // TODO: remove that hack at some point - and blame the lazy me for not doing it now
-            admin: if user.credentials.as_ref().unwrap().username == "Romain" {
+            admin: if user.credentials.username == "Romain" {
                 true
             } else {
                 false
@@ -37,7 +37,7 @@ impl JwtData {
             iss: "cerbes".to_owned(),
             exp: (chrono::Utc::now() + chrono::Duration::hours(1)).timestamp() as usize,
             email: user.email.to_string(),
-            username: user.credentials.as_ref().unwrap().username.to_string(),
+            username: user.credentials.username.to_string(),
         }
     }
 
@@ -76,7 +76,7 @@ where
     R: CredentialsRepositoryTrait,
 {
     if let user = credentials_repo.get_by_username(&username).await? {
-        if user.credentials.as_ref().unwrap().password == get_hash(password) {
+        if user.credentials.password == get_hash(password) {
             return Ok(user);
         }
     }
@@ -147,7 +147,7 @@ where
         .await
         .or(repo.get_by_user_email(username).await)?;
 
-    let credentials = repo.reset_request(user.credentials.unwrap()).await?;
+    let credentials = repo.reset_request(user.credentials).await?;
 
     publisher
         .publish(
@@ -172,13 +172,7 @@ where
     R: CredentialsRepositoryTrait,
 {
     match repo.get_by_user_public_id(user_id).await {
-        Ok(user) => {
-            user.credentials
-                .unwrap_or_default()
-                .password_reset_id
-                .unwrap_or_default()
-                == reset_id
-        }
+        Ok(user) => user.credentials.password_reset_id.unwrap_or_default() == reset_id,
         Err(_) => false,
     }
 }
@@ -193,7 +187,7 @@ where
     R: CredentialsRepositoryTrait,
 {
     let user = repo.get_by_user_public_id(user_id).await?;
-    let credentials: Credentials = user.credentials.unwrap();
+    let credentials: Credentials = user.credentials;
 
     if credentials.password_reset_id != Some(reset_id) {
         return Err(CerbesError::user_not_found());
@@ -256,11 +250,8 @@ mod tests {
 
     #[test]
     fn test_jwt_validation_success() {
-        let mut user = User::new("email".to_owned());
-        user.credentials = Some(Credentials::new(
-            "username".to_owned(),
-            "password".to_owned(),
-        ));
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email".to_owned(), credentials);
         let token = generate_jwt_for_user(&user);
         assert!(validate_token(token.to_string()).is_ok());
     }

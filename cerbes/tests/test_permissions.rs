@@ -1,4 +1,5 @@
 use cerbes::domain::adapters::database::*;
+use cerbes::domain::entities::Credentials;
 use cerbes::domain::entities::User;
 use cerbes::infrastructure::database::repository::PermissionsRepository;
 use cerbes::infrastructure::database::repository::UserRepository;
@@ -8,7 +9,8 @@ mod common;
 
 async fn get_user(conn: DatabaseConnection) -> User {
     let rep = UserRepository::new(conn);
-    let user = User::new("email".to_owned());
+    let creds = Credentials::new("user".to_owned(), "pwd".to_owned());
+    let user = User::new("email".to_owned(), creds);
     rep.save(&user).await.unwrap();
     return user;
 }

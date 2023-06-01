@@ -1,4 +1,5 @@
 use cerbes::domain::adapters::database::*;
+use cerbes::domain::entities::Credentials;
 use cerbes::infrastructure::database::repository::UserRepository;
 
 mod common;
@@ -7,7 +8,9 @@ mod common;
 async fn test_user_creation() {
     let conn = common::database::get_db().await;
 
-    let user = cerbes::domain::entities::User::new("email".to_owned());
+    let creds = Credentials::new("user".to_owned(), "pwd".to_owned());
+    let user = cerbes::domain::entities::User::new("email".to_owned(), creds);
+
     let repo = UserRepository::new(conn);
     repo.save(&user).await.unwrap();
 

@@ -47,7 +47,7 @@ impl CredentialsRepositoryTrait for CredentialsRepository {
             .await?
             .expect("User couldn't be found");
 
-        let user = User::from_entity(user, credentials);
+        let user = User::from_entity(user, credentials.unwrap());
         return Ok(user);
     }
 
@@ -63,7 +63,7 @@ impl CredentialsRepositoryTrait for CredentialsRepository {
         }
 
         let (user, credentials) = result.unwrap();
-        return Ok(User::from_entity(user, credentials));
+        return Ok(User::from_entity(user, credentials.unwrap()));
     }
 
     async fn get_by_user_email(&self, user_email: &str) -> Result<User, CerbesError> {
@@ -78,7 +78,7 @@ impl CredentialsRepositoryTrait for CredentialsRepository {
         }
 
         let (user, credentials) = result.unwrap();
-        return Ok(User::from_entity(user, credentials));
+        return Ok(User::from_entity(user, credentials.unwrap()));
     }
 
     async fn reset_request(&self, creds: Credentials) -> Result<Credentials, CerbesError> {
