@@ -168,7 +168,7 @@ impl UserRepositoryTrait for UserRepository {
     async fn activate_user(&self, activation_id: Uuid) -> Result<User, CerbesError> {
         let result = UserModel::Entity::find()
             .filter(UserModel::Column::ActivationId.eq(activation_id))
-            .find_also_related((CredentialsModel::Entity))
+            .find_also_related(CredentialsModel::Entity)
             .one(&self.conn)
             .await?;
 
