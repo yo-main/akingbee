@@ -90,10 +90,10 @@ pub async fn refresh_jwt(
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), StatusCode> {
     match Jwt::validate_jwt(auth.token().to_owned()) {
-        Ok(token) => Ok((
+        Ok(jwt) => Ok((
             StatusCode::OK,
             Json(LoginOutput {
-                access_token: Jwt::regenerate_token(token),
+                access_token: jwt.refresh().get_token(),
             }),
         )),
         _ => Err(StatusCode::FORBIDDEN),

@@ -35,7 +35,7 @@ impl Jwt {
         }
     }
 
-    fn refresh(self) -> Self {
+    pub fn refresh(self) -> Self {
         Jwt {
             admin: self.admin,
             impersonator: self.impersonator,
@@ -51,15 +51,6 @@ impl Jwt {
         jsonwebtoken::encode(
             &jsonwebtoken::Header::default(),
             &self,
-            &jsonwebtoken::EncodingKey::from_secret(SETTINGS.jwt_key.as_ref()),
-        )
-        .unwrap()
-    }
-
-    pub fn regenerate_token(jwt: Jwt) -> String {
-        jsonwebtoken::encode(
-            &jsonwebtoken::Header::default(),
-            &jwt.refresh(),
             &jsonwebtoken::EncodingKey::from_secret(SETTINGS.jwt_key.as_ref()),
         )
         .unwrap()
