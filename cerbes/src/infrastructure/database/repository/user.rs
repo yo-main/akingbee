@@ -91,29 +91,35 @@ impl UserRepositoryTrait for UserRepository {
     async fn update(&self, user: &User) -> Result<(), CerbesError> {
         let mut user_query = Query::update();
         let mut creds_query = Query::update();
-        user_query.table(UserModel::Entity).values(vec![
-            (UserModel::Column::Email, user.email.as_str().into()),
-            (UserModel::Column::ActivationId, user.activation_id.into()),
-            (
-                UserModel::Column::UpdatedAt,
-                chrono::Utc::now().naive_utc().into(),
-            ),
-        ]);
+        user_query
+            .table(UserModel::Entity)
+            .values(vec![
+                (UserModel::Column::Email, user.email.as_str().into()),
+                (UserModel::Column::ActivationId, user.activation_id.into()),
+                (
+                    UserModel::Column::UpdatedAt,
+                    chrono::Utc::now().naive_utc().into(),
+                ),
+            ])
+            .and_where(UserModel::Column::PublicId.eq(user.public_id));
 
-        creds_query.table(CredentialsModel::Entity).values(vec![
-            (
-                CredentialsModel::Column::PasswordResetId,
-                user.credentials.password_reset_id.into(),
-            ),
-            (
-                CredentialsModel::Column::Password,
-                user.credentials.password.as_str().into(),
-            ),
-            (
-                CredentialsModel::Column::UpdatedAt,
-                chrono::Utc::now().naive_utc().into(),
-            ),
-        ]);
+        creds_query
+            .table(CredentialsModel::Entity)
+            .values(vec![
+                (
+                    CredentialsModel::Column::PasswordResetId,
+                    user.credentials.password_reset_id.into(),
+                ),
+                (
+                    CredentialsModel::Column::Password,
+                    user.credentials.password.as_str().into(),
+                ),
+                (
+                    CredentialsModel::Column::UpdatedAt,
+                    chrono::Utc::now().naive_utc().into(),
+                ),
+            ])
+            .and_where(CredentialsModel::Column::Username.eq(&user.credentials.username));
 
         let builder = self.conn.get_database_backend();
         self.conn.execute(builder.build(&user_query)).await?;

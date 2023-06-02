@@ -50,19 +50,22 @@ where
     repo.update(&user).await
 }
 
-pub async fn validate_user_credentials<R>(
+pub async fn user_login<R>(
     username: String,
     password: String,
     user_repo: &R,
-) -> Result<User, CerbesError>
+) -> Result<String, CerbesError>
 where
     R: UserRepositoryTrait,
 {
-    let user = user_repo.get_by_username(&username).await?;
+    let mut user = user_repo.get_by_username(&username).await?;
 
     if !user.validate_password(password) {
         return Err(CerbesError::not_enough_permissions());
     }
 
-    Ok(user)
+    user.register_login();
+    user_repo.update(&user).await?;
+
+    Ok(user.generate_jwt())
 }

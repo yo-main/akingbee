@@ -26,8 +26,8 @@ impl CerbesError {
 
     pub fn not_enough_permissions() -> Self {
         CerbesError {
-            msg: String::from("Invalid jwt"),
-            code: 401,
+            msg: String::from("Not enough permissions"),
+            code: 403,
         }
     }
 }

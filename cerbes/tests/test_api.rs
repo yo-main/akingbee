@@ -135,7 +135,7 @@ async fn test_login_user_dont_exist() {
 async fn test_login_wrong_password() {
     let conn = common::database::get_db().await;
 
-    create_user(
+    let user = create_user(
         "email".to_owned(),
         "username".to_owned(),
         "password".to_owned(),
@@ -147,6 +147,7 @@ async fn test_login_wrong_password() {
     .unwrap();
 
     let app = create_app(conn).await;
+    let token = user.generate_jwt();
 
     let response = app
         .oneshot(

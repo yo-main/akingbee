@@ -2,16 +2,13 @@ use super::AppState;
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::entities::Jwt;
 use crate::domain::errors::CerbesError;
-use crate::domain::services::credentials::generate_jwt_for_user;
 use crate::domain::services::credentials::impersonate_user;
 use crate::domain::services::credentials::password_reset_validate;
-use crate::domain::services::credentials::regenerate_jwt;
 use crate::domain::services::credentials::register_password_reset_request;
-use crate::domain::services::credentials::register_user_login;
-use crate::domain::services::credentials::validate_token;
 use crate::domain::services::user::password_reset;
-use crate::domain::services::user::validate_user_credentials;
+use crate::domain::services::user::user_login;
 use crate::infrastructure::rabbitmq::client::RbmqClient;
 use crate::infrastructure::rabbitmq::client::TestRbmqClient;
 use crate::settings::SETTINGS;
@@ -70,12 +67,9 @@ where
 
     info!("Login request from {}", username);
 
-    let user = validate_user_credentials(username, password, &state.user_repo)
+    let token = user_login(username, password, &state.user_repo)
         .await
-        .or_else(|_| Err(StatusCode::FORBIDDEN))?;
-
-    let token = generate_jwt_for_user(&user);
-    register_user_login(&state.credentials_repo, &user.credentials).await?;
+        .map_err(|_| CerbesError::not_enough_permissions())?;
 
     return Ok((
         StatusCode::OK,
@@ -88,18 +82,18 @@ where
 pub async fn check_jwt(
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<CheckOutput>), StatusCode> {
-    let token = validate_token(auth.token().to_owned())?;
+    let token = Jwt::validate_jwt(auth.token().to_owned())?;
     return Ok((StatusCode::OK, Json(CheckOutput { user_id: token.sub })));
 }
 
 pub async fn refresh_jwt(
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), StatusCode> {
-    match validate_token(auth.token().to_owned()) {
+    match Jwt::validate_jwt(auth.token().to_owned()) {
         Ok(token) => Ok((
             StatusCode::OK,
             Json(LoginOutput {
-                access_token: regenerate_jwt(token),
+                access_token: Jwt::regenerate_token(token),
             }),
         )),
         _ => Err(StatusCode::FORBIDDEN),
@@ -191,7 +185,7 @@ where
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    let token = validate_token(auth.token().to_owned()).unwrap();
+    let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
     info!(
         "Request to impersonate user {} from user {}",
         user_id, token.sub
@@ -201,7 +195,6 @@ where
         user_id,
         token.sub,
         &state.user_repo,
-        &state.credentials_repo,
         &state.permissions_repo,
     )
     .await?;
@@ -218,7 +211,7 @@ where
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    let token = validate_token(auth.token().to_owned()).unwrap();
+    let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
 
     if token.impersonator.is_none() {
         return Err(StatusCode::BAD_REQUEST);
@@ -228,7 +221,7 @@ where
         .get_by_user_public_id(token.impersonator.unwrap())
         .await?;
 
-    let jwt = generate_jwt_for_user(&user);
+    let jwt = user.generate_jwt();
 
     return Ok((StatusCode::OK, Json(LoginOutput { access_token: jwt })));
 }

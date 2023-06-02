@@ -3,8 +3,8 @@ use super::AppState;
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::entities::Jwt;
 use crate::domain::entities::User;
-use crate::domain::services::credentials::validate_token;
 use crate::domain::services::user::create_user;
 use crate::infrastructure::rabbitmq::client::RbmqClient;
 use crate::infrastructure::rabbitmq::client::TestRbmqClient;
@@ -95,7 +95,7 @@ where
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    validate_token(auth.token().to_owned())?;
+    Jwt::validate_jwt(auth.token().to_owned())?;
 
     let users = state.user_repo.get_all_users().await?;
     Ok(Json(users.into_iter().map(|u| u.into()).collect()))
