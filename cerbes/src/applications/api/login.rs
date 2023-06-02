@@ -70,7 +70,7 @@ where
 
     info!("Login request from {}", username);
 
-    let user = validate_user_credentials(username, password, &state.credentials_repo)
+    let user = validate_user_credentials(username, password, &state.user_repo)
         .await
         .or_else(|_| Err(StatusCode::FORBIDDEN))?;
 
@@ -120,7 +120,7 @@ where
         "test" => {
             register_password_reset_request(
                 &payload.username,
-                &state.credentials_repo,
+                &state.user_repo,
                 &TestRbmqClient::new(),
             )
             .await?
@@ -128,7 +128,7 @@ where
         _ => {
             register_password_reset_request(
                 &payload.username,
-                &state.credentials_repo,
+                &state.user_repo,
                 &RbmqClient::new().await,
             )
             .await?

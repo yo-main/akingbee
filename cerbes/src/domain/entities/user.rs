@@ -46,6 +46,10 @@ impl User {
     pub fn validate_password(&self, password: String) -> bool {
         self.credentials.validate_password(password)
     }
+
+    pub fn request_password_reset(&mut self) {
+        self.credentials.register_password_reset_request();
+    }
 }
 
 #[cfg(test)]

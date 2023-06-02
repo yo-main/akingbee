@@ -50,6 +50,10 @@ impl Credentials {
 
         Ok(())
     }
+
+    pub fn register_password_reset_request(&mut self) {
+        self.password_reset_id = Some(Uuid::new_v4());
+    }
 }
 
 #[cfg(test)]

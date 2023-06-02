@@ -129,6 +129,36 @@ impl UserRepositoryTrait for UserRepository {
         return Ok(user);
     }
 
+    async fn get_by_username(&self, username: &str) -> Result<User, CerbesError> {
+        let result = UserModel::Entity::find()
+            .find_also_related(CredentialsModel::Entity)
+            .filter(CredentialsModel::Column::Username.eq(username))
+            .one(&self.conn)
+            .await?;
+
+        if result.is_none() {
+            return Err(CerbesError::user_not_found());
+        }
+
+        let (user, credentials) = result.unwrap();
+        return Ok(User::from_entity(user, credentials.unwrap()));
+    }
+
+    async fn get_by_user_email(&self, user_email: &str) -> Result<User, CerbesError> {
+        let result = UserModel::Entity::find()
+            .filter(UserModel::Column::Email.eq(user_email))
+            .find_also_related(CredentialsModel::Entity)
+            .one(&self.conn)
+            .await?;
+
+        if result.is_none() {
+            return Err(CerbesError::user_not_found());
+        }
+
+        let (user, credentials) = result.unwrap();
+        return Ok(User::from_entity(user, credentials.unwrap()));
+    }
+
     async fn activate_user(&self, activation_id: Uuid) -> Result<User, CerbesError> {
         let result = UserModel::Entity::find()
             .filter(UserModel::Column::ActivationId.eq(activation_id))

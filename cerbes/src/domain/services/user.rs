@@ -53,12 +53,12 @@ where
 pub async fn validate_user_credentials<R>(
     username: String,
     password: String,
-    credentials_repo: &R,
+    user_repo: &R,
 ) -> Result<User, CerbesError>
 where
-    R: CredentialsRepositoryTrait,
+    R: UserRepositoryTrait,
 {
-    let user = credentials_repo.get_by_username(&username).await?;
+    let user = user_repo.get_by_username(&username).await?;
 
     if !user.validate_password(password) {
         return Err(CerbesError::not_enough_permissions());

@@ -107,15 +107,19 @@ pub async fn register_password_reset_request<R, P>(
     publisher: &P,
 ) -> Result<(), CerbesError>
 where
-    R: CredentialsRepositoryTrait,
+    R: UserRepositoryTrait,
     P: PublisherTrait,
 {
-    let user = repo
-        .get_by_username(username)
-        .await
-        .or(repo.get_by_user_email(username).await)?;
+    let mut user = repo.get_by_username(username).await;
 
-    let credentials = repo.reset_request(user.credentials).await?;
+    if user.is_err() {
+        user = repo.get_by_user_email(username).await;
+    }
+
+    let mut user = user?;
+
+    user.request_password_reset();
+    repo.update(&user).await?;
 
     publisher
         .publish(
@@ -126,7 +130,7 @@ where
                     "email": user.email,
                     "id": user.public_id,
                 },
-                "reset_link": format!("https://akingbee.com/password-reset/{}/{}", user.public_id, credentials.password_reset_id.unwrap())
+                "reset_link": format!("https://akingbee.com/password-reset/{}/{}", user.public_id, user.credentials.password_reset_id.unwrap())
             })
             .to_string(),
         )
