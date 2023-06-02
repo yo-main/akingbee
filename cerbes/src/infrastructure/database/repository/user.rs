@@ -45,7 +45,7 @@ impl UserRepository {
 
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
-    async fn save(&self, user: &User) -> Result<(), CerbesError> {
+    async fn create(&self, user: &User) -> Result<(), CerbesError> {
         let creds_select = SimpleExpr::SubQuery(
             None,
             Box::new(
@@ -84,6 +84,40 @@ impl UserRepositoryTrait for UserRepository {
 
         let builder = self.conn.get_database_backend();
         self.conn.execute(builder.build(&query)).await?;
+
+        Ok(())
+    }
+
+    async fn update(&self, user: &User) -> Result<(), CerbesError> {
+        let mut user_query = Query::update();
+        let mut creds_query = Query::update();
+        user_query.table(UserModel::Entity).values(vec![
+            (UserModel::Column::Email, user.email.as_str().into()),
+            (UserModel::Column::ActivationId, user.activation_id.into()),
+            (
+                UserModel::Column::UpdatedAt,
+                chrono::Utc::now().naive_utc().into(),
+            ),
+        ]);
+
+        creds_query.table(CredentialsModel::Entity).values(vec![
+            (
+                CredentialsModel::Column::PasswordResetId,
+                user.credentials.password_reset_id.into(),
+            ),
+            (
+                CredentialsModel::Column::Password,
+                user.credentials.password.as_str().into(),
+            ),
+            (
+                CredentialsModel::Column::UpdatedAt,
+                chrono::Utc::now().naive_utc().into(),
+            ),
+        ]);
+
+        let builder = self.conn.get_database_backend();
+        self.conn.execute(builder.build(&user_query)).await?;
+        self.conn.execute(builder.build(&creds_query)).await?;
 
         Ok(())
     }

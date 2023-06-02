@@ -16,7 +16,7 @@ async fn test_credentials_creation() {
     creds_repo.save(&creds).await.unwrap();
 
     let user = User::new("email".to_owned(), creds);
-    user_repo.save(&user).await.unwrap();
+    user_repo.create(&user).await.unwrap();
 
     let new_user = creds_repo
         .get_by_user_public_id(user.public_id)
@@ -26,5 +26,8 @@ async fn test_credentials_creation() {
     assert_eq!(new_user.public_id, user.public_id);
     let creds = new_user.credentials;
     assert_eq!(creds.username, "username");
-    assert_eq!(creds.password, "password");
+    assert_eq!(
+        creds.password,
+        "600c10feb7b03d284eed76d71ae61feacc9e7bd6508ecb97bfc3d7f197a4753d"
+    );
 }

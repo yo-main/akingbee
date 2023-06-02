@@ -7,7 +7,8 @@ use uuid::Uuid;
 
 #[async_trait]
 pub trait UserRepositoryTrait {
-    async fn save(&self, user: &User) -> Result<(), CerbesError>;
+    async fn create(&self, user: &User) -> Result<(), CerbesError>;
+    async fn update(&self, user: &User) -> Result<(), CerbesError>;
     async fn get_by_public_id(&self, public_id: Uuid) -> Result<User, CerbesError>;
     async fn activate_user(&self, activation_id: Uuid) -> Result<User, CerbesError>;
     async fn get_all_users(&self) -> Result<Vec<User>, CerbesError>;

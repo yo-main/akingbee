@@ -2,15 +2,16 @@ use super::AppState;
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::errors::CerbesError;
 use crate::domain::services::credentials::generate_jwt_for_user;
 use crate::domain::services::credentials::impersonate_user;
-use crate::domain::services::credentials::password_reset;
 use crate::domain::services::credentials::password_reset_validate;
 use crate::domain::services::credentials::regenerate_jwt;
 use crate::domain::services::credentials::register_password_reset_request;
 use crate::domain::services::credentials::register_user_login;
 use crate::domain::services::credentials::validate_token;
-use crate::domain::services::credentials::validate_user_credentials;
+use crate::domain::services::user::password_reset;
+use crate::domain::services::user::validate_user_credentials;
 use crate::infrastructure::rabbitmq::client::RbmqClient;
 use crate::infrastructure::rabbitmq::client::TestRbmqClient;
 use crate::settings::SETTINGS;
@@ -165,7 +166,7 @@ where
         payload.user_id,
         payload.reset_id,
         payload.password,
-        &state.credentials_repo,
+        &state.user_repo,
     )
     .await
     {
@@ -176,7 +177,7 @@ where
             );
             StatusCode::OK
         }
-        Err(_) => StatusCode::BAD_REQUEST,
+        Err(err) => err.into(),
     }
 }
 

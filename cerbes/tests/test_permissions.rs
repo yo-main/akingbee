@@ -15,7 +15,7 @@ async fn get_user(conn: DatabaseConnection) -> User {
     let user = User::new("email".to_owned(), creds);
 
     cred_rep.save(&user.credentials).await.unwrap();
-    rep.save(&user).await.unwrap();
+    rep.create(&user).await.unwrap();
     return user;
 }
 

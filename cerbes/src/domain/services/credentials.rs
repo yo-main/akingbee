@@ -8,8 +8,6 @@ use crate::domain::errors::CerbesError;
 use crate::settings::SETTINGS;
 use serde::Deserialize;
 use serde::Serialize;
-use sha2::Digest;
-use sha2::Sha256;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize)]
@@ -52,36 +50,6 @@ impl JwtData {
             username: self.username,
         }
     }
-}
-
-pub fn get_hash(password: String) -> String {
-    let mut hasher = Sha256::new();
-
-    hasher.update(&SETTINGS.hash_key);
-    hasher.update(password);
-    let hash: String = format!("{:x}", hasher.finalize()); // format as hex string
-    return hash;
-}
-
-pub fn create_credentials(username: String, password: String) -> Credentials {
-    Credentials::new(username, get_hash(password))
-}
-
-pub async fn validate_user_credentials<R>(
-    username: String,
-    password: String,
-    credentials_repo: &R,
-) -> Result<User, CerbesError>
-where
-    R: CredentialsRepositoryTrait,
-{
-    if let user = credentials_repo.get_by_username(&username).await? {
-        if user.credentials.password == get_hash(password) {
-            return Ok(user);
-        }
-    }
-
-    return Err(CerbesError::not_enough_permissions());
 }
 
 pub fn validate_token(token: String) -> Result<JwtData, CerbesError> {
@@ -177,28 +145,6 @@ where
     }
 }
 
-pub async fn password_reset<R>(
-    user_id: Uuid,
-    reset_id: Uuid,
-    password: String,
-    repo: &R,
-) -> Result<(), CerbesError>
-where
-    R: CredentialsRepositoryTrait,
-{
-    let user = repo.get_by_user_public_id(user_id).await?;
-    let credentials: Credentials = user.credentials;
-
-    if credentials.password_reset_id != Some(reset_id) {
-        return Err(CerbesError::user_not_found());
-    }
-
-    repo.update_password(&credentials.username, &get_hash(password))
-        .await?;
-
-    return Ok(());
-}
-
 pub async fn impersonate_user<U, R, P>(
     user_id: Uuid,
     impersonator_id: Uuid,
@@ -236,17 +182,6 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_create_credentials() {
-        let credentials = create_credentials("username".to_owned(), "password".to_owned());
-
-        assert_eq!(credentials.username, "username");
-        assert_eq!(
-            credentials.password,
-            "600c10feb7b03d284eed76d71ae61feacc9e7bd6508ecb97bfc3d7f197a4753d"
-        );
-    }
 
     #[test]
     fn test_jwt_validation_success() {

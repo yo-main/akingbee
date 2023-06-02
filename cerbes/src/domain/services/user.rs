@@ -1,9 +1,12 @@
+use core::panic;
+
 use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::adapters::publisher::PublisherTrait;
+use crate::domain::entities::Credentials;
 use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
-use crate::domain::services::credentials;
+use uuid::Uuid;
 
 pub async fn create_user<R, D, Q>(
     email: String,
@@ -18,16 +21,48 @@ where
     D: CredentialsRepositoryTrait,
     Q: PublisherTrait,
 {
-    let credentials = credentials::create_credentials(username, password);
+    let credentials = Credentials::new(username, password);
     let user = User::new(email, credentials);
 
     // TODO: find a way to wrap those 2 operations in the same transaction
     cred_repo.save(&user.credentials).await?;
-    user_repo.save(&user).await?;
+    user_repo.create(&user).await?;
 
     publisher
         .publish("user.created", &user.to_json().to_string())
         .await?;
 
     return Ok(user);
+}
+
+pub async fn password_reset<R>(
+    user_id: Uuid,
+    reset_id: Uuid,
+    password: String,
+    repo: &R,
+) -> Result<(), CerbesError>
+where
+    R: UserRepositoryTrait,
+{
+    let mut user = repo.get_by_public_id(user_id).await?;
+    user.update_password(password, reset_id)?;
+
+    repo.update(&user).await
+}
+
+pub async fn validate_user_credentials<R>(
+    username: String,
+    password: String,
+    credentials_repo: &R,
+) -> Result<User, CerbesError>
+where
+    R: CredentialsRepositoryTrait,
+{
+    let user = credentials_repo.get_by_username(&username).await?;
+
+    if !user.validate_password(password) {
+        return Err(CerbesError::not_enough_permissions());
+    }
+
+    Ok(user)
 }

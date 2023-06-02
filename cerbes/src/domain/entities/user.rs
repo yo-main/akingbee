@@ -1,3 +1,5 @@
+use crate::domain::errors::CerbesError;
+
 use super::Credentials;
 use serde_json::json;
 use serde_json::Value;
@@ -30,6 +32,19 @@ impl User {
             },
             "language": "fr"
         })
+    }
+
+    pub fn update_password(
+        &mut self,
+        new_password: String,
+        password_reset_id: Uuid,
+    ) -> Result<(), CerbesError> {
+        self.credentials
+            .set_new_password(new_password, password_reset_id)
+    }
+
+    pub fn validate_password(&self, password: String) -> bool {
+        self.credentials.validate_password(password)
     }
 }
 
