@@ -1,5 +1,4 @@
 use super::AppState;
-use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::entities::Jwt;
@@ -53,13 +52,12 @@ pub struct PasswordResetValidation {
     reset_id: Uuid,
 }
 
-pub async fn login<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn login<R, P>(
+    state: State<AppState<R, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Basic>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     let username = auth.username().to_owned();
@@ -100,13 +98,12 @@ pub async fn refresh_jwt(
     ))
 }
 
-pub async fn reset_password_request<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn reset_password_request<R, P>(
+    state: State<AppState<R, P>>,
     Json(payload): Json<PasswordResetRequestInput>,
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     info!("Password reset request from {}", payload.username);
@@ -132,13 +129,12 @@ where
     Ok(StatusCode::OK)
 }
 
-pub async fn reset_password_validate<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn reset_password_validate<R, P>(
+    state: State<AppState<R, P>>,
     query: Query<PasswordResetValidation>,
 ) -> StatusCode
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     match password_reset_validate(query.user_id, query.reset_id, &state.user_repo).await {
@@ -147,13 +143,12 @@ where
     }
 }
 
-pub async fn reset_password<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn reset_password<R, P>(
+    state: State<AppState<R, P>>,
     Json(payload): Json<PasswordResetInput>,
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     password_reset(
@@ -172,14 +167,13 @@ where
     Ok(StatusCode::OK)
 }
 
-pub async fn impersonate<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn impersonate<R, P>(
+    state: State<AppState<R, P>>,
     Path(user_id): Path<Uuid>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
@@ -199,13 +193,12 @@ where
     return Ok((StatusCode::OK, Json(LoginOutput { access_token: jwt })));
 }
 
-pub async fn desimpersonate<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn desimpersonate<R, P>(
+    state: State<AppState<R, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();

@@ -1,4 +1,3 @@
-use crate::domain::entities::Credentials;
 use crate::domain::entities::Permissions;
 use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
@@ -14,11 +13,6 @@ pub trait UserRepositoryTrait {
     async fn get_by_user_email(&self, user_email: &str) -> Result<User, CerbesError>;
     async fn get_by_activation_id(&self, activation_id: Uuid) -> Result<User, CerbesError>;
     async fn get_all_users(&self) -> Result<Vec<User>, CerbesError>;
-}
-
-#[async_trait]
-pub trait CredentialsRepositoryTrait {
-    async fn save(&self, credentials: &Credentials) -> Result<(), CerbesError>;
 }
 
 #[async_trait]

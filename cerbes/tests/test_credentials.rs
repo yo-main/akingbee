@@ -1,7 +1,6 @@
 use cerbes::domain::adapters::database::*;
 use cerbes::domain::entities::Credentials;
 use cerbes::domain::entities::User;
-use cerbes::infrastructure::database::repository::CredentialsRepository;
 use cerbes::infrastructure::database::repository::UserRepository;
 
 mod common;
@@ -10,7 +9,6 @@ mod common;
 async fn test_credentials_creation() {
     let conn = common::database::get_db().await;
     let user_repo = UserRepository::new(conn.clone());
-    let creds_repo = CredentialsRepository::new(conn.clone());
 
     let creds = Credentials::new("username".to_owned(), "password".to_owned());
     let user = User::new("email".to_owned(), creds);

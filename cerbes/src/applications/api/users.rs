@@ -1,6 +1,5 @@
 use super::AppState;
 
-use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::entities::Jwt;
@@ -49,13 +48,12 @@ impl Into<OutputUser> for User {
     }
 }
 
-pub async fn post_user<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn post_user<R, P>(
+    state: State<AppState<R, P>>,
     Json(payload): Json<InputPostUser>,
 ) -> Result<(StatusCode, Json<OutputUser>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     let user = match SETTINGS.env.as_str() {
@@ -65,7 +63,6 @@ where
                 payload.username,
                 payload.password,
                 &state.user_repo,
-                &state.credentials_repo,
                 &TestRbmqClient::new(),
             )
             .await?
@@ -76,7 +73,6 @@ where
                 payload.username,
                 payload.password,
                 &state.user_repo,
-                &state.credentials_repo,
                 &RbmqClient::new().await,
             )
             .await?
@@ -86,13 +82,12 @@ where
     Ok((StatusCode::CREATED, Json(user.into())))
 }
 
-pub async fn get_users<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn get_users<R, P>(
+    state: State<AppState<R, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<Json<Vec<OutputUser>>, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     Jwt::validate_jwt(auth.token().to_owned())?;
@@ -101,13 +96,12 @@ where
     Ok(Json(users.into_iter().map(|u| u.into()).collect()))
 }
 
-pub async fn activate_user_endpoint<R, D, P>(
-    state: State<AppState<R, D, P>>,
+pub async fn activate_user_endpoint<R, P>(
+    state: State<AppState<R, P>>,
     Path(activation_id): Path<Uuid>,
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
     activate_user(activation_id, &state.user_repo).await?;

@@ -1,4 +1,3 @@
-use crate::domain::adapters::database::CredentialsRepositoryTrait;
 use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::adapters::publisher::PublisherTrait;
@@ -7,17 +6,15 @@ use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
 use uuid::Uuid;
 
-pub async fn create_user<R, D, Q>(
+pub async fn create_user<R, Q>(
     email: String,
     username: String,
     password: String,
     user_repo: &R,
-    cred_repo: &D,
     publisher: &Q,
 ) -> Result<User, CerbesError>
 where
     R: UserRepositoryTrait,
-    D: CredentialsRepositoryTrait,
     Q: PublisherTrait,
 {
     let credentials = Credentials::new(username, password);

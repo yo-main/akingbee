@@ -5,10 +5,7 @@ use crate::infrastructure::database::models::credentials as CredentialsModel;
 use crate::infrastructure::database::models::user as UserModel;
 use async_trait::async_trait;
 use sea_orm::entity::prelude::*;
-use sea_orm::sea_query::query::QueryStatementBuilder;
-use sea_orm::sea_query::Expr;
 use sea_orm::sea_query::Query;
-use sea_orm::sea_query::SimpleExpr;
 use uuid::Uuid;
 
 #[derive(Clone)]

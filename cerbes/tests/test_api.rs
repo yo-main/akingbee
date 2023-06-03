@@ -8,7 +8,6 @@ use cerbes::domain::entities::Permissions;
 use cerbes::domain::services::user::create_user;
 use cerbes::infrastructure::database::models::credentials as CredentialsModel;
 use cerbes::infrastructure::database::models::user as UserModel;
-use cerbes::infrastructure::database::repository::CredentialsRepository;
 use cerbes::infrastructure::database::repository::PermissionsRepository;
 use cerbes::infrastructure::database::repository::UserRepository;
 use sea_orm::entity::prelude::*;
@@ -81,7 +80,6 @@ async fn test_login() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -139,7 +137,6 @@ async fn test_login_wrong_password() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -174,7 +171,6 @@ async fn test_check_jwt_success() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -229,7 +225,6 @@ async fn test_refresh_jwt() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -284,7 +279,6 @@ async fn test_activate_user() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -319,7 +313,6 @@ async fn test_reset_password() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -417,7 +410,6 @@ async fn test_get_users() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -427,7 +419,6 @@ async fn test_get_users() {
         "username2".to_owned(),
         "password2".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -493,7 +484,6 @@ async fn test_impersonate() {
         "username".to_owned(),
         "password".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
@@ -504,7 +494,6 @@ async fn test_impersonate() {
         "username2".to_owned(),
         "password2".to_owned(),
         &UserRepository::new(conn.clone()),
-        &CredentialsRepository::new(conn.clone()),
         &common::publisher::TestPublisher::new(),
     )
     .await
