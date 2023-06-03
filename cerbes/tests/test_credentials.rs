@@ -18,10 +18,7 @@ async fn test_credentials_creation() {
     let user = User::new("email".to_owned(), creds);
     user_repo.create(&user).await.unwrap();
 
-    let new_user = creds_repo
-        .get_by_user_public_id(user.public_id)
-        .await
-        .unwrap();
+    let new_user = user_repo.get_by_public_id(user.public_id).await.unwrap();
 
     assert_eq!(new_user.public_id, user.public_id);
     let creds = new_user.credentials;

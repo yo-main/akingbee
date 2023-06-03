@@ -44,7 +44,7 @@ pub async fn create_app(conn: DatabaseConnection) -> axum::Router {
         .route("/refresh", routing::post(login::refresh_jwt))
         .route(
             "/activate/:activation_id",
-            routing::post(users::activate_user),
+            routing::post(users::activate_user_endpoint),
         )
         .route(
             "/password-reset/request",

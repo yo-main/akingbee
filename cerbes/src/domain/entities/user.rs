@@ -35,6 +35,10 @@ impl User {
         })
     }
 
+    pub fn activate(&mut self) {
+        self.activation_id = None;
+    }
+
     pub fn update_password(
         &mut self,
         new_password: String,

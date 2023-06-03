@@ -5,6 +5,7 @@ use crate::domain::adapters::database::PermissionsRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::entities::Jwt;
 use crate::domain::entities::User;
+use crate::domain::services::user::activate_user;
 use crate::domain::services::user::create_user;
 use crate::infrastructure::rabbitmq::client::RbmqClient;
 use crate::infrastructure::rabbitmq::client::TestRbmqClient;
@@ -52,7 +53,7 @@ impl Into<OutputUser> for User {
 pub async fn post_user<R, D, P>(
     state: State<AppState<R, D, P>>,
     Json(payload): Json<InputPostUser>,
-) -> Result<(StatusCode, Json<OutputUser>), StatusCode>
+) -> Result<(StatusCode, Json<OutputUser>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
@@ -89,7 +90,7 @@ where
 pub async fn get_users<R, D, P>(
     state: State<AppState<R, D, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
-) -> Result<Json<Vec<OutputUser>>, StatusCode>
+) -> Result<Json<Vec<OutputUser>>, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
@@ -101,19 +102,16 @@ where
     Ok(Json(users.into_iter().map(|u| u.into()).collect()))
 }
 
-pub async fn activate_user<R, D, P>(
+pub async fn activate_user_endpoint<R, D, P>(
     state: State<AppState<R, D, P>>,
     Path(activation_id): Path<Uuid>,
-) -> StatusCode
+) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    let user = state.user_repo.activate_user(activation_id).await;
-    if user.is_err() {
-        return StatusCode::BAD_REQUEST;
-    }
+    activate_user(activation_id, &state.user_repo).await?;
 
-    return StatusCode::OK;
+    return Ok(StatusCode::OK);
 }

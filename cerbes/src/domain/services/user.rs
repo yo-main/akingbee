@@ -109,9 +109,9 @@ where
 
 pub async fn password_reset_validate<R>(user_id: Uuid, reset_id: Uuid, repo: &R) -> bool
 where
-    R: CredentialsRepositoryTrait,
+    R: UserRepositoryTrait,
 {
-    match repo.get_by_user_public_id(user_id).await {
+    match repo.get_by_public_id(user_id).await {
         Ok(user) => user.credentials.password_reset_id.unwrap_or_default() == reset_id,
         Err(_) => false,
     }
@@ -138,4 +138,16 @@ where
     }
 
     return Ok(user.generate_jwt_with_impersonator(&impersonator));
+}
+
+pub async fn activate_user<U>(activation_id: Uuid, user_repo: &U) -> Result<User, CerbesError>
+where
+    U: UserRepositoryTrait,
+{
+    let mut user = user_repo.get_by_activation_id(activation_id).await?;
+    user.activate();
+
+    user_repo.update(&user).await?;
+
+    Ok(user)
 }

@@ -165,7 +165,7 @@ impl UserRepositoryTrait for UserRepository {
         return Ok(User::from_entity(user, credentials.unwrap()));
     }
 
-    async fn activate_user(&self, activation_id: Uuid) -> Result<User, CerbesError> {
+    async fn get_by_activation_id(&self, activation_id: Uuid) -> Result<User, CerbesError> {
         let result = UserModel::Entity::find()
             .filter(UserModel::Column::ActivationId.eq(activation_id))
             .find_also_related(CredentialsModel::Entity)
@@ -176,19 +176,8 @@ impl UserRepositoryTrait for UserRepository {
             return Err(CerbesError::user_not_found());
         }
 
-        let (mut user, credentials): (UserModel::ActiveModel, CredentialsModel::Model) = result
-            .map(|result| {
-                (
-                    result.0.into(),
-                    result.1.expect("No credentials found for the user"),
-                )
-            })
-            .unwrap();
-        user.activation_id = Set(None);
-
-        let user = user.update(&self.conn).await?;
-
-        return Ok(User::from_entity(user, credentials));
+        let (user, credentials) = result.unwrap();
+        return Ok(User::from_entity(user, credentials.unwrap()));
     }
 
     async fn get_all_users(&self) -> Result<Vec<User>, CerbesError> {

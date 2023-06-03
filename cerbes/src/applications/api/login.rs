@@ -20,6 +20,7 @@ use axum::extract::State;
 use axum::extract::TypedHeader;
 use axum::headers;
 use axum::http::StatusCode;
+use sea_orm::Statement;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::info;
@@ -56,7 +57,7 @@ pub struct PasswordResetValidation {
 pub async fn login<R, D, P>(
     state: State<AppState<R, D, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Basic>>,
-) -> Result<(StatusCode, Json<LoginOutput>), StatusCode>
+) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
@@ -81,29 +82,29 @@ where
 
 pub async fn check_jwt(
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
-) -> Result<(StatusCode, Json<CheckOutput>), StatusCode> {
+) -> Result<(StatusCode, Json<CheckOutput>), (StatusCode, String)> {
     let token = Jwt::validate_jwt(auth.token().to_owned())?;
     return Ok((StatusCode::OK, Json(CheckOutput { user_id: token.sub })));
 }
 
 pub async fn refresh_jwt(
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
-) -> Result<(StatusCode, Json<LoginOutput>), StatusCode> {
-    match Jwt::validate_jwt(auth.token().to_owned()) {
-        Ok(jwt) => Ok((
-            StatusCode::OK,
-            Json(LoginOutput {
-                access_token: jwt.refresh().get_token(),
-            }),
-        )),
-        _ => Err(StatusCode::FORBIDDEN),
-    }
+) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)> {
+    let jwt = Jwt::validate_jwt(auth.token().to_owned())
+        .map_err(|_| (StatusCode::FORBIDDEN, "Forbidden".to_owned()))?;
+
+    Ok((
+        StatusCode::OK,
+        Json(LoginOutput {
+            access_token: jwt.refresh().get_token(),
+        }),
+    ))
 }
 
 pub async fn reset_password_request<R, D, P>(
     state: State<AppState<R, D, P>>,
     Json(payload): Json<PasswordResetRequestInput>,
-) -> Result<StatusCode, StatusCode>
+) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
@@ -141,7 +142,7 @@ where
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    match password_reset_validate(query.user_id, query.reset_id, &state.credentials_repo).await {
+    match password_reset_validate(query.user_id, query.reset_id, &state.user_repo).await {
         true => StatusCode::OK,
         false => StatusCode::NOT_FOUND,
     }
@@ -150,29 +151,26 @@ where
 pub async fn reset_password<R, D, P>(
     state: State<AppState<R, D, P>>,
     Json(payload): Json<PasswordResetInput>,
-) -> StatusCode
+) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
     P: PermissionsRepositoryTrait,
 {
-    match password_reset(
+    password_reset(
         payload.user_id,
         payload.reset_id,
         payload.password,
         &state.user_repo,
     )
-    .await
-    {
-        Ok(()) => {
-            info!(
-                "Successfuly reseted password from user {}, reset id {}",
-                payload.user_id, payload.reset_id
-            );
-            StatusCode::OK
-        }
-        Err(err) => err.into(),
-    }
+    .await?;
+
+    info!(
+        "Successfuly reseted password from user {}, reset id {}",
+        payload.user_id, payload.reset_id
+    );
+
+    Ok(StatusCode::OK)
 }
 
 pub async fn impersonate<R, D, P>(
@@ -205,7 +203,7 @@ where
 pub async fn desimpersonate<R, D, P>(
     state: State<AppState<R, D, P>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
-) -> Result<(StatusCode, Json<LoginOutput>), StatusCode>
+) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     D: CredentialsRepositoryTrait,
@@ -214,11 +212,11 @@ where
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
 
     if token.impersonator.is_none() {
-        return Err(StatusCode::BAD_REQUEST);
+        return Err((StatusCode::BAD_REQUEST, "Not impersonator token".to_owned()));
     }
     let user = state
-        .credentials_repo
-        .get_by_user_public_id(token.impersonator.unwrap())
+        .user_repo
+        .get_by_public_id(token.impersonator.unwrap())
         .await?;
 
     let jwt = user.generate_jwt();
