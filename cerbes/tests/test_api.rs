@@ -5,7 +5,6 @@ use axum::http::StatusCode;
 use cerbes::applications::api::create_app;
 use cerbes::domain::adapters::database::*;
 use cerbes::domain::entities::Permissions;
-use cerbes::domain::entities::User;
 use cerbes::domain::services::user::create_user;
 use cerbes::infrastructure::database::models::credentials as CredentialsModel;
 use cerbes::infrastructure::database::models::user as UserModel;
@@ -135,7 +134,7 @@ async fn test_login_user_dont_exist() {
 async fn test_login_wrong_password() {
     let conn = common::database::get_db().await;
 
-    let user = create_user(
+    create_user(
         "email".to_owned(),
         "username".to_owned(),
         "password".to_owned(),
@@ -147,7 +146,6 @@ async fn test_login_wrong_password() {
     .unwrap();
 
     let app = create_app(conn).await;
-    let token = user.generate_jwt();
 
     let response = app
         .oneshot(
@@ -409,7 +407,6 @@ async fn test_reset_password() {
 async fn test_get_users() {
     #[derive(Deserialize)]
     struct UserTest {
-        public_id: String,
         email: String,
     }
 

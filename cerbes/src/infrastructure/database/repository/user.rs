@@ -9,7 +9,6 @@ use sea_orm::sea_query::query::QueryStatementBuilder;
 use sea_orm::sea_query::Expr;
 use sea_orm::sea_query::Query;
 use sea_orm::sea_query::SimpleExpr;
-use sea_orm::Set;
 use uuid::Uuid;
 
 #[derive(Clone)]

@@ -8,10 +8,7 @@ use async_trait::async_trait;
 use migration::JoinType;
 use sea_orm::entity::prelude::*;
 use sea_orm::query::QuerySelect;
-use sea_orm::sea_query::query::IntoCondition;
-use sea_orm::sea_query::Expr;
 use sea_orm::Set;
-use sea_query::Query;
 
 #[derive(Clone)]
 pub struct PermissionsRepository {
