@@ -6,6 +6,7 @@ use crate::infrastructure::database::models::user as UserModel;
 use async_trait::async_trait;
 use sea_orm::entity::prelude::*;
 use sea_orm::sea_query::Query;
+use sea_orm::TransactionTrait;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -44,9 +45,12 @@ impl UserRepositoryTrait for UserRepository {
     async fn create(&self, user: &User) -> Result<(), CerbesError> {
         let builder = self.conn.get_database_backend();
 
+        let transaction = self.conn.begin().await?;
+
         let mut query = Query::insert();
         query
             .into_table(CredentialsModel::Entity)
+            .returning_col(CredentialsModel::Column::Id)
             .columns(vec![
                 CredentialsModel::Column::Username,
                 CredentialsModel::Column::Password,
@@ -62,8 +66,6 @@ impl UserRepositoryTrait for UserRepository {
                 chrono::Utc::now().naive_utc().into(),
             ])
             .unwrap();
-
-        query.returning_col(CredentialsModel::Column::Id);
 
         let cred_id: i32 = match self.conn.query_one(builder.build(&query)).await? {
             Some(result) => result.try_get_by(0).map_err(|err| err.into()),
@@ -93,6 +95,8 @@ impl UserRepositoryTrait for UserRepository {
 
         let builder = self.conn.get_database_backend();
         self.conn.execute(builder.build(&query)).await?;
+
+        transaction.commit().await?;
 
         Ok(())
     }
