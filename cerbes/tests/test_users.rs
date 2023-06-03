@@ -13,7 +13,6 @@ async fn test_user_creation() {
 
     let cred_rep = CredentialsRepository::new(conn.clone());
     let repo = UserRepository::new(conn);
-    cred_rep.save(&user.credentials).await.unwrap();
     repo.create(&user).await.unwrap();
 
     let user_created = repo.get_by_public_id(user.public_id).await.unwrap();

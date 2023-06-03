@@ -10,6 +10,20 @@ pub struct CerbesError {
 impl Error for CerbesError {}
 
 impl CerbesError {
+    pub fn database_error() -> Self {
+        CerbesError {
+            msg: String::from("Database error has been wildly encountered"),
+            code: 400,
+        }
+    }
+
+    pub fn credentials_could_not_be_created() -> Self {
+        CerbesError {
+            msg: String::from("Something went wrong when creating credentials"),
+            code: 400,
+        }
+    }
+
     pub fn user_not_found() -> Self {
         CerbesError {
             msg: String::from("User not found"),

@@ -17,10 +17,9 @@ use axum::extract::TypedHeader;
 use axum::headers;
 use axum::http::StatusCode;
 use chrono::NaiveDateTime;
-use uuid::Uuid;
-// use axum::response::IntoResponse;
 use serde::Deserialize;
 use serde::Serialize;
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 pub struct InputPostUser {

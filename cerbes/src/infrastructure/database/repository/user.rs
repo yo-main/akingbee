@@ -45,20 +45,33 @@ impl UserRepository {
 #[async_trait]
 impl UserRepositoryTrait for UserRepository {
     async fn create(&self, user: &User) -> Result<(), CerbesError> {
-        let creds_select = SimpleExpr::SubQuery(
-            None,
-            Box::new(
-                Query::select()
-                    .column(CredentialsModel::Column::Id)
-                    .from(CredentialsModel::Entity)
-                    .and_where(
-                        Expr::col(CredentialsModel::Column::Username)
-                            .eq(user.credentials.username.as_str()),
-                    )
-                    .to_owned()
-                    .into_sub_query_statement(),
-            ),
-        );
+        let builder = self.conn.get_database_backend();
+
+        let mut query = Query::insert();
+        query
+            .into_table(CredentialsModel::Entity)
+            .columns(vec![
+                CredentialsModel::Column::Username,
+                CredentialsModel::Column::Password,
+                CredentialsModel::Column::LastSeen,
+                CredentialsModel::Column::CreatedAt,
+                CredentialsModel::Column::UpdatedAt,
+            ])
+            .values(vec![
+                user.credentials.username.as_str().into(),
+                user.credentials.password.as_str().into(),
+                user.credentials.last_seen.into(),
+                chrono::Utc::now().naive_utc().into(),
+                chrono::Utc::now().naive_utc().into(),
+            ])
+            .unwrap();
+
+        query.returning_col(CredentialsModel::Column::Id);
+
+        let cred_id: i32 = match self.conn.query_one(builder.build(&query)).await? {
+            Some(result) => result.try_get_by(0).map_err(|err| err.into()),
+            _ => Err(CerbesError::credentials_could_not_be_created()),
+        }?;
 
         let mut query = Query::insert();
         query
@@ -75,7 +88,7 @@ impl UserRepositoryTrait for UserRepository {
                 user.email.as_str().into(),
                 user.public_id.into(),
                 user.activation_id.into(),
-                creds_select,
+                cred_id.into(),
                 chrono::Utc::now().naive_utc().into(),
                 chrono::Utc::now().naive_utc().into(),
             ])

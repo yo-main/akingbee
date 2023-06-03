@@ -24,7 +24,6 @@ where
     let user = User::new(email, credentials);
 
     // TODO: find a way to wrap those 2 operations in the same transaction
-    cred_repo.save(&user.credentials).await?;
     user_repo.create(&user).await?;
 
     publisher
