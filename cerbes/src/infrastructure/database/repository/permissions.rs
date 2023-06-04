@@ -1,4 +1,4 @@
-use crate::domain::adapters::database::PermissionsRepositoryTrait;
+use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::entities::Permissions;
 use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
@@ -9,20 +9,62 @@ use migration::JoinType;
 use sea_orm::entity::prelude::*;
 use sea_orm::query::QuerySelect;
 use sea_orm::Set;
+use std::collections::HashMap;
+use std::sync::Arc;
+use std::sync::Mutex;
 
 #[derive(Clone)]
-pub struct PermissionsRepository {
-    pub conn: DatabaseConnection,
+pub struct PermissionRepositoryMem {
+    storage: Arc<Mutex<HashMap<Uuid, Vec<Permissions>>>>,
 }
 
-impl PermissionsRepository {
-    pub fn new(conn: DatabaseConnection) -> Self {
-        PermissionsRepository { conn }
+impl PermissionRepositoryMem {
+    pub fn new() -> Self {
+        PermissionRepositoryMem {
+            storage: Arc::new(Mutex::new(HashMap::new())),
+        }
     }
 }
 
 #[async_trait]
-impl PermissionsRepositoryTrait for PermissionsRepository {
+impl PermissionRepositoryTrait for PermissionRepositoryMem {
+    async fn get_permissions_for_user(&self, user: &User) -> Result<Vec<Permissions>, CerbesError> {
+        let storage = self.storage.lock().unwrap();
+        Ok(storage
+            .get(&user.public_id)
+            .map(|v| v.clone())
+            .unwrap_or(Vec::new()))
+    }
+    async fn add_permission_for_user(
+        &self,
+        permissions: &Permissions,
+        user: &User,
+    ) -> Result<(), CerbesError> {
+        let mut storage = self.storage.lock().unwrap();
+        match storage.get_mut(&user.public_id) {
+            Some(perms) => perms.push(permissions.clone()),
+            _ => {
+                storage.insert(user.public_id, vec![permissions.clone()]);
+            }
+        };
+
+        Ok(())
+    }
+}
+
+#[derive(Clone)]
+pub struct PermissionRepositoryPg {
+    pub conn: DatabaseConnection,
+}
+
+impl PermissionRepositoryPg {
+    pub fn new(conn: DatabaseConnection) -> Self {
+        PermissionRepositoryPg { conn }
+    }
+}
+
+#[async_trait]
+impl PermissionRepositoryTrait for PermissionRepositoryPg {
     async fn get_permissions_for_user(&self, user: &User) -> Result<Vec<Permissions>, CerbesError> {
         // let public_id: Uuid = user.public_id.clone();
         let permissions = PermissionModel::Entity::find()

@@ -1,14 +1,14 @@
 use cerbes::domain::adapters::database::*;
 use cerbes::domain::entities::Credentials;
 use cerbes::domain::entities::User;
-use cerbes::infrastructure::database::repository::UserRepository;
+use cerbes::infrastructure::database::repository::UserRepositoryPg;
 
 mod common;
 
 #[tokio::test]
 async fn test_credentials_creation() {
     let conn = common::database::get_db().await;
-    let user_repo = UserRepository::new(conn.clone());
+    let user_repo = UserRepositoryPg::new(conn.clone());
 
     let creds = Credentials::new("username".to_owned(), "password".to_owned());
     let user = User::new("email".to_owned(), creds);

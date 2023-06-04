@@ -6,7 +6,7 @@ use serde_json::json;
 use serde_json::Value;
 use uuid::Uuid;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct User {
     pub email: String,
     pub credentials: Credentials,

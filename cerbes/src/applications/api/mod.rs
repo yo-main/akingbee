@@ -1,27 +1,25 @@
 use axum::routing;
-use sea_orm::DatabaseConnection;
 mod login;
 mod users;
-use crate::domain::adapters::database::PermissionsRepositoryTrait;
+use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
-use crate::infrastructure::database::repository::PermissionsRepository;
-use crate::infrastructure::database::repository::UserRepository;
 use tower_http::cors::CorsLayer;
 
 #[derive(Clone)]
 pub struct AppState<R, P>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     user_repo: R,
     permissions_repo: P,
 }
 
-pub async fn create_app(conn: DatabaseConnection) -> axum::Router {
-    let user_repo = UserRepository { conn: conn.clone() };
-    let permissions_repo = PermissionsRepository { conn: conn.clone() };
-
+pub async fn create_app<U, C>(user_repo: U, permissions_repo: C) -> axum::Router
+where
+    U: UserRepositoryTrait + Clone + Send + Sync + 'static,
+    C: PermissionRepositoryTrait + Clone + Send + Sync + 'static,
+{
     let state = AppState {
         user_repo,
         permissions_repo,

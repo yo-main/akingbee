@@ -16,7 +16,7 @@ pub trait UserRepositoryTrait {
 }
 
 #[async_trait]
-pub trait PermissionsRepositoryTrait {
+pub trait PermissionRepositoryTrait {
     async fn get_permissions_for_user(&self, user: &User) -> Result<Vec<Permissions>, CerbesError>;
     async fn add_permission_for_user(
         &self,

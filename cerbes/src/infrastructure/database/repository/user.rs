@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
@@ -7,16 +9,103 @@ use async_trait::async_trait;
 use sea_orm::entity::prelude::*;
 use sea_orm::sea_query::Query;
 use sea_orm::TransactionTrait;
+use std::sync::Arc;
+use std::sync::Mutex;
 use uuid::Uuid;
 
 #[derive(Clone)]
-pub struct UserRepository {
+pub struct UserRepositoryMem {
+    storage: Arc<Mutex<Vec<User>>>,
+}
+
+impl UserRepositoryMem {
+    pub fn new() -> Self {
+        UserRepositoryMem {
+            storage: Arc::new(Mutex::new(Vec::new())),
+        }
+    }
+}
+
+#[async_trait]
+impl UserRepositoryTrait for UserRepositoryMem {
+    async fn create(&self, user: &User) -> Result<(), CerbesError> {
+        let mut storage = self.storage.lock().unwrap();
+
+        if storage
+            .iter()
+            .find(|u| u.public_id == user.public_id)
+            .is_some()
+        {
+            return Ok(());
+        } else {
+            storage.push(user.clone());
+        }
+
+        Ok(())
+    }
+
+    async fn update(&self, user: &User) -> Result<(), CerbesError> {
+        let mut storage = self.storage.lock().unwrap();
+        if let Some(existing_user) = storage.iter_mut().find(|u| u.public_id == user.public_id) {
+            existing_user.email = user.email.clone();
+            existing_user.credentials = user.credentials.clone();
+            existing_user.activation_id = user.activation_id;
+        } else {
+            return Err(CerbesError::user_not_found());
+        }
+
+        Ok(())
+    }
+
+    async fn get_by_public_id(&self, public_id: Uuid) -> Result<User, CerbesError> {
+        let storage = self.storage.lock().unwrap();
+        if let Some(user) = storage.iter().find(|u| u.public_id == public_id) {
+            return Ok(user.clone());
+        } else {
+            return Err(CerbesError::user_not_found());
+        }
+    }
+    async fn get_by_username(&self, username: &str) -> Result<User, CerbesError> {
+        let storage = self.storage.lock().unwrap();
+        if let Some(user) = storage.iter().find(|u| u.credentials.username == username) {
+            return Ok(user.clone());
+        } else {
+            return Err(CerbesError::user_not_found());
+        }
+    }
+    async fn get_by_user_email(&self, user_email: &str) -> Result<User, CerbesError> {
+        let storage = self.storage.lock().unwrap();
+        if let Some(user) = storage.iter().find(|u| u.email == user_email) {
+            return Ok(user.clone());
+        } else {
+            return Err(CerbesError::user_not_found());
+        }
+    }
+    async fn get_by_activation_id(&self, activation_id: Uuid) -> Result<User, CerbesError> {
+        let storage = self.storage.lock().unwrap();
+        if let Some(user) = storage
+            .iter()
+            .find(|u| u.activation_id == Some(activation_id))
+        {
+            return Ok(user.clone());
+        } else {
+            return Err(CerbesError::user_not_found());
+        }
+    }
+    async fn get_all_users(&self) -> Result<Vec<User>, CerbesError> {
+        let storage = self.storage.lock().unwrap();
+        Ok(storage.clone())
+    }
+}
+
+#[derive(Clone)]
+pub struct UserRepositoryPg {
     pub conn: DatabaseConnection,
 }
 
-impl UserRepository {
+impl UserRepositoryPg {
     pub fn new(conn: DatabaseConnection) -> Self {
-        UserRepository { conn }
+        UserRepositoryPg { conn }
     }
 
     async fn get_raw_model_by_public_id(
@@ -41,7 +130,7 @@ impl UserRepository {
 }
 
 #[async_trait]
-impl UserRepositoryTrait for UserRepository {
+impl UserRepositoryTrait for UserRepositoryPg {
     async fn create(&self, user: &User) -> Result<(), CerbesError> {
         let builder = self.conn.get_database_backend();
 

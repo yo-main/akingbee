@@ -5,7 +5,7 @@ use sha2::Digest;
 use sha2::Sha256;
 use uuid::Uuid;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Credentials {
     pub username: String,
     pub password: String,

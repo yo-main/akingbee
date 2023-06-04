@@ -1,6 +1,6 @@
 use super::AppState;
 
-use crate::domain::adapters::database::PermissionsRepositoryTrait;
+use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::entities::Jwt;
 use crate::domain::entities::User;
@@ -54,7 +54,7 @@ pub async fn post_user<R, P>(
 ) -> Result<(StatusCode, Json<OutputUser>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     let user = match SETTINGS.env.as_str() {
         "test" => {
@@ -88,7 +88,7 @@ pub async fn get_users<R, P>(
 ) -> Result<Json<Vec<OutputUser>>, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     Jwt::validate_jwt(auth.token().to_owned())?;
 
@@ -102,7 +102,7 @@ pub async fn activate_user_endpoint<R, P>(
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     activate_user(activation_id, &state.user_repo).await?;
 

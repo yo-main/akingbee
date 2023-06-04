@@ -1,5 +1,5 @@
 use super::AppState;
-use crate::domain::adapters::database::PermissionsRepositoryTrait;
+use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::entities::Jwt;
 use crate::domain::errors::CerbesError;
@@ -58,7 +58,7 @@ pub async fn login<R, P>(
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     let username = auth.username().to_owned();
     let password = auth.password().to_owned();
@@ -104,7 +104,7 @@ pub async fn reset_password_request<R, P>(
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     info!("Password reset request from {}", payload.username);
     match SETTINGS.env.as_str() {
@@ -135,7 +135,7 @@ pub async fn reset_password_validate<R, P>(
 ) -> StatusCode
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     match password_reset_validate(query.user_id, query.reset_id, &state.user_repo).await {
         true => StatusCode::OK,
@@ -149,7 +149,7 @@ pub async fn reset_password<R, P>(
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     password_reset(
         payload.user_id,
@@ -174,7 +174,7 @@ pub async fn impersonate<R, P>(
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
     info!(
@@ -199,7 +199,7 @@ pub async fn desimpersonate<R, P>(
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
 

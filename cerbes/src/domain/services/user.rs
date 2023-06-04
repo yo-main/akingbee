@@ -1,4 +1,4 @@
-use crate::domain::adapters::database::PermissionsRepositoryTrait;
+use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
 use crate::domain::adapters::publisher::PublisherTrait;
 use crate::domain::entities::Credentials;
@@ -121,7 +121,7 @@ pub async fn impersonate_user<U, P>(
 ) -> Result<String, CerbesError>
 where
     U: UserRepositoryTrait,
-    P: PermissionsRepositoryTrait,
+    P: PermissionRepositoryTrait,
 {
     let user = user_repo.get_by_public_id(user_id).await?;
     let impersonator = user_repo.get_by_public_id(impersonator_id).await?;
