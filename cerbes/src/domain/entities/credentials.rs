@@ -71,4 +71,58 @@ mod tests {
         assert!(credentials.password_reset_id.is_none());
         assert!(credentials.last_seen.is_none());
     }
+
+    #[test]
+    fn validate_password_success() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        assert!(credentials.validate_password("password".to_owned()));
+    }
+
+    #[test]
+    fn validate_password_fail() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        assert!(!credentials.validate_password("pasword".to_owned()));
+    }
+
+    #[test]
+    fn register_password_reset() {
+        let mut credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        credentials.register_password_reset_request();
+        assert!(credentials.password_reset_id.is_some());
+    }
+
+    #[test]
+    fn set_new_password_no_reset_id() {
+        let mut credentials = Credentials::new("username".to_owned(), "password".to_owned());
+
+        assert!(credentials
+            .set_new_password("coucou".to_owned(), Uuid::new_v4())
+            .is_err());
+
+        assert!(credentials.validate_password("password".to_owned()));
+    }
+
+    #[test]
+    fn set_new_password_wrong_reset_id() {
+        let mut credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        credentials.register_password_reset_request();
+
+        assert!(credentials
+            .set_new_password("coucou".to_owned(), Uuid::new_v4())
+            .is_err());
+
+        assert!(credentials.validate_password("password".to_owned()));
+    }
+
+    #[test]
+    fn set_new_password_success() {
+        let mut credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        credentials.register_password_reset_request();
+
+        assert!(credentials
+            .set_new_password("coucou".to_owned(), credentials.password_reset_id.unwrap())
+            .is_ok());
+
+        assert!(credentials.validate_password("coucou".to_owned()));
+    }
 }

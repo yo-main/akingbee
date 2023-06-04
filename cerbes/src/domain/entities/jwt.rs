@@ -89,6 +89,77 @@ mod tests {
     }
 
     #[test]
+    fn test_jwt_data() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email".to_owned(), credentials);
+        let jwt = Jwt::from_user(&user);
+
+        assert_eq!(jwt.admin, false);
+        assert_eq!(jwt.impersonator, None);
+        assert_eq!(jwt.sub, user.public_id);
+        assert_eq!(jwt.iss, "cerbes".to_owned());
+        assert_eq!(jwt.email, user.email);
+        assert_eq!(jwt.username, user.credentials.username);
+    }
+
+    #[test]
+    fn test_jwt_data_admin() {
+        let credentials = Credentials::new("Romain".to_owned(), "password".to_owned());
+        let user = User::new("email".to_owned(), credentials);
+        let jwt = Jwt::from_user(&user);
+
+        assert_eq!(jwt.admin, true);
+        assert_eq!(jwt.impersonator, None);
+        assert_eq!(jwt.sub, user.public_id);
+        assert_eq!(jwt.iss, "cerbes".to_owned());
+        assert_eq!(jwt.email, user.email);
+        assert_eq!(jwt.username, user.credentials.username);
+    }
+
+    #[test]
+    fn test_jwt_refresh() {
+        let credentials = Credentials::new("Romain".to_owned(), "password".to_owned());
+        let user = User::new("email".to_owned(), credentials);
+        let jwt = Jwt::from_user(&user);
+        let refreshed = Jwt::refresh(jwt);
+
+        assert_eq!(refreshed.admin, true);
+        assert_eq!(refreshed.impersonator, None);
+        assert_eq!(refreshed.sub, user.public_id);
+        assert_eq!(refreshed.iss, "cerbes".to_owned());
+        assert_eq!(refreshed.email, user.email);
+        assert_eq!(refreshed.username, user.credentials.username);
+    }
+
+    #[test]
+    fn test_jwt_impersonator() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email".to_owned(), credentials);
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let impersonator = User::new("email2".to_owned(), credentials);
+        let mut jwt = Jwt::from_user(&user);
+        jwt.set_impersonator(&impersonator);
+
+        assert_eq!(jwt.impersonator, Some(impersonator.public_id));
+    }
+
+    #[test]
+    fn test_jwt_impersonator_refreshed() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email".to_owned(), credentials);
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let impersonator = User::new("email2".to_owned(), credentials);
+        let mut jwt = Jwt::from_user(&user);
+        jwt.set_impersonator(&impersonator);
+
+        assert_eq!(jwt.impersonator, Some(impersonator.public_id));
+
+        let refreshed = jwt.refresh();
+
+        assert_eq!(refreshed.impersonator, Some(impersonator.public_id));
+    }
+
+    #[test]
     fn test_jwt_validation_fails() {
         let data = Jwt {
             admin: false,

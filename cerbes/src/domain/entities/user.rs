@@ -84,4 +84,30 @@ mod tests {
         assert_eq!(user.credentials.username, "username");
         assert!(user.activation_id.is_some());
     }
+
+    #[test]
+    fn activate_user() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let mut user = User::new("email@test.com".to_owned(), credentials);
+        user.activate();
+        assert!(user.activation_id.is_none());
+    }
+
+    #[test]
+    fn generate_jwt() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email@test.com".to_owned(), credentials);
+        assert!(!user.generate_jwt().is_empty());
+    }
+
+    #[test]
+    fn generate_jwt_with_impersonator() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email@test.com".to_owned(), credentials);
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let impersonator = User::new("email2@test.com".to_owned(), credentials);
+        assert!(!user
+            .generate_jwt_with_impersonator(&impersonator)
+            .is_empty());
+    }
 }
