@@ -16,9 +16,17 @@ def test_apiary_model():
 def test_apiary_equal():
     apiary = Apiary(name="name", location="location", honey_kind="honey_kind", organization_id=uuid4(), hive_count=1)
     other = Apiary(name="name", location="location", honey_kind="honey_kind", organization_id=uuid4(), hive_count=1)
+    same = Apiary(
+        name="name",
+        location="location",
+        honey_kind="honey_kind",
+        organization_id=uuid4(),
+        hive_count=1,
+        public_id=apiary.public_id,
+    )
 
     assert apiary != other
-    assert apiary == apiary
+    assert apiary == same
 
 
 def test_apiary_rename():
