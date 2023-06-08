@@ -6,4 +6,4 @@ serve:
 	npm run start
 
 lint:
-	npx eslint src/
+	npm exec eslint src/
