@@ -196,14 +196,19 @@ export class HivePage extends React.Component {
 
   async componentDidMount() {
     try {
-      let hives = await getHives(true);
-      let hiveBeekeeper = await listSetupData('owner');
-      let hiveCondition = await listSetupData('hive_condition');
-      let swarmHealths = await listSetupData('swarm_health');
-      let tableData = this.getTableData(hives);
+      let promises = [
+        getHives(true),
+        listSetupData('owner'),
+        listSetupData('hive_condition'),
+        listSetupData('swarm_health')
+      ];
+
+      let data = await Promise.all(promises);
+
+      let tableData = this.getTableData(data[0]);
       let pageStatus = 'OK';
 
-      this.setState({ hives, hiveBeekeeper, hiveCondition, swarmHealths, pageStatus, tableData });
+      this.setState({ hives: data[0], hiveBeekeeper: data[1], hiveCondition: data[2], swarmHealths: data[3], pageStatus, tableData });
 
     } catch (error) {
       let status = dealWithError(error);
@@ -355,13 +360,18 @@ export class HiveStockPage extends React.Component {
 
   async componentDidMount() {
     try {
-      let hives = await getHives(false);
-      let hiveBeekeeper = await listSetupData('owner');
-      let hiveCondition = await listSetupData('hive_condition');
-      let tableData = this.getTableData(hives);
+      let promises = [
+        getHives(false),
+        listSetupData('owner'),
+        listSetupData('hive_condition')
+      ];
+
+      let data = await Promise.all(promises);
+
+      let tableData = this.getTableData(data[0]);
       let pageStatus = 'OK';
 
-      this.setState({ hives, hiveBeekeeper, hiveCondition, pageStatus, tableData });
+      this.setState({ hives: data[0], hiveBeekeeper: data[1], hiveCondition: data[2], pageStatus, tableData });
 
     } catch (error) {
       let status = dealWithError(error);
@@ -480,13 +490,17 @@ export class HiveCreationPage extends React.Component {
 
   async componentDidMount() {
     try {
-      let owners = await listSetupData('owner');
-      let hiveConditions = await listSetupData('hive_condition');
-      let swarmHealths = await listSetupData('swarm_health');
-      let apiaries = await getApiaries();
+      let promises = [
+        listSetupData('owner'),
+        listSetupData('hive_condition'),
+        listSetupData('swarm_health'),
+        getApiaries(),
+      ];
+      let data = await Promise.all(promises);
+
       let pageStatus = "OK";
 
-      this.setState({ apiaries, owners, hiveConditions, swarmHealths, pageStatus });
+      this.setState({ apiaries: data[3], owners: data[0], hiveConditions: data[1], swarmHealths: data[3], pageStatus });
     } catch (error) {
       let status = dealWithError(error);
       this.setState((state) => {
@@ -603,13 +617,17 @@ export class HiveDetailsPage extends React.Component {
     }
 
     try {
-      let apiaries = await getApiaries('apiaries');
-      let hiveBeekeeper = await listSetupData('owner');
-      let hiveCondition = await listSetupData('hive_condition');
-      let swarmHealthStatus = await listSetupData('swarm_health');
+      let promises = [
+        getApiaries(),
+        listSetupData('owner'),
+        listSetupData('hive_condition'),
+        listSetupData('swarm_health')
+      ];
+
+      let data = await Promise.all(promises);
 
       let pageStatus = "OK"
-      this.setState({ hive, apiaries, hiveBeekeeper, hiveCondition, swarmHealthStatus, pageStatus });
+      this.setState({ hive, apiaries: data[0], hiveBeekeeper: data[1], hiveCondition: data[2], swarmHealthStatus: data[3], pageStatus });
 
     } catch (error) {
       let status = dealWithError(error);

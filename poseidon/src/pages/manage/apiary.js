@@ -71,12 +71,16 @@ export class ApiaryPage extends React.Component {
 
   async componentDidMount() {
     try {
-      let apiaries = await getApiaries();
-      let apiaryHoneyKind = await listSetupData('honey_kind');
-      let tableData = this.getTableContent(apiaries);
+      let promises = [
+        getApiaries(),
+        listSetupData('honey_kind'),
+      ];
+
+      let data = await Promise.all(promises);
+      let tableData = this.getTableContent(data[0]);
       let pageStatus = 'OK';
 
-      this.setState({tableData, apiaryHoneyKind, pageStatus})
+      this.setState({tableData, apiaryHoneyKind: data[1], pageStatus})
 
     } catch (error) {
       let status = dealWithError(error);
