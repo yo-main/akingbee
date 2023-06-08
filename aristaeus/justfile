@@ -10,10 +10,10 @@ rbmq:
 init:
 	poetry install
 
-test-unit: init
+test-unit:
 	poetry run pytest tests/unit
 
-test-integration: init
+test-integration: 
 	poetry run pytest tests/integration
 
 migrate: db
