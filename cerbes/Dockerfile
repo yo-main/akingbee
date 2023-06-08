@@ -22,7 +22,7 @@ RUN cargo install --path . --target $(cat /rust_target.txt)
 
 
 FROM debian:bullseye-slim
-RUN apt update && apt install libssl-dev
+RUN apt update && apt install -y libssl-dev
 COPY ./config ./config
 COPY --from=builder /usr/local/cargo/bin/cerbes /usr/local/bin/cerbes
 CMD cerbes
