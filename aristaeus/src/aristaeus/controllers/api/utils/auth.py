@@ -2,7 +2,9 @@ from uuid import UUID
 
 from fastapi import Cookie
 from fastapi import HTTPException
+import jwt
 
+from aristaeus.config import settings
 from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.entities.user import User
 from aristaeus.infrastructure.clients.http.cerbes import CerbesClientAsyncAdapter
@@ -14,7 +16,8 @@ class UserManager(InjectorMixin, metaclass=SingletonMeta):
     cerbes: CerbesClientAsyncAdapter
 
     async def validate_access_token(self, access_token) -> str | None:
-        return await self.cerbes.validate(access_token)
+        token = jwt.decode(access_token, key=settings.jwt_key, verify=True, algorithms="HS256")
+        return token["sub"]
 
     async def get_logged_in_user(self, access_token) -> User:
         if not access_token:

@@ -26,7 +26,7 @@ serve-prod: db rbmq migrate
 	poetry run gunicorn src.aristaeus.controllers.api.app:create_app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
 
 profile-serve: db rbmq migrate
-	poetry run python -m cProfile -o profileout.txt -m uvicorn --host 0.0.0.0 --port 8001 --reload src.aristaeus.controllers.api.app:create_app
+	poetry run viztracer -m uvicorn --host 0.0.0.0 --port 8001 --reload src.aristaeus.controllers.api.app:create_app
 
 listen: db rbmq migrate
 	poetry run python src/aristaeus/controllers/consumers/app.py

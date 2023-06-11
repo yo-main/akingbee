@@ -1,5 +1,6 @@
 import uuid
 
+import jwt
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
@@ -37,5 +38,6 @@ async def async_app(anyio_backend, request):
                 user = User(public_id=access_token, organization_id=access_token)
                 await uow.user.save(user)
 
-            client.cookies["access_token"] = str(access_token)
+            token = jwt.encode({"sub": str(access_token)}, key=settings.jwt_key, algorithm="HS256")
+            client.cookies["access_token"] = str(token)
         yield client
