@@ -34,4 +34,4 @@ EXPOSE 80
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["uvicorn", "aristaeus.controllers.api.app:create_app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["gunicorn", "aristaeus.controllers.api.app:create_app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80"]
