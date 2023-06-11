@@ -34,14 +34,4 @@ EXPOSE 80
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD [
-    "uvicorn",
-    "--host",
-    "0.0.0.0",
-    "--port",
-    "80",
-    "--proxy-headers",
-    "--workers",
-    "4",
-    "aristaeus.controllers.api.app:create_app"
-]
+CMD ["uvicorn", "--host", "0.0.0.0", "--port", "80", "--proxy-headers", "--workers", "4", "aristaeus.controllers.api.app:create_app"]
