@@ -1,4 +1,4 @@
-FROM python:3.9.15-buster as build
+FROM python:3.11-buster as build
 ENV PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     TZ=Europe/Paris \
@@ -10,7 +10,7 @@ RUN python -m venv $VENV_PATH && $VENV_PATH/bin/pip install wheel && \
     $VENV_PATH/bin/pip install -r requirements.txt
 
 
-FROM python:3.9.15-slim-buster as runtime
+FROM python:3.11-slim-buster as runtime
 
 ENV VENV_PATH=/opt/venv \
     TZ=Europe/Paris \
