@@ -6,6 +6,8 @@ DEFAULT:
 DEVELOPMENT:
   LOGS_FOLDER_NAME: "log"
 
+  NOREPLY_EMAIL: "noreply@byebye.com"
+
   RBMQ_PORT: 5672
   RBMQ_HOST: "127.0.0.1"
   RBMQ_USER: "akingbee"
