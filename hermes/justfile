@@ -1,13 +1,10 @@
 DB_URL := "postgres://sa_cerbes:password@localhost:5432/cerbes"
 
-rbmq:
-	docker compose up -d rbmq
-
 init:
 	poetry install
 
 test: init
 	poetry run pytest
 
-listen: rbmq
+listen:
 	poetry run python src/hermes/consumer.py

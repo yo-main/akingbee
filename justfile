@@ -1,10 +1,6 @@
 db:
 	docker compose up -d db
 
-rbmq:
-	docker compose up -d rbmq
-
-
 test-all:
 	just cerbes/test
 	just aristaeus/test

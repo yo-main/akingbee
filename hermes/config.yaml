@@ -8,9 +8,3 @@ DEVELOPMENT:
 
   NOREPLY_EMAIL: "noreply@byebye.com"
 
-  RBMQ_PORT: 5672
-  RBMQ_HOST: "127.0.0.1"
-  RBMQ_USER: "akingbee"
-  RBMQ_PASSWORD: "password"
-  RBMQ_VHOST: "/"
-

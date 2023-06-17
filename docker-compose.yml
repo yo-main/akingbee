@@ -17,15 +17,9 @@ services:
       - CERBES_ENV=local
       - EXECUTE_MIGRATION=true
       - CERBES__DATABASE__URL=postgres://sa_cerbes:password@db/cerbes
-      - CERBES__RABBITMQ__USER=akingbee
-      - CERBES__RABBITMQ__PASSWORD=password
-      - CERBES__RABBITMQ__HOST=rbmq
-      - CERBES__RABBITMQ__PORT=5672
-      - CERBES__RABBITMQ__EXCHANGE=akingbee.main_exchange
-      - CERBES__RABBITMQ__VHOST=/
     ports:
       - 9001:80
-    depends_on: [db, rbmq]
+    depends_on: [db]
     restart: always
     networks:
       - akb
@@ -44,7 +38,7 @@ services:
       - AKB_CERBES_API_PORT=80
     ports:
       - 9002:80
-    depends_on: [db, rbmq, cerbes]
+    depends_on: [db, cerbes]
     restart: always
     networks:
       - akb
@@ -58,16 +52,8 @@ services:
       - AKB_DATABASE_USER=sa_aristaeus
       - AKB_DATABASE_PASSWORD=123
       - AKB_DATABASE_DBNAME=aristaeus
-      - AKB_RBMQ_HOST=rbmq
-      - AKB_RBMQ_PORT=5672
-      - AKB_RBMQ_USER=akingbee
-      - AKB_RBMQ_PASSWORD=password
-      - AKB_RBMQ_VHOST=/
-      - AKB_RBMQ_EXCHANGE=akingbee.main_exchange
-      - AKB_RBMQ_EXCHANGE_TYPE=topic
-      - AKB_RBMQ_QUEUE=aristaeus-main-queue
     command: python aristaeus/controllers/consumers/app.py
-    depends_on: [db, rbmq]
+    depends_on: [db]
     restart: always
     networks:
       - akb
@@ -81,7 +67,7 @@ services:
       - AKB_DATABASE_USER=akingbee
       - AKB_DATABASE_PASSWORD=123
       - AKB_DATABASE_DBNAME=akb_dev
-    depends_on: [db, rbmq]
+    depends_on: [db]
     networks:
       - akb
 
@@ -99,19 +85,6 @@ services:
       CERBES_PASSWORD: 123
     volumes:
       - ./infra/core/config/postgresql/users.sh:/docker-entrypoint-initdb.d/users.sh
-    networks:
-      - akb
-
-  rbmq:
-    image: rabbitmq:management-alpine
-    container_name: rbmq
-    restart: always
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      RABBITMQ_DEFAULT_USER: akingbee
-      RABBITMQ_DEFAULT_PASS: password
     networks:
       - akb
 
