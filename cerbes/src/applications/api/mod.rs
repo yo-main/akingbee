@@ -3,26 +3,31 @@ mod login;
 mod users;
 use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::adapters::publisher::PublisherTrait;
 use tower_http::cors::CorsLayer;
 
 #[derive(Clone)]
-pub struct AppState<R, P>
+pub struct AppState<R, P, C>
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     user_repo: R,
     permissions_repo: P,
+    publisher: C,
 }
 
-pub async fn create_app<U, C>(user_repo: U, permissions_repo: C) -> axum::Router
+pub async fn create_app<U, P, C>(user_repo: U, permissions_repo: P, publisher: C) -> axum::Router
 where
     U: UserRepositoryTrait + Clone + Send + Sync + 'static,
-    C: PermissionRepositoryTrait + Clone + Send + Sync + 'static,
+    P: PermissionRepositoryTrait + Clone + Send + Sync + 'static,
+    C: PublisherTrait + Clone + Send + Sync + 'static,
 {
     let state = AppState {
         user_repo,
         permissions_repo,
+        publisher,
     };
 
     let cors = CorsLayer::very_permissive();

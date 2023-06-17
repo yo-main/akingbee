@@ -44,6 +44,13 @@ impl CerbesError {
             code: 403,
         }
     }
+
+    pub fn cant_publish_message() -> Self {
+        CerbesError {
+            msg: String::from("Cant publish message"),
+            code: 400,
+        }
+    }
 }
 
 impl fmt::Display for CerbesError {

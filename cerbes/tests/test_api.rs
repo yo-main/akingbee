@@ -8,6 +8,7 @@ use cerbes::domain::entities::Permissions;
 use cerbes::domain::services::user::create_user;
 use cerbes::infrastructure::database::repository::PermissionRepositoryMem;
 use cerbes::infrastructure::database::repository::UserRepositoryMem;
+use cerbes::infrastructure::rabbitmq::client::TestPublisherClient;
 use serde::Deserialize;
 use serde_json::json;
 use tower::ServiceExt;
@@ -21,7 +22,12 @@ struct LoginResponse {
 
 #[tokio::test]
 async fn test_healthcheck() {
-    let app = create_app(UserRepositoryMem::new(), PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        UserRepositoryMem::new(),
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .oneshot(
@@ -38,7 +44,12 @@ async fn test_healthcheck() {
 
 #[tokio::test]
 async fn test_post_user() {
-    let app = create_app(UserRepositoryMem::new(), PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        UserRepositoryMem::new(),
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .oneshot(
@@ -79,7 +90,12 @@ async fn test_login() {
     .await
     .unwrap();
 
-    let app = create_app(user_repo, PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo,
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .oneshot(
@@ -101,7 +117,12 @@ async fn test_login() {
 
 #[tokio::test]
 async fn test_login_user_dont_exist() {
-    let app = create_app(UserRepositoryMem::new(), PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        UserRepositoryMem::new(),
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .oneshot(
@@ -134,7 +155,12 @@ async fn test_login_wrong_password() {
     .await
     .unwrap();
 
-    let app = create_app(user_repo, PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo,
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .oneshot(
@@ -167,7 +193,12 @@ async fn test_check_jwt_success() {
     .await
     .unwrap();
 
-    let app = create_app(user_repo, PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo,
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
     let app2 = app.clone();
 
     let response = app
@@ -221,7 +252,12 @@ async fn test_refresh_jwt() {
     .await
     .unwrap();
 
-    let app = create_app(user_repo, PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo,
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
     let app2 = app.clone();
 
     let response = app
@@ -282,7 +318,12 @@ async fn test_activate_user() {
         .into_iter()
         .next()
         .unwrap();
-    let app = create_app(user_repo.clone(), PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo.clone(),
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .oneshot(
@@ -321,7 +362,12 @@ async fn test_reset_password() {
     .await
     .unwrap();
 
-    let app = create_app(user_repo.clone(), PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo.clone(),
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .clone()
@@ -428,7 +474,12 @@ async fn test_get_users() {
     .await
     .unwrap();
 
-    let app = create_app(user_repo, PermissionRepositoryMem::new()).await;
+    let app = create_app(
+        user_repo,
+        PermissionRepositoryMem::new(),
+        TestPublisherClient::new(),
+    )
+    .await;
 
     let response = app
         .clone()
@@ -509,7 +560,7 @@ async fn test_impersonate() {
         .await
         .unwrap();
 
-    let app = create_app(user_repo, perm_repo).await;
+    let app = create_app(user_repo, perm_repo, TestPublisherClient::new()).await;
 
     let response = app
         .clone()

@@ -1,6 +1,7 @@
 use super::AppState;
 use crate::domain::adapters::database::PermissionRepositoryTrait;
 use crate::domain::adapters::database::UserRepositoryTrait;
+use crate::domain::adapters::publisher::PublisherTrait;
 use crate::domain::entities::Jwt;
 use crate::domain::errors::CerbesError;
 use crate::domain::services::user::impersonate_user;
@@ -8,8 +9,6 @@ use crate::domain::services::user::password_reset;
 use crate::domain::services::user::password_reset_validate;
 use crate::domain::services::user::register_password_reset_request;
 use crate::domain::services::user::user_login;
-use crate::infrastructure::rabbitmq::client::RbmqClient;
-use crate::infrastructure::rabbitmq::client::TestRbmqClient;
 use crate::settings::SETTINGS;
 
 use axum::extract::Json;
@@ -52,13 +51,14 @@ pub struct PasswordResetValidation {
     reset_id: Uuid,
 }
 
-pub async fn login<R, P>(
-    state: State<AppState<R, P>>,
+pub async fn login<R, P, C>(
+    state: State<AppState<R, P, C>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Basic>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     let username = auth.username().to_owned();
     let password = auth.password().to_owned();
@@ -98,44 +98,29 @@ pub async fn refresh_jwt(
     ))
 }
 
-pub async fn reset_password_request<R, P>(
-    state: State<AppState<R, P>>,
+pub async fn reset_password_request<R, P, C>(
+    state: State<AppState<R, P, C>>,
     Json(payload): Json<PasswordResetRequestInput>,
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     info!("Password reset request from {}", payload.username);
-    match SETTINGS.env.as_str() {
-        "test" => {
-            register_password_reset_request(
-                &payload.username,
-                &state.user_repo,
-                &TestRbmqClient::new(),
-            )
-            .await?
-        }
-        _ => {
-            register_password_reset_request(
-                &payload.username,
-                &state.user_repo,
-                &RbmqClient::new().await,
-            )
-            .await?
-        }
-    };
+    register_password_reset_request(&payload.username, &state.user_repo, &state.publisher).await?;
 
     Ok(StatusCode::OK)
 }
 
-pub async fn reset_password_validate<R, P>(
-    state: State<AppState<R, P>>,
+pub async fn reset_password_validate<R, P, C>(
+    state: State<AppState<R, P, C>>,
     query: Query<PasswordResetValidation>,
 ) -> StatusCode
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     match password_reset_validate(query.user_id, query.reset_id, &state.user_repo).await {
         true => StatusCode::OK,
@@ -143,13 +128,14 @@ where
     }
 }
 
-pub async fn reset_password<R, P>(
-    state: State<AppState<R, P>>,
+pub async fn reset_password<R, P, C>(
+    state: State<AppState<R, P, C>>,
     Json(payload): Json<PasswordResetInput>,
 ) -> Result<StatusCode, (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     password_reset(
         payload.user_id,
@@ -167,14 +153,15 @@ where
     Ok(StatusCode::OK)
 }
 
-pub async fn impersonate<R, P>(
-    state: State<AppState<R, P>>,
+pub async fn impersonate<R, P, C>(
+    state: State<AppState<R, P, C>>,
     Path(user_id): Path<Uuid>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
     info!(
@@ -193,13 +180,14 @@ where
     return Ok((StatusCode::OK, Json(LoginOutput { access_token: jwt })));
 }
 
-pub async fn desimpersonate<R, P>(
-    state: State<AppState<R, P>>,
+pub async fn desimpersonate<R, P, C>(
+    state: State<AppState<R, P, C>>,
     TypedHeader(auth): TypedHeader<headers::Authorization<headers::authorization::Bearer>>,
 ) -> Result<(StatusCode, Json<LoginOutput>), (StatusCode, String)>
 where
     R: UserRepositoryTrait,
     P: PermissionRepositoryTrait,
+    C: PublisherTrait,
 {
     let token = Jwt::validate_jwt(auth.token().to_owned()).unwrap();
 

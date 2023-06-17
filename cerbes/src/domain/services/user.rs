@@ -4,6 +4,7 @@ use crate::domain::adapters::publisher::PublisherTrait;
 use crate::domain::entities::Credentials;
 use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
+use tracing::error;
 use uuid::Uuid;
 
 pub async fn create_user<R, Q>(
@@ -23,9 +24,16 @@ where
     // TODO: find a way to wrap those 2 operations in the same transaction
     user_repo.create(&user).await?;
 
-    publisher
+    let res = publisher
         .publish("user.created", &user.to_json().to_string())
-        .await?;
+        .await;
+
+    if res.is_err() {
+        error!(
+            "Could not publish user.created event for user {}",
+            user.public_id
+        );
+    }
 
     return Ok(user);
 }

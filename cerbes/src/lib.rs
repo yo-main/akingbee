@@ -7,6 +7,7 @@ use infrastructure::database::repository::PermissionRepositoryPg;
 use infrastructure::database::repository::UserRepositoryPg;
 
 use crate::infrastructure::database::connection::get_connection;
+use crate::infrastructure::zeromq::client::ZMQClient;
 use crate::settings::SETTINGS;
 use std::net::IpAddr;
 use std::net::Ipv4Addr;
@@ -17,8 +18,9 @@ pub async fn create_app() {
 
     let user_repo = UserRepositoryPg::new(conn.clone());
     let permissions_repo = PermissionRepositoryPg::new(conn.clone());
+    let publisher = ZMQClient::new();
 
-    let app = applications::api::create_app(user_repo, permissions_repo).await;
+    let app = applications::api::create_app(user_repo, permissions_repo, publisher).await;
     let port = &SETTINGS.app.port;
 
     axum::Server::bind(&SocketAddr::new(
