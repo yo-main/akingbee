@@ -1,3 +1,4 @@
+import json
 from gaea.log import logger
 from hermes.zeromq import listen
 
@@ -18,9 +19,9 @@ def handler(event):
         logger.warning("Unknown routing key: %s", routing_key)
         return
 
-    await command(json.loads(event["body"]))
+    command(json.loads(event["body"]))
 
 
 if __name__ == "__main__":
     logger.info("Starting consumer !")
-    listen(handlers=HANDLERS)
+    listen(handler)
