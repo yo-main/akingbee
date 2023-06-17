@@ -10,18 +10,11 @@ from hermes.templates.welcome_email import CONTENT as WELCOME_EMAIL
 from hermes.templates.reset_password import CONTENT as RESET_PASSWORD_EMAIL
 
 
-def welcome_new_user(properties, payload):
+def welcome_new_user(payload):
     logger.info(
         "Received message to welcome a new user !",
-        properties=properties,
         payload=payload,
     )
-
-    try:
-        payload = json.loads(payload)
-    except:
-        logger.exception("Message is not in JSON format")
-        return False
 
     required_keys = ("user", "language", "activation_link")
 
@@ -35,18 +28,11 @@ def welcome_new_user(properties, payload):
     return True
 
 
-def reset_user_password(properties, payload):
+def reset_user_password(payload):
     logger.info(
         "Received message to reset a user password !",
-        properties=properties,
         payload=payload,
     )
-
-    try:
-        payload = json.loads(payload)
-    except:
-        logger.exception("Message is not in JSON format")
-        return False
 
     required_keys = ("user", "language", "reset_link")
 

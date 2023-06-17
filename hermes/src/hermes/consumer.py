@@ -1,7 +1,8 @@
 from gaea.log import logger
-from gaea.rbmq.consumer import RBMQConsumer
+from hermes.zeromq import listen
 
 from hermes.controller import welcome_new_user, reset_user_password
+
 
 HANDLERS = {
     "user.created": welcome_new_user,
@@ -9,7 +10,17 @@ HANDLERS = {
 }
 
 
+def handler(event):
+    routing_key = event["routing_key"]
+
+    command = HANDLERS.get(routing_key)
+    if command is None:
+        logger.warning("Unknown routing key: %s", routing_key)
+        return
+
+    await command(event["body"])
+
+
 if __name__ == "__main__":
-    consumer = RBMQConsumer(handlers=HANDLERS, queue="hermes-main-queue")
     logger.info("Starting consumer !")
-    consumer.consume()
+    listen(handlers=HANDLERS)
