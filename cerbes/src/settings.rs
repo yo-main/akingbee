@@ -16,6 +16,11 @@ pub struct App {
 }
 
 #[derive(Deserialize)]
+pub struct ZeroMQ {
+    pub port: String,
+}
+
+#[derive(Deserialize)]
 pub struct RabbitMQ {
     pub host: String,
     pub port: u16,
@@ -29,6 +34,7 @@ pub struct RabbitMQ {
 pub struct Settings {
     pub database: Database,
     pub rabbitmq: RabbitMQ,
+    pub zeromq: ZeroMQ,
     pub app: App,
     pub hash_key: String,
     pub jwt_key: String,

@@ -10,6 +10,7 @@ use amqprs::connection::OpenConnectionArguments;
 use amqprs::BasicProperties;
 use async_trait::async_trait;
 use tokio::time;
+use tracing::info;
 
 pub struct RbmqClient {
     connection: Connection,
@@ -64,17 +65,19 @@ impl PublisherTrait for RbmqClient {
     }
 }
 
-pub struct TestRbmqClient;
+#[derive(Clone)]
+pub struct TestPublisherClient;
 
-impl TestRbmqClient {
+impl TestPublisherClient {
     pub fn new() -> Self {
-        TestRbmqClient {}
+        TestPublisherClient {}
     }
 }
 
 #[async_trait]
-impl PublisherTrait for TestRbmqClient {
+impl PublisherTrait for TestPublisherClient {
     async fn publish(&self, _routing_key: &str, _content: &str) -> Result<(), CerbesError> {
+        println!("NOOOOO");
         Ok(())
     }
 }
