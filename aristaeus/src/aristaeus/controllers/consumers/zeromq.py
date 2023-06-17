@@ -15,8 +15,9 @@ async def listen(handler):
     socket.subscribe("")
 
     while True:
-        event = await socket.recv_multipart()
-        try:
-            await handler(json.loads(event))
-        except Exception as exc:
-            logger.exception(f"Error happened while processing event: {exc}")
+        events = await socket.recv_multipart()
+        for event in events:
+            try:
+                await handler(json.loads(event))
+            except Exception as exc:
+                logger.exception(f"Error happened while processing event: {exc}")
