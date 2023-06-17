@@ -1,8 +1,7 @@
 import asyncio
-import json
 import uuid
 
-from aristaeus.controllers.consumers.app import handler
+from aristaeus.controllers.consumers.app import zeromq_handler
 from aristaeus.dispatcher import Dispatcher
 from aristaeus.domain.services.unit_of_work import UnitOfWork
 
@@ -16,19 +15,20 @@ async def test_user_created():
     Dispatcher.init()
 
     user_id = str(uuid.uuid4())
-    payload = json.dumps(
-        {
+    payload = {
+        "routing_key": "user.created",
+        "body": {
             "user": {
                 "id": user_id,
                 "username": "kikoo",
             },
             "language": "fr",
-        }
-    )
+        },
+    }
 
-    handler(FakeDeliver("user.created"), None, payload.encode())
+    await zeromq_handler(payload)
 
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(0)
 
     async with UnitOfWork() as uow:
         user = await uow.user.get(user_id)
