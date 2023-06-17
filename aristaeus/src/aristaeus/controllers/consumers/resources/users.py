@@ -7,7 +7,7 @@ from aristaeus.domain.commands.user import CreateUserCommand
 logger = logging.getLogger(__name__)
 
 
-async def on_user_created(properties, body):
+async def on_user_created(body):
     user_id = body["user"]["id"]
     organization_id = str(uuid.uuid4())
     username = body["user"]["username"]
