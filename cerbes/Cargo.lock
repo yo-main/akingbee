@@ -37,29 +37,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "250f629c0161ad8107cf89319e990051fae62832fd343083bea452d93e2205fd"
 
 [[package]]
-name = "amqp_serde"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "19659fab053d9b2cd4fa17649609a3241b181fcd14189931ea5c0976502fe381"
-dependencies = [
- "bytes",
- "serde",
-]
-
-[[package]]
-name = "amqprs"
-version = "1.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b16f62ef427e90df82ba53de2bd2c9fdae10640b8b78538d8c63ac2bdf13dd80"
-dependencies = [
- "amqp_serde",
- "async-trait",
- "bytes",
- "serde",
- "tokio",
-]
-
-[[package]]
 name = "android_system_properties"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -480,7 +457,6 @@ dependencies = [
 name = "cerbes"
 version = "1.21.1"
 dependencies = [
- "amqprs",
  "async-trait",
  "axum",
  "base64 0.21.0",
