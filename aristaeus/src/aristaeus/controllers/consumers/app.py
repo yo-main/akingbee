@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 
 from aristaeus.controllers.consumers import zeromq
@@ -21,7 +22,7 @@ async def zeromq_handler(event):
         logger.warning("Unknown routing key: %s", routing_key)
         return
 
-    await command(event["body"])
+    await command(json.loads(event["body"]))
 
 
 def create_app():
