@@ -18,13 +18,15 @@ async def test_user_created():
     user_id = str(uuid.uuid4())
     payload = {
         "routing_key": "user.created",
-        "body": json.dumps({
-            "user": {
-                "id": user_id,
-                "username": "kikoo",
-            },
-            "language": "fr",
-        }),
+        "body": json.dumps(
+            {
+                "user": {
+                    "id": user_id,
+                    "username": "kikoo",
+                },
+                "language": "fr",
+            }
+        ),
     }
 
     await zeromq_handler(payload)
