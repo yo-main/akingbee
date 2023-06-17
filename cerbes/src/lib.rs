@@ -12,8 +12,15 @@ use crate::settings::SETTINGS;
 use std::net::IpAddr;
 use std::net::Ipv4Addr;
 use std::net::SocketAddr;
+use tracing::info;
 
 pub async fn create_app() {
+    tracing_subscriber::fmt::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
+
+    info!("Initialiazing Cerbes application");
+
     let conn = get_connection(&SETTINGS.database.url).await.unwrap();
 
     let user_repo = UserRepositoryPg::new(conn.clone());

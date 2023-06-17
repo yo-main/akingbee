@@ -5,6 +5,7 @@ use crate::domain::entities::Credentials;
 use crate::domain::entities::User;
 use crate::domain::errors::CerbesError;
 use tracing::error;
+use tracing::info;
 use uuid::Uuid;
 
 pub async fn create_user<R, Q>(
@@ -152,6 +153,8 @@ where
     user.activate();
 
     user_repo.update(&user).await?;
+
+    info!("Activated user {}", user.credentials.username);
 
     Ok(user)
 }

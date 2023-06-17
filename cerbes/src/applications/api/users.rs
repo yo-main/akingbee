@@ -16,6 +16,7 @@ use axum::http::StatusCode;
 use chrono::NaiveDateTime;
 use serde::Deserialize;
 use serde::Serialize;
+use tracing::info;
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -64,6 +65,7 @@ where
     )
     .await?;
 
+    info!("Create new user {}", user.credentials.username);
     Ok((StatusCode::CREATED, Json(user.into())))
 }
 

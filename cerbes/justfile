@@ -15,7 +15,7 @@ migrate: db
 	cd migration && DATABASE_URL={{DB_URL}} cargo run -- -s cerbes up
 
 serve: migrate
-	CERBES_ENV={{CERBES_ENV}} DATABASE_URL={{DB_URL}} cargo run
+	LOG_LEVEL=INFO CERBES_ENV={{CERBES_ENV}} DATABASE_URL={{DB_URL}} cargo run
 
 
 

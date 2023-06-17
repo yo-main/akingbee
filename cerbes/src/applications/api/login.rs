@@ -9,7 +9,6 @@ use crate::domain::services::user::password_reset;
 use crate::domain::services::user::password_reset_validate;
 use crate::domain::services::user::register_password_reset_request;
 use crate::domain::services::user::user_login;
-use crate::settings::SETTINGS;
 
 use axum::extract::Json;
 use axum::extract::Path;
