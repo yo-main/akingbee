@@ -31,7 +31,8 @@ impl User {
                 "email": self.email,
                 "username": self.credentials.username
             },
-            "language": "fr"
+            "language": "fr",
+            "activation_link": format!("https://akingbee.com/activate/{}", self.activation_id.unwrap())
         })
     }
 
@@ -91,6 +92,24 @@ mod tests {
         let mut user = User::new("email@test.com".to_owned(), credentials);
         user.activate();
         assert!(user.activation_id.is_none());
+    }
+
+    #[test]
+    fn user_create_message() {
+        let credentials = Credentials::new("username".to_owned(), "password".to_owned());
+        let user = User::new("email@test.com".to_owned(), credentials);
+        assert_eq!(
+            user.to_json(),
+            json!({
+                "user": {
+                    "id": user.public_id,
+                    "email": "email@test.com",
+                    "username": "username"
+                },
+                "language": "fr",
+                "activation_link": format!("https://akingbee.com/activate/{}", user.activation_id.unwrap())
+            })
+        );
     }
 
     #[test]
