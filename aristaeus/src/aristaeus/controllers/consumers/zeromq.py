@@ -10,8 +10,9 @@ logger = logging.getLogger(__name__)
 
 async def listen(handler):
     context = zmq.asyncio.Context()
-    socket = context.Socket(zmq.PULL)
-    socket.bind(f"tcp://*.{settings.zeromq_port}")
+    socket = context.socket(zmq.SUB)
+    socket.connect(f"tcp://*:{settings.zeromq_port}")
+    socket.suibscribe("")
 
     while True:
         event = await socket.recv_multipart()
