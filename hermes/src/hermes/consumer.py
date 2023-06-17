@@ -18,7 +18,7 @@ def handler(event):
         logger.warning("Unknown routing key: %s", routing_key)
         return
 
-    await command(event["body"])
+    await command(json.loads(event["body"]))
 
 
 if __name__ == "__main__":

@@ -5,8 +5,9 @@ from gaea.log import logger
 
 def listen(handler):
     context = zmq.Context()
-    socket = context.Socket(zmq.PULL)
-    socket.bind(f"tcp://*.{CONFIG.ZEROMQ_PORT}")
+    socket = context.Socket(zmq.SUB)
+    socket.connect(f"tcp://*.{CONFIG.ZEROMQ_PORT}")
+    socket.subscribe("")
 
     while True:
         event = socket.recv_multipart()
