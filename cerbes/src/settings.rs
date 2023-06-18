@@ -17,6 +17,7 @@ pub struct App {
 
 #[derive(Deserialize)]
 pub struct ZeroMQ {
+    pub host: String,
     pub port: String,
 }
 

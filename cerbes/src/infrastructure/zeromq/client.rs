@@ -5,6 +5,7 @@ use async_trait::async_trait;
 use serde::Serialize;
 use std::sync::Arc;
 use std::sync::Mutex;
+use tracing::info;
 use zmq;
 
 #[derive(Clone)]
@@ -28,10 +29,10 @@ impl ZMQClient {
     pub fn new() -> Self {
         let context = zmq::Context::new();
         let socket = context.socket(zmq::PUB).unwrap();
-        println!("publishing to tcp://0.0.0.0:{}", SETTINGS.zeromq.port);
-        socket
-            .bind(&format!("tcp://0.0.0.0:{}", SETTINGS.zeromq.port))
-            .unwrap();
+        let uri = format!("tcp://{}:{}", SETTINGS.zeromq.host, SETTINGS.zeromq.port);
+
+        info!("publishing to {}", uri);
+        socket.bind(&uri).unwrap();
 
         ZMQClient {
             socket: Arc::new(Mutex::new(socket)),
