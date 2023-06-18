@@ -1,6 +1,7 @@
 [default]
 service_name = "aristaeus"
 jwt_key = "very_super_secret_key"
+zeromq_host = "0.0.0.0"
 zeromq_port = 5555
 
 [development]

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 async def listen(handler):
     context = zmq.asyncio.Context()
     socket = context.socket(zmq.SUB)
-    socket.connect(f"tcp://0.0.0.0:{settings.zeromq_port}")
+    socket.connect(f"tcp://{settings.zeromq_host}:{settings.zeromq_port}")
     socket.subscribe("")
 
     while True:
