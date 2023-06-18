@@ -7,7 +7,7 @@ from gaea.log import logger
 def listen(handler):
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
-    socket.connect(f"tcp://0.0.0.0:{CONFIG.ZEROMQ_PORT}")
+    socket.connect(f"tcp://{CONFIG.ZEROMQ_HOST}:{CONFIG.ZEROMQ_PORT}")
     socket.subscribe("")
 
     while True:
