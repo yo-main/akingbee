@@ -10,8 +10,6 @@ from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.entities.user import User
 from aristaeus.dispatcher import Dispatcher
 
-settings.setenv("test")
-
 from aristaeus.controllers.api.app import create_app
 
 pytestmark = pytest.mark.anyio
@@ -24,6 +22,7 @@ def anyio_backend():
 
 @pytest.fixture(scope="session", autouse=True)
 async def app():
+    settings.setenv("test")
     with TestClient(app=create_app(), base_url="http://testserver") as client:
         client.cookies["access_token"] = "test"
         yield client

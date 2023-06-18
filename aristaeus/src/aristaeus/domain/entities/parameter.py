@@ -32,7 +32,6 @@ class Parameter(Entity):
 
     @staticmethod
     def of(entity: ParameterType, organization_id: UUID) -> "Parameter":
-
         match entity.__class__.__name__:
             case "HiveCondition":
                 key = "hive_condition"

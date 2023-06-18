@@ -9,14 +9,14 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from aristaeus.config import settings
-
-settings.setenv("integration")
-
 from aristaeus.controllers.api.app import create_app
 from aristaeus.infrastructure.db.orm.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
 
+
 pytestmark = pytest.mark.anyio
+
+settings.setenv("integration")
 
 
 @pytest.fixture(scope="session")

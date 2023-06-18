@@ -3,7 +3,6 @@ import pytest
 
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
 async def test_hive_endpoints(async_app):
-
     # create apiary
     data = {"name": "apiary name", "honey_kind": "honey kind", "location": "location"}
     response = await async_app.post("/apiary", json=data)
@@ -41,7 +40,6 @@ async def test_hive_endpoints(async_app):
 
 @pytest.mark.parametrize("async_app", ["22222222-2222-2222-2222-222222222222"], indirect=True)
 async def test_hive_move(async_app):
-
     # create apiary
     data = {"name": "second apiary name", "honey_kind": "honey kind", "location": "location"}
     response = await async_app.post("/apiary", json=data)

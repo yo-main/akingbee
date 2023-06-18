@@ -3,7 +3,6 @@ import pytest
 
 @pytest.mark.parametrize("async_app", ["11111111-1111-1111-1111-111111111111"], indirect=True)
 async def test_apiary_endpoints(async_app):
-
     # POST
     data = {"name": "a name", "honey_kind": "too good", "location": "everywhere"}
     response = await async_app.post("/apiary", json=data)

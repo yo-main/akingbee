@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 
 class Dispatcher:
-
     _registry: dict[str, Any] = {}
     _queue: asyncio.Queue = asyncio.Queue()
     _started: bool = False

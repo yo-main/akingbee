@@ -11,11 +11,9 @@ dynaconf = "^3.1.11"
 fastapi = "^0.85.1"
 aiohttp = "^3.8.3"
 uvicorn = {version = "^0.22.0", extras = ["gunicorn"]}
-requests = "^2.28.1"
 asyncpg = "^0.27.0"
 anyio = "^3.6.2"
 alembic = "^1.9.1"
-greenlet = "^2.0.2"
 gunicorn = "^20.1.0"
 pyjwt = "^2.7.0"
 pyzmq = "^25.1.0"
@@ -36,6 +34,8 @@ flake8 = "*"
 httpx = "*"
 coverage = "*"
 aiosqlite = "^0.19.0"
+requests = "^2.31.0"
+pdbpp = "^0.10.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
