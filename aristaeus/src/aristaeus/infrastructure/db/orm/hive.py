@@ -12,6 +12,7 @@ from sqlalchemy.orm import relationship
 from aristaeus.domain.entities.hive import Hive
 from aristaeus.domain.entities.apiary import Apiary
 from aristaeus.domain.entities.swarm import Swarm
+from aristaeus.domain.entities.harvest import Harvest
 
 from .base import mapper_registry
 
@@ -36,5 +37,6 @@ mapper_registry.map_imperatively(
     properties={
         "apiary": relationship(Apiary, lazy="joined"),
         "swarm": relationship(Swarm, lazy="joined"),
+        "harvests": relationship(Harvest, lazy="joined")
     },
 )

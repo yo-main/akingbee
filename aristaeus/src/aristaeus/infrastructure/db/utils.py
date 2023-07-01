@@ -3,7 +3,6 @@ import functools
 from sqlalchemy.exc import NoResultFound
 
 from aristaeus.config import settings
-from aristaeus.domain.entities.base import Entity
 from aristaeus.domain.errors import EntityNotFound
 
 

@@ -13,10 +13,13 @@ from aristaeus.controllers.api.app import create_app
 from aristaeus.infrastructure.db.orm.base import mapper_registry
 from aristaeus.infrastructure.db.utils import get_database_uri
 
-
 pytestmark = pytest.mark.anyio
 
-settings.setenv("integration")
+
+@pytest.fixture(scope="session")
+def set_integration_env():
+    settings.setenv("integration")
+    yield
 
 
 @pytest.fixture(scope="session")
@@ -39,7 +42,7 @@ async def root_connection(root_engine):
 
 
 @pytest.fixture(scope="session")
-def dbname():
+def dbname(set_integration_env):
     dbname = "test_" + str(uuid.uuid4()).replace("-", "")
     settings.set("database_dbname", dbname)
     return dbname
