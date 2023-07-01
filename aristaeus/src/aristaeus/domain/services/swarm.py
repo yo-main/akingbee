@@ -42,7 +42,7 @@ class SwarmApplication(InjectorMixin):
                 hive = await uow.hive.get_from_swarm_id(swarm_id)
                 swarm = hive.swarm
             except EntityNotFound:
-                uow.rollback()
+                await uow.rollback()
                 swarm = await uow.swarm.get(swarm_id)
             await uow.swarm.delete(swarm)
             await uow.commit()

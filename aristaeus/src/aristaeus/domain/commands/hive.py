@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from dataclasses import field
+from datetime import date
 from uuid import UUID
 
 
@@ -31,4 +32,4 @@ class MoveHiveCommand:
 class HarvestCommand:
     hive_id: UUID
     quantity_in_grams: int
-    date_harvest: str
+    date_harvest: date

@@ -3,11 +3,13 @@ from uuid import UUID
 from fastapi import APIRouter
 from fastapi import Depends
 
+from aristaeus.controllers.api.dtos.hive import HarvestInput
 from aristaeus.controllers.api.dtos.hive import HiveOut
 from aristaeus.controllers.api.dtos.hive import PostHiveIn
 from aristaeus.controllers.api.dtos.hive import PutHiveIn
 from aristaeus.controllers.api.utils.auth import auth_user
 from aristaeus.domain.commands.hive import CreateHiveCommand
+from aristaeus.domain.commands.hive import HarvestCommand
 from aristaeus.domain.commands.hive import MoveHiveCommand
 from aristaeus.domain.commands.hive import PutHiveCommand
 from aristaeus.domain.entities.user import User
@@ -76,3 +78,12 @@ async def delete_hive(hive_id: UUID, user: User = Depends(auth_user)):
     hive_service = HiveService()
     await hive_service.delete(hive_id=hive_id)
     return 204
+
+
+@router.post("/{hive_id}/harvest", status_code=204)
+async def harvest_hive(hive_id: UUID, input: HarvestInput, user: User = Depends(auth_user)):
+    hive_service = HiveService()
+    command = HarvestCommand(
+        hive_id=hive_id, quantity_in_grams=input.quantity_in_grams, date_harvest=input.date_harvest
+    )
+    await hive_service.harvest(hive_id, requester=user, command=command)

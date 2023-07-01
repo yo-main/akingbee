@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from aristaeus.domain.adapters.repositories.harvest import HarvestRepositoryAdapter
 from aristaeus.domain.entities.harvest import Harvest
+from aristaeus.domain.entities.hive import Hive
 from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
@@ -39,7 +40,7 @@ class HarvestRepository(BaseRepository):
     @error_handler
     async def save(self, harvest: Harvest) -> None:
         data = {
-            "hive_id": harvest.hive_id,
+            "hive_id": select(orm.hive_table.c.id).where(orm.hive_table.c.public_id == harvest.hive_id).scalar_subquery(),
             "quantity": harvest.quantity,
             "date_harvest": harvest.date_harvest,
             "apiary_name": harvest.apiary_name,

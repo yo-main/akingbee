@@ -21,6 +21,7 @@ harvest_table = Table(
     Column("quantity", Integer, nullable=False),
     Column("apiary_name", Text, nullable=False),
     Column("hive_id", Integer, ForeignKey("hive.id"), nullable=False),
+    Column("date_harvest", DateTime, nullable=False),
     Column("date_creation", DateTime, default=datetime.now, nullable=False),
     Column("date_modification", DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
 )
