@@ -8,6 +8,7 @@ from aristaeus.domain.adapters.repositories.hive import HiveRepositoryAdapter
 from aristaeus.domain.adapters.repositories.parameter import ParameterRepositoryAdapter
 from aristaeus.domain.adapters.repositories.swarm import SwarmRepositoryAdapter
 from aristaeus.domain.adapters.repositories.user import UserRepositoryAdapter
+from aristaeus.domain.adapters.repositories.harvest import HarvestRepositoryAdapter
 from aristaeus.domain.adapters.session import SessionManagerAdapter
 
 
@@ -24,6 +25,7 @@ class UnitOfWork(InjectorMixin):
         self.event = Injector.get(EventRepositoryAdapter, kwargs={"session": self.session})
         self.parameter = Injector.get(ParameterRepositoryAdapter, kwargs={"session": self.session})
         self.user = Injector.get(UserRepositoryAdapter, kwargs={"session": self.session})
+        self.harvest = Injector.get(HarvestRepositoryAdapter, kwargs={"session": self.session})
 
         return self
 

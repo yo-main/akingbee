@@ -1,4 +1,5 @@
 import uuid
+from datetime import date
 
 import pytest
 
@@ -8,6 +9,8 @@ from aristaeus.domain.entities.swarm import Swarm
 from aristaeus.domain.errors import ApiaryCannotBeRemovedSwarmExists
 from aristaeus.domain.errors import CantAttachSwarmNoApiary
 from aristaeus.domain.errors import CantAttachSwarmOneAlreadyExists
+from aristaeus.domain.errors import CantHarvestIfNoApiary
+from aristaeus.domain.errors import CantHarvestIfNoSwarm
 from aristaeus.domain.errors import PermissionError
 
 
@@ -142,3 +145,34 @@ def test_hive_remove__no_apiary():
     hive.remove_apiary()
 
     assert hive.apiary is None
+
+
+def test_hive_harvest():
+    apiary = Apiary(name="name", location="location", honey_kind="kind", organization_id=uuid.uuid4())
+    swarm = Swarm(health="health", queen_year=1)
+    hive = Hive(
+        name="name", condition="condition", owner="owner", organization_id=uuid.uuid4(), apiary=apiary, swarm=swarm
+    )
+
+    harvest = hive.harvest(100, date(2023, 1, 1))
+
+    assert harvest.hive_id == hive.public_id
+    assert harvest.apiary_name == "name"
+    assert harvest.quantity == 100
+    assert harvest.date_harvest == date(2023, 1, 1)
+
+
+def test_hive_harvest__no_apiary():
+    swarm = Swarm(health="health", queen_year=1)
+    hive = Hive(name="name", condition="condition", owner="owner", organization_id=uuid.uuid4(), swarm=swarm)
+
+    with pytest.raises(CantHarvestIfNoApiary):
+        hive.harvest(100, date(2023, 1, 1))
+
+
+def test_hive_harvest__no_swarm():
+    apiary = Apiary(name="name", location="location", honey_kind="kind", organization_id=uuid.uuid4())
+    hive = Hive(name="name", condition="condition", owner="owner", organization_id=uuid.uuid4(), apiary=apiary)
+
+    with pytest.raises(CantHarvestIfNoSwarm):
+        hive.harvest(100, date(2023, 1, 1))

@@ -1,15 +1,19 @@
 import uuid
 from dataclasses import dataclass
 from dataclasses import field
+from datetime import date
 from uuid import UUID
 
 from aristaeus.domain.errors import ApiaryCannotBeRemovedSwarmExists
-from aristaeus.domain.errors import CantAttachSwarmOneAlreadyExists
 from aristaeus.domain.errors import CantAttachSwarmNoApiary
+from aristaeus.domain.errors import CantAttachSwarmOneAlreadyExists
+from aristaeus.domain.errors import CantHarvestIfNoApiary
+from aristaeus.domain.errors import CantHarvestIfNoSwarm
 from aristaeus.domain.errors import PermissionError
 
 from .apiary import Apiary
 from .base import Entity
+from .harvest import Harvest
 from .swarm import Swarm
 
 
@@ -22,6 +26,7 @@ class Hive(Entity):
     public_id: UUID = field(default_factory=uuid.uuid4)
     apiary: Apiary | None = None
     swarm: Swarm | None = None
+    harvests: list[Harvest] = field(default_factory=list)
 
     def transfer_ownership(self, new_owner: str):
         self.owner = new_owner
@@ -55,6 +60,22 @@ class Hive(Entity):
             raise ApiaryCannotBeRemovedSwarmExists(f"Can't remove apiary from {self} when a swarm exists: {self.swarm}")
 
         self.apiary = None
+
+    def harvest(self, quantity_in_grams: int, date_harvest: date) -> Harvest:
+        if not self.apiary:
+            raise CantHarvestIfNoApiary(f"Can't harvest on {self} as there's no apiary")
+
+        if not self.swarm:
+            raise CantHarvestIfNoSwarm(f"Cant't harvest on {self} if there's no swarm")
+
+        harvest = Harvest(
+            quantity=quantity_in_grams, apiary_name=self.apiary.name, date_harvest=date_harvest, hive_id=self.public_id
+        )
+        if harvest in self.harvests:
+            return next(i for i in self.harvests if i == harvest)
+
+        self.harvests.append(harvest)
+        return harvest
 
     def __repr__(self):
         return f"<Hive {self.public_id}>"

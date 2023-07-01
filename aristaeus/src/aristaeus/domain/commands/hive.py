@@ -25,3 +25,10 @@ class PutHiveCommand:
 class MoveHiveCommand:
     hive_id: UUID
     apiary_id: UUID
+
+
+@dataclass(frozen=True, slots=True)
+class HarvestCommand:
+    hive_id: UUID
+    quantity_in_grams: int
+    date_harvest: str
