@@ -25,10 +25,10 @@ async def zeromq_handler(event):
     await command(json.loads(event["body"]))
 
 
-def create_app():
+async def create_app():
     Dispatcher.init()
-    asyncio.run(zeromq.listen(zeromq_handler))
+    await zeromq.listen(zeromq_handler)
 
 
 if __name__ == "__main__":
-    create_app()
+    asyncio.run(create_app())
