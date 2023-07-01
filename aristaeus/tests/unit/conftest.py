@@ -8,7 +8,6 @@ from httpx import AsyncClient
 from aristaeus.config import settings
 from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.entities.user import User
-from aristaeus.dispatcher import Dispatcher
 
 from aristaeus.controllers.api.app import create_app
 

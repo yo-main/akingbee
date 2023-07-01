@@ -5,6 +5,7 @@ from aristaeus.domain.services.unit_of_work import UnitOfWork
 from aristaeus.domain.commands.hive import CreateHiveCommand
 from aristaeus.domain.commands.hive import PutHiveCommand
 from aristaeus.domain.commands.hive import MoveHiveCommand
+from aristaeus.domain.commands.hive import HarvestCommand
 from aristaeus.domain.entities.hive import Hive
 from aristaeus.domain.entities.user import User
 from aristaeus.injector import InjectorMixin
@@ -86,5 +87,14 @@ class HiveService(InjectorMixin):
             await uow.commit()
 
         Dispatcher.publish("hive.removed", hive=hive, requester=requester)
+
+        return hive
+
+    async def harvest(self, hive_id: UUID, requester: User, command: HarvestCommand) -> Hive:
+        async with UnitOfWork() as uow:
+            hive = await uow.hive.get(hive_id)
+            harvest = hive.harvest(quantity_in_grams=command.quantity_in_grams, date_harvest=command.date_harvest)
+            await uow.harvest.save(harvest)
+            await uow.commit()
 
         return hive

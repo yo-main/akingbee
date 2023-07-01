@@ -26,3 +26,15 @@ class CantAttachSwarmOneAlreadyExists(BaseException):
 
 class CantAttachSwarmNoApiary(BaseException):
     pass
+
+
+class CantHarvestIfNoApiary(BaseException):
+    pass
+
+
+class CantHarvestIfNoSwarm(BaseException):
+    pass
+
+
+class CantHarvestNegativeQuantity(BaseException):
+    pass
