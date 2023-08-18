@@ -7,6 +7,7 @@ var/
 .mypy_cache
 
 # dev env
+.isort.cfg
 .vscode/
 .venv
 .coverage
