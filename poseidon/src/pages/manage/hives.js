@@ -775,6 +775,19 @@ export class HiveDetailsPage extends React.Component {
           dealWithError(error);
         }
         break;
+      case 'harvest':
+        try {
+          let swarm = await createSwarm({ health: action[1], queen_year: new Date().getFullYear() });
+          let hive = await updateHive(this.state.hive.public_id, { swarm_id: swarm.public_id })
+          this.setState((state) => {
+            state['hive'] = hive;
+            return state;
+          })
+          notificate('success', window.i18n('form.swarmAddedSuccess'))
+        } catch (error) {
+          dealWithError(error);
+        }
+        break;
       default:
         notificate('error', 'Something went wrong with the chosen action - sorry');
     }
