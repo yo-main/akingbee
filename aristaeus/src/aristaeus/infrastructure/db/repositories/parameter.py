@@ -20,23 +20,23 @@ from .base import BaseRepository
 class FakeParameterRepository(BaseRepository):
     _parameters: set[Parameter] = set()
 
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Parameter:
         try:
             return next(parameter for parameter in self._parameters if parameter.public_id == public_id)
         except StopIteration:
             raise EntityNotFound("Parameter not found")
 
-    @error_handler
+    @error_handler()
     async def save(self, parameter: Parameter) -> None:
         self._parameters.add(parameter)
 
-    @error_handler
+    @error_handler()
     async def update(self, parameter: Parameter) -> None:
         self._parameters.discard(parameter)
         self._parameters.add(parameter)
 
-    @error_handler
+    @error_handler()
     async def list(self, organization_id: UUID, key: str | None = None) -> list[Parameter]:
         return [
             parameter
@@ -44,20 +44,20 @@ class FakeParameterRepository(BaseRepository):
             if parameter.organization_id == organization_id and (parameter.key == key if key else True)
         ]
 
-    @error_handler
+    @error_handler()
     async def delete(self, parameter: Parameter) -> None:
         self._parameters.discard(parameter)
 
 
 @Injector.bind(ParameterRepositoryAdapter)
 class ParameterRespository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Parameter:
         query = select(Parameter).where(orm.parameter_table.c.public_id == public_id)
         result = await self.session.execute(query)
         return result.scalar_one()
 
-    @error_handler
+    @error_handler()
     async def save(self, parameter: Parameter) -> None:
         data = {
             "key": parameter.key,
@@ -68,18 +68,18 @@ class ParameterRespository(BaseRepository):
         query = insert(orm.parameter_table).values(data).on_conflict_do_nothing()
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def update(self, parameter: Parameter) -> None:
         data: dict[Any, Any] = {"value": parameter.value}
         query = update(orm.parameter_table).values(data).where(orm.parameter_table.c.public_id == parameter.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def delete(self, parameter: Parameter) -> None:
         query = delete(orm.parameter_table).where(orm.parameter_table.c.public_id == parameter.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def list(self, organization_id: UUID, key: str | None = None) -> list[Parameter]:
         query = select(Parameter).where(orm.parameter_table.c.organization_id == organization_id)
         if key is not None:

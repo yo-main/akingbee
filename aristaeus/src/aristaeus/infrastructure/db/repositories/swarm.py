@@ -20,36 +20,36 @@ from .base import BaseRepository
 class FakeSwarmRepository(BaseRepository):
     _swarms: set[Swarm] = set()
 
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Swarm:
         try:
             return next(swarm for swarm in self._swarms if swarm.public_id == public_id)
         except StopIteration:
             raise EntityNotFound("Swarm not found")
 
-    @error_handler
+    @error_handler()
     async def save(self, swarm: Swarm) -> None:
         self._swarms.add(swarm)
 
-    @error_handler
+    @error_handler()
     async def update(self, swarm: Swarm) -> None:
         self._swarms.discard(swarm)
         self._swarms.add(swarm)
 
-    @error_handler
+    @error_handler()
     async def delete(self, swarm: Swarm) -> None:
         self._swarms.discard(swarm)
 
 
 @Injector.bind(SwarmRepositoryAdapter)
 class SwarmRespository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Swarm:
         query = select(Swarm).where(orm.swarm_table.c.public_id == public_id)
         result = await self.session.execute(query)
         return result.scalar_one()
 
-    @error_handler
+    @error_handler()
     async def save(self, swarm: Swarm) -> None:
         data = {
             "health": swarm.health,
@@ -59,13 +59,13 @@ class SwarmRespository(BaseRepository):
         query = insert(orm.swarm_table).values(data)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def update(self, swarm: Swarm) -> None:
         data: dict[Any, Any] = {"queen_year": swarm.queen_year, "health": swarm.health}
         query = update(orm.swarm_table).values(data).where(orm.swarm_table.c.public_id == swarm.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def delete(self, swarm: Swarm) -> None:
         query = delete(orm.swarm_table).where(orm.swarm_table.c.public_id == swarm.public_id)
         await self.session.execute(query)

@@ -57,7 +57,7 @@ class FakeHiveRepository(BaseRepository):
 
 @Injector.bind(HiveRepositoryAdapter)
 class HiveRepository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Hive:
         query = (
             select(Hive)
@@ -68,7 +68,7 @@ class HiveRepository(BaseRepository):
         result = await self.session.execute(query)
         return result.unique().scalar_one()
 
-    @error_handler
+    @error_handler()
     async def get_from_swarm_id(self, public_id: UUID) -> Hive:
         query = (
             select(Hive)
@@ -98,7 +98,7 @@ class HiveRepository(BaseRepository):
 
         return data
 
-    @error_handler
+    @error_handler()
     async def save(self, hive: Hive) -> None:
         data: dict[Any, Any] = {
             "name": hive.name,
@@ -112,7 +112,7 @@ class HiveRepository(BaseRepository):
         query = insert(orm.hive_table).values(data)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def update(self, hive: Hive) -> None:
         data: dict[Any, Any] = {
             "name": hive.name,
@@ -123,12 +123,12 @@ class HiveRepository(BaseRepository):
         query = update(orm.hive_table).values(data).where(orm.hive_table.c.public_id == hive.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def delete(self, hive: Hive) -> None:
         query = delete(orm.hive_table).where(orm.hive_table.c.public_id == hive.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def list(self, organization_id: UUID, with_apiary_only: bool | None) -> list[Hive]:
         query = (
             select(Hive)

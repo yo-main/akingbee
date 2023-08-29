@@ -42,7 +42,7 @@ class FakeApiaryRepository(BaseRepository):
 
 @Injector.bind(ApiaryRepositoryAdapter)
 class ApiaryRespository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Apiary:
         query = (
             select(Apiary)
@@ -52,7 +52,7 @@ class ApiaryRespository(BaseRepository):
         result = await self.session.execute(query)
         return result.unique().scalar_one()
 
-    @error_handler
+    @error_handler()
     async def save(self, apiary: Apiary) -> None:
         query = insert(orm.apiary_table).values(
             public_id=apiary.public_id,
@@ -63,7 +63,7 @@ class ApiaryRespository(BaseRepository):
         )
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def update(self, apiary: Apiary) -> None:
         data: dict[Any, Any] = {
             "name": apiary.name,
@@ -73,7 +73,7 @@ class ApiaryRespository(BaseRepository):
         query = update(orm.apiary_table).values(data).where(orm.apiary_table.c.public_id == apiary.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def list(self, organization_id: UUID) -> list[Apiary]:
         query = (
             select(Apiary)
@@ -83,7 +83,7 @@ class ApiaryRespository(BaseRepository):
         result = await self.session.execute(query)
         return result.unique().scalars().all()
 
-    @error_handler
+    @error_handler()
     async def delete(self, apiary: Apiary) -> None:
         query = delete(orm.apiary_table).where(orm.apiary_table.c.public_id == apiary.public_id)
         await self.session.execute(query)

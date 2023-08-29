@@ -6,7 +6,7 @@ from aristaeus.config import settings
 from aristaeus.domain.errors import EntityNotFound
 
 
-def get_database_uri(dbname: str = None) -> str:
+def get_database_uri(dbname: str | None = None) -> str:
     return "postgresql+asyncpg://{user}:{pwd}@{host}:{port}/{dbname}".format(
         user=settings.database_user,
         pwd=settings.database_password,
@@ -16,12 +16,18 @@ def get_database_uri(dbname: str = None) -> str:
     )
 
 
-def error_handler(func):
-    @functools.wraps(func)
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-        except NoResultFound as exc:
-            raise EntityNotFound("Entity not found in database") from exc
+def error_handler(mapping: dict | None = None):
+    def decorator(func):
+        @functools.wraps(func)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except NoResultFound as exc:
+                raise EntityNotFound("Entity not found in database") from exc
+            except Exception as exc:
+                if mapping and exc in mapping:
+                    raise mapping[exc] from exc
+                raise
+        return wrapper
 
-    return wrapper
+    return decorator

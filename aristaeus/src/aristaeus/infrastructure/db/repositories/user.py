@@ -32,14 +32,14 @@ class FakeUserRepository(BaseRepository):
 
 @Injector.bind(UserRepositoryAdapter)
 class UserRepository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> User:
         query = select(User).where(orm.user_table.c.public_id == public_id)
         result = await self.session.execute(query)
         obj = result.scalar_one()
         return obj
 
-    @error_handler
+    @error_handler()
     async def save(self, user: User) -> None:
         data = {
             "public_id": user.public_id,
