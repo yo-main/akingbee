@@ -30,14 +30,14 @@ class FakeHarvestRepository(BaseRepository):
 
 @Injector.bind(HarvestRepositoryAdapter)
 class HarvestRepository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, hive_id: UUID) -> Harvest:
         query = select(Harvest).where(orm.harvest_table.c.hive_id == hive_id)
         result = await self.session.execute(query)
         objs = result.scalars()
         return objs
 
-    @error_handler
+    @error_handler()
     async def save(self, harvest: Harvest) -> None:
         data = {
             "hive_id": select(orm.hive_table.c.id).where(orm.hive_table.c.public_id == harvest.hive_id).scalar_subquery(),

@@ -42,13 +42,13 @@ class FakeEventRepository(BaseRepository):
 
 @Injector.bind(EventRepositoryAdapter)
 class EventRepository(BaseRepository):
-    @error_handler
+    @error_handler()
     async def get(self, public_id: UUID) -> Event:
         query = select(Event).where(orm.event_table.c.public_id == public_id)
         result = await self.session.execute(query)
         return result.unique().scalar_one()
 
-    @error_handler
+    @error_handler()
     async def save(self, event: Event) -> None:
         data = {
             "title": event.title,
@@ -63,7 +63,7 @@ class EventRepository(BaseRepository):
         query = insert(orm.event_table).values(data)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def update(self, event: Event) -> None:
         data: dict[Any, Any] = {
             "title": event.title,
@@ -74,12 +74,12 @@ class EventRepository(BaseRepository):
         query = update(orm.event_table).values(data).where(orm.event_table.c.public_id == event.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def delete(self, event: Event) -> None:
         query = delete(orm.event_table).where(orm.event_table.c.public_id == event.public_id)
         await self.session.execute(query)
 
-    @error_handler
+    @error_handler()
     async def list(self, hive_id: UUID) -> list[Event]:
         query = select(Event).join_from(orm.hive_table, orm.event_table).where(orm.hive_table.c.public_id == hive_id)
         result = await self.session.execute(query)
