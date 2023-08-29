@@ -20,6 +20,14 @@ class ApiaryCannotBeRemovedSwarmExists(BaseException):
     pass
 
 
+class ApiaryCannotBeDeletedHiveExists(BaseException):
+    pass
+
+
+class ApiaryCouldNotBeDeleted(BaseException):
+    pass
+
+
 class CantAttachSwarmOneAlreadyExists(BaseException):
     pass
 

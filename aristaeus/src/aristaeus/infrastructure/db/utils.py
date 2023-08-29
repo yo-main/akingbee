@@ -25,8 +25,8 @@ def error_handler(mapping: dict | None = None):
             except NoResultFound as exc:
                 raise EntityNotFound("Entity not found in database") from exc
             except Exception as exc:
-                if mapping and exc in mapping:
-                    raise mapping[exc] from exc
+                if mapping and type(exc) in mapping:
+                    raise mapping[type(exc)] from exc
                 raise
         return wrapper
 

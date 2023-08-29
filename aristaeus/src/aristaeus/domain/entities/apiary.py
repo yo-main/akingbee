@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from dataclasses import field
 from uuid import UUID
 
+from aristaeus.domain.errors import ApiaryCannotBeDeletedHiveExists
+
 from .base import Entity
 
 
@@ -23,6 +25,12 @@ class Apiary(Entity):
 
     def rename(self, new_name: str):
         self.name = new_name
+
+    def can_be_deleted(self) -> bool:
+        if self.hive_count > 0:
+            raise ApiaryCannotBeDeletedHiveExists(f"Can't delete {self.name} as it contains hives")
+
+        return True
 
     def __repr__(self):
         return f"<Apiary {self.public_id}>"
