@@ -5,10 +5,12 @@ from sqlalchemy import delete
 from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
+from sqlalchemy.exc import IntegrityError
 
 from aristaeus.domain.adapters.repositories.apiary import ApiaryRepositoryAdapter
 from aristaeus.domain.entities.apiary import Apiary
 from aristaeus.domain.errors import EntityNotFound
+from aristaeus.domain.errors import ApiaryCouldNotBeDeleted
 from aristaeus.infrastructure.db import orm
 from aristaeus.infrastructure.db.utils import error_handler
 from aristaeus.injector import Injector
@@ -83,7 +85,7 @@ class ApiaryRespository(BaseRepository):
         result = await self.session.execute(query)
         return result.unique().scalars().all()
 
-    @error_handler()
+    @error_handler({IntegrityError: ApiaryCouldNotBeDeleted("Apiary could not be deleted")})
     async def delete(self, apiary: Apiary) -> None:
         query = delete(orm.apiary_table).where(orm.apiary_table.c.public_id == apiary.public_id)
         await self.session.execute(query)

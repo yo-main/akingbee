@@ -39,5 +39,6 @@ class ApiaryService(InjectorMixin):
     async def delete(self, apiary_id: UUID) -> None:
         async with UnitOfWork() as uow:
             apiary = await uow.apiary.get(apiary_id)
-            await uow.apiary.delete(apiary)
-            await uow.commit()
+            if apiary.can_be_deleted():
+                await uow.apiary.delete(apiary)
+                await uow.commit()
