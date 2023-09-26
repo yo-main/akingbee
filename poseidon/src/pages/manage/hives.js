@@ -824,7 +824,7 @@ export class HiveDetailsPage extends React.Component {
     const hiveId = form.hiveId;
     const harvestData = {
       quantity_in_grams: form.quantity,
-      date_harvest: form.date.date(),
+      date_harvest: form.date.format('YYYY-MM-DD'),
     }
 
     try {
@@ -834,7 +834,7 @@ export class HiveDetailsPage extends React.Component {
         state['hive'] = hive;
         return state;
       })
-      notificate('success', window.i18n('form.harvestCreationSuccess'))
+      notificate('success', window.i18n('form.harvestCreationSuccess'));
     } catch (error) {
       dealWithError(error);
     }
