@@ -97,4 +97,6 @@ class HiveService(InjectorMixin):
             await uow.harvest.save(harvest)
             await uow.commit()
 
+        Dispatcher.publish("harvest.created", harvest=harvest, hive=hive, requester=requester)
+
         return hive
