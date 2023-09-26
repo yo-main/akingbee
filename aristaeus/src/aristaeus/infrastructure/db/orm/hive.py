@@ -37,6 +37,6 @@ mapper_registry.map_imperatively(
     properties={
         "apiary": relationship(Apiary, lazy="joined"),
         "swarm": relationship(Swarm, lazy="joined"),
-        "harvests": relationship(Harvest, lazy="joined")
+        "harvests": relationship(Harvest, lazy="joined"),
     },
 )
