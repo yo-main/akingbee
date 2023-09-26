@@ -52,7 +52,7 @@ export async function moveHive(hive_id, apiary_id) {
   return response.data;
 }
 
-export async function harvestHive(hive_id, quantity_in_grams, date_harvest) {
+export async function harvestHive(hive_id, {quantity_in_grams, date_harvest}) {
   let response = await aristaeusApi.post(`/hive/${hive_id}/harvest`, {quantity_in_grams, date_harvest});
   return response.data;
 }
