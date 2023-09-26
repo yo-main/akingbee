@@ -142,5 +142,11 @@
     "form.removeApiary": "Mettre en stock",
     "error.ApiaryCannotBeRemovedSwarmExists": "Impossible de mettre en stock une ruche avec une essaim actif",
     "error.CantAttachSwarmOneAlreadyExists": "Impossible - cette ruche est déjà rattaché à un essaim",
-    "error.CantAttachSwarmNoApiary": "Impossible d'ajouter un essaim sur une ruche sans rucher"
+    "error.CantAttachSwarmNoApiary": "Impossible d'ajouter un essaim sur une ruche sans rucher",
+    "word.harvest": "Récolter",
+    "word.quantityInGrams": "Quantité",
+    "form.quantityInGrams": "En grammes",
+    "word.dateHarvest": "Date de la récolte",
+    "form.harvestTitle": "Nouvelle récolte",
+    "form.harvestCreationSuccess": "Récolte enregistrée avec succès"
   }

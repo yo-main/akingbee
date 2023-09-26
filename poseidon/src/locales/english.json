@@ -142,5 +142,11 @@
     "form.removeApiary": "Put in storage",
     "error.ApiaryCannotBeRemoved": "Cannot put in storage a hive with an active swarm",
     "error.CantAttachSwarmOneAlreadyExists": "Cannot attach a swarm to that hive as one already exists",
-    "error.CantAttachSwarmNoApiary": "Cannot attach a swarm to a hive without an apiary"
+    "error.CantAttachSwarmNoApiary": "Cannot attach a swarm to a hive without an apiary",
+    "word.harvest": "Harvest",
+    "word.quantityInGrams": "Quantity",
+    "form.quantityInGrams": "In grams",
+    "word.dateHarvest": "Date of harvest",
+    "form.harvestTitle": "New harvest",
+    "form.harvestCreationSuccess": "Harvest successfully created"
   }

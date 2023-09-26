@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs } from 'antd';
+import { DatePicker, Row, Col, Table, Space, Button, Form, Input, Popconfirm, Select, Divider, Card, Tabs } from 'antd';
 import Icon from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
-import { OptionalFormItem, FormLinkModal, CascaderForm } from '../../components';
+import { OptionalFormItem, FormLinkModal, FormModal, CascaderForm } from '../../components';
 import { dealWithError, notificate } from '../../lib/common';
 import { formItemLayout, tailFormItemLayout } from '../../constants';
 
@@ -12,7 +12,7 @@ import { ReactComponent as queenSVG } from '../../images/queen.svg';
 
 import { listSetupData } from '../../services/aristaeus/setup';
 import { getApiaries } from '../../services/aristaeus/apiary';
-import { createHive, getHives, updateHive, removeApiary, deleteHive, getHive, moveHive } from '../../services/aristaeus/hive';
+import { createHive, getHives, updateHive, removeApiary, deleteHive, getHive, moveHive, harvestHive } from '../../services/aristaeus/hive';
 import { deleteSwarm, createSwarm, updateSwarm } from '../../services/aristaeus/swarm';
 
 import { LOADING_STATUS, getGenericPage } from '../generic';
@@ -110,6 +110,26 @@ export function UpdateHiveForm(props) {
         </Select>
       </Form.Item>
       {swarmMenuItems}
+      <Form.Item name="hiveId" hidden={true} />
+    </Form>
+  )
+}
+
+export function HarvestHiveForm(props) {
+  const [form] = Form.useForm();
+
+  form.setFieldsValue({
+    "hiveId": props.hive.public_id,
+  })
+
+  return (
+    <Form {...formItemLayout} id={props.formId} form={form} onFinish={props.onFinish} onFailed={onFailed} requiredMark={false}>
+      <Form.Item label={window.i18n("word.quantityInGrams")} name="quantity" help={window.i18n("form.quantityInGrams")} rules={[{ required: true, type: 'int', min: 1 }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label={window.i18n("word.dateHarvest")} name="date">
+        <DatePicker />
+      </Form.Item>
       <Form.Item name="hiveId" hidden={true} />
     </Form>
   )
@@ -500,7 +520,7 @@ export class HiveCreationPage extends React.Component {
 
       let pageStatus = "OK";
 
-      this.setState({ apiaries: data[3], owners: data[0], hiveConditions: data[1], swarmHealths: data[3], pageStatus });
+      this.setState({ apiaries: data[3], owners: data[0], hiveConditions: data[1], swarmHealths: data[2], pageStatus });
     } catch (error) {
       let status = dealWithError(error);
       this.setState((state) => {
@@ -566,6 +586,7 @@ export class HiveDetailsPage extends React.Component {
       hiveCondition: [],
       apiaries: [],
       swarmHealthStatus: [],
+      showHarvestForm: false
     }
   }
 
@@ -698,6 +719,12 @@ export class HiveDetailsPage extends React.Component {
       })
     }
 
+    if (this.state.hive.swarm) {
+      options.push({
+        label: window.i18n('word.harvest'),
+        value: "harvest"
+      })
+    }
 
     options.push({
       label: window.i18n('form.deleteHive'),
@@ -776,20 +803,40 @@ export class HiveDetailsPage extends React.Component {
         }
         break;
       case 'harvest':
-        try {
-          let swarm = await createSwarm({ health: action[1], queen_year: new Date().getFullYear() });
-          let hive = await updateHive(this.state.hive.public_id, { swarm_id: swarm.public_id })
-          this.setState((state) => {
-            state['hive'] = hive;
-            return state;
-          })
-          notificate('success', window.i18n('form.swarmAddedSuccess'))
-        } catch (error) {
-          dealWithError(error);
-        }
+        this.setState((state) => {
+          state['showHarvestForm'] = true;
+          return state;
+        })
         break;
       default:
         notificate('error', 'Something went wrong with the chosen action - sorry');
+    }
+  }
+
+  setHarvestModal(flag) {
+    this.setState((state) => {
+      state["showHarvestForm"] = flag;
+      return state;
+    })
+  }
+
+  createHarvest = async (form) => {
+    const hiveId = form.hiveId;
+    const harvestData = {
+      quantity_in_grams: form.quantity,
+      date_harvest: form.date.date(),
+    }
+
+    try {
+      await harvestHive(hiveId, harvestData);
+      let hive = await getHive(hiveId);
+      this.setState((state) => {
+        state['hive'] = hive;
+        return state;
+      })
+      notificate('success', window.i18n('form.harvestCreationSuccess'))
+    } catch (error) {
+      dealWithError(error);
     }
   }
 
@@ -813,6 +860,16 @@ export class HiveDetailsPage extends React.Component {
       apiary = cardItems(window.i18n('word.apiary'), this.state.hive.apiary.name);
     };
 
+    let harvestHiveForm = (
+      <FormModal title={window.i18n("form.harvestTitle")} formId='harvestHiveForm' visible={this.state.showHarvestForm} activate={() => this.setHarvestModal(true)} deactivate={() => this.setHarvestModal(false)}>
+        <HarvestHiveForm
+          formId='harvestHiveForm'
+          hive={this.state.hive}
+          onFinish={this.createHarvest}
+        />
+      </FormModal>
+    )
+
     let updateHiveForm = (
       <FormLinkModal title={window.i18n('title.hiveUpdate')} formId='updateHiveFormId' linkContent={window.i18n('word.edit')}>
         <UpdateHiveForm
@@ -835,6 +892,7 @@ export class HiveDetailsPage extends React.Component {
 
     return (
       <>
+        <>{harvestHiveForm}</>
         <Row>
           <Col offset="1">
             <Card title={`${window.i18n("word.info")} ${name}`} size="default" type="inner" extra={<div style={{ paddingLeft: '50px' }}>{updateHiveForm}</div>}>
