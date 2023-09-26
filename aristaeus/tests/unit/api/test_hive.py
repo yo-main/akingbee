@@ -326,4 +326,3 @@ async def test_harvest(async_app):
     payload = {"quantity_in_grams": 100, "date_harvest": "2023-01-01"}
     response = await async_app.post(f"/hive/{hive.public_id}/harvest", json=payload)
     assert response.status_code == 204, response.text
-

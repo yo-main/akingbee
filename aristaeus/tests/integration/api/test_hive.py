@@ -84,7 +84,13 @@ async def test_hive_harvest(async_app):
     swarm_id = response.json()["public_id"]
 
     # create hive
-    data = {"name": "hive name", "condition": "condition", "owner": "owner", "apiary_id": apiary_id, "swarm_id": swarm_id}
+    data = {
+        "name": "hive name",
+        "condition": "condition",
+        "owner": "owner",
+        "apiary_id": apiary_id,
+        "swarm_id": swarm_id,
+    }
     response = await async_app.post("/hive", json=data)
     assert response.status_code == 201, response.text
     hive_id = response.json()["public_id"]

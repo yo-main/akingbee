@@ -40,7 +40,9 @@ class HarvestRepository(BaseRepository):
     @error_handler()
     async def save(self, harvest: Harvest) -> None:
         data = {
-            "hive_id": select(orm.hive_table.c.id).where(orm.hive_table.c.public_id == harvest.hive_id).scalar_subquery(),
+            "hive_id": select(orm.hive_table.c.id)
+            .where(orm.hive_table.c.public_id == harvest.hive_id)
+            .scalar_subquery(),
             "quantity": harvest.quantity,
             "date_harvest": harvest.date_harvest,
             "apiary_name": harvest.apiary_name,

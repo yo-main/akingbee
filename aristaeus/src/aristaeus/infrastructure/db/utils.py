@@ -28,6 +28,7 @@ def error_handler(mapping: dict | None = None):
                 if mapping and type(exc) in mapping:
                     raise mapping[type(exc)] from exc
                 raise
+
         return wrapper
 
     return decorator
