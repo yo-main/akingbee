@@ -92,7 +92,7 @@ jobs:
         with:
           context: poseidon
           push: true
-          platforms: linux/amd64,linux/arm/v7
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
           tags: |
             yomain/poseidon:${{ env.REACT_APP_VERSION }}
             yomain/poseidon:latest

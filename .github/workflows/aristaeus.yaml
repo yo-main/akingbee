@@ -117,7 +117,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: aristaeus
-          platforms: linux/amd64,linux/arm/v7
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
           tags: |
             yomain/aristaeus:${{ env.image_version }}
