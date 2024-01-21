@@ -22,7 +22,7 @@ jobs:
       - name: install node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
       - name: install dependencies
         run: npm install
       - name: run eslint
@@ -45,7 +45,7 @@ jobs:
       - name: install node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
       - name: install dependencies
         run: sudo npm install -g semantic-release @semantic-release/git @semantic-release/npm
       - name: git pull
