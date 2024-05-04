@@ -30,6 +30,10 @@ docker-compose.override.yml
 environment.yaml
 **/tokens/*
 
+# direnv
+.direnv/
+.envrc
+
 # node js
 .eslintcache
 node_modules

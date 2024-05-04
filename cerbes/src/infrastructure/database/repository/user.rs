@@ -217,6 +217,10 @@ impl UserRepositoryTrait for UserRepositoryPg {
                     user.credentials.password.as_str().into(),
                 ),
                 (
+                    CredentialsModel::Column::LastSeen,
+                    user.credentials.last_seen.into(),
+                ),
+                (
                     CredentialsModel::Column::UpdatedAt,
                     chrono::Utc::now().naive_utc().into(),
                 ),
