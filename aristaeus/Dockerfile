@@ -24,7 +24,7 @@ RUN apt update && apt install -y libpq-dev
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY src/aristaeus aristaeus
+COPY aristaeus aristaeus
 COPY config.toml config.toml
 COPY alembic.ini alembic.ini
 COPY migrations migrations

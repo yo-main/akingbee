@@ -17,16 +17,16 @@ migrate: db
 	poetry run alembic upgrade head
 
 serve: db migrate
-	poetry run uvicorn --host 0.0.0.0 --port 8001 --reload src.aristaeus.controllers.api.app:create_app
+	poetry run uvicorn --host 0.0.0.0 --port 8001 --reload aristaeus.controllers.api.app:create_app
 
 serve-prod: db migrate
-	poetry run gunicorn src.aristaeus.controllers.api.app:create_app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
+	poetry run gunicorn aristaeus.controllers.api.app:create_app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
 
 profile-serve: db migrate
-	poetry run viztracer -m uvicorn --host 0.0.0.0 --port 8001 --reload src.aristaeus.controllers.api.app:create_app
+	poetry run viztracer -m uvicorn --host 0.0.0.0 --port 8001 --reload aristaeus.controllers.api.app:create_app
 
 listen: db migrate
-	poetry run python src/aristaeus/controllers/consumers/app.py
+	poetry run python aristaeus/controllers/consumers/app.py
 
 lint:
-	poetry run black src tests migrations
+	poetry run black aristaeus tests migrations
