@@ -19,9 +19,6 @@
       }
     }]
   ],
-  "generateNotes": [
-    "@semantic-release/release-notes-generator"
-  ],
   "prepare": [
     ["@semantic-release/npm", 
       {
