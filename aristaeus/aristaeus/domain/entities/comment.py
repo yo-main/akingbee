@@ -9,7 +9,7 @@ from .hive import Hive
 from .event import Event
 
 
-@dataclass(slots=True)
+@dataclass
 class Comment(Entity):
     date: datetime
     type: str  # choice

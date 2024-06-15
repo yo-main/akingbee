@@ -6,7 +6,7 @@ TRANSLATIONS = {
 }
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class HiveCondition:
     value: str
 

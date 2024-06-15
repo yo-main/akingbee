@@ -8,7 +8,7 @@ from .base import Entity
 from .hive import Hive
 
 
-@dataclass(slots=True)
+@dataclass
 class Event(Entity):
     hive: Hive
     title: str

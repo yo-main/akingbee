@@ -11,7 +11,7 @@ EVENT_STATUS_TRANSLATIONS = {
 }
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class EventType:
     value: str
 

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class CreateApiaryCommand:
     name: str
     location: str
@@ -10,7 +10,7 @@ class CreateApiaryCommand:
     organization_id: UUID
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class PutApiaryCommand:
     apiary_id: UUID
     name: str | None

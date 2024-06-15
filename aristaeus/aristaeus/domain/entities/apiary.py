@@ -8,7 +8,7 @@ from aristaeus.domain.errors import ApiaryCannotBeDeletedHiveExists
 from .base import Entity
 
 
-@dataclass(slots=True)
+@dataclass
 class Apiary(Entity):
     name: str
     location: str

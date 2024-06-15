@@ -17,7 +17,7 @@ from .harvest import Harvest
 from .swarm import Swarm
 
 
-@dataclass(slots=True)
+@dataclass
 class Hive(Entity):
     name: str
     condition: str

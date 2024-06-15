@@ -3,7 +3,7 @@ from datetime import datetime
 from uuid import UUID
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class CreateCommentCommand:
     hive_id: UUID
     date: datetime
@@ -12,7 +12,7 @@ class CreateCommentCommand:
     event_id: UUID | None = None
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class PutCommentCommand:
     comment_id: UUID
     date: datetime | None

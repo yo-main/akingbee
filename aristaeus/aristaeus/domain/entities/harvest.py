@@ -7,7 +7,7 @@ from aristaeus.domain.errors import CantHarvestNegativeQuantity
 from .base import Entity
 
 
-@dataclass(slots=True)
+@dataclass
 class Harvest(Entity):
     quantity: int  # in grams
     apiary_name: str

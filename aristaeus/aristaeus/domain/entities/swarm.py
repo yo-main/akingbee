@@ -6,7 +6,7 @@ from uuid import UUID
 from .base import Entity
 
 
-@dataclass(slots=True)
+@dataclass
 class Swarm(Entity):
     health: str
     queen_year: int

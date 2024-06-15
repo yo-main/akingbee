@@ -20,7 +20,7 @@ ParameterType = TypeVar(
 )
 
 
-@dataclass(slots=True)
+@dataclass
 class Parameter(Entity):
     key: str
     value: str

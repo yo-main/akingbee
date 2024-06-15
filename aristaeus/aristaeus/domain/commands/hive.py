@@ -4,7 +4,7 @@ from datetime import date
 from uuid import UUID
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class CreateHiveCommand:
     name: str
     owner: str
@@ -13,7 +13,7 @@ class CreateHiveCommand:
     swarm_id: UUID | None
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class PutHiveCommand:
     hive_id: UUID
     name: str | None = field(default=None)
@@ -22,13 +22,13 @@ class PutHiveCommand:
     owner: str | None = field(default=None)
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class MoveHiveCommand:
     hive_id: UUID
     apiary_id: UUID
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class HarvestCommand:
     hive_id: UUID
     quantity_in_grams: int
