@@ -1,9 +1,9 @@
 
 init:
-	npm install
+	bun install
 	
 serve:
-	npm run start
+	bun run start
 
 lint:
-	npm exec eslint src/
+	bun run eslint src/

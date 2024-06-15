@@ -9,7 +9,9 @@ pkgs.mkShellNoCC {
     poetry
     rust-analyzer
     rustup
-    nodejs_18
+    nodejs_20
+    bun
+    nodePackages.typescript-language-server
   ];
 
 }
