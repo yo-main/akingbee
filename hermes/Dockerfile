@@ -20,7 +20,7 @@ ENV VENV_PATH=/opt/venv \
 WORKDIR /app
 
 COPY --from=build $VENV_PATH $VENV_PATH
-COPY ./src/hermes ./hermes
+COPY ./hermes ./hermes
 COPY config.yaml .
 
 CMD ["python", "hermes/consumer.py"]

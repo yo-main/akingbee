@@ -17,7 +17,7 @@ black = "*"
 pynvim = "*"
 coverage = {version = "*", extras = ["toml"]}
 ipdb = "*"
-mock = "^4.0.3"
+mock = "*"
 
 [tool.coverage.run]
 branch = true

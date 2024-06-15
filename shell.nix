@@ -6,8 +6,10 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [ 
     gcc
     just
+    poetry
     rust-analyzer
     rustup
+    nodejs_18
   ];
 
 }

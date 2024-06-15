@@ -7,4 +7,4 @@ test: init
 	poetry run pytest
 
 listen:
-	poetry run python src/hermes/consumer.py
+	poetry run python hermes/consumer.py
