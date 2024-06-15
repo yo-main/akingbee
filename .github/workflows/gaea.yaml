@@ -39,11 +39,11 @@ jobs:
 
     steps:
       - name: install python3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: install poetry
         run: pip install poetry
       - name: setup env
@@ -66,11 +66,11 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: 'master'
       - name: install node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: install dependencies
@@ -92,11 +92,11 @@ jobs:
 
     steps:
       - name: install python3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: 'master'
       - name: install poetry
@@ -116,7 +116,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: 'master'
       - name: Set up QEMU
