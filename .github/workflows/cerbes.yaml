@@ -63,13 +63,13 @@ jobs:
         with:
           ref: 'master'
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
         with:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -80,7 +80,7 @@ jobs:
           version=$(echo $tag | cut -d'-' -f2 | cut -d'v' -f2)
           echo "image_version=${version}" >> $GITHUB_ENV
       - name: Build and push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: cerbes
           platforms: linux/amd64,linux/arm/v7,linux/arm64
