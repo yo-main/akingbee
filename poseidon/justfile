@@ -1,9 +1,0 @@
-
-init:
-	bun install
-	
-serve:
-	bun run start
-
-lint:
-	bun run eslint src/
