@@ -6,6 +6,8 @@ __pycache__
 var/
 .mypy_cache
 
+akingbee.db
+
 # dev env
 .isort.cfg
 .vscode/
