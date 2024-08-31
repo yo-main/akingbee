@@ -1,17 +1,27 @@
 package api
 
 import (
-	"fmt"
+	// "fmt"
+	"akingbee/api/login"
+	"log"
 	"net/http"
 )
 
 func Serve() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome to my website!")
-	})
+	fs := http.FileServer(http.Dir("front/pages/"))
 
-	fs := http.FileServer(http.Dir("static/"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux := http.NewServeMux()
 
-	http.ListenAndServe(":8080", nil)
+	mux.Handle("/", fs)
+	mux.HandleFunc("GET /login", login.HandleGetLogin)
+
+	// http.HandleFunc("POST /login", login.UserLogin)
+
+	// http.HandleFunc("GET /user/{id}", user.GetUser)
+	// http.HandleFunc("GET /users", user.GetUsers)
+	// http.HandleFunc("POST /users", user.PostUser)
+	// http.Handle("/", fs)
+
+	log.Print("Listing on port 8080...\n")
+	http.ListenAndServe(":8080", mux)
 }

@@ -39,11 +39,10 @@ const getUser = `
 	SELECT USERS.public_id, USERS.email, CREDENTIALS.public_id, CREDENTIALS.username, CREDENTIALS.password
 	FROM USERS
 	JOIN CREDENTIALS ON USERS.CREDENTIAL_ID=CREDENTIALS.ID
-	WHERE USERS.public_id=$1
 `
 
-func GetUser(ctx context.Context, db *sql.DB, publicId *uuid.UUID) (*models.User, error) {
-	row := db.QueryRowContext(ctx, getUser, publicId)
+func GetUser(ctx context.Context, db *sql.DB, query string, params interface{}) (*models.User, error) {
+	row := db.QueryRowContext(ctx, query, params)
 
 	var user models.User
 	var credentials models.Credentials
@@ -55,4 +54,14 @@ func GetUser(ctx context.Context, db *sql.DB, publicId *uuid.UUID) (*models.User
 	}
 
 	return &user, nil
+}
+
+func GetUserByPublicId(ctx context.Context, db *sql.DB, publicId *uuid.UUID) (*models.User, error) {
+	query := getUser + " WHERE USERS.public_id=$1"
+	return GetUser(ctx, db, query, publicId)
+}
+
+func GetUserByEmail(ctx context.Context, db *sql.DB, email *string) (*models.User, error) {
+	query := getUser + " WHERE USERS.email=$1"
+	return GetUser(ctx, db, query, email)
 }
