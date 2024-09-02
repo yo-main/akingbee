@@ -1,19 +1,14 @@
 package templates
 
 import (
-	"akingbee/api/templates/icons"
 	"bytes"
-	// "io"
-	// "log"
-	// "os"
+	"fmt"
 	"text/template"
 )
 
 type htmlPageComponent struct {
-	LogoImage string
-	LogoText  string
-	Head      string
-	Body      string
+	Head string
+	Body string
 }
 
 const htmlHead = `
@@ -36,10 +31,8 @@ const htmlBase = `
 func BuildPage(body string) ([]byte, error) {
 
 	params := htmlPageComponent{
-		Head:      htmlHead,
-		LogoImage: icons.AkingbeeLogoImage,
-		LogoText:  icons.AkingbeeLogoText,
-		Body:      body,
+		Head: htmlHead,
+		Body: body,
 	}
 
 	tmpl, err := template.New("HtmlPage").Parse(htmlBase)
@@ -53,4 +46,24 @@ func BuildPage(body string) ([]byte, error) {
 
 	return buffer.Bytes(), nil
 
+}
+
+func BuildBody(content string, menu string) string {
+	return fmt.Sprintf(`
+	  <body class="has-navbar-fixed-top">
+		<section class="section">
+			%s
+		</section>
+
+		<section class="hero is-fullheight-with-navbar has-background-white-lighter">
+			%s
+		</section>
+
+	    <div class="container p-5">
+	      <div class="content has-text-centered">
+	        <p>Made with love by Yomain</p>
+	      </div>
+	    </div>
+	  </body>
+	`, menu, content)
 }
