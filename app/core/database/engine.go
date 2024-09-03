@@ -1,7 +1,7 @@
 package database
 
 import (
-	_ "akingbee/database/queries/migrations"
+	_ "akingbee/app/core/database/queries/migrations"
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"log"

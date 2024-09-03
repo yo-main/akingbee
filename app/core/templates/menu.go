@@ -1,7 +1,7 @@
 package templates
 
 import (
-	"akingbee/api/templates/icons"
+	"akingbee/app/core/templates/icons"
 	"bytes"
 	"text/template"
 )

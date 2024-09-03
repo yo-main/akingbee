@@ -1,7 +1,7 @@
 package login
 
 import (
-	"akingbee/api/templates"
+	"akingbee/app/core/templates"
 	"log"
 	"net/http"
 )

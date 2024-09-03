@@ -1,12 +1,11 @@
 package repositories
 
 import (
-	"akingbee/models"
+	"akingbee/app/user/models"
 	"context"
 	"database/sql"
 
 	"github.com/google/uuid"
-	_ "github.com/google/uuid"
 )
 
 const createCredentials = `
