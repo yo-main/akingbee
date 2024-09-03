@@ -45,7 +45,7 @@ const loginForm = `
 func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 	log.Print("GOT A LOGIN REQUEST")
 
-	menu, err := templates.GetLoggedInMenu()
+	menu, err := templates.GetLoggedOutMenu()
 	if err != nil {
 		log.Printf("NOOOO FAILED: %s", err)
 		return
