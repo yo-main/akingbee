@@ -1,16 +1,11 @@
 package main
 
 import (
-	"akingbee/api"
-	_ "akingbee/api"
-	"akingbee/database"
-	"akingbee/database/queries/migrations"
-	"akingbee/database/repositories"
-	"akingbee/models"
+	"akingbee/app/core/database"
+	"akingbee/app/core/database/queries/migrations"
+	"akingbee/app/entrypoints"
 	"context"
 	"log"
-
-	"github.com/google/uuid"
 )
 
 func main() {
@@ -26,39 +21,39 @@ func main() {
 
 	migrations.Upgrade(ctx, db)
 
-	email := "arnal.romain"
-	user, err := repositories.GetUserByEmail(ctx, db, &email)
+	// email := "arnal.romain"
+	// user, err := repositories.GetUserByEmail(ctx, db, &email)
 
-	if user == nil {
+	// if user == nil {
 
-		new_user := models.User{
-			PublicId: uuid.New(),
-			Email:    "arnal.romain",
-			Credentials: models.Credentials{
-				PublicId: uuid.New(),
-				Username: "romain",
-				Password: "123",
-			},
-		}
+	// 	new_user := models.User{
+	// 		PublicId: uuid.New(),
+	// 		Email:    "arnal.romain",
+	// 		Credentials: models.Credentials{
+	// 			PublicId: uuid.New(),
+	// 			Username: "romain",
+	// 			Password: "123",
+	// 		},
+	// 	}
 
-		err = repositories.CreateCredentials(ctx, db, &new_user.Credentials)
-		if err != nil {
-			log.Fatalf("Couldn't create user: %s", err)
-		}
+	// 	err = repositories.CreateCredentials(ctx, db, &new_user.Credentials)
+	// 	if err != nil {
+	// 		log.Fatalf("Couldn't create user: %s", err)
+	// 	}
 
-		err = repositories.CreateUser(ctx, db, &new_user)
-		if err != nil {
-			log.Fatalf("Couldn't create user: %s", err)
-		}
+	// 	err = repositories.CreateUser(ctx, db, &new_user)
+	// 	if err != nil {
+	// 		log.Fatalf("Couldn't create user: %s", err)
+	// 	}
 
-		user, err = repositories.GetUserByPublicId(ctx, db, &new_user.PublicId)
+	// 	user, err = repositories.GetUserByPublicId(ctx, db, &new_user.PublicId)
 
-		if err != nil {
-			log.Fatalf("Couldn't get user: %s", err)
-		}
-	}
+	// 	if err != nil {
+	// 		log.Fatalf("Couldn't get user: %s", err)
+	// 	}
+	// }
 
-	log.Printf("Retrieved user %s", user.Email)
+	// log.Printf("Retrieved user %s", user.Email)
 
-	api.Serve()
+	entrypoints.ApiServe()
 }
