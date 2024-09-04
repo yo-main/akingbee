@@ -1,9 +1,9 @@
 package repositories
 
 import (
+	"akingbee/app/core/database"
 	"akingbee/app/user/models"
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -16,7 +16,8 @@ const createCredentials = `
 	)
 `
 
-func CreateCredentials(ctx context.Context, db *sql.DB, credentials *models.Credentials) error {
+func CreateCredentials(ctx context.Context, credentials *models.Credentials) error {
+	db := database.GetDb()
 	_, err := db.ExecContext(ctx, createCredentials, credentials.PublicId, credentials.Username, credentials.Password)
 	return err
 }
@@ -29,7 +30,8 @@ const createUser = `
 	)
 `
 
-func CreateUser(ctx context.Context, db *sql.DB, user *models.User) error {
+func CreateUser(ctx context.Context, user *models.User) error {
+	db := database.GetDb()
 	_, err := db.ExecContext(ctx, createUser, user.PublicId, user.Email, user.Credentials.PublicId)
 	return err
 }
@@ -40,7 +42,8 @@ const getUser = `
 	JOIN CREDENTIALS ON USERS.CREDENTIAL_ID=CREDENTIALS.ID
 `
 
-func GetUser(ctx context.Context, db *sql.DB, query string, params interface{}) (*models.User, error) {
+func GetUser(ctx context.Context, query string, params interface{}) (*models.User, error) {
+	db := database.GetDb()
 	row := db.QueryRowContext(ctx, query, params)
 
 	var user models.User
@@ -55,12 +58,12 @@ func GetUser(ctx context.Context, db *sql.DB, query string, params interface{}) 
 	return &user, nil
 }
 
-func GetUserByPublicId(ctx context.Context, db *sql.DB, publicId *uuid.UUID) (*models.User, error) {
+func GetUserByPublicId(ctx context.Context, publicId *uuid.UUID) (*models.User, error) {
 	query := getUser + " WHERE USERS.public_id=$1"
-	return GetUser(ctx, db, query, publicId)
+	return GetUser(ctx, query, publicId)
 }
 
-func GetUserByEmail(ctx context.Context, db *sql.DB, email *string) (*models.User, error) {
+func GetUserByEmail(ctx context.Context, email *string) (*models.User, error) {
 	query := getUser + " WHERE USERS.email=$1"
-	return GetUser(ctx, db, query, email)
+	return GetUser(ctx, query, email)
 }

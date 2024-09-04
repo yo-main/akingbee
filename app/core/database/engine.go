@@ -5,9 +5,13 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
+	"sync"
 )
 
-func GetDb() (*sql.DB, error) {
+var lock = &sync.Mutex{}
+var db *sql.DB
+
+func createDb() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", "akingbee.db")
 	if err != nil {
 		log.Fatalf("Couldn't open sqlite database: %s\n", err)
@@ -21,4 +25,21 @@ func GetDb() (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func GetDb() *sql.DB {
+	if db == nil {
+		lock.Lock()
+		defer lock.Unlock()
+
+		if db == nil {
+			db_instance, err := createDb()
+			if err != nil {
+				log.Fatalf("Could not get a database instance: %s", err)
+			}
+			db = db_instance
+		}
+	}
+
+	return db
 }

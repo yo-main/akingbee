@@ -5,18 +5,12 @@ import (
 	"akingbee/app/core/database/queries/migrations"
 	"akingbee/app/entrypoints"
 	"context"
-	"log"
 )
 
 func main() {
 	// api.Serve()
 
-	db, err := database.GetDb()
-
-	if err != nil {
-		log.Fatalf("Couldn't start database: %s", err)
-	}
-
+	db := database.GetDb()
 	ctx := context.TODO()
 
 	migrations.Upgrade(ctx, db)
