@@ -20,11 +20,20 @@ func userToJson(user *models.User) ([]byte, error) {
 func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	username := req.PostForm.Get("username")
-	password := req.PostForm.Get("password")
-	email := req.PostForm.Get("email")
+	command := user_service.CreateUserCommand{
+		Username: req.FormValue("username"),
+		Password: req.FormValue("password"),
+		Email:    req.FormValue("email"),
+	}
 
-	user, err := user_service.CreateUser(ctx, email, username, password)
+	err := command.Validate()
+	if err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		response.Write([]byte(err.Error()))
+		return
+	}
+
+	user, err := user_service.CreateUser(ctx, &command)
 	if err != nil {
 		response.WriteHeader(http.StatusBadRequest)
 		return
