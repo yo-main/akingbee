@@ -1,6 +1,7 @@
 package user
 
 import (
+	"akingbee/app/core/templates"
 	user_service "akingbee/app/user"
 	"akingbee/app/user/models"
 	"encoding/json"
@@ -36,16 +37,17 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	user, err := user_service.CreateUser(ctx, &command)
 	if err != nil {
 		response.WriteHeader(http.StatusBadRequest)
+		response.Write([]byte(err.Error()))
 		return
 	}
 
-	payload, err := userToJson(user)
+	_, err = userToJson(user)
 	if err != nil {
 		response.WriteHeader(http.StatusBadRequest)
+		response.Write([]byte(err.Error()))
 		return
 	}
 
 	response.WriteHeader(http.StatusOK)
-	response.Header().Set("Content-Type", "application/json")
-	response.Write(payload)
+	response.Write([]byte(templates.BuildSuccessNotification("User created successfully")))
 }

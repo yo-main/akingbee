@@ -15,9 +15,15 @@ const htmlHead = `
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<meta name="htmx-config" content='{"selfRequestsOnly":false}'>
+
         <title>Akingbee</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+
 		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+		<link rel="stylesheet" href="custom.css" />
       </head>
 `
 
@@ -56,6 +62,13 @@ func BuildBody(content string, menu string) string {
 			%s
 		</section>
 
+		<div id="notificationBox">
+			<div class="notification is-success">
+				<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
+				<div>coucou</div>
+			</div>
+		</div>
+
 		<section class="hero is-fullheight-with-navbar has-background-white-lighter">
 			%s
 		</section>
@@ -67,4 +80,14 @@ func BuildBody(content string, menu string) string {
 	    </div>
 	  </body>
 	`, menu, content)
+}
+
+func BuildSuccessNotification(content string) string {
+	return fmt.Sprintf(`
+	<div class="notification is-success">
+		<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
+		<div>%s</div>
+	</div>
+	`, content)
+
 }

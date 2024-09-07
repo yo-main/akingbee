@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const createCredentials = `
+const queryCreateCredentials = `
 	INSERT INTO CREDENTIALS (
 		public_id, username, password
 	) VALUES (
@@ -18,11 +18,11 @@ const createCredentials = `
 
 func CreateCredentials(ctx context.Context, credentials *models.Credentials) error {
 	db := database.GetDb()
-	_, err := db.ExecContext(ctx, createCredentials, credentials.PublicId, credentials.Username, credentials.Password)
+	_, err := db.ExecContext(ctx, queryCreateCredentials, credentials.PublicId, credentials.Username, credentials.Password)
 	return err
 }
 
-const createUser = `
+const queryCreateUser = `
 	INSERT INTO USERS (
 		public_id, email, credential_id
 	) VALUES (
@@ -32,17 +32,17 @@ const createUser = `
 
 func CreateUser(ctx context.Context, user *models.User) error {
 	db := database.GetDb()
-	_, err := db.ExecContext(ctx, createUser, user.PublicId, user.Email, user.Credentials.PublicId)
+	_, err := db.ExecContext(ctx, queryCreateUser, user.PublicId, user.Email, user.Credentials.PublicId)
 	return err
 }
 
-const getUser = `
+const queryGetUser = `
 	SELECT USERS.public_id, USERS.email, CREDENTIALS.public_id, CREDENTIALS.username, CREDENTIALS.password
 	FROM USERS
 	JOIN CREDENTIALS ON USERS.CREDENTIAL_ID=CREDENTIALS.ID
 `
 
-func GetUser(ctx context.Context, query string, params interface{}) (*models.User, error) {
+func getUser(ctx context.Context, query string, params interface{}) (*models.User, error) {
 	db := database.GetDb()
 	row := db.QueryRowContext(ctx, query, params)
 
@@ -59,11 +59,11 @@ func GetUser(ctx context.Context, query string, params interface{}) (*models.Use
 }
 
 func GetUserByPublicId(ctx context.Context, publicId *uuid.UUID) (*models.User, error) {
-	query := getUser + " WHERE USERS.public_id=$1"
-	return GetUser(ctx, query, publicId)
+	query := queryGetUser + " WHERE USERS.public_id=$1"
+	return getUser(ctx, query, publicId)
 }
 
 func GetUserByEmail(ctx context.Context, email *string) (*models.User, error) {
-	query := getUser + " WHERE USERS.email=$1"
-	return GetUser(ctx, query, email)
+	query := queryGetUser + " WHERE USERS.email=$1"
+	return getUser(ctx, query, email)
 }
