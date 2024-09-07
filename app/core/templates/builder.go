@@ -63,7 +63,7 @@ func BuildBody(content string, menu string) string {
 			%s
 		</section>
 
-		<div id="notificationBox" hx-trigger="notificationEvent from:body" hx-get="data:text/html," hx-on:htmx:after-swap="htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value, {swapStyle: 'afterbegin'})"></div>
+		<div id="notificationBox" hx-trigger="notificationEvent from:body" hx-get="data:text/html," hx-swap="none" hx-on:htmx:after-settle="if (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value, {swapStyle: 'afterbegin'})}"></div>
 
 		<section class="hero is-fullheight-with-navbar has-background-white-lighter">
 			%s

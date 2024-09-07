@@ -1,4 +1,4 @@
-.notification {
+#notificationBox {
   position: fixed !important;
   top: 6rem;  
   right: 1rem;
