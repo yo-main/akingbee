@@ -42,7 +42,7 @@ const registerForm = `
       </div>
       <div class="field is-grouped is-grouped-right">
         <div class="control">
-          <button class="button is-link" hx-post="/users" hx-swap="none">
+          <button class="button is-link" hx-post="/users" hx-swap="none" hx-on:htmx:after-request="if (event.detail.successful) {event.srcElement.form.reset()}">
               S'enregister
           </button>
         </div>
