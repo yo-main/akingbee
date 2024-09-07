@@ -13,6 +13,7 @@ func ApiServe() {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", fs)
+	mux.HandleFunc("GET /{$}", user_pages.HandleWelcomePage)
 	mux.HandleFunc("GET /login", user_pages.HandleGetLogin)
 	mux.HandleFunc("GET /register", user_pages.HandleGetRegister)
 

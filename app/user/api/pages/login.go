@@ -15,7 +15,7 @@ const loginForm = `
     </div>
 
     <div class="field pt-5 is-horizontal">
-      <div class="field-labelis-normal is-flex-grow-4">Identifiant</div>
+      <div class="field-label is-normal is-flex-grow-4">Identifiant</div>
       <div class="field-body">
         <div class="control">
           <input class="input" type="text">
@@ -58,4 +58,8 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 	}
 
 	response.Write([]byte(page))
+}
+
+func HandleWelcomePage(response http.ResponseWriter, req *http.Request) {
+	http.Redirect(response, req, "/login", http.StatusMovedPermanently)
 }
