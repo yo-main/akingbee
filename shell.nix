@@ -13,6 +13,8 @@ pkgs.mkShellNoCC {
     unstable.go
     unstable.gopls
     gcc
+    nodePackages.typescript-language-server
+
   ];
 
 }

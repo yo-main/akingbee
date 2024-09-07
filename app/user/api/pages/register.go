@@ -42,11 +42,7 @@ const registerForm = `
       </div>
       <div class="field is-grouped is-grouped-right">
         <div class="control">
-          <button class="button is-link"
-            hx-post="/users"
-            hx-target="#notificationBox"
-            hx-swap="afterbegin"
-          >
+          <button class="button is-link" hx-post="/users" hx-swap="none">
               S'enregister
           </button>
         </div>

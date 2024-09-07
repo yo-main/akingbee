@@ -32,6 +32,7 @@ const htmlBase = `
     <html>
     {{ .Head }}
     {{ .Body }}
+		<script src="custom.js"></script>
 </html>
 `
 
@@ -62,12 +63,7 @@ func BuildBody(content string, menu string) string {
 			%s
 		</section>
 
-		<div id="notificationBox">
-			<div class="notification is-success">
-				<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
-				<div>coucou</div>
-			</div>
-		</div>
+		<div id="notificationBox" hx-trigger="notificationEvent from:body" hx-get="data:text/html," hx-on:htmx:after-swap="htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value, {swapStyle: 'afterbegin'})"></div>
 
 		<section class="hero is-fullheight-with-navbar has-background-white-lighter">
 			%s
@@ -89,5 +85,13 @@ func BuildSuccessNotification(content string) string {
 		<div>%s</div>
 	</div>
 	`, content)
+}
 
+func BuildErrorNotification(content string) string {
+	return fmt.Sprintf(`
+	<div class="notification is-danger">
+		<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
+		<div>%s</div>
+	</div>
+	`, content)
 }
