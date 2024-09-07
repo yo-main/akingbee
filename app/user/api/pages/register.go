@@ -44,6 +44,8 @@ const registerForm = `
         <div class="control">
           <button class="button is-link"
             hx-post="/users"
+            hx-target="#notificationBox"
+            hx-swap="afterbegin"
           >
               S'enregister
           </button>

@@ -1,0 +1,6 @@
+.notification {
+  position: fixed !important;
+  top: 6rem;  
+  right: 1rem;
+  transition: all ease-in 1s ;
+}

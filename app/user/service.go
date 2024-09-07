@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -49,7 +50,10 @@ func CreateUser(ctx context.Context, command *CreateUserCommand) (*models.User, 
 	err := repositories.CreateCredentials(ctx, &credentials)
 	if err != nil {
 		log.Printf("Could not create credentials: %s", err)
-		return nil, err
+		if strings.Contains(err.Error(), "UNIQUE constraint") {
+			return nil, errors.New("Email or Username already taken")
+		}
+		return nil, errors.New("Couldn't create the user")
 	}
 
 	user := models.User{

@@ -8,7 +8,7 @@ import (
 )
 
 func ApiServe() {
-	fs := http.FileServer(http.Dir("front/pages/"))
+	fs := http.FileServer(http.Dir("front/resources/"))
 
 	mux := http.NewServeMux()
 
