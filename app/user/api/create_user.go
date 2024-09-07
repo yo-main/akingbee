@@ -29,25 +29,46 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 
 	err := command.Validate()
 	if err != nil {
+
+		events := map[string]interface{}{
+			"notificationEvent": templates.BuildErrorNotification(err.Error()),
+		}
+		triggerHeader, _ := json.Marshal(events)
+		response.Header().Set("HX-Trigger", string(triggerHeader))
 		response.WriteHeader(http.StatusBadRequest)
-		response.Write([]byte(err.Error()))
+
 		return
 	}
 
 	user, err := user_service.CreateUser(ctx, &command)
 	if err != nil {
+
+		events := map[string]interface{}{
+			"notificationEvent": templates.BuildErrorNotification(err.Error()),
+		}
+		triggerHeader, _ := json.Marshal(events)
+		response.Header().Set("HX-Trigger", string(triggerHeader))
 		response.WriteHeader(http.StatusBadRequest)
-		response.Write([]byte(err.Error()))
 		return
 	}
 
 	_, err = userToJson(user)
 	if err != nil {
+
+		events := map[string]interface{}{
+			"notificationEvent": templates.BuildErrorNotification(err.Error()),
+		}
+		triggerHeader, _ := json.Marshal(events)
+		response.Header().Set("HX-Trigger", string(triggerHeader))
+
 		response.WriteHeader(http.StatusBadRequest)
-		response.Write([]byte(err.Error()))
 		return
 	}
 
+	events := map[string]interface{}{
+		"notificationEvent": templates.BuildSuccessNotification("User created successfully"),
+	}
+	triggerHeader, _ := json.Marshal(events)
+	response.Header().Set("HX-Trigger", string(triggerHeader))
 	response.WriteHeader(http.StatusOK)
-	response.Write([]byte(templates.BuildSuccessNotification("User created successfully")))
 }
