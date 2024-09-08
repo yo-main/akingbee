@@ -3,15 +3,15 @@ package templates
 import (
 	"akingbee/app/core/api/templates/icons"
 	"bytes"
-	"text/template"
+	"html/template"
 )
 
 type menuComponent struct {
-	LogoImage string
-	LogoText  string
+	LogoImage template.HTML
+	LogoText  template.HTML
 }
 
-const loggedOutMenu = `
+var loggedOutMenu = template.Must(template.New("loggedOutMenu").Parse(`
 <nav class="navbar is-fixed-top has-background-warning-95 has-shadow">
     <div class="navbar-brand">
 		{{ .LogoImage }}
@@ -24,9 +24,9 @@ const loggedOutMenu = `
 		<p class="navbar-item"><a class="has-text-warning-95-invert">Inscription</a></p>
 	</div>
 </nav>
-`
+`))
 
-const loggedInMenu = `
+var loggedInMenu = template.Must(template.New("loggedInMenu").Parse(`
 <nav class="navbar is-fixed-top has-background-warning-95 has-shadow">
     <div class="navbar-brand">
 		{{ .LogoImage }}
@@ -45,42 +45,30 @@ const loggedInMenu = `
 		<p class="navbar-item"><a class="has-text-warning-95-invert">Déconnexion</a></p>
 	</div>
 </nav>
-`
+`))
 
-func GetLoggedInMenu() (string, error) {
+func GetLoggedInMenu() (template.HTML, error) {
 	params := menuComponent{
 		LogoImage: icons.AkingbeeLogoImage,
 		LogoText:  icons.AkingbeeLogoText,
 	}
 
-	tmpl, err := template.New("LoggedInMenu").Parse(loggedInMenu)
-
-	if err != nil {
-		return "", err
-	}
-
 	var buffer bytes.Buffer
-	tmpl.Execute(&buffer, params)
+	loggedInMenu.Execute(&buffer, params)
 
-	return buffer.String(), nil
+	return template.HTML(buffer.Bytes()), nil
 
 }
 
-func GetLoggedOutMenu() (string, error) {
+func GetLoggedOutMenu() (template.HTML, error) {
 	params := menuComponent{
 		LogoImage: icons.AkingbeeLogoImage,
 		LogoText:  icons.AkingbeeLogoText,
 	}
 
-	tmpl, err := template.New("LoggedOutMenu").Parse(loggedOutMenu)
-
-	if err != nil {
-		return "", err
-	}
-
 	var buffer bytes.Buffer
-	tmpl.Execute(&buffer, params)
+	loggedOutMenu.Execute(&buffer, params)
 
-	return buffer.String(), nil
+	return template.HTML(buffer.Bytes()), nil
 
 }

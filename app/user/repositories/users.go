@@ -67,3 +67,8 @@ func GetUserByEmail(ctx context.Context, email *string) (*models.User, error) {
 	query := queryGetUser + " WHERE USERS.email=$1"
 	return getUser(ctx, query, email)
 }
+
+func GetUserByUsername(ctx context.Context, username *string) (*models.User, error) {
+	query := queryGetUser + " WHERE CREDENTIALS.username=$1"
+	return getUser(ctx, query, username)
+}
