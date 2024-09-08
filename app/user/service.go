@@ -69,3 +69,13 @@ func CreateUser(ctx context.Context, command *CreateUserCommand) (*models.User, 
 
 	return &user, nil
 }
+
+func LoginUser(ctx context.Context, username string, password string) (*models.User, error) {
+	user, err := repositories.GetUserByUsername(ctx, &username)
+
+	if err != nil {
+		return nil, errors.New("Could not login in the user")
+	}
+
+	return user, nil
+}

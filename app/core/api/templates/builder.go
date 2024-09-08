@@ -3,15 +3,17 @@ package templates
 import (
 	"bytes"
 	"fmt"
-	"text/template"
+	"html/template"
+	"log"
 )
 
 type htmlPageComponent struct {
-	Head string
-	Body string
+	Body template.HTML
 }
 
-const htmlHead = `
+var htmlBase = template.Must(template.New("htmlBase").Parse(`
+	<!DOCTYPE html>
+    <html>
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,40 +26,29 @@ const htmlHead = `
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
 		<link rel="stylesheet" href="custom.css" />
-      </head>
-`
-
-const htmlBase = `
-	<!DOCTYPE html>
-    <html>
-    {{ .Head }}
+    </head>
     {{ .Body }}
-		<script src="custom.js"></script>
 </html>
-`
+`))
 
-func BuildPage(body string) ([]byte, error) {
+func BuildPage(body template.HTML) ([]byte, error) {
 
 	params := htmlPageComponent{
-		Head: htmlHead,
 		Body: body,
 	}
 
-	tmpl, err := template.New("HtmlPage").Parse(htmlBase)
-
-	if err != nil {
-		return nil, err
-	}
-
 	var buffer bytes.Buffer
-	tmpl.Execute(&buffer, params)
+	err := htmlBase.Execute(&buffer, params)
+	if err != nil {
+		log.Printf("Error while building html page: %s", err)
+	}
 
 	return buffer.Bytes(), nil
 
 }
 
-func BuildBody(content string, menu string) string {
-	return fmt.Sprintf(`
+func BuildBody(content template.HTML, menu template.HTML) template.HTML {
+	return template.HTML(fmt.Sprintf(`
 	  <body class="has-navbar-fixed-top">
 		<section class="section">
 			%s
@@ -75,23 +66,23 @@ func BuildBody(content string, menu string) string {
 	      </div>
 	    </div>
 	  </body>
-	`, menu, content)
+	`, menu, content))
 }
 
-func BuildSuccessNotification(content string) string {
-	return fmt.Sprintf(`
+func BuildSuccessNotification(content string) template.HTML {
+	return template.HTML(fmt.Sprintf(`
 	<div class="notification is-success">
 		<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
 		<div>%s</div>
 	</div>
-	`, content)
+	`, content))
 }
 
-func BuildErrorNotification(content string) string {
-	return fmt.Sprintf(`
+func BuildErrorNotification(content string) template.HTML {
+	return template.HTML(fmt.Sprintf(`
 	<div class="notification is-danger">
 		<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
 		<div>%s</div>
 	</div>
-	`, content)
+	`, content))
 }

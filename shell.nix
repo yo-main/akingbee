@@ -14,7 +14,7 @@ pkgs.mkShellNoCC {
     unstable.gopls
     gcc
     nodePackages.typescript-language-server
-
+    vscode-langservers-extracted
   ];
 
 }

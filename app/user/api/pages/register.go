@@ -2,55 +2,31 @@ package login
 
 import (
 	"akingbee/app/core/api/templates"
+	"bytes"
+	"html/template"
+
+	"log"
+
 	"net/http"
 )
 
-const registerForm = `
+var registerPageTemplate = template.Must(template.New("registerPage").Parse(`
 <div class="columns is-centered">
 
-  <form>
-    <div class="column is-narrow">
-      <div class="content has-text-centered">
-        <p class="subtitle">Dites moi en plus sur vous</p>
-      </div>
-
-      <div class="field pt-5 is-horizontal">
-        <div class="field-label is-normal is-flex-grow-4">Votre email</div>
-        <div class="field-body">
-          <div class="control">
-            <input class="input" type="text" name="email">
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label is-normal is-flex-grow-4">Votre identifiant</div>
-        <div class="field-body">
-          <div class="control">
-            <input class="input" type="text" name="username">
-          </div>
-        </div>
-      </div>
-
-      <div class="field is-horizontal">
-        <div class="field-label is-normal is-flex-grow-4">Votre mot de passe</div>
-        <div class="field-body">
-          <div class="control">
-            <input class="input" type="password" name="password">
-          </div>
-        </div>
-      </div>
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          <button class="button is-link" hx-post="/users" hx-swap="none" hx-on:htmx:after-request="if (event.detail.successful) {event.srcElement.form.reset()}">
-              S'enregister
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
+  <div class="columns">
+	<div class="column">
+	  <div class="content has-text-centered">
+	    <p class="subtitle">Dites moi en plus sur vous</p>
+	  </div>
+	  {{ .Form }}
+  	</div>
+  </div>
 </div>
-`
+`))
+
+type registerPageParams struct {
+	Form template.HTML
+}
 
 func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	menu, err := templates.GetLoggedOutMenu()
@@ -58,7 +34,43 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	page, err := templates.BuildPage(templates.BuildBody(registerForm, menu))
+	form := templates.Form{
+		Id:     "post-user",
+		Method: "post",
+		Target: "/users",
+		SubmitButton: templates.Button{
+			Label: "S'enregistrer",
+			Swap:  "none",
+		},
+		Inputs: []templates.Input{
+			{
+				Name:     "email",
+				Label:    "Email",
+				Type:     "email",
+				Required: true,
+			},
+			{
+				Name:     "username",
+				Label:    "Identifiant",
+				Type:     "text",
+				Required: true,
+			},
+			{
+				Name:     "password",
+				Label:    "Mot de passe",
+				Type:     "password",
+				Required: true,
+			},
+		},
+	}
+
+	formStr, err := form.Build()
+	var registerPage bytes.Buffer
+	err = registerPageTemplate.Execute(&registerPage, registerPageParams{Form: formStr})
+
+	log.Printf("%s - %s", formStr, err)
+
+	page, err := templates.BuildPage(templates.BuildBody(template.HTML(registerPage.Bytes()), menu))
 	if err != nil {
 		return
 	}

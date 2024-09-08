@@ -5,6 +5,7 @@ import (
 	user_service "akingbee/app/user"
 	"akingbee/app/user/models"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -29,7 +30,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 
 	err := command.Validate()
 	if err != nil {
-		api.PrepareFailedNotification(&response, err.Error())
+		api.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -37,7 +38,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	user, err := user_service.CreateUser(ctx, &command)
 	if err != nil {
 
-		api.PrepareFailedNotification(&response, err.Error())
+		api.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -45,11 +46,29 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	_, err = userToJson(user)
 	if err != nil {
 
-		api.PrepareFailedNotification(&response, err.Error())
+		api.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	api.PrepareSuccessNotification(&response, "User created successfully")
+	api.PrepareSuccessNotification(response, "User created successfully")
+	response.WriteHeader(http.StatusOK)
+}
+
+func HandleLoginUser(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	username := req.FormValue("username")
+	password := req.FormValue("password")
+
+	_, err := user_service.LoginUser(ctx, username, password)
+
+	if err != nil {
+		api.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	api.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.WriteHeader(http.StatusOK)
 }
