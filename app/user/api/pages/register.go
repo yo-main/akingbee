@@ -4,9 +4,6 @@ import (
 	"akingbee/app/core/api/templates"
 	"bytes"
 	"html/template"
-
-	"log"
-
 	"net/http"
 )
 
@@ -67,8 +64,6 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	formStr, err := form.Build()
 	var registerPage bytes.Buffer
 	err = registerPageTemplate.Execute(&registerPage, registerPageParams{Form: formStr})
-
-	log.Printf("%s - %s", formStr, err)
 
 	page, err := templates.BuildPage(templates.BuildBody(template.HTML(registerPage.Bytes()), menu))
 	if err != nil {

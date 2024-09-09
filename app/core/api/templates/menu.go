@@ -20,8 +20,8 @@ var loggedOutMenu = template.Must(template.New("loggedOutMenu").Parse(`
     <div class="navbar-menu has-text-inherit">
 
 	<div class="navbar-end pr-5">
-		<p class="navbar-item"><a class="has-text-warning-95-invert">Connexion</a></p>
-		<p class="navbar-item"><a class="has-text-warning-95-invert">Inscription</a></p>
+		<p class="navbar-item"><a class="has-text-warning-95-invert" href="/login">Connexion</a></p>
+		<p class="navbar-item"><a class="has-text-warning-95-invert" href="/register">Inscription</a></p>
 	</div>
 </nav>
 `))
