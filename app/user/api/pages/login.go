@@ -41,7 +41,7 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 		},
 		Inputs: []templates.Input{
 			{
-				Name:     "login",
+				Name:     "username",
 				Label:    "Identifiant",
 				Type:     "text",
 				Required: true,

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"akingbee/app/user/jwt"
 	"akingbee/app/user/models"
 	"akingbee/app/user/repositories"
 	"context"
@@ -70,12 +71,19 @@ func CreateUser(ctx context.Context, command *CreateUserCommand) (*models.User, 
 	return &user, nil
 }
 
-func LoginUser(ctx context.Context, username string, password string) (*models.User, error) {
+func LoginUser(ctx context.Context, username string, password string) (string, error) {
 	user, err := repositories.GetUserByUsername(ctx, &username)
 
 	if err != nil {
-		return nil, errors.New("Could not login in the user")
+		log.Printf("Could not get user by username with %s: %s", username, err)
+		return "", errors.New("Incorrect username or password")
 	}
 
-	return user, nil
+	token, err := jwt.CreateToken(user)
+	if err != nil {
+		log.Printf("Could not generate jwt: %s", err)
+		return "", errors.New("Could not login in the user")
+	}
+
+	return token, nil
 }

@@ -21,7 +21,7 @@ func ApiServe() {
 
 	// http.HandleFunc("GET /user/{id}", user.GetUser)
 	// http.HandleFunc("GET /users", user.GetUsers)
-	mux.HandleFunc("POST /login", user_api.HandleLoginUser)
+	mux.HandleFunc("POST /login", user_api.HandlePostLogin)
 	mux.HandleFunc("POST /users", user_api.HandlePostUser)
 	// http.Handle("/", fs)
 
