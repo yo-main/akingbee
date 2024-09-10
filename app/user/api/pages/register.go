@@ -4,25 +4,14 @@ import (
 	"akingbee/app/core/api/templates"
 	"bytes"
 	"html/template"
+	"log"
 	"net/http"
 )
 
-var registerPageTemplate = template.Must(template.New("registerPage").Parse(`
-<div class="columns is-centered">
-
-  <div class="columns">
-	<div class="column">
-	  <div class="content has-text-centered">
-	    <p class="subtitle">Dites moi en plus sur vous</p>
-	  </div>
-	  {{ .Form }}
-  	</div>
-  </div>
-</div>
-`))
+var registerPageTemplate = template.Must(templates.HtmlPage.ParseFiles("front/pages/register.html"))
 
 type registerPageParams struct {
-	Form template.HTML
+	Form templates.Form
 }
 
 func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
@@ -31,44 +20,52 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	form := templates.Form{
-		Id:     "post-user",
-		Method: "post",
-		Target: "/users",
-		SubmitButton: templates.Button{
-			Label: "S'enregistrer",
-			Swap:  "none",
-		},
-		Inputs: []templates.Input{
-			{
-				Name:     "email",
-				Label:    "Email",
-				Type:     "email",
-				Required: true,
+	params := registerPageParams{
+		Form: templates.Form{
+			Id:     "post-user",
+			Method: "post",
+			Target: "/users",
+			SubmitButton: templates.Button{
+				Label: "S'enregistrer",
+				Swap:  "none",
 			},
-			{
-				Name:     "username",
-				Label:    "Identifiant",
-				Type:     "text",
-				Required: true,
-			},
-			{
-				Name:     "password",
-				Label:    "Mot de passe",
-				Type:     "password",
-				Required: true,
+			Inputs: []templates.Input{
+				{
+					Name:     "email",
+					Label:    "Email",
+					Type:     "email",
+					Required: true,
+				},
+				{
+					Name:     "username",
+					Label:    "Identifiant",
+					Type:     "text",
+					Required: true,
+				},
+				{
+					Name:     "password",
+					Label:    "Mot de passe",
+					Type:     "password",
+					Required: true,
+				},
 			},
 		},
 	}
 
-	formStr, err := form.Build()
 	var registerPage bytes.Buffer
-	err = registerPageTemplate.Execute(&registerPage, registerPageParams{Form: formStr})
+	err = templates.HtmlPage.ExecuteTemplate(&registerPage, "register.html", params)
 
-	page, err := templates.BuildPage(templates.BuildBody(template.HTML(registerPage.Bytes()), menu))
 	if err != nil {
+		log.Printf("Failed to build register page: %s", err)
 		return
 	}
 
-	response.Write([]byte(page))
+	page, err := templates.BuildPage(templates.GetBody(template.HTML(registerPage.Bytes()), menu))
+
+	if err != nil {
+		log.Printf("Failed to build register page: %s", err)
+		return
+	}
+
+	response.Write(page)
 }

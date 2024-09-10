@@ -11,41 +11,8 @@ type menuComponent struct {
 	LogoText  template.HTML
 }
 
-var loggedOutMenu = template.Must(template.New("loggedOutMenu").Parse(`
-<nav class="navbar is-fixed-top has-background-warning-95 has-shadow">
-    <div class="navbar-brand">
-		{{ .LogoImage }}
-		{{ .LogoText }}
-    </div>
-    <div class="navbar-menu has-text-inherit">
-
-	<div class="navbar-end pr-5">
-		<p class="navbar-item"><a class="has-text-warning-95-invert" href="/login">Connexion</a></p>
-		<p class="navbar-item"><a class="has-text-warning-95-invert" href="/register">Inscription</a></p>
-	</div>
-</nav>
-`))
-
-var loggedInMenu = template.Must(template.New("loggedInMenu").Parse(`
-<nav class="navbar is-fixed-top has-background-warning-95 has-shadow">
-    <div class="navbar-brand">
-		{{ .LogoImage }}
-		{{ .LogoText }}
-    </div>
-    <div class="navbar-menu has-text-inherit">
-
-	<div class="navbar-start has-text-inherit">
-		<p class="navbar-item"><a class="has-text-warning-95-invert">Ruches</a></p>
-		<p class="navbar-item"><a class="has-text-warning-95-invert">Ruchers</a></p>
-		<p class="navbar-item"><a class="has-text-warning-95-invert">Paramètres</a></p>
-	</div>
-
-	<div class="navbar-end pr-5">
-		<p class="navbar-item"><strong class="has-text-warning-95-invert">Bienvenue Romain</strong></p>
-		<p class="navbar-item"><a class="has-text-warning-95-invert">Déconnexion</a></p>
-	</div>
-</nav>
-`))
+var loggedOutMenu = template.Must(HtmlPage.ParseFiles("front/components/navbar_logged_out.html"))
+var loggedInMenu = template.Must(HtmlPage.ParseFiles("front/components/navbar_logged_in.html"))
 
 func GetLoggedInMenu() (template.HTML, error) {
 	params := menuComponent{
@@ -54,7 +21,7 @@ func GetLoggedInMenu() (template.HTML, error) {
 	}
 
 	var buffer bytes.Buffer
-	loggedInMenu.Execute(&buffer, params)
+	loggedInMenu.ExecuteTemplate(&buffer, "navbar_logged_in.html", params)
 
 	return template.HTML(buffer.Bytes()), nil
 
@@ -67,7 +34,7 @@ func GetLoggedOutMenu() (template.HTML, error) {
 	}
 
 	var buffer bytes.Buffer
-	loggedOutMenu.Execute(&buffer, params)
+	loggedOutMenu.ExecuteTemplate(&buffer, "navbar_logged_out.html", params)
 
 	return template.HTML(buffer.Bytes()), nil
 

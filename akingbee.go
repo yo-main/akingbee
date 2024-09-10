@@ -3,7 +3,7 @@ package main
 import (
 	"akingbee/app/core/database"
 	"akingbee/app/core/database/queries/migrations"
-	"akingbee/app/entrypoints"
+	"akingbee/entrypoints"
 	"context"
 )
 
