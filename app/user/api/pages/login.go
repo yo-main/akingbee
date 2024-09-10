@@ -4,25 +4,14 @@ import (
 	"akingbee/app/core/api/templates"
 	"bytes"
 	"html/template"
+	"log"
 	"net/http"
 )
 
-var loginPageTemplate = template.Must(template.New("loginPage").Parse(`
-<div class="columns is-centered">
-  <div class="column is-narrow">
-
-    <div class="content has-text-centered">
-      <p class="subtitle">Bienvenue sur <strong>Akingbee</strong>!</p>
-    </div>
-
-	{{ .Form }}
-
-  </div>
-</div>
-`))
+var loginPageTemplate = template.Must(templates.HtmlPage.ParseFiles("front/pages/login.html"))
 
 type loginPageParams struct {
-	Form template.HTML
+	Form templates.Form
 }
 
 func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
@@ -31,39 +20,40 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	form := templates.Form{
-		Id:     "login",
-		Method: "post",
-		Target: "/login",
-		SubmitButton: templates.Button{
-			Label: "Se connecter",
-			Swap:  "none",
-		},
-		Inputs: []templates.Input{
-			{
-				Name:     "username",
-				Label:    "Identifiant",
-				Type:     "text",
-				Required: true,
+	loginParams := loginPageParams{
+		Form: templates.Form{
+			Id:     "login",
+			Method: "post",
+			Target: "/login",
+			SubmitButton: templates.Button{
+				Label: "Se connecter",
+				Swap:  "none",
 			},
-			{
-				Name:     "password",
-				Label:    "Mot de passe",
-				Type:     "password",
-				Required: true,
+			Inputs: []templates.Input{
+				{
+					Name:     "username",
+					Label:    "Identifiant",
+					Type:     "text",
+					Required: true,
+				},
+				{
+					Name:     "password",
+					Label:    "Mot de passe",
+					Type:     "password",
+					Required: true,
+				},
 			},
-		},
-	}
+		}}
 
-	formStr, err := form.Build()
 	var loginPage bytes.Buffer
-
-	err = loginPageTemplate.Execute(&loginPage, loginPageParams{Form: formStr})
-	page, err := templates.BuildPage(templates.BuildBody(template.HTML(loginPage.Bytes()), menu))
+	err = templates.HtmlPage.ExecuteTemplate(&loginPage, "login.html", loginParams)
 
 	if err != nil {
+		log.Printf("Failed to build login page: %s", err)
 		return
 	}
+
+	page, err := templates.BuildPage(templates.GetBody(template.HTML(loginPage.Bytes()), menu))
 
 	response.Write([]byte(page))
 }

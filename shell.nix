@@ -12,6 +12,7 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [ 
     unstable.go
     unstable.gopls
+    air
     gcc
     nodePackages.typescript-language-server
     vscode-langservers-extracted

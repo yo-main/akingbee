@@ -1,0 +1,24 @@
+<form id="{{ .Id }}" hx-{{ .Method }}="{{ .Target }}"
+  hx-on:htmx:after-request="if (event.detail.successful) {this.reset()}"
+  hx-on:htmx:validation:validate="this.reportValidity()">
+  <div class="column is-narrow">
+
+    {{ range .Inputs }}
+    <div class="field is-horizontal">
+      <div class="field-label is-normal is-flex-grow-4">{{ .Label }}</div>
+      <div class="field-body">
+        <div class="control">
+          {{ template "input.html" . }}
+        </div>
+      </div>
+    </div>
+    {{ end }}
+
+    <div class="field is-grouped is-grouped-right">
+      <div class="control">
+        {{ template "button.html" .SubmitButton }}
+      </div>
+    </div>
+
+  </div>
+</form>
