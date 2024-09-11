@@ -1,35 +1,36 @@
-package login
+package pages
 
 import (
-	"akingbee/app/core/api/templates"
+	"akingbee/web/components"
+	"akingbee/web/pages"
 	"bytes"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-var registerPageTemplate = template.Must(templates.HtmlPage.ParseFiles("front/pages/register.html"))
+var registerPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/templates/register.html"))
 
 type registerPageParams struct {
-	Form templates.Form
+	Form components.Form
 }
 
 func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
-	menu, err := templates.GetLoggedOutMenu()
+	menu, err := components.GetLoggedOutMenu()
 	if err != nil {
 		return
 	}
 
 	params := registerPageParams{
-		Form: templates.Form{
+		Form: components.Form{
 			Id:     "post-user",
 			Method: "post",
 			Target: "/users",
 			Swap:   "none",
-			SubmitButton: templates.Button{
+			SubmitButton: components.Button{
 				Label: "S'enregistrer",
 			},
-			Inputs: []templates.Input{
+			Inputs: []components.Input{
 				{
 					Name:     "email",
 					Label:    "Email",
@@ -53,14 +54,14 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	}
 
 	var registerPage bytes.Buffer
-	err = templates.HtmlPage.ExecuteTemplate(&registerPage, "register.html", params)
+	err = pages.HtmlPage.ExecuteTemplate(&registerPage, "register.html", params)
 
 	if err != nil {
 		log.Printf("Failed to build register page: %s", err)
 		return
 	}
 
-	page, err := templates.BuildPage(templates.GetBody(template.HTML(registerPage.Bytes()), menu))
+	page, err := pages.BuildPage(pages.GetBody(template.HTML(registerPage.Bytes()), menu))
 
 	if err != nil {
 		log.Printf("Failed to build register page: %s", err)

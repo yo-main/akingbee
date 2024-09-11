@@ -1,9 +1,9 @@
 package user
 
 import (
-	"akingbee/app/user/jwt"
-	"akingbee/app/user/models"
-	"akingbee/app/user/repositories"
+	"akingbee/user/jwt"
+	"akingbee/user/models"
+	"akingbee/user/repositories"
 	"context"
 	"errors"
 	"log"

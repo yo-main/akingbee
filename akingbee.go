@@ -1,9 +1,9 @@
 package main
 
 import (
-	"akingbee/app/core/database"
-	"akingbee/app/core/database/queries/migrations"
 	"akingbee/entrypoints"
+	"akingbee/internal/database"
+	"akingbee/internal/database/queries/migrations"
 	"context"
 )
 

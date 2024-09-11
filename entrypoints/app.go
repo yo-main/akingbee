@@ -1,14 +1,14 @@
 package entrypoints
 
 import (
-	user_api "akingbee/app/user/api"
-	user_pages "akingbee/app/user/api/pages"
+	user_api "akingbee/user/api"
+	user_pages "akingbee/user/pages"
 	"log"
 	"net/http"
 )
 
 func ApiServe() {
-	fs := http.FileServer(http.Dir("front/resources/"))
+	fs := http.FileServer(http.Dir("web/resources/"))
 
 	mux := http.NewServeMux()
 

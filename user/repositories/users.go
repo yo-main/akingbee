@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"akingbee/app/core/database"
-	"akingbee/app/user/models"
+	"akingbee/internal/database"
+	"akingbee/user/models"
 	"context"
 
 	"github.com/google/uuid"

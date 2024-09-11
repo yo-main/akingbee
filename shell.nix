@@ -16,6 +16,7 @@ pkgs.mkShellNoCC {
     gcc
     nodePackages.typescript-language-server
     vscode-langservers-extracted
+    tree
   ];
 
 }
