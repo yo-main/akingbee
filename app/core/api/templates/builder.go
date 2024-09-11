@@ -2,7 +2,6 @@ package templates
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"log"
 )
@@ -16,8 +15,14 @@ type htmlPageComponent struct {
 	Body htmlBodyComponent
 }
 
+type NotificationComponent struct {
+	Type    string
+	Content string
+}
+
 var HtmlPage = template.Must(template.ParseFiles("front/pages/index.html"))
 var htmlBody = template.Must(HtmlPage.ParseFiles("front/pages/body.html"))
+var notificationComponent = template.Must(HtmlPage.ParseFiles("front/components/notification.html"))
 
 func BuildPage(body htmlBodyComponent) ([]byte, error) {
 
@@ -42,20 +47,12 @@ func GetBody(content template.HTML, menu template.HTML) htmlBodyComponent {
 	}
 }
 
-func BuildSuccessNotification(content string) template.HTML {
-	return template.HTML(fmt.Sprintf(`
-	<div class="notification is-success">
-		<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
-		<div>%s</div>
-	</div>
-	`, content))
-}
+func (data *NotificationComponent) Build() (template.HTML, error) {
+	var buffer bytes.Buffer
+	err := HtmlPage.ExecuteTemplate(&buffer, "notification.html", data)
+	if err != nil {
+		log.Printf("Error while building notification: %s", err)
+	}
 
-func BuildErrorNotification(content string) template.HTML {
-	return template.HTML(fmt.Sprintf(`
-	<div class="notification is-danger">
-		<button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
-		<div>%s</div>
-	</div>
-	`, content))
+	return template.HTML(buffer.Bytes()), nil
 }
