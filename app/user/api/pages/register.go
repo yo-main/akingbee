@@ -25,9 +25,9 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 			Id:     "post-user",
 			Method: "post",
 			Target: "/users",
+			Swap:   "none",
 			SubmitButton: templates.Button{
 				Label: "S'enregistrer",
-				Swap:  "none",
 			},
 			Inputs: []templates.Input{
 				{

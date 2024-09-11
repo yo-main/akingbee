@@ -12,13 +12,13 @@ type Form struct {
 	Id           string
 	Method       string
 	Target       string
+	Swap         string
 	SubmitButton Button
 	Inputs       []Input
 }
 
 type Button struct {
 	Label string
-	Swap  string
 }
 
 type Input struct {
