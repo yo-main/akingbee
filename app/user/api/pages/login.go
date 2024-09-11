@@ -25,9 +25,9 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 			Id:     "login",
 			Method: "post",
 			Target: "/login",
+			Swap:   "none",
 			SubmitButton: templates.Button{
 				Label: "Se connecter",
-				Swap:  "none",
 			},
 			Inputs: []templates.Input{
 				{
