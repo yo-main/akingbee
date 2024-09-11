@@ -1,9 +1,9 @@
 package user
 
 import (
-	"akingbee/app/core/api"
-	user_service "akingbee/app/user"
-	"akingbee/app/user/models"
+	user_service "akingbee/user"
+	"akingbee/user/models"
+	"akingbee/web"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -31,7 +31,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 
 	err := command.Validate()
 	if err != nil {
-		api.PrepareFailedNotification(response, err.Error())
+		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -39,7 +39,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	user, err := user_service.CreateUser(ctx, &command)
 	if err != nil {
 
-		api.PrepareFailedNotification(response, err.Error())
+		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -47,12 +47,12 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	_, err = userToJson(user)
 	if err != nil {
 
-		api.PrepareFailedNotification(response, err.Error())
+		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	api.PrepareSuccessNotification(response, "User created successfully")
+	web.PrepareSuccessNotification(response, "User created successfully")
 	response.WriteHeader(http.StatusOK)
 }
 
@@ -72,12 +72,12 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)
-		api.PrepareFailedNotification(response, err.Error())
+		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	api.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
+	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
 	response.WriteHeader(http.StatusOK)
 }

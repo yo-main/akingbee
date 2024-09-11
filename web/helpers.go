@@ -1,13 +1,13 @@
-package api
+package web
 
 import (
-	"akingbee/app/core/api/templates"
+	"akingbee/web/components"
 	"encoding/json"
 	"log"
 	"net/http"
 )
 
-func prepareNotification(response http.ResponseWriter, notification *templates.NotificationComponent) {
+func prepareNotification(response http.ResponseWriter, notification *components.NotificationComponent) {
 	html, err := notification.Build()
 	if err != nil {
 		log.Printf("Could not build notification: %s", err)
@@ -21,7 +21,7 @@ func prepareNotification(response http.ResponseWriter, notification *templates.N
 }
 
 func PrepareFailedNotification(response http.ResponseWriter, msg string) {
-	notification := templates.NotificationComponent{
+	notification := components.NotificationComponent{
 		Type:    "danger",
 		Content: msg,
 	}
@@ -30,7 +30,7 @@ func PrepareFailedNotification(response http.ResponseWriter, msg string) {
 }
 
 func PrepareSuccessNotification(response http.ResponseWriter, msg string) {
-	notification := templates.NotificationComponent{
+	notification := components.NotificationComponent{
 		Type:    "success",
 		Content: msg,
 	}

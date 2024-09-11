@@ -1,8 +1,8 @@
 package jwt
 
 import (
-	"akingbee/app/core/config"
-	"akingbee/app/user/models"
+	"akingbee/internal/config"
+	"akingbee/user/models"
 	"crypto"
 	"time"
 
