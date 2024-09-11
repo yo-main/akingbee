@@ -1,0 +1,4 @@
+<div class="notification is-{{ .Type }}">
+  <button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
+  <div>{{ .Content }}</div>
+</div>

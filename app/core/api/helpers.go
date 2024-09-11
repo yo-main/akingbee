@@ -3,22 +3,36 @@ package api
 import (
 	"akingbee/app/core/api/templates"
 	"encoding/json"
-	"html/template"
+	"log"
 	"net/http"
 )
 
-func prepareNotification(response http.ResponseWriter, msg template.HTML) {
+func prepareNotification(response http.ResponseWriter, notification *templates.NotificationComponent) {
+	html, err := notification.Build()
+	if err != nil {
+		log.Printf("Could not build notification: %s", err)
+	}
+
 	events := map[string]interface{}{
-		"notificationEvent": msg,
+		"notificationEvent": html,
 	}
 	triggerHeader, _ := json.Marshal(events)
 	response.Header().Set("HX-Trigger", string(triggerHeader))
 }
 
 func PrepareFailedNotification(response http.ResponseWriter, msg string) {
-	prepareNotification(response, templates.BuildErrorNotification(msg))
+	notification := templates.NotificationComponent{
+		Type:    "danger",
+		Content: msg,
+	}
+
+	prepareNotification(response, &notification)
 }
 
 func PrepareSuccessNotification(response http.ResponseWriter, msg string) {
-	prepareNotification(response, templates.BuildSuccessNotification(msg))
+	notification := templates.NotificationComponent{
+		Type:    "success",
+		Content: msg,
+	}
+	prepareNotification(response, &notification)
 }
