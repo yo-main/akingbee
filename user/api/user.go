@@ -1,8 +1,8 @@
 package user
 
 import (
-	user_service "akingbee/user"
 	"akingbee/user/models"
+	"akingbee/user/services"
 	"akingbee/web"
 	"encoding/json"
 	"fmt"
@@ -23,7 +23,7 @@ func userToJson(user *models.User) ([]byte, error) {
 func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	command := user_service.CreateUserCommand{
+	command := services.CreateUserCommand{
 		Username: req.FormValue("username"),
 		Password: req.FormValue("password"),
 		Email:    req.FormValue("email"),
@@ -36,7 +36,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := user_service.CreateUser(ctx, &command)
+	user, err := services.CreateUser(ctx, &command)
 	if err != nil {
 
 		web.PrepareFailedNotification(response, err.Error())
@@ -68,7 +68,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := user_service.LoginUser(ctx, username, password)
+	token, err := services.LoginUser(ctx, username, password)
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)
