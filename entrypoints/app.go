@@ -1,6 +1,7 @@
 package entrypoints
 
 import (
+	bee_pages "akingbee/bees/pages"
 	user_api "akingbee/user/api"
 	user_pages "akingbee/user/pages"
 	"log"
@@ -16,6 +17,8 @@ func ApiServe() {
 	mux.HandleFunc("GET /{$}", user_pages.HandleWelcomePage)
 	mux.HandleFunc("GET /login", user_pages.HandleGetLogin)
 	mux.HandleFunc("GET /register", user_pages.HandleGetRegister)
+
+	mux.HandleFunc("GET /apiary", bee_pages.HandleGetApiary)
 
 	// http.HandleFunc("POST /login", login.UserLogin)
 
