@@ -1,0 +1,21 @@
+<div class="modal" id="modal-{{ .ButtonLabel }}">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">{{ .Title }}</p>
+
+      <button class="modal-close is-large" aria-label="close"
+        onclick="document.getElementById('modal-{{ .ButtonLabel }}').classList.remove('is-active')">BLAAA</button>
+    </header>
+    <section class="modal-card-body">
+      {{ template "form.html" .Form }}
+    </section>
+    <footer class="modal-card-foot">
+      {{ template "button.html" .Form.SubmitButton }}
+    </footer>
+  </div>
+</div>
+
+<button class="button" onclick="document.getElementById('modal-{{ .ButtonLabel }}').classList.add('is-active')">
+  {{ .ButtonLabel }}
+</button>

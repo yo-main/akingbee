@@ -12,7 +12,8 @@ import (
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
 
 type apiaryPageParameter struct {
-	Table components.Table
+	CreateApiaryModal components.ModalForm
+	Table             components.Table
 }
 
 func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
@@ -22,6 +23,40 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 	}
 
 	params := apiaryPageParameter{
+		CreateApiaryModal: components.ModalForm{
+			Title:       "Création un nouveau rucher",
+			ButtonLabel: "Nouveau rucher",
+			Form: components.Form{
+				Id:     "createApiary",
+				Method: "post",
+				Target: "/apiary",
+				Swap:   "none",
+				Inputs: []components.Input{
+					{
+						Name:     "name",
+						Label:    "Nom",
+						Type:     "text",
+						Required: true,
+					},
+					{
+						Name:     "location",
+						Label:    "Location",
+						Type:     "text",
+						Required: true,
+					},
+					{
+						Name:     "honeyKind",
+						Label:    "Type de miel",
+						Type:     "text",
+						Required: true,
+					},
+				},
+				SubmitButton: components.Button{
+					Label:  "Créer",
+					Type:   "is-link",
+					FormId: "createApiary",
+				},
+			}},
 		Table: components.Table{
 			IsBordered:  false,
 			IsStripped:  true,

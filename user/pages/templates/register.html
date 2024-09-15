@@ -5,6 +5,11 @@
         <p class="subtitle">Dites moi en plus sur vous</p>
       </div>
       {{ template "form.html" .Form }}
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          {{ template "button.html" .Form.SubmitButton }}
+        </div>
+      </div>
     </div>
   </div>
 </div>
