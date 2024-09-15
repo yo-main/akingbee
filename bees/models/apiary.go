@@ -5,9 +5,9 @@ import (
 )
 
 type Apiary struct {
-	name      string
-	location  string
-	honeyKind string
-	hiveCount int
-	publicId  uuid.UUID
+	Name      string
+	Location  string
+	HoneyKind string
+	HiveCount int
+	PublicId  uuid.UUID
 }
