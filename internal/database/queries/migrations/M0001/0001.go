@@ -1,4 +1,4 @@
-package migrations
+package M0001
 
 import (
 	"context"
@@ -12,7 +12,8 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
 	_, err := db.ExecContext(ctx, `
         CREATE TABLE IF NOT EXISTS CREDENTIALS (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-			public_id BLOBL NOT NULL UNIQUE,
+			date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
+			public_id BLOB NOT NULL UNIQUE,
             username BLOB NOT NULL UNIQUE,
             password BLOB NOT NULL
         );
