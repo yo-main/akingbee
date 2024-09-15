@@ -6,7 +6,6 @@ import (
 )
 
 var formTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/form.html"))
-var buttonTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/button.html"))
 var inputTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/input.html"))
 
 type Form struct {
@@ -16,10 +15,6 @@ type Form struct {
 	Swap         string
 	SubmitButton Button
 	Inputs       []Input
-}
-
-type Button struct {
-	Label string
 }
 
 type Input struct {

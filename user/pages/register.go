@@ -28,7 +28,8 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 			Target: "/users",
 			Swap:   "none",
 			SubmitButton: components.Button{
-				Label: "S'enregistrer",
+				Label:  "S'enregistrer",
+				FormId: "post-user",
 			},
 			Inputs: []components.Input{
 				{

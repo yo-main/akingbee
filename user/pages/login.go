@@ -41,7 +41,9 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 			Target: "/login",
 			Swap:   "none",
 			SubmitButton: components.Button{
-				Label: "Se connecter",
+				Label:  "Se connecter",
+				Type:   "is-link",
+				FormId: "login",
 			},
 			Inputs: []components.Input{
 				{
