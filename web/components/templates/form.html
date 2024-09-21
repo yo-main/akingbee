@@ -1,5 +1,5 @@
-<form id="{{ .Id }}" hx-{{ .Method }}="{{ .Target }}" hx-swap="{{ .Swap }}"
-  hx-on:htmx:after-request="if (event.detail.successful) {this.reset()}"
+<form id="{{ .Id }}" hx-{{ .Method }}="{{ .Target }}"
+  hx-on:htmx:after-request=" if (event.detail.successful) {this.reset()}"
   hx-on:htmx:validation:validate="this.reportValidity()">
   <div class="column is-narrow">
 

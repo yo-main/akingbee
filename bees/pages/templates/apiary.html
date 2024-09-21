@@ -1,7 +1,7 @@
-<div class="columns is-centered">
+<div id="apiary-body" class="columns is-centered">
   <div class="column is-three-fifths">
 
-    <div class="block is-pulled-right">
+    <div class="block is-pulled-right" hx-target="#apiary-body" hx-swap="outerHTML">
       {{ template "modal.html" .CreateApiaryModal }}
     </div>
 
