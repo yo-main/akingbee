@@ -1,6 +1,8 @@
 package pages
 
 import (
+	"akingbee/internal/htmx"
+	"akingbee/user/services"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -16,25 +18,20 @@ type LoginPageBuilder struct {
 	SubmitButton components.Button
 }
 
-func (data *LoginPageBuilder) Build() (template.HTML, error) {
+func (data *LoginPageBuilder) Build() (*bytes.Buffer, error) {
 	var loginPage bytes.Buffer
 	err := pages.HtmlPage.ExecuteTemplate(&loginPage, "login.html", data)
 
 	if err != nil {
 		log.Printf("Failed to build login page: %s", err)
-		return "", err
+		return nil, err
 	}
 
-	return template.HTML(loginPage.Bytes()), nil
+	return &loginPage, nil
 
 }
 
 func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
-	menu, err := components.GetLoggedOutMenu()
-	if err != nil {
-		return
-	}
-
 	loginParams := LoginPageBuilder{
 		SubmitButton: components.Button{
 			Label:  "Se connecter",
@@ -64,14 +61,58 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 
 	loginPage, err := loginParams.Build()
 	if err != nil {
+		log.Printf("Could not load login page: %s", err)
 		return
 	}
 
-	page, err := pages.BuildPage(pages.GetBody(loginPage, menu))
+	if htmx.IsHtmxRequest(req) {
+		response.Write(loginPage.Bytes())
+	} else {
+		menu, err := components.GetLoggedOutMenu()
+		if err != nil {
+			log.Printf("Could not build logged out menu: %s", err)
+			return
+		}
 
-	response.Write([]byte(page))
+		page, err := pages.BuildPage(pages.GetBody(template.HTML(loginPage.Bytes()), template.HTML(menu.Bytes())))
+
+		response.Write([]byte(page))
+	}
+}
+
+func GetWelcomePage(req *http.Request) (*bytes.Buffer, error) {
+
+	var page bytes.Buffer
+	page.WriteString("COUCOU")
+	return &page, nil
 }
 
 func HandleWelcomePage(response http.ResponseWriter, req *http.Request) {
-	http.Redirect(response, req, "/login", http.StatusMovedPermanently)
+	welcomePage, err := GetWelcomePage(req)
+
+	if err != nil {
+		log.Printf("Could not get welcome page content: %s", err)
+		return
+	}
+
+	if htmx.IsHtmxRequest(req) {
+		response.Write([]byte(welcomePage.Bytes()))
+	} else {
+		_, err = services.AuthenticateUser(req)
+
+		var menu *bytes.Buffer
+
+		if err != nil {
+			menu, err = components.GetLoggedOutMenu()
+		} else {
+			menu, err = components.GetLoggedInMenu()
+		}
+
+		page, err := pages.BuildPage(pages.GetBody(template.HTML(welcomePage.Bytes()), template.HTML(menu.Bytes())))
+		if err != nil {
+			log.Printf("Could not build welcome page content: %s", err)
+			return
+		}
+		response.Write([]byte(page))
+	}
 }

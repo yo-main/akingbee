@@ -2,6 +2,7 @@ package user
 
 import (
 	"akingbee/internal/htmx"
+	user_pages "akingbee/user/pages"
 	"akingbee/user/services"
 	"akingbee/web"
 	"fmt"
@@ -27,13 +28,22 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 
 	_, err = services.CreateUser(ctx, &command)
 	if err != nil {
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
+	welcomePage, err := user_pages.GetWelcomePage(req)
+	if err != nil {
+		log.Printf("Could not get welcome page: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	web.PrepareSuccessNotification(response, "User created successfully")
+	htmx.NewLocation(response, "/")
+	response.Write(welcomePage.Bytes())
 	response.WriteHeader(http.StatusOK)
 }
 
@@ -58,9 +68,13 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
+	welcomePage, err := user_pages.GetWelcomePage(req)
+
+	// htmx.NewLocation(response, "/")
+	web.PrepareLoggedInMenu(response)
+	// web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
-	response.WriteHeader(http.StatusOK)
+	response.Write(welcomePage.Bytes())
 }
 
 func HandleLogout(response http.ResponseWriter, req *http.Request) {

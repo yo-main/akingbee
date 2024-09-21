@@ -121,7 +121,7 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		page, err := pages.BuildPage(pages.GetBody(template.HTML(apiaryPage.Bytes()), menu))
+		page, err := pages.BuildPage(pages.GetBody(template.HTML(apiaryPage.Bytes()), template.HTML(menu.Bytes())))
 
 		response.Write([]byte(page))
 	}
