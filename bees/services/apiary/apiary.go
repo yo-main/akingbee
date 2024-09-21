@@ -31,6 +31,11 @@ func (c *CreateApiaryCommand) Validate() error {
 }
 
 func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Apiary, error) {
+	err := command.Validate()
+	if err != nil {
+		return nil, err
+	}
+
 	apiary := models.Apiary{
 		HoneyKind: command.HoneyKind,
 		Name:      command.Name,
@@ -40,7 +45,7 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 		PublicId:  uuid.New(),
 	}
 
-	err := repositories.CreateApiary(ctx, &apiary)
+	err = repositories.CreateApiary(ctx, &apiary)
 	if err != nil {
 		log.Printf("Could not create apiary: %s", err)
 		return nil, errors.New("Couldn't create the apiary")

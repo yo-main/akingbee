@@ -2,10 +2,13 @@ package pages
 
 import (
 	"akingbee/bees/repositories"
+	"akingbee/internal/htmx"
 	"akingbee/user/services"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
+	"context"
+	"github.com/google/uuid"
 	"html/template"
 	"log"
 	"net/http"
@@ -19,28 +22,11 @@ type apiaryPageParameter struct {
 	Table             components.Table
 }
 
-func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-
-	userId, err := services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	menu, err := components.GetLoggedInMenu()
-	if err != nil {
-		log.Printf("Could not get logged in menu: %s", err)
-		return
-	}
-
+func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error) {
 	apiaries, err := repositories.GetApiary(ctx, userId)
 	if err != nil {
 		log.Printf("Could not get apiaries: %s", err)
-		response.WriteHeader(http.StatusBadRequest)
-		return
+		return nil, err
 	}
 
 	rows := []components.Rows{}
@@ -99,12 +85,44 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 	err = pages.HtmlPage.ExecuteTemplate(&apiaryPage, "apiary.html", params)
 
 	if err != nil {
-		log.Printf("Failed to build login page: %s", err)
+		log.Printf("Failed to build apiary page: %s", err)
+		return nil, err
+	}
+
+	return &apiaryPage, nil
+
+}
+
+func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	userId, err := services.AuthenticateUser(req)
+
+	if err != nil {
+		log.Printf("Could not authenticate user: %s", err)
+		response.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	page, err := pages.BuildPage(pages.GetBody(template.HTML(apiaryPage.Bytes()), menu))
+	apiaryPage, err := GetApiaryBody(ctx, userId)
+	if err != nil {
+		log.Printf("Could not get apiry page: %s", err)
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	response.Write([]byte(page))
+	if htmx.IsHtmxRequest(req) {
+		response.Write(apiaryPage.Bytes())
+		response.WriteHeader(http.StatusOK)
+	} else {
+		menu, err := components.GetLoggedInMenu()
+		if err != nil {
+			log.Printf("Could not get logged in menu: %s", err)
+			return
+		}
 
+		page, err := pages.BuildPage(pages.GetBody(template.HTML(apiaryPage.Bytes()), menu))
+
+		response.Write([]byte(page))
+	}
 }

@@ -17,7 +17,7 @@ func prepareNotification(response http.ResponseWriter, notification *components.
 		"notificationEvent": html,
 	}
 	triggerHeader, _ := json.Marshal(events)
-	response.Header().Set("HX-Trigger", string(triggerHeader))
+	response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
 }
 
 func PrepareFailedNotification(response http.ResponseWriter, msg string) {

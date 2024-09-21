@@ -34,6 +34,7 @@ const queryGetApiary = `
 	FROM APIARY
 	JOIN USERS ON USERS.ID=APIARY.OWNER_ID
 	WHERE USERS.PUBLIC_ID=$1
+	ORDER BY APIARY.DATE_CREATION DESC
 `
 
 func GetApiary(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, error) {
