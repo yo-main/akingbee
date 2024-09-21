@@ -17,6 +17,8 @@ func ApiServe() {
 	mux.Handle("/", fs)
 	mux.HandleFunc("GET /{$}", pages_user.HandleWelcomePage)
 
+	mux.HandleFunc("POST /logout", api_user.HandleLogout)
+
 	mux.HandleFunc("GET /login", pages_user.HandleGetLogin)
 	mux.HandleFunc("POST /login", api_user.HandlePostLogin)
 
