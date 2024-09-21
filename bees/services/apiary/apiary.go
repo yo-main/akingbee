@@ -2,15 +2,18 @@ package apiary
 
 import (
 	"akingbee/bees/models"
+	"akingbee/bees/repositories"
 	"context"
 	"errors"
 	"github.com/google/uuid"
+	"log"
 )
 
 type CreateApiaryCommand struct {
 	Name      string
 	Location  string
 	HoneyKind string
+	Owner     *uuid.UUID
 }
 
 func (c *CreateApiaryCommand) Validate() error {
@@ -32,28 +35,16 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 		HoneyKind: command.HoneyKind,
 		Name:      command.Name,
 		Location:  command.Location,
+		Owner:     *command.Owner,
+		HiveCount: 0,
 		PublicId:  uuid.New(),
 	}
 
-	err := repositories.CreateCredentials(ctx, &credentials)
+	err := repositories.CreateApiary(ctx, &apiary)
 	if err != nil {
-		log.Printf("Could not create credentials: %s", err)
-		if strings.Contains(err.Error(), "UNIQUE constraint") {
-			return nil, errors.New("Email or Username already taken")
-		}
-		return nil, errors.New("Couldn't create the user")
+		log.Printf("Could not create apiary: %s", err)
+		return nil, errors.New("Couldn't create the apiary")
 	}
 
-	user := models.User{
-		PublicId:    uuid.New(),
-		Email:       command.Email,
-		Credentials: credentials,
-	}
-	err = repositories.CreateUser(ctx, &user)
-	if err != nil {
-		log.Printf("Could not create user: %s", err)
-		return nil, err
-	}
-
-	return &user, nil
+	return &apiary, nil
 }

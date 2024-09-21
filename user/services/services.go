@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
@@ -86,4 +87,14 @@ func LoginUser(ctx context.Context, username string, password string) (string, e
 	}
 
 	return token, nil
+}
+
+func AuthenticateUser(req *http.Request) (*uuid.UUID, error) {
+	cookie, err := req.Cookie("akingbeeToken")
+
+	if err != nil {
+		return nil, errors.New("Not authenticated")
+	}
+
+	return jwt.ValidateToken(cookie.Value)
 }

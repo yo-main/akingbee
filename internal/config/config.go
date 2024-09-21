@@ -25,4 +25,4 @@ func toInt(value string) int {
 }
 
 var APP_PRIVATE_KEY = []byte(getEnv("APP_PRIVATE_KEY", "VERY_PRIVATE_KEY"))
-var JWT_TTL = toInt(getEnv("TOKEN_TTL", "300"))
+var JWT_TTL = toInt(getEnv("TOKEN_TTL", "300000"))

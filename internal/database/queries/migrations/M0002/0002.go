@@ -14,8 +14,11 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 			date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
 			public_id BLOB NOT NULL UNIQUE,
-            username BLOB NOT NULL UNIQUE,
-            password BLOB NOT NULL
+            name BLOB NOT NULL UNIQUE,
+            location BLOB NOT NULL,
+            honey_kind BLOB NOT NULL,
+			owner_id INTEGER NOT NULL,
+			FOREIGN KEY(owner_id) REFERENCES USERS(id)
         );
     `)
 

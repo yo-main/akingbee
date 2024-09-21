@@ -1,9 +1,10 @@
 package entrypoints
 
 import (
-	bee_pages "akingbee/bees/pages"
-	user_api "akingbee/user/api"
-	user_pages "akingbee/user/pages"
+	api_apiary "akingbee/bees/api"
+	pages_bees "akingbee/bees/pages"
+	api_user "akingbee/user/api"
+	pages_user "akingbee/user/pages"
 	"log"
 	"net/http"
 )
@@ -14,18 +15,21 @@ func ApiServe() {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", fs)
-	mux.HandleFunc("GET /{$}", user_pages.HandleWelcomePage)
-	mux.HandleFunc("GET /login", user_pages.HandleGetLogin)
-	mux.HandleFunc("GET /register", user_pages.HandleGetRegister)
+	mux.HandleFunc("GET /{$}", pages_user.HandleWelcomePage)
 
-	mux.HandleFunc("GET /apiary", bee_pages.HandleGetApiary)
+	mux.HandleFunc("GET /login", pages_user.HandleGetLogin)
+	mux.HandleFunc("POST /login", api_user.HandlePostLogin)
+
+	mux.HandleFunc("GET /register", pages_user.HandleGetRegister)
+	mux.HandleFunc("POST /users", api_user.HandlePostUser)
+
+	mux.HandleFunc("GET /apiary", pages_bees.HandleGetApiary)
+	mux.HandleFunc("POST /apiary", api_apiary.HandlePostApiary)
 
 	// http.HandleFunc("POST /login", login.UserLogin)
 
 	// http.HandleFunc("GET /user/{id}", user.GetUser)
 	// http.HandleFunc("GET /users", user.GetUsers)
-	mux.HandleFunc("POST /login", user_api.HandlePostLogin)
-	mux.HandleFunc("POST /users", user_api.HandlePostUser)
 	// http.Handle("/", fs)
 
 	log.Print("Listing on port 8080...\n")

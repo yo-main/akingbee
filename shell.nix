@@ -12,6 +12,7 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [ 
     unstable.go
     unstable.gopls
+    sqlite
     air
     gcc
     nodePackages.typescript-language-server

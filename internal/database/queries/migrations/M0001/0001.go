@@ -27,8 +27,9 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
         CREATE TABLE IF NOT EXISTS USERS (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
             public_id BLOB NOT NULL UNIQUE,
+			credential_id INTEGER NOT NULL,
             email BLOB NOT NULL UNIQUE,
-            credential_id INTEGER UNIQUE NOT NULL
+            FOREIGN KEY(credential_id) REFERENCES USERS(id)
         );
     `)
 
