@@ -12,7 +12,8 @@ import (
 var registerPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/templates/register.html"))
 
 type registerPageParams struct {
-	Form components.Form
+	SubmitButton components.Button
+	Form         components.Form
 }
 
 func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
@@ -22,15 +23,15 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	}
 
 	params := registerPageParams{
+		SubmitButton: components.Button{
+			Label:  "S'enregistrer",
+			FormId: "post-user",
+		},
 		Form: components.Form{
 			Id:     "post-user",
 			Method: "post",
 			Target: "/users",
 			Swap:   "none",
-			SubmitButton: components.Button{
-				Label:  "S'enregistrer",
-				FormId: "post-user",
-			},
 			Inputs: []components.Input{
 				{
 					Name:     "email",

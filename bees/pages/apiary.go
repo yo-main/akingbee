@@ -53,8 +53,9 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 
 	params := apiaryPageParameter{
 		CreateApiaryModal: components.ModalForm{
-			Title:       "Création un nouveau rucher",
-			ButtonLabel: "Nouveau rucher",
+			Title:                 "Création un nouveau rucher",
+			ShowModalButtonLabel:  "Nouveau rucher",
+			SubmitFormButtonLabel: "Créer",
 			Form: components.Form{
 				Id:     "createApiary",
 				Method: "post",
@@ -79,11 +80,6 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 						Type:     "text",
 						Required: true,
 					},
-				},
-				SubmitButton: components.Button{
-					Label:  "Créer",
-					Type:   "is-link",
-					FormId: "createApiary",
 				},
 			}},
 		Table: components.Table{

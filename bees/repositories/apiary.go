@@ -6,8 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
-
 	"github.com/google/uuid"
 )
 
