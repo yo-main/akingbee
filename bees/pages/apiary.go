@@ -1,12 +1,15 @@
 package pages
 
 import (
+	"akingbee/bees/repositories"
+	"akingbee/user/services"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
@@ -17,9 +20,35 @@ type apiaryPageParameter struct {
 }
 
 func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	userId, err := services.AuthenticateUser(req)
+
+	if err != nil {
+		log.Printf("Could not authenticate user: %s", err)
+		response.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	menu, err := components.GetLoggedInMenu()
 	if err != nil {
+		log.Printf("Could not get logged in menu: %s", err)
 		return
+	}
+
+	apiaries, err := repositories.GetApiary(ctx, userId)
+	if err != nil {
+		log.Printf("Could not get apiaries: %s", err)
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	rows := []components.Rows{}
+	for _, apiary := range apiaries {
+		rows = append(rows, components.Rows{
+			Values: []string{apiary.Name, apiary.Location, apiary.HoneyKind, strconv.Itoa(apiary.HiveCount)},
+		})
+
 	}
 
 	params := apiaryPageParameter{
@@ -67,11 +96,7 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 				{Label: "Type de miel"},
 				{Label: "Nombre de ruches"},
 			},
-			Rows: []components.Rows{
-				{Values: []string{"Ma rucher", "Paris", "Noix", "10"}},
-				{Values: []string{"Mon autre rucher", "Ganges", "Tournesol", "5"}},
-				{Values: []string{"Mon beau rucher", "Puteaux", "Fleur", "8"}},
-			},
+			Rows: rows,
 		}}
 
 	var apiaryPage bytes.Buffer

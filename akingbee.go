@@ -8,8 +8,6 @@ import (
 )
 
 func main() {
-	// api.Serve()
-
 	db := database.GetDb()
 	ctx := context.TODO()
 

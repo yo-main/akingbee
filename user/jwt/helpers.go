@@ -3,22 +3,26 @@ package jwt
 import (
 	"akingbee/internal/config"
 	"akingbee/user/models"
-	"crypto"
+	"errors"
+	"fmt"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/golang-jwt/jwt"
 )
 
 func CreateToken(user *models.User) (string, error) {
 	token := jwt.NewWithClaims(
-		&jwt.SigningMethodHMAC{
-			Name: "IDK",
-			Hash: crypto.SHA256,
-		},
-		jwt.MapClaims{
-			"iss": "akingbee",
-			"sub": user.PublicId,
-			"exp": time.Now().UTC().Add(time.Second * time.Duration(config.JWT_TTL)).Unix(),
+		jwt.SigningMethodHS256,
+		jwt.StandardClaims{
+			Audience:  "all",
+			ExpiresAt: time.Now().UTC().Add(time.Second * time.Duration(config.JWT_TTL)).Unix(),
+			Issuer:    "akingbee",
+			Subject:   user.PublicId.String(),
+			Id:        "akingbee",
+			IssuedAt:  time.Now().UTC().Unix(),
+			NotBefore: time.Now().UTC().Unix(),
 		},
 	)
 	jwt, err := token.SignedString(config.APP_PRIVATE_KEY)
@@ -27,4 +31,27 @@ func CreateToken(user *models.User) (string, error) {
 		return "", err
 	}
 	return jwt, nil
+}
+
+func ValidateToken(tokenString string) (*uuid.UUID, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) { return config.APP_PRIVATE_KEY, nil })
+
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("JWT could not be parsed: %s", err))
+	}
+
+	claim := token.Claims.(*jwt.StandardClaims)
+
+	err = claim.Valid()
+	if err != nil {
+
+		return nil, err
+	}
+
+	tk, err := uuid.Parse(claim.Subject)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Subject is not an UUID: %s", err))
+	}
+
+	return &tk, nil
 }

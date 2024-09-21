@@ -10,4 +10,5 @@ type Apiary struct {
 	HoneyKind string
 	HiveCount int
 	PublicId  uuid.UUID
+	Owner     uuid.UUID
 }
