@@ -3,6 +3,7 @@ package web
 import (
 	"akingbee/web/components"
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 )
@@ -19,9 +20,9 @@ func prepareNotification(response http.ResponseWriter, notification *components.
 	triggerHeader, _ := json.Marshal(events)
 
 	if notification.Type == "success" {
-		response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
+		response.Header().Add("HX-Trigger-After-Swap", string(triggerHeader))
 	} else {
-		response.Header().Set("HX-Trigger", string(triggerHeader))
+		response.Header().Add("HX-Trigger", string(triggerHeader))
 	}
 }
 
@@ -40,4 +41,34 @@ func PrepareSuccessNotification(response http.ResponseWriter, msg string) {
 		Content: msg,
 	}
 	prepareNotification(response, &notification)
+}
+
+func PrepareLoggedInMenu(response http.ResponseWriter) {
+	menu, err := components.GetLoggedInMenu()
+	if err != nil {
+		log.Printf("Could not generate menu: %s", err)
+		return
+	}
+
+	events := map[string]interface{}{
+		"menuEvent": template.HTML(menu.String()),
+	}
+	triggerHeader, _ := json.Marshal(events)
+
+	response.Header().Add("HX-Trigger-After-Swap", string(triggerHeader))
+}
+
+func PrepareLoggedOutMenu(response http.ResponseWriter) {
+	menu, err := components.GetLoggedOutMenu()
+	if err != nil {
+		log.Printf("Could not generate menu: %s", err)
+		return
+	}
+
+	events := map[string]interface{}{
+		"menuEvent": template.HTML(menu.String()),
+	}
+	triggerHeader, _ := json.Marshal(events)
+
+	response.Header().Add("HX-Trigger-After-Swap", string(triggerHeader))
 }

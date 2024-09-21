@@ -1,10 +1,14 @@
 <body class="has-navbar-fixed-top">
-  <section class="section">
-    {{ .Menu }}
+  <section class=" section">
+    <div hx-trigger="menuEvent from:body" hx-get="data:text/html," hx-swap="none"
+      hx-on:htmx:after-swap="if
+      (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value.replaceAll('Ã©', 'é' ).replaceAll('Ã¨', 'è'), {swapStyle: 'innerHTML' })}">
+      {{ .Menu }}
+    </div>
   </section>
 
   <div id="notificationBox" hx-trigger="notificationEvent from:body" hx-get="data:text/html," hx-swap="none"
-    hx-on:htmx:after-swap="if (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value, {swapStyle: 'afterbegin'})}">
+    hx-on:htmx:after-swap="if (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value.replaceAll('Ã©', 'é' ).replaceAll('Ã¨', 'è'), {swapStyle: 'afterbegin'})}">
   </div>
 
   <section class="hero is-fullheight-with-navbar has-background-white-lighter">

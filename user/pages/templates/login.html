@@ -1,17 +1,19 @@
-<div class="columns is-centered">
+<div id="login-body" class="columns is-centered">
   <div class="column is-narrow">
 
     <div class="content has-text-centered">
       <p class="subtitle">Bienvenue sur <strong>Akingbee</strong>!</p>
     </div>
 
-    {{ template "form.html" .Form }}
+    <div hx-target="#login-body" hx-swap="outerHTML">
 
-    <div class="field is-grouped is-grouped-right">
-      <div class="control">
-        {{ template "button.html" .SubmitButton }}
+      {{ template "form.html" .Form }}
+
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          {{ template "button.html" .SubmitButton }}
+        </div>
       </div>
     </div>
-
   </div>
 </div>

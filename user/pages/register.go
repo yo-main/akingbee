@@ -63,7 +63,7 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	page, err := pages.BuildPage(pages.GetBody(template.HTML(registerPage.Bytes()), menu))
+	page, err := pages.BuildPage(pages.GetBody(template.HTML(registerPage.Bytes()), template.HTML(menu.Bytes())))
 
 	if err != nil {
 		log.Printf("Failed to build register page: %s", err)
