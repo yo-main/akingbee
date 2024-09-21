@@ -1,24 +1,13 @@
 package user
 
 import (
-	"akingbee/user/models"
+	"akingbee/internal/htmx"
 	"akingbee/user/services"
 	"akingbee/web"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 )
-
-func userToJson(user *models.User) ([]byte, error) {
-	data := map[string]interface{}{
-		"publicId": user.PublicId,
-		"email":    user.Email,
-		"username": user.Credentials.Username,
-	}
-
-	return json.Marshal(data)
-}
 
 func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
@@ -36,15 +25,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := services.CreateUser(ctx, &command)
-	if err != nil {
-
-		web.PrepareFailedNotification(response, err.Error())
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	_, err = userToJson(user)
+	_, err = services.CreateUser(ctx, &command)
 	if err != nil {
 
 		web.PrepareFailedNotification(response, err.Error())
@@ -80,4 +61,9 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
 	response.WriteHeader(http.StatusOK)
+}
+
+func HandleLogout(response http.ResponseWriter, req *http.Request) {
+	response.Header().Set("Set-Cookie", "akingbeeToken=''; expire;")
+	htmx.Redirect(response, "/")
 }
