@@ -6,14 +6,20 @@ import (
 	"html/template"
 )
 
-type menuComponent struct {
+type LoggedInMenuComponent struct {
+	Username string
+}
+
+type LoggedOutMenuComponent struct {
 }
 
 var loggedOutMenu = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/navbar_logged_out.html"))
 var loggedInMenu = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/navbar_logged_in.html"))
 
-func GetLoggedInMenu() (*bytes.Buffer, error) {
-	params := menuComponent{}
+func GetLoggedInMenu(username string) (*bytes.Buffer, error) {
+	params := LoggedInMenuComponent{
+		Username: username,
+	}
 
 	var buffer bytes.Buffer
 	err := loggedInMenu.ExecuteTemplate(&buffer, "navbar_logged_in.html", params)
@@ -22,7 +28,7 @@ func GetLoggedInMenu() (*bytes.Buffer, error) {
 }
 
 func GetLoggedOutMenu() (*bytes.Buffer, error) {
-	params := menuComponent{}
+	params := LoggedOutMenuComponent{}
 
 	var buffer bytes.Buffer
 	err := loggedOutMenu.ExecuteTemplate(&buffer, "navbar_logged_out.html", params)

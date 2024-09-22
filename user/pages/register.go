@@ -2,6 +2,7 @@ package pages
 
 import (
 	"akingbee/internal/htmx"
+	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -63,18 +64,6 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	if htmx.IsHtmxRequest(req) {
 		response.Write(registerPage.Bytes())
 	} else {
-		menu, err := components.GetLoggedOutMenu()
-		if err != nil {
-			log.Printf("Could not build logged out menu: %s", err)
-			return
-		}
-
-		page, err := pages.BuildPage(pages.GetBody(template.HTML(registerPage.Bytes()), template.HTML(menu.Bytes())))
-		if err != nil {
-			log.Printf("Failed to build register page: %s", err)
-			return
-		}
-
-		response.Write(page)
+		web.ReturnFullPage(req.Context(), response, *&registerPage, nil)
 	}
 }

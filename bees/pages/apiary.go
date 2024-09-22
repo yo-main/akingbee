@@ -4,15 +4,17 @@ import (
 	"akingbee/bees/repositories"
 	"akingbee/internal/htmx"
 	"akingbee/user/services"
+	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
 	"context"
-	"github.com/google/uuid"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
@@ -115,14 +117,6 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 		response.Write(apiaryPage.Bytes())
 		response.WriteHeader(http.StatusOK)
 	} else {
-		menu, err := components.GetLoggedInMenu()
-		if err != nil {
-			log.Printf("Could not get logged in menu: %s", err)
-			return
-		}
-
-		page, err := pages.BuildPage(pages.GetBody(template.HTML(apiaryPage.Bytes()), template.HTML(menu.Bytes())))
-
-		response.Write([]byte(page))
+		web.ReturnFullPage(ctx, response, *apiaryPage, userId)
 	}
 }
