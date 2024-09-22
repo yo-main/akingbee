@@ -4,7 +4,6 @@ import (
 	"akingbee/internal/database"
 	"akingbee/user/models"
 	"context"
-
 	"github.com/google/uuid"
 )
 

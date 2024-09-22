@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+
 	"github.com/google/uuid"
 )
 
@@ -56,4 +58,36 @@ func GetApiary(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, error)
 	}
 
 	return apiaries, err
+}
+
+func GetApiaryValues(ctx context.Context, value string, ownerId *uuid.UUID) []string {
+	results := []string{}
+
+	if !(value == "location" || value == "honey_kind") {
+		log.Printf("Wrong choice of value: %s", value)
+		return results
+	}
+
+	queryGetApiaryValue := fmt.Sprintf(`
+		SELECT DISTINCT %s
+		FROM APIARY
+		JOIN USERS ON USERS.ID=APIARY.OWNER_ID
+		WHERE USERS.PUBLIC_ID=$1
+	`, value)
+
+	db := database.GetDb()
+	rows, err := db.QueryContext(ctx, queryGetApiaryValue, ownerId)
+
+	if err != nil {
+		log.Printf("Error executing query: %s", err)
+		return nil
+	}
+
+	for rows.Next() {
+		var value string
+		rows.Scan(&value)
+		results = append(results, value)
+	}
+
+	return results
 }
