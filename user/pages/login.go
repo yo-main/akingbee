@@ -31,7 +31,7 @@ func (data *LoginPageBuilder) Build() (*bytes.Buffer, error) {
 
 }
 
-func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
+func GetLoginPage() (*bytes.Buffer, error) {
 	loginParams := LoginPageBuilder{
 		SubmitButton: components.Button{
 			Label:  "Se connecter",
@@ -60,8 +60,13 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 		}}
 
 	loginPage, err := loginParams.Build()
+	return loginPage, err
+}
+
+func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
+	loginPage, err := GetLoginPage()
 	if err != nil {
-		log.Printf("Could not load login page: %s", err)
+		log.Printf("Could not build llogin page: %s", err)
 		return
 	}
 
@@ -75,6 +80,10 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 		}
 
 		page, err := pages.BuildPage(pages.GetBody(template.HTML(loginPage.Bytes()), template.HTML(menu.Bytes())))
+		if err != nil {
+			log.Printf("Failed to build register page: %s", err)
+			return
+		}
 
 		response.Write([]byte(page))
 	}
