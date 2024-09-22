@@ -1,2 +1,11 @@
+{{ if .Choices }}
+<datalist id="datalist-{{ .Name }}">
+  {{ range .Choices }}
+  <option value="{{ . }}">{{ . }}</option>
+  {{ end }}
+</datalist>
+{{ end }}
+
 <input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
-  hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}}>
+  hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
+  .Choices }} list="datalist-{{ .Name }}" {{ end }}>

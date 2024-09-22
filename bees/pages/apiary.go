@@ -9,12 +9,11 @@ import (
 	"akingbee/web/pages"
 	"bytes"
 	"context"
+	"github.com/google/uuid"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/google/uuid"
 )
 
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
@@ -38,6 +37,8 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 		})
 
 	}
+	locations := repositories.GetApiaryValues(ctx, "location", userId)
+	honeyKind := repositories.GetApiaryValues(ctx, "honey_kind", userId)
 
 	params := apiaryPageParameter{
 		CreateApiaryModal: components.ModalForm{
@@ -61,15 +62,18 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 						Label:    "Location",
 						Type:     "text",
 						Required: true,
+						Choices:  locations,
 					},
 					{
 						Name:     "honeyKind",
 						Label:    "Type de miel",
 						Type:     "text",
 						Required: true,
+						Choices:  honeyKind,
 					},
 				},
-			}},
+			},
+		},
 		Table: components.Table{
 			IsBordered:  false,
 			IsStripped:  true,
@@ -115,7 +119,6 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 
 	if htmx.IsHtmxRequest(req) {
 		response.Write(apiaryPage.Bytes())
-		response.WriteHeader(http.StatusOK)
 	} else {
 		web.ReturnFullPage(ctx, response, *apiaryPage, userId)
 	}
