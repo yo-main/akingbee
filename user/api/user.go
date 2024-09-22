@@ -33,7 +33,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	welcomePage, err := user_pages.GetWelcomePage(req)
+	loginPage, err := user_pages.GetLoginPage()
 	if err != nil {
 		log.Printf("Could not get welcome page: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -42,8 +42,8 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	}
 
 	web.PrepareSuccessNotification(response, "User created successfully")
-	htmx.PushUrl(response, "/")
-	response.Write(welcomePage.Bytes())
+	htmx.PushUrl(response, "/login")
+	response.Write(loginPage.Bytes())
 	response.WriteHeader(http.StatusOK)
 }
 

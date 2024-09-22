@@ -1,14 +1,20 @@
-<div class="columns is-centered">
+<div id="register-body" class="columns is-centered">
   <div class="columns">
     <div class="column">
+
       <div class="content has-text-centered">
         <p class="subtitle">Dites moi en plus sur vous</p>
       </div>
-      {{ template "form.html" .Form }}
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          {{ template "button.html" .SubmitButton }}
+
+      <div hx-target="#page-body" hx-swap="innerHTML">
+        {{ template "form.html" .Form }}
+
+        <div class="field is-grouped is-grouped-right">
+          <div class="control">
+            {{ template "button.html" .SubmitButton }}
+          </div>
         </div>
+
       </div>
     </div>
   </div>

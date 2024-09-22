@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"akingbee/internal/htmx"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -17,15 +18,11 @@ type registerPageParams struct {
 }
 
 func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
-	menu, err := components.GetLoggedOutMenu()
-	if err != nil {
-		return
-	}
-
 	params := registerPageParams{
 		SubmitButton: components.Button{
 			Label:  "S'enregistrer",
 			FormId: "post-user",
+			Type:   "is-link",
 		},
 		Form: components.Form{
 			Id:     "post-user",
@@ -56,19 +53,28 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	}
 
 	var registerPage bytes.Buffer
-	err = pages.HtmlPage.ExecuteTemplate(&registerPage, "register.html", params)
+	err := pages.HtmlPage.ExecuteTemplate(&registerPage, "register.html", params)
 
 	if err != nil {
 		log.Printf("Failed to build register page: %s", err)
 		return
 	}
 
-	page, err := pages.BuildPage(pages.GetBody(template.HTML(registerPage.Bytes()), template.HTML(menu.Bytes())))
+	if htmx.IsHtmxRequest(req) {
+		response.Write(registerPage.Bytes())
+	} else {
+		menu, err := components.GetLoggedOutMenu()
+		if err != nil {
+			log.Printf("Could not build logged out menu: %s", err)
+			return
+		}
 
-	if err != nil {
-		log.Printf("Failed to build register page: %s", err)
-		return
+		page, err := pages.BuildPage(pages.GetBody(template.HTML(registerPage.Bytes()), template.HTML(menu.Bytes())))
+		if err != nil {
+			log.Printf("Failed to build register page: %s", err)
+			return
+		}
+
+		response.Write(page)
 	}
-
-	response.Write(page)
 }
