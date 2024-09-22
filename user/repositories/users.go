@@ -54,6 +54,7 @@ func getUser(ctx context.Context, query string, params interface{}) (*models.Use
 	if err != nil {
 		return nil, err
 	}
+	user.Credentials = credentials
 
 	return &user, nil
 }
