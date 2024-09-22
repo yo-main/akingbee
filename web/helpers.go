@@ -1,9 +1,13 @@
 package web
 
 import (
+	user_services "akingbee/user/services"
 	"akingbee/web/components"
+	"akingbee/web/pages"
 	"bytes"
+	"context"
 	"encoding/json"
+	"github.com/google/uuid"
 	"html/template"
 	"log"
 	"net/http"
@@ -25,6 +29,40 @@ func getEventMap(response http.ResponseWriter, headerKey string) map[string]inte
 	}
 
 	return events
+}
+
+func ReturnFullPage(ctx context.Context, response http.ResponseWriter, content bytes.Buffer, userId *uuid.UUID) {
+	var menu *bytes.Buffer
+	var err error
+
+	if userId != nil {
+		user, err := user_services.GetUser(ctx, userId)
+		if err != nil {
+			log.Printf("User not found: %s", err)
+			return
+		}
+
+		menu, err = components.GetLoggedInMenu(user.Credentials.Username)
+		if err != nil {
+			log.Printf("Could not get logged in menu: %s", err)
+			return
+		}
+	} else {
+		menu, err = components.GetLoggedOutMenu()
+		if err != nil {
+			log.Printf("Could not build logged out menu: %s", err)
+			return
+		}
+	}
+
+	page, err := pages.BuildPage(pages.GetBody(template.HTML(content.Bytes()), template.HTML(menu.Bytes())))
+	if err != nil {
+		log.Printf("Could not buiild full page: %s", err)
+		return
+	}
+
+	response.Write([]byte(page))
+
 }
 
 func prepareNotification(response http.ResponseWriter, notification *components.NotificationComponent) {
@@ -79,8 +117,8 @@ func prepareMenuEvent(response http.ResponseWriter, menu *bytes.Buffer) {
 	response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
 }
 
-func PrepareLoggedInMenu(response http.ResponseWriter) {
-	menu, err := components.GetLoggedInMenu()
+func PrepareLoggedInMenu(response http.ResponseWriter, username string) {
+	menu, err := components.GetLoggedInMenu(username)
 	if err != nil {
 		log.Printf("Could not generate menu: %s", err)
 		return

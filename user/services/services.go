@@ -89,6 +89,17 @@ func LoginUser(ctx context.Context, username string, password string) (string, e
 	return token, nil
 }
 
+func GetUser(ctx context.Context, userId *uuid.UUID) (*models.User, error) {
+	user, err := repositories.GetUserByPublicId(ctx, userId)
+
+	if err != nil {
+		log.Printf("User could not be found: %s", err)
+		return nil, errors.New("User not found")
+	}
+
+	return user, nil
+}
+
 func AuthenticateUser(req *http.Request) (*uuid.UUID, error) {
 	cookie, err := req.Cookie("akingbeeToken")
 
