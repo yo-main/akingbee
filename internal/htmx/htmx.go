@@ -12,6 +12,6 @@ func Redirect(response http.ResponseWriter, url string) {
 	response.Header().Set("HX-Redirect", url)
 }
 
-func NewLocation(response http.ResponseWriter, url string) {
-	response.Header().Set("HX-Location", url)
+func PushUrl(response http.ResponseWriter, url string) {
+	response.Header().Set("HX-Push-Url", url)
 }

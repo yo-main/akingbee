@@ -42,7 +42,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	}
 
 	web.PrepareSuccessNotification(response, "User created successfully")
-	htmx.NewLocation(response, "/")
+	htmx.PushUrl(response, "/")
 	response.Write(welcomePage.Bytes())
 	response.WriteHeader(http.StatusOK)
 }
@@ -70,14 +70,22 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 
 	welcomePage, err := user_pages.GetWelcomePage(req)
 
-	// htmx.NewLocation(response, "/")
+	htmx.PushUrl(response, "/")
 	web.PrepareLoggedInMenu(response)
-	// web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
+	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
 	response.Write(welcomePage.Bytes())
 }
 
 func HandleLogout(response http.ResponseWriter, req *http.Request) {
 	response.Header().Set("Set-Cookie", "akingbeeToken=''; expire;")
-	htmx.Redirect(response, "/")
+	web.PrepareLoggedOutMenu(response)
+	htmx.PushUrl(response, "/")
+
+	welcomePage, err := user_pages.GetWelcomePage(req)
+	if err != nil {
+		log.Printf("Could not load welcome page: %s", err)
+	} else {
+		response.Write(welcomePage.Bytes())
+	}
 }
