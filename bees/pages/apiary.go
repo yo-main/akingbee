@@ -9,11 +9,13 @@ import (
 	"akingbee/web/pages"
 	"bytes"
 	"context"
-	"github.com/google/uuid"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
@@ -33,7 +35,48 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 	rows := []components.Rows{}
 	for _, apiary := range apiaries {
 		rows = append(rows, components.Rows{
-			Values: []string{apiary.Name, apiary.Location, apiary.HoneyKind, strconv.Itoa(apiary.HiveCount)},
+			Values: []components.Value{
+				{Label: apiary.Name},
+				{Label: apiary.Location},
+				{Label: apiary.HoneyKind},
+				{Label: strconv.Itoa(apiary.HiveCount)},
+				{
+					ModalForm: components.ModalForm{
+						Title:            "Editer le rucher",
+						ShowModalButton:  components.Button{Icon: "edit"},
+						SubmitFormButton: components.Button{Label: "Sauvegarder"},
+						Form: components.Form{
+							Id:     fmt.Sprintf("apiary-edit-%s", apiary.Name),
+							Method: "put",
+							Target: fmt.Sprintf("/apiary/%s", apiary.PublicId),
+							Swap:   "none",
+							Inputs: []components.Input{
+								{
+									Name:     "name",
+									Label:    "Nom",
+									Type:     "text",
+									Required: true,
+									Default:  apiary.Name,
+								},
+								{
+									Name:     "location",
+									Label:    "Lieu",
+									Type:     "text",
+									Required: true,
+									Default:  apiary.Location,
+								},
+								{
+									Name:     "honey_kind",
+									Label:    "Type de miel",
+									Type:     "text",
+									Required: true,
+									Default:  apiary.HoneyKind,
+								},
+							},
+						},
+					},
+				},
+			},
 		})
 
 	}
@@ -42,9 +85,10 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 
 	params := apiaryPageParameter{
 		CreateApiaryModal: components.ModalForm{
-			Title:                 "Création un nouveau rucher",
-			ShowModalButtonLabel:  "Nouveau rucher",
-			SubmitFormButtonLabel: "Créer",
+			Title: "Création un nouveau rucher",
+			ShowModalButton: components.Button{
+				Label: "Nouveau rucher"},
+			SubmitFormButton: components.Button{Label: "Créer"},
 			Form: components.Form{
 				Id:     "createApiary",
 				Method: "post",
@@ -83,6 +127,7 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 				{Label: "Lieu"},
 				{Label: "Type de miel"},
 				{Label: "Nombre de ruches"},
+				{Label: "Actions"},
 			},
 			Rows: rows,
 		}}

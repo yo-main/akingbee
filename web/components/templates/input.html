@@ -8,4 +8,4 @@
 
 <input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
   hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
-  .Choices }} list="datalist-{{ .Name }}" {{ end }}>
+  .Choices }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>

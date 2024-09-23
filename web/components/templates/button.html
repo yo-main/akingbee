@@ -1,3 +1,10 @@
+{{ if .Label }}
 <button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
   {{ .Label }}
 </button>
+{{ else if .Icon }}
+<span class="icon">
+  <img src="icon-{{ .Icon }}.svg">
+</span>
+{{ .Label }}
+{{ end }}

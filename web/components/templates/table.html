@@ -20,7 +20,13 @@
     {{ range .Rows }}
     <tr>
       {{ range .Values }}
-      <td>{{ . }}</td>
+      <td>
+        {{ if .Label }}
+        {{ .Label }}
+        {{ else if .ModalForm }}
+        {{ template "modal.html" .ModalForm }}
+        {{ end }}
+      </td>
       {{ end }}
     </tr>
     {{ end }}

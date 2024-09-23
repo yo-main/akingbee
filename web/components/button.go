@@ -11,4 +11,5 @@ type Button struct {
 	Label  string
 	Type   string
 	FormId string
+	Icon   string
 }

@@ -22,4 +22,5 @@ type Input struct {
 	Type     string
 	Required bool
 	Choices  []string
+	Default  string
 }
