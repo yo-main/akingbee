@@ -8,8 +8,8 @@ import (
 var modalTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/modal.html"))
 
 type ModalForm struct {
-	Title                 string
-	ShowModalButtonLabel  string
-	SubmitFormButtonLabel string
-	Form                  Form
+	Title            string
+	ShowModalButton  Button
+	SubmitFormButton Button
+	Form             Form
 }

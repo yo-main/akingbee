@@ -19,6 +19,11 @@ type Header struct {
 	Label string
 }
 
+type Value struct {
+	Label     string
+	ModalForm ModalForm
+}
+
 type Rows struct {
-	Values []string
+	Values []Value
 }
