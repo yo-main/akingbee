@@ -25,7 +25,19 @@ func CreateApiary(ctx context.Context, apiary *models.Apiary) error {
 	return err
 }
 
-const queryGetApiary = `
+const queryUpdateApiary = `
+	UPDATE APIARY 
+	SET NAME=$2, LOCATION=$3, HONEY_KIND=$4
+	WHERE PUBLIC_ID=$1
+`
+
+func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
+	db := database.GetDb()
+	_, err := db.ExecContext(ctx, queryUpdateApiary, apiary.PublicId, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.Owner)
+	return err
+}
+
+const queryGetApiaries = `
 	SELECT 
 		APIARY.PUBLIC_ID, 
 		APIARY.NAME,
@@ -39,9 +51,9 @@ const queryGetApiary = `
 	ORDER BY APIARY.DATE_CREATION DESC
 `
 
-func GetApiary(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, error) {
+func GetApiaries(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, error) {
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetApiary, ownerId)
+	rows, err := db.QueryContext(ctx, queryGetApiaries, ownerId)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
 	}
@@ -58,6 +70,38 @@ func GetApiary(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, error)
 	}
 
 	return apiaries, err
+}
+
+const queryGetApiary = `
+	SELECT 
+		APIARY.PUBLIC_ID, 
+		APIARY.NAME,
+		APIARY.LOCATION,
+		APIARY.HONEY_KIND,
+		USERS.PUBLIC_ID, 
+		2 AS HIVE_COUNT
+	FROM APIARY
+	JOIN USERS ON USERS.ID=APIARY.OWNER_ID
+	WHERE APIARY.PUBLIC_ID=$1
+`
+
+func GetApiary(ctx context.Context, apiaryPublicId *uuid.UUID) (*models.Apiary, error) {
+	db := database.GetDb()
+	rows, err := db.QueryContext(ctx, queryGetApiary, apiaryPublicId)
+	defer rows.Close()
+
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+	}
+
+	var apiary models.Apiary
+	rows.Next()
+	err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.Owner, &apiary.HiveCount)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Could not build Apiary from result: %s", err))
+	}
+
+	return &apiary, err
 }
 
 func GetApiaryValues(ctx context.Context, value string, ownerId *uuid.UUID) []string {
