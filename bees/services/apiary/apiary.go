@@ -27,6 +27,32 @@ func (c *CreateApiaryCommand) Validate() error {
 		return errors.New("HoneyKind has not been provided")
 	}
 
+	if c.Owner == nil {
+		return errors.New("HoneyKind has not been provided")
+	}
+
+	return nil
+}
+
+type UpdateApiaryCommand struct {
+	Name      string
+	Location  string
+	HoneyKind string
+	Owner     *uuid.UUID
+	PublicId  *uuid.UUID
+}
+
+func (c *UpdateApiaryCommand) Validate() error {
+	if len(c.Name) == 0 {
+		return errors.New("Name has not been provided")
+	}
+	if len(c.Location) == 0 {
+		return errors.New("Location has not been provided")
+	}
+	if len(c.HoneyKind) == 0 {
+		return errors.New("HoneyKind has not been provided")
+	}
+
 	return nil
 }
 
@@ -52,4 +78,14 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 	}
 
 	return &apiary, nil
+}
+
+func UpdateApiary(ctx context.Context, apiary *models.Apiary) (*models.Apiary, error) {
+	err := repositories.UpdateApiary(ctx, apiary)
+	if err != nil {
+		log.Printf("Could not update apiary: %s", err)
+		return nil, errors.New("Couldn't update the apiary")
+	}
+
+	return apiary, nil
 }

@@ -26,7 +26,7 @@ type apiaryPageParameter struct {
 }
 
 func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error) {
-	apiaries, err := repositories.GetApiary(ctx, userId)
+	apiaries, err := repositories.GetApiaries(ctx, userId)
 	if err != nil {
 		log.Printf("Could not get apiaries: %s", err)
 		return nil, err
@@ -66,7 +66,7 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 									Default:  apiary.Location,
 								},
 								{
-									Name:     "honey_kind",
+									Name:     "honeyKind",
 									Label:    "Type de miel",
 									Type:     "text",
 									Required: true,
