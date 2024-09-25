@@ -1,0 +1,13 @@
+<td>
+  {{ if .Label }}
+  {{ .Label }}
+  {{ else if .ModalForm }}
+  {{ if .UpdateRow}}
+  <div hx-target="closest tr" hx-swap="outerHTML">
+    {{ end }}
+    {{ template "modal.html" .ModalForm }}
+    {{ if .UpdateRow}}
+  </div>
+  {{ end }}
+  {{ end }}
+</td>

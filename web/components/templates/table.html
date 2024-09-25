@@ -18,17 +18,7 @@
 
   <tbody>
     {{ range .Rows }}
-    <tr>
-      {{ range .Values }}
-      <td>
-        {{ if .Label }}
-        {{ .Label }}
-        {{ else if .ModalForm }}
-        {{ template "modal.html" .ModalForm }}
-        {{ end }}
-      </td>
-      {{ end }}
-    </tr>
+    {{ template "table_row.html" .}}
     {{ end }}
   </tbody>
 
