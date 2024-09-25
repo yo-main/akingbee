@@ -1,8 +1,6 @@
-<div class="modal" id="modal-{{ .ShowModalButton.Label }}"
-  hx-on:htmx:after-request="document.getElementById('modal-{{ .ShowModalButton.Label }}').classList.remove('is-active')">
+<div class="modal" hx-on:htmx:after-request="this.classList.remove('is-active')">
 
-  <div class="modal-background"
-    hx-on:click="document.getElementById('modal-{{ .ShowModalButton.Label }}').classList.remove('is-active')"></div>
+  <div class="modal-background" hx-on:click="this.closest('.modal').classList.remove('is-active')"></div>
 
   <div class="modal-card">
 
@@ -10,7 +8,7 @@
       <p class="modal-card-title">{{ .Title }}</p>
 
       <button class="modal-close is-large" aria-label="close"
-        onclick="document.getElementById('modal-{{ .ShowModalButton.Label }}').classList.remove('is-active')"></button>
+        onclick="this.closest('.modal').classList.remove('is-active')"></button>
     </header>
 
     <section class="modal-card-body">
@@ -25,7 +23,6 @@
 
   </div>
 </div>
-
-<div hx-on:click="document.getElementById('modal-{{ .ShowModalButton.Label }}').classList.add('is-active')">
+<div hx-on:click="this.previousSibling.previousSibling.classList.add('is-active')">
   {{ template "button.html" .ShowModalButton }}
 </div>
