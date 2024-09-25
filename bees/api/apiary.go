@@ -98,14 +98,15 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	apiaryPage, err := pages.GetApiaryBody(ctx, userId)
+	tableRow := pages.GetApiaryTableRow(apiary)
+	content, err := tableRow.Build()
 	if err != nil {
-		log.Printf("Could not get apiary page: %s", err)
-		http.Redirect(response, req, "/", http.StatusMovedPermanently)
+		log.Printf("Could not get table row: %s", err)
+		http.Redirect(response, req, "/", http.StatusBadRequest)
 		return
 	}
 
-	web.PrepareSuccessNotification(response, "Apiary created successfully")
+	web.PrepareSuccessNotification(response, "Apiary updated successfully")
 	response.WriteHeader(http.StatusOK)
-	response.Write(apiaryPage.Bytes())
+	response.Write(content.Bytes())
 }
