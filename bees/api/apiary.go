@@ -90,7 +90,7 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 	apiary.Location = req.FormValue("location")
 	apiary.HoneyKind = req.FormValue("honeyKind")
 
-	_, err = apiary_services.UpdateApiary(ctx, apiary)
+	err = apiary_services.UpdateApiary(ctx, apiary)
 	if err != nil {
 		log.Printf("Could not update apiary: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
