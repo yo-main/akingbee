@@ -80,12 +80,12 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 	return &apiary, nil
 }
 
-func UpdateApiary(ctx context.Context, apiary *models.Apiary) (*models.Apiary, error) {
+func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
 	err := repositories.UpdateApiary(ctx, apiary)
 	if err != nil {
 		log.Printf("Could not update apiary: %s", err)
-		return nil, errors.New("Couldn't update the apiary")
+		return errors.New("Couldn't update the apiary")
 	}
 
-	return apiary, nil
+	return nil
 }
