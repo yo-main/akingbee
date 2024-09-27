@@ -38,6 +38,17 @@ func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
 	return err
 }
 
+const queryDeleteApiary = `
+	DELETE FROM APIARY 
+	WHERE PUBLIC_ID=$1
+`
+
+func DeleteApiary(ctx context.Context, apiary *models.Apiary) error {
+	db := database.GetDb()
+	_, err := db.ExecContext(ctx, queryDeleteApiary, apiary.PublicId)
+	return err
+}
+
 const queryGetApiaries = `
 	SELECT 
 		APIARY.PUBLIC_ID, 

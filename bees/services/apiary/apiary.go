@@ -89,3 +89,13 @@ func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
 
 	return nil
 }
+
+func DeleteApiary(ctx context.Context, apiary *models.Apiary) error {
+	err := repositories.DeleteApiary(ctx, apiary)
+	if err != nil {
+		log.Printf("Could not delete apiary: %s", err)
+		return errors.New("Couldn't delete the apiary")
+	}
+
+	return nil
+}

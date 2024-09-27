@@ -42,7 +42,7 @@ func GetLoginPage() (*bytes.Buffer, error) {
 		Form: components.Form{
 			Id:     "login",
 			Method: "post",
-			Target: "/login",
+			Url:    "/login",
 			Swap:   "none",
 			Inputs: []components.Input{
 				{

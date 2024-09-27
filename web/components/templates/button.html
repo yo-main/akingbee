@@ -1,10 +1,12 @@
-{{ if .Label }}
-<button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
+<div {{ if .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }} {{ if .Url }}hx-{{ .Method }}="{{ .Url }}" {{ end }}>
+  {{ if .Label }}
+  <button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
+    {{ .Label }}
+  </button>
+  {{ else if .Icon }}
+  <span class="icon">
+    <img src="icon-{{ .Icon }}.svg">
+  </span>
   {{ .Label }}
-</button>
-{{ else if .Icon }}
-<span class="icon">
-  <img src="icon-{{ .Icon }}.svg">
-</span>
-{{ .Label }}
-{{ end }}
+  {{ end }}
+</div>

@@ -110,3 +110,49 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 	response.WriteHeader(http.StatusOK)
 	response.Write(content.Bytes())
 }
+
+func HandleDeleteApiary(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	userId, err := user_services.AuthenticateUser(req)
+
+	if err != nil {
+		log.Printf("Could not authenticate user: %s", err)
+		web.PrepareFailedNotification(response, "Not authenticated")
+		response.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	apiaryPublicId, err := uuid.Parse(req.PathValue("apiaryPublicId"))
+	if err != nil {
+		log.Printf("The provided apiary id is incorrect: %s", err)
+		web.PrepareFailedNotification(response, "Bad request")
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	apiary, err := repositories.GetApiary(ctx, &apiaryPublicId)
+	if err != nil {
+		log.Printf("Apiary not found: %s", err)
+		web.PrepareFailedNotification(response, "Apiary not found")
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if apiary.Owner != *userId {
+		response.WriteHeader(http.StatusForbidden)
+		web.PrepareFailedNotification(response, "Forbidden")
+		return
+	}
+
+	err = apiary_services.DeleteApiary(ctx, apiary)
+	if err != nil {
+		log.Printf("Could not delete apiary: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	web.PrepareSuccessNotification(response, "Apiary deleted successfully")
+	response.WriteHeader(http.StatusOK)
+}

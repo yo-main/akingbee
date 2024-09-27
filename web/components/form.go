@@ -11,7 +11,7 @@ var inputTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/temp
 type Form struct {
 	Id     string
 	Method string
-	Target string
+	Url    string
 	Swap   string
 	Inputs []Input
 }

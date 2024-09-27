@@ -16,9 +16,7 @@
     </section>
 
     <footer class="modal-card-foot">
-      <button class="button is-link" form="{{ .Form.Id }}">
-        {{ .SubmitFormButton.Label }}
-      </button>
+      {{ template "button.html" .SubmitFormButton }}
     </footer>
 
   </div>
