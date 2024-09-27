@@ -117,7 +117,11 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 			ShowModalButton: components.Button{
 				Label: "Nouveau rucher",
 			},
-			SubmitFormButton: components.Button{Label: "Créer", FormId: "createApiary"},
+			SubmitFormButton: components.Button{
+				Label:  "Créer",
+				FormId: "createApiary",
+				Type:   "is-link",
+			},
 			Form: components.Form{
 				Id:     "createApiary",
 				Method: "post",
