@@ -34,38 +34,59 @@ func GetApiaryTableRow(apiary *models.Apiary) components.Row {
 			{Label: apiary.HoneyKind},
 			{Label: strconv.Itoa(apiary.HiveCount)},
 			{
-				UpdateRow: true,
-				ModalForm: components.ModalForm{
-					Title:            "Editer le rucher",
-					ShowModalButton:  components.Button{Icon: "edit"},
-					SubmitFormButton: components.Button{Label: "Sauvegarder"},
-					Form: components.Form{
-						Id:     fmt.Sprintf("apiary-edit-%s", apiary.Name),
-						Method: "put",
-						Target: fmt.Sprintf("/apiary/%s", apiary.PublicId),
-						Swap:   "none",
-						Inputs: []components.Input{
-							{
-								Name:     "name",
-								Label:    "Nom",
-								Type:     "text",
-								Required: true,
-								Default:  apiary.Name,
+				GroupedCells: []components.Cell{
+					{
+						UpdateRow: components.UpdateRowStrategy{
+							Swap: "outerHTML",
+						},
+						ModalForm: components.ModalForm{
+							Title: "Editer le rucher",
+							ShowModalButton: components.Button{
+								Icon: "edit",
 							},
-							{
-								Name:     "location",
-								Label:    "Lieu",
-								Type:     "text",
-								Required: true,
-								Default:  apiary.Location,
+							SubmitFormButton: components.Button{
+								Label:  "Sauvegarder",
+								Type:   "is-link",
+								FormId: fmt.Sprintf("apiary-edit-%s", apiary.Name),
 							},
-							{
-								Name:     "honeyKind",
-								Label:    "Type de miel",
-								Type:     "text",
-								Required: true,
-								Default:  apiary.HoneyKind,
+							Form: components.Form{
+								Id:     fmt.Sprintf("apiary-edit-%s", apiary.Name),
+								Method: "put",
+								Url:    fmt.Sprintf("/apiary/%s", apiary.PublicId),
+								Swap:   "none",
+								Inputs: []components.Input{
+									{
+										Name:     "name",
+										Label:    "Nom",
+										Type:     "text",
+										Required: true,
+										Default:  apiary.Name,
+									},
+									{
+										Name:     "location",
+										Label:    "Lieu",
+										Type:     "text",
+										Required: true,
+										Default:  apiary.Location,
+									},
+									{
+										Name:     "honeyKind",
+										Label:    "Type de miel",
+										Type:     "text",
+										Required: true,
+										Default:  apiary.HoneyKind,
+									},
+								},
 							},
+						},
+					},
+					{
+						UpdateRow: components.UpdateRowStrategy{Swap: "delete"},
+						Button: components.Button{
+							Icon:    "delete",
+							Confirm: "Supprimer le rucher ?",
+							Url:     fmt.Sprintf("/apiary/%s", apiary.PublicId),
+							Method:  "delete",
 						},
 					},
 				},
@@ -96,11 +117,11 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 			ShowModalButton: components.Button{
 				Label: "Nouveau rucher",
 			},
-			SubmitFormButton: components.Button{Label: "Créer"},
+			SubmitFormButton: components.Button{Label: "Créer", FormId: "createApiary"},
 			Form: components.Form{
 				Id:     "createApiary",
 				Method: "post",
-				Target: "/apiary",
+				Url:    "/apiary",
 				Swap:   "none",
 				Inputs: []components.Input{
 					{

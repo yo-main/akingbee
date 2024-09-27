@@ -8,8 +8,11 @@ import (
 var buttonTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/button.html"))
 
 type Button struct {
-	Label  string
-	Type   string
-	FormId string
-	Icon   string
+	Label   string
+	Type    string
+	FormId  string
+	Icon    string
+	Confirm string
+	Url     string
+	Method  string
 }

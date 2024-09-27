@@ -28,6 +28,7 @@ func ApiServe() {
 	mux.HandleFunc("GET /apiary", pages_bees.HandleGetApiary)
 	mux.HandleFunc("POST /apiary", api_apiary.HandlePostApiary)
 	mux.HandleFunc("PUT /apiary/{apiaryPublicId}", api_apiary.HandlePutApiary)
+	mux.HandleFunc("DELETE /apiary/{apiaryPublicId}", api_apiary.HandleDeleteApiary)
 
 	// http.HandleFunc("POST /login", login.UserLogin)
 

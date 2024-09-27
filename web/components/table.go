@@ -23,10 +23,16 @@ type Header struct {
 	Label string
 }
 
+type UpdateRowStrategy struct {
+	Swap string
+}
+
 type Cell struct {
-	Label     string
-	UpdateRow bool
-	ModalForm ModalForm
+	Label        string
+	UpdateRow    UpdateRowStrategy
+	ModalForm    ModalForm
+	Button       Button
+	GroupedCells []Cell
 }
 
 type Row struct {
