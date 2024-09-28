@@ -11,12 +11,11 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"html/template"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/google/uuid"
 )
 
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))

@@ -12,3 +12,18 @@ type Apiary struct {
 	PublicId  uuid.UUID
 	Owner     uuid.UUID
 }
+
+type Hive struct {
+	Name      string
+	PublicId  uuid.UUID
+	Condition string
+	Apiary    *Apiary
+	Owner     uuid.UUID
+}
+
+type Swarm struct {
+	PublicId uuid.UUID
+	Year     int
+	Health   string
+	Hive     *Hive
+}
