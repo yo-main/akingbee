@@ -1,7 +1,7 @@
 package entrypoints
 
 import (
-	api_apiary "akingbee/bees/api"
+	api_bees "akingbee/bees/api"
 	pages_bees "akingbee/bees/pages"
 	api_user "akingbee/user/api"
 	pages_user "akingbee/user/pages"
@@ -26,9 +26,14 @@ func ApiServe() {
 	mux.HandleFunc("POST /users", api_user.HandlePostUser)
 
 	mux.HandleFunc("GET /apiary", pages_bees.HandleGetApiary)
-	mux.HandleFunc("POST /apiary", api_apiary.HandlePostApiary)
-	mux.HandleFunc("PUT /apiary/{apiaryPublicId}", api_apiary.HandlePutApiary)
-	mux.HandleFunc("DELETE /apiary/{apiaryPublicId}", api_apiary.HandleDeleteApiary)
+	mux.HandleFunc("POST /apiary", api_bees.HandlePostApiary)
+	mux.HandleFunc("PUT /apiary/{apiaryPublicId}", api_bees.HandlePutApiary)
+	mux.HandleFunc("DELETE /apiary/{apiaryPublicId}", api_bees.HandleDeleteApiary)
+
+	mux.HandleFunc("GET /hive", pages_bees.HandleGetHive)
+	mux.HandleFunc("POST /hive", api_bees.HandlePostHive)
+	mux.HandleFunc("PUT /hive/{hivePublicId}", api_bees.HandlePutHive)
+	mux.HandleFunc("DELETE /hive/{hivePublicId}", api_bees.HandleDeleteHive)
 
 	// http.HandleFunc("POST /login", login.UserLogin)
 

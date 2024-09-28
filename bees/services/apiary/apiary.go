@@ -28,7 +28,7 @@ func (c *CreateApiaryCommand) Validate() error {
 	}
 
 	if c.Owner == nil {
-		return errors.New("HoneyKind has not been provided")
+		return errors.New("Owner has not been provided")
 	}
 
 	return nil
