@@ -8,6 +8,13 @@ import (
 var formTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/form.html"))
 var inputTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/input.html"))
 
+type Choice struct {
+	Key      string
+	Label    string
+	Disabled bool
+	Selected bool
+}
+
 type Form struct {
 	Id     string
 	Method string
@@ -17,10 +24,11 @@ type Form struct {
 }
 
 type Input struct {
-	Name     string
-	Label    string
-	Type     string
-	Required bool
-	Choices  []string
-	Default  string
+	Name          string
+	Label         string
+	Type          string
+	Required      bool
+	ChoicesFree   []Choice
+	ChoicesStrict []Choice
+	Default       string
 }

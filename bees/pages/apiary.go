@@ -107,8 +107,15 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 		rows = append(rows, GetApiaryTableRow(&apiary))
 	}
 
-	locations := repositories.GetApiaryValues(ctx, "location", userId)
-	honeyKind := repositories.GetApiaryValues(ctx, "honey_kind", userId)
+	var locations []components.Choice
+	for _, location := range repositories.GetApiaryValues(ctx, "location", userId) {
+		locations = append(locations, components.Choice{Key: location, Label: location})
+	}
+
+	var honeyKinds []components.Choice
+	for _, honeyKind := range repositories.GetApiaryValues(ctx, "honey_kind", userId) {
+		honeyKinds = append(honeyKinds, components.Choice{Key: honeyKind, Label: honeyKind})
+	}
 
 	params := apiaryPageParameter{
 		CreateApiaryModal: components.ModalForm{
@@ -134,18 +141,18 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 						Required: true,
 					},
 					{
-						Name:     "location",
-						Label:    "Location",
-						Type:     "text",
-						Required: true,
-						Choices:  locations,
+						Name:        "location",
+						Label:       "Location",
+						Type:        "text",
+						Required:    true,
+						ChoicesFree: locations,
 					},
 					{
-						Name:     "honeyKind",
-						Label:    "Type de miel",
-						Type:     "text",
-						Required: true,
-						Choices:  honeyKind,
+						Name:        "honeyKind",
+						Label:       "Type de miel",
+						Type:        "text",
+						Required:    true,
+						ChoicesFree: honeyKinds,
 					},
 				},
 			},

@@ -6,6 +6,7 @@ import (
 	hive_services "akingbee/bees/services/hive"
 	user_services "akingbee/user/services"
 	"akingbee/web"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -24,9 +25,21 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	var apiaryPublicId *uuid.UUID
+	if !(req.FormValue("apiary") == "none" || req.FormValue("apiary") == "") {
+		result, err := uuid.Parse(req.FormValue("apiary"))
+		if err != nil {
+			log.Printf("Wrong apiary id: %s", req.FormValue("apiary"))
+			web.PrepareFailedNotification(response, fmt.Sprintf("Invalid apiary id: %s", req.FormValue("apiary")))
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		apiaryPublicId = &result
+	}
 	command := hive_services.CreateHiveCommand{
 		Name:      req.FormValue("name"),
 		Condition: req.FormValue("condition"),
+		Apiary:    apiaryPublicId,
 		Owner:     userId,
 	}
 
