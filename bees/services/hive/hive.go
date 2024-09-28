@@ -12,6 +12,7 @@ import (
 type CreateHiveCommand struct {
 	Name      string
 	Condition string
+	Apiary    *uuid.UUID
 	Owner     *uuid.UUID
 }
 
@@ -57,6 +58,21 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 		Condition: command.Condition,
 		Owner:     *command.Owner,
 		PublicId:  uuid.New(),
+	}
+
+	if command.Apiary != nil {
+		apiary, err := repositories.GetApiary(ctx, command.Apiary)
+		if err != nil {
+			log.Printf("Could not find apiary %s", command.Apiary)
+			return nil, errors.New("Could not find Apiary")
+		}
+
+		if apiary.Owner != *command.Owner {
+			log.Printf("Forbidden: apiary %s does not belong to current user %s", command.Apiary, command.Owner)
+			return nil, errors.New("Forbidden access")
+		}
+
+		hive.Apiary = apiary
 	}
 
 	err = repositories.CreateHive(ctx, &hive)

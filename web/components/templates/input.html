@@ -1,11 +1,23 @@
-{{ if .Choices }}
+{{ if .ChoicesStrict }}
+<div class="select is-fullwidth">
+  <select name="{{ .Name }}">
+    {{ range .ChoicesStrict }}
+    <option {{ if .Disabled }}disabled{{end}} {{ if .Selected }}selected{{ end }} value="{{ .Key }}">{{ .Label }}
+    </option>
+    {{ end }}
+  </select>
+</div>
+
+{{ else }}
+{{ if .ChoicesFree }}
 <datalist id="datalist-{{ .Name }}">
-  {{ range .Choices }}
-  <option value="{{ . }}">{{ . }}</option>
+  {{ range .ChoicesFree }}
+  <option {{ if .Disabled }}disabled{{end}} {{ if .Selected }}selected{{ end }} value="{{ .Key }}">{{ .Label }}</option>
   {{ end }}
 </datalist>
 {{ end }}
 
 <input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
   hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
-  .Choices }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>
+  .ChoicesFree }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>
+{{ end }}

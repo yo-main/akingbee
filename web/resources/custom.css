@@ -9,3 +9,7 @@
 .modal-card-foot {
   justify-content: flex-end;
 }
+
+.no-flex {
+  display: block
+}

@@ -102,7 +102,24 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 		rows = append(rows, GetHiveTableRow(hive))
 	}
 
-	conditions := repositories.GetHiveValues(ctx, "condition", userId)
+	var conditions []components.Choice
+	for _, condition := range repositories.GetHiveValues(ctx, "condition", userId) {
+		conditions = append(conditions, components.Choice{Key: condition, Label: condition})
+	}
+
+	apiaries, err := repositories.GetApiaries(ctx, userId)
+	if err != nil {
+		log.Printf("Could not load apiaries: %s", err)
+		return nil, err
+	}
+
+	var apiaryChoices = []components.Choice{
+		{Key: "none", Label: "Aucun", Selected: true, Disabled: true},
+	}
+
+	for _, apiary := range apiaries {
+		apiaryChoices = append(apiaryChoices, components.Choice{Key: apiary.PublicId.String(), Label: apiary.Name})
+	}
 
 	params := hivePageParameter{
 		CreateHiveModal: components.ModalForm{
@@ -128,11 +145,18 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 						Required: true,
 					},
 					{
-						Name:     "condition",
-						Label:    "Condition",
-						Type:     "text",
-						Required: true,
-						Choices:  conditions,
+						Name:        "condition",
+						Label:       "Condition",
+						Type:        "text",
+						Required:    true,
+						ChoicesFree: conditions,
+					},
+					{
+						Name:          "apiary",
+						Label:         "Rucher",
+						Type:          "text",
+						Required:      true,
+						ChoicesStrict: apiaryChoices,
 					},
 				},
 			},
