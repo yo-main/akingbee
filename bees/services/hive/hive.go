@@ -10,10 +10,11 @@ import (
 )
 
 type CreateHiveCommand struct {
-	Name      string
-	Condition string
-	Apiary    *uuid.UUID
-	Owner     *uuid.UUID
+	Name        string
+	Condition   string
+	Apiary      *uuid.UUID
+	SwarmHealth string
+	Owner       *uuid.UUID
 }
 
 func (c *CreateHiveCommand) Validate() error {
@@ -73,6 +74,21 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 		}
 
 		hive.Apiary = apiary
+	}
+
+	if command.SwarmHealth != "" {
+		swarm := models.Swarm{
+			PublicId: uuid.New(),
+			Year:     0,
+			Health:   command.SwarmHealth,
+		}
+		err := repositories.CreateSwarm(ctx, &swarm)
+		if err != nil {
+			log.Printf("Could not create swarm %s", err)
+			return nil, errors.New("Could not create swarm")
+		}
+
+		hive.Swarm = &swarm
 	}
 
 	err = repositories.CreateHive(ctx, &hive)

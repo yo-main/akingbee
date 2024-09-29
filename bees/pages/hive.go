@@ -29,10 +29,16 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 	if hive.Apiary != nil {
 		apiaryName = hive.Apiary.Name
 	}
+
+	var swarmHealth string
+	if hive.Swarm != nil {
+		swarmHealth = hive.Swarm.Health
+	}
 	return components.Row{
 		Cells: []components.Cell{
 			{Label: hive.Name},
 			{Label: hive.Condition},
+			{Label: swarmHealth},
 			{Label: apiaryName},
 			{
 				GroupedCells: []components.Cell{
@@ -117,6 +123,11 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 		{Key: "none", Label: "Aucun", Selected: true, Disabled: true},
 	}
 
+	var swarmHealths []components.Choice
+	for _, swarmHealth := range repositories.GetSwarmValues(ctx, "health", userId) {
+		swarmHealths = append(swarmHealths, components.Choice{Key: swarmHealth, Label: swarmHealth})
+	}
+
 	for _, apiary := range apiaries {
 		apiaryChoices = append(apiaryChoices, components.Choice{Key: apiary.PublicId.String(), Label: apiary.Name})
 	}
@@ -152,6 +163,13 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 						ChoicesFree: conditions,
 					},
 					{
+						Name:        "swarm_health",
+						Label:       "Santé de l'essaim",
+						Type:        "text",
+						Required:    true,
+						ChoicesFree: swarmHealths,
+					},
+					{
 						Name:          "apiary",
 						Label:         "Rucher",
 						Type:          "text",
@@ -168,6 +186,7 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 			Headers: []components.Header{
 				{Label: "Nom"},
 				{Label: "Condition"},
+				{Label: "Santé de l'essaim"},
 				{Label: "Rucher"},
 				{Label: "Actions"},
 			},

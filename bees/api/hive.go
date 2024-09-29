@@ -37,10 +37,11 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 		apiaryPublicId = &result
 	}
 	command := hive_services.CreateHiveCommand{
-		Name:      req.FormValue("name"),
-		Condition: req.FormValue("condition"),
-		Apiary:    apiaryPublicId,
-		Owner:     userId,
+		Name:        req.FormValue("name"),
+		Condition:   req.FormValue("condition"),
+		SwarmHealth: req.FormValue("swarm_health"),
+		Apiary:      apiaryPublicId,
+		Owner:       userId,
 	}
 
 	_, err = hive_services.CreateHive(ctx, &command)
