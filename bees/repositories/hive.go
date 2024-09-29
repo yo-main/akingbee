@@ -14,13 +14,14 @@ import (
 
 const queryCreateHive = `
 	INSERT INTO HIVE (
-		public_id, name, condition, apiary_id, owner_id
+		public_id, name, condition, apiary_id, swarm_id, owner_id
 	) VALUES (
 		$1, 
 		$2,
 		$3,
 		(SELECT APIARY.ID FROM APIARY WHERE APIARY.PUBLIC_ID=$4),
-		(SELECT USERS.ID FROM USERS WHERE USERS.PUBLIC_ID=$5)
+		(SELECT SWARM.ID FROM SWARM WHERE SWARM.PUBLIC_ID=$5),
+		(SELECT USERS.ID FROM USERS WHERE USERS.PUBLIC_ID=$6)
 	)
 `
 
@@ -31,15 +32,23 @@ func CreateHive(ctx context.Context, hive *models.Hive) error {
 	if hive.Apiary != nil {
 		apiaryPublicId = hive.Apiary.PublicId
 	}
-	_, err := db.ExecContext(ctx, queryCreateHive, hive.PublicId, hive.Name, hive.Condition, apiaryPublicId, hive.Owner)
+	var swarmPublicId uuid.UUID
+	if hive.Swarm != nil {
+		swarmPublicId = hive.Swarm.PublicId
+	}
+	_, err := db.ExecContext(ctx, queryCreateHive, hive.PublicId, hive.Name, hive.Condition, apiaryPublicId, swarmPublicId, hive.Owner)
 
 	return err
 }
 
 const queryUpdateHive = `
 	UPDATE HIVE 
-	SET NAME=$1, CONDITION=$2, APIARY_ID=(SELECT APIARY.ID FROM APIARY WHERE APIARY.PUBLIC_ID=$3)
-	WHERE PUBLIC_ID=$4
+	SET 
+		NAME=$1,
+		CONDITION=$2,
+		APIARY_ID=(SELECT APIARY.ID FROM APIARY WHERE APIARY.PUBLIC_ID=$3),
+		SWARM_ID=(SELECT SWARM.ID FROM SWARM WHERE SWARM.PUBLIC_ID=$4)
+	WHERE PUBLIC_ID=$5
 `
 
 func UpdateHive(ctx context.Context, hive *models.Hive) error {
@@ -48,7 +57,11 @@ func UpdateHive(ctx context.Context, hive *models.Hive) error {
 	if hive.Apiary != nil {
 		apiaryPublicId = hive.Apiary.PublicId
 	}
-	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Condition, apiaryPublicId, hive.PublicId)
+	var swarmPublicId uuid.UUID
+	if hive.Swarm != nil {
+		swarmPublicId = hive.Swarm.PublicId
+	}
+	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Condition, apiaryPublicId, swarmPublicId, hive.PublicId)
 	return err
 }
 
@@ -86,16 +99,21 @@ const queryGetHives = `
 		COALESCE(APIARIES.LOCATION, ''),
 		COALESCE(APIARIES.HONEY_KIND, ''),
 		COALESCE(APIARIES.HIVE_COUNT, 0),
+		SWARM.PUBLIC_ID,
+		COALESCE(SWARM.YEAR, 0),
+		COALESCE(SWARM.HEALTH, ''),
 		USERS.PUBLIC_ID,
 		USERS.PUBLIC_ID
 	FROM HIVE
 	JOIN USERS ON USERS.ID=HIVE.OWNER_ID
 	LEFT JOIN APIARIES ON APIARIES.ID=HIVE.APIARY_ID
+	LEFT JOIN SWARM ON SWARM.ID=HIVE.SWARM_ID
 `
 
 func scanHive(rows *sql.Rows) (*models.Hive, error) {
 	var apiary models.Apiary
 	var hive models.Hive
+	var swarm models.Swarm
 	err := rows.Scan(
 		&hive.PublicId,
 		&hive.Name,
@@ -105,6 +123,9 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 		&apiary.Location,
 		&apiary.HoneyKind,
 		&apiary.HiveCount,
+		&swarm.PublicId,
+		&swarm.Year,
+		&swarm.Health,
 		&apiary.Owner,
 		&hive.Owner,
 	)
@@ -113,6 +134,9 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 	}
 	if apiary.PublicId != uuid.Nil {
 		hive.Apiary = &apiary
+	}
+	if swarm.PublicId != uuid.Nil {
+		hive.Swarm = &swarm
 	}
 	return &hive, nil
 }

@@ -18,6 +18,7 @@ type Hive struct {
 	PublicId  uuid.UUID
 	Condition string
 	Apiary    *Apiary
+	Swarm     *Swarm
 	Owner     uuid.UUID
 }
 
@@ -25,5 +26,4 @@ type Swarm struct {
 	PublicId uuid.UUID
 	Year     int
 	Health   string
-	Hive     *Hive
 }

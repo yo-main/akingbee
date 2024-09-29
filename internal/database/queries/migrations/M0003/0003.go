@@ -10,17 +10,13 @@ import (
 func Upgrade(ctx context.Context, db *sql.DB) error {
 
 	_, err := db.ExecContext(ctx, `
-        CREATE TABLE IF NOT EXISTS HIVE (
+        CREATE TABLE IF NOT EXISTS SWARM (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 			date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
 			public_id BLOB NOT NULL UNIQUE,
-            name BLOB NOT NULL UNIQUE,
-			condition BLOB NOT NULL,
-            apiary_id INTEGER,
-			owner_id INTEGER NOT NULL,
-			FOREIGN KEY(owner_id) REFERENCES USERS(id)
-			FOREIGN KEY(apiary_id) REFERENCES APIARY(id)
-        );
+			year INTEGER NOT NULL,
+			health BLOB NOT NULL
+		);
     `)
 
 	if err != nil {
@@ -28,15 +24,19 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
 	}
 
 	_, err = db.ExecContext(ctx, `
-        CREATE TABLE IF NOT EXISTS SWARM (
+        CREATE TABLE IF NOT EXISTS HIVE (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 			date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
 			public_id BLOB NOT NULL UNIQUE,
-			year INTEGER NOT NULL,
-			health BLOB NOT NULL,
-			hive_id INTEGER NOT NULL UNIQUE,
-			FOREIGN KEY(hive_id) REFERENCES HIVE(id)
-		);
+            name BLOB NOT NULL UNIQUE,
+			condition BLOB NOT NULL,
+            apiary_id INTEGER,
+			swarm_id INTEGER,
+			owner_id INTEGER NOT NULL,
+			FOREIGN KEY(owner_id) REFERENCES USERS(id),
+			FOREIGN KEY(apiary_id) REFERENCES APIARY(id),
+			FOREIGN KEY(swarm_id) REFERENCES SWARM(id)
+        );
     `)
 
 	if err != nil {
