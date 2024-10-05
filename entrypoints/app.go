@@ -32,6 +32,7 @@ func ApiServe() {
 
 	mux.HandleFunc("GET /hive", pages_bees.HandleGetHive)
 	mux.HandleFunc("POST /hive", api_bees.HandlePostHive)
+	mux.HandleFunc("GET /hive/{hivePublicId}", pages_bees.HandleGetHiveDetail)
 	mux.HandleFunc("PUT /hive/{hivePublicId}", api_bees.HandlePutHive)
 	mux.HandleFunc("DELETE /hive/{hivePublicId}", api_bees.HandleDeleteHive)
 
