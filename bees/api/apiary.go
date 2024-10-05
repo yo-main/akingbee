@@ -29,7 +29,7 @@ func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 		Name:      req.FormValue("name"),
 		Location:  req.FormValue("location"),
 		HoneyKind: req.FormValue("honeyKind"),
-		Owner:     userId,
+		User:      userId,
 	}
 
 	_, err = apiary_services.CreateApiary(ctx, &command)
@@ -80,7 +80,7 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if apiary.Owner != *userId {
+	if apiary.User != *userId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return
@@ -139,7 +139,7 @@ func HandleDeleteApiary(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if apiary.Owner != *userId {
+	if apiary.User != *userId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return

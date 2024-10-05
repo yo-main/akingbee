@@ -13,7 +13,7 @@ import (
 
 const queryCreateApiary = `
 	INSERT INTO APIARY (
-		public_id, name, location, honey_kind, owner_id
+		public_id, name, location, honey_kind, user_id
 	) VALUES (
 		$1, $2, $3, $4, (SELECT USERS.ID FROM USERS WHERE USERS.PUBLIC_ID=$5)
 	)
@@ -21,7 +21,7 @@ const queryCreateApiary = `
 
 func CreateApiary(ctx context.Context, apiary *models.Apiary) error {
 	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryCreateApiary, apiary.PublicId, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.Owner)
+	_, err := db.ExecContext(ctx, queryCreateApiary, apiary.PublicId, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.User)
 
 	return err
 }
@@ -58,16 +58,16 @@ const queryGetApiaries = `
 		USERS.PUBLIC_ID, 
 		COUNT(HIVE.ID) AS HIVE_COUNT
 	FROM APIARY
-	JOIN USERS ON USERS.ID=APIARY.OWNER_ID
+	JOIN USERS ON USERS.ID=APIARY.USER_ID
 	LEFT JOIN HIVE ON HIVE.APIARY_ID=APIARY.ID
 	WHERE USERS.PUBLIC_ID=$1
 	GROUP BY 1, 2, 3, 4, 5
 	ORDER BY APIARY.DATE_CREATION DESC
 `
 
-func GetApiaries(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, error) {
+func GetApiaries(ctx context.Context, userId *uuid.UUID) ([]models.Apiary, error) {
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetApiaries, ownerId)
+	rows, err := db.QueryContext(ctx, queryGetApiaries, userId)
 	defer rows.Close()
 
 	if err != nil {
@@ -78,7 +78,7 @@ func GetApiaries(ctx context.Context, ownerId *uuid.UUID) ([]models.Apiary, erro
 
 	for rows.Next() {
 		var apiary models.Apiary
-		err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.Owner, &apiary.HiveCount)
+		err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
 		if err != nil {
 			return nil, errors.New(fmt.Sprintf("Could not build Apiary from result: %s", err))
 		}
@@ -97,7 +97,7 @@ const queryGetApiary = `
 		USERS.PUBLIC_ID, 
 		2 AS HIVE_COUNT
 	FROM APIARY
-	JOIN USERS ON USERS.ID=APIARY.OWNER_ID
+	JOIN USERS ON USERS.ID=APIARY.USER_ID
 	WHERE APIARY.PUBLIC_ID=$1
 `
 
@@ -112,7 +112,7 @@ func GetApiary(ctx context.Context, apiaryPublicId *uuid.UUID) (*models.Apiary, 
 
 	var apiary models.Apiary
 	rows.Next()
-	err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.Owner, &apiary.HiveCount)
+	err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Could not build Apiary from result: %s", err))
 	}
@@ -120,7 +120,7 @@ func GetApiary(ctx context.Context, apiaryPublicId *uuid.UUID) (*models.Apiary, 
 	return &apiary, err
 }
 
-func GetApiaryValues(ctx context.Context, value string, ownerId *uuid.UUID) []string {
+func GetApiaryValues(ctx context.Context, value string, userId *uuid.UUID) []string {
 	results := []string{}
 
 	if !(value == "location" || value == "honey_kind") {
@@ -131,12 +131,12 @@ func GetApiaryValues(ctx context.Context, value string, ownerId *uuid.UUID) []st
 	queryGetApiaryValue := fmt.Sprintf(`
 		SELECT DISTINCT %s
 		FROM APIARY
-		JOIN USERS ON USERS.ID=APIARY.OWNER_ID
+		JOIN USERS ON USERS.ID=APIARY.USER_ID
 		WHERE USERS.PUBLIC_ID=$1
 	`, value)
 
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetApiaryValue, ownerId)
+	rows, err := db.QueryContext(ctx, queryGetApiaryValue, userId)
 	defer rows.Close()
 
 	if err != nil {

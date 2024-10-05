@@ -40,7 +40,7 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 	return components.Row{
 		Cells: []components.Cell{
 			{Label: hive.Name},
-			{Label: hive.Condition},
+			{Label: hive.Beekeeper},
 			{Label: swarmHealth},
 			{Label: apiaryName},
 			{
@@ -73,11 +73,11 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 										Default:  hive.Name,
 									},
 									{
-										Name:     "condition",
+										Name:     "beekeeper",
 										Label:    "État",
 										Type:     "text",
 										Required: true,
-										Default:  hive.Condition,
+										Default:  hive.Beekeeper,
 									},
 								},
 							},
@@ -111,9 +111,9 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 		rows = append(rows, GetHiveTableRow(hive))
 	}
 
-	var conditions []components.Choice
-	for _, condition := range repositories.GetHiveValues(ctx, "condition", userId) {
-		conditions = append(conditions, components.Choice{Key: condition, Label: condition})
+	var beekeepers []components.Choice
+	for _, beekeeper := range repositories.GetHiveValues(ctx, "beekeeper", userId) {
+		beekeepers = append(beekeepers, components.Choice{Key: beekeeper, Label: beekeeper})
 	}
 
 	apiaries, err := repositories.GetApiaries(ctx, userId)
@@ -159,11 +159,11 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 						Required: true,
 					},
 					{
-						Name:        "condition",
-						Label:       "Condition",
+						Name:        "beekeeper",
+						Label:       "Apiculteur",
 						Type:        "text",
 						Required:    true,
-						ChoicesFree: conditions,
+						ChoicesFree: beekeepers,
 					},
 					{
 						Name:        "swarm_health",
@@ -188,7 +188,7 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 			IsFullWidth: true,
 			Headers: []components.Header{
 				{Label: "Nom"},
-				{Label: "Condition"},
+				{Label: "Apiculteur"},
 				{Label: "Santé de l'essaim"},
 				{Label: "Rucher"},
 				{Label: "Actions"},

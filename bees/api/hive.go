@@ -38,10 +38,10 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 	}
 	command := hive_services.CreateHiveCommand{
 		Name:        req.FormValue("name"),
-		Condition:   req.FormValue("condition"),
+		Beekeeper:   req.FormValue("beekeeper"),
 		SwarmHealth: req.FormValue("swarm_health"),
 		Apiary:      apiaryPublicId,
-		Owner:       userId,
+		User:        userId,
 	}
 
 	_, err = hive_services.CreateHive(ctx, &command)
@@ -92,14 +92,14 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if hive.Owner != *userId {
+	if hive.User != *userId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return
 	}
 
 	hive.Name = req.FormValue("name")
-	hive.Condition = req.FormValue("condition")
+	hive.Beekeeper = req.FormValue("beekeeper")
 
 	err = hive_services.UpdateHive(ctx, hive)
 	if err != nil {
@@ -150,7 +150,7 @@ func HandleDeleteHive(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if hive.Owner != *userId {
+	if hive.User != *userId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return
