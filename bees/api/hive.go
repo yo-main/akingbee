@@ -79,8 +79,8 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
 		log.Printf("The provided hive id is incorrect: %s", err)
-		web.PrepareFailedNotification(response, "Bad request")
-		response.WriteHeader(http.StatusBadRequest)
+		web.PrepareFailedNotification(response, "Not Found")
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 

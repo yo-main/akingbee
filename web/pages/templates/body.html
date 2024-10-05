@@ -11,13 +11,14 @@
     hx-on:htmx:after-swap="if (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value.replaceAll('Ã©', 'é' ).replaceAll('Ã¨', 'è'), {swapStyle: 'afterbegin'})}">
   </div>
 
-  <section id="page-body" class="hero is-fullheight-with-navbar has-background-white-lighter">
+  <!-- <section id="page-body" class="hero is-fullheight-with-navbar has-background-white-lighter"> -->
+  <div id="page-body" class="section has-background-white-lighter">
     {{ .Content }}
-  </section>
-
-  <div class="container p-5">
-    <div class="content has-text-centered">
-      <p>Made with love by Yomain</p>
-    </div>
   </div>
+
+  <!-- <div class="container p-5"> -->
+  <!-- <div class="content has-text-centered"> -->
+  <!-- <p>Made with love by Yomain</p> -->
+  <!-- </div> -->
+  <!-- </div> -->
 </body>
