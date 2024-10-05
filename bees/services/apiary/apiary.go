@@ -13,7 +13,7 @@ type CreateApiaryCommand struct {
 	Name      string
 	Location  string
 	HoneyKind string
-	Owner     *uuid.UUID
+	User      *uuid.UUID
 }
 
 func (c *CreateApiaryCommand) Validate() error {
@@ -27,8 +27,8 @@ func (c *CreateApiaryCommand) Validate() error {
 		return errors.New("HoneyKind has not been provided")
 	}
 
-	if c.Owner == nil {
-		return errors.New("Owner has not been provided")
+	if c.User == nil {
+		return errors.New("User has not been provided")
 	}
 
 	return nil
@@ -38,7 +38,7 @@ type UpdateApiaryCommand struct {
 	Name      string
 	Location  string
 	HoneyKind string
-	Owner     *uuid.UUID
+	User      *uuid.UUID
 	PublicId  *uuid.UUID
 }
 
@@ -66,7 +66,7 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 		HoneyKind: command.HoneyKind,
 		Name:      command.Name,
 		Location:  command.Location,
-		Owner:     *command.Owner,
+		User:      *command.User,
 		HiveCount: 0,
 		PublicId:  uuid.New(),
 	}

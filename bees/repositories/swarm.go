@@ -50,7 +50,7 @@ func DeleteSwarm(ctx context.Context, swarm *models.Swarm) error {
 	return err
 }
 
-func GetSwarmValues(ctx context.Context, value string, ownerId *uuid.UUID) []string {
+func GetSwarmValues(ctx context.Context, value string, userId *uuid.UUID) []string {
 	results := []string{}
 
 	if value != "health" {
@@ -62,12 +62,12 @@ func GetSwarmValues(ctx context.Context, value string, ownerId *uuid.UUID) []str
 		SELECT DISTINCT %s
 		FROM SWARM
 		JOIN HIVE ON SWARM.ID=HIVE.SWARM_ID
-		JOIN USERS ON USERS.ID=HIVE.OWNER_ID
+		JOIN USERS ON USERS.ID=HIVE.USER_ID
 		WHERE USERS.PUBLIC_ID=$1
 	`, value)
 
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetSwarmValue, ownerId)
+	rows, err := db.QueryContext(ctx, queryGetSwarmValue, userId)
 	defer rows.Close()
 
 	if err != nil {

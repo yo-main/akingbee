@@ -14,7 +14,7 @@ import (
 
 const queryCreateHive = `
 	INSERT INTO HIVE (
-		public_id, name, condition, apiary_id, swarm_id, owner_id
+		public_id, name, beekeeper, apiary_id, swarm_id, user_id
 	) VALUES (
 		$1, 
 		$2,
@@ -36,7 +36,7 @@ func CreateHive(ctx context.Context, hive *models.Hive) error {
 	if hive.Swarm != nil {
 		swarmPublicId = hive.Swarm.PublicId
 	}
-	_, err := db.ExecContext(ctx, queryCreateHive, hive.PublicId, hive.Name, hive.Condition, apiaryPublicId, swarmPublicId, hive.Owner)
+	_, err := db.ExecContext(ctx, queryCreateHive, hive.PublicId, hive.Name, hive.Beekeeper, apiaryPublicId, swarmPublicId, hive.User)
 
 	return err
 }
@@ -45,7 +45,7 @@ const queryUpdateHive = `
 	UPDATE HIVE 
 	SET 
 		NAME=$1,
-		CONDITION=$2,
+		BEEKEEPER=$2,
 		APIARY_ID=(SELECT APIARY.ID FROM APIARY WHERE APIARY.PUBLIC_ID=$3),
 		SWARM_ID=(SELECT SWARM.ID FROM SWARM WHERE SWARM.PUBLIC_ID=$4)
 	WHERE PUBLIC_ID=$5
@@ -61,7 +61,7 @@ func UpdateHive(ctx context.Context, hive *models.Hive) error {
 	if hive.Swarm != nil {
 		swarmPublicId = hive.Swarm.PublicId
 	}
-	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Condition, apiaryPublicId, swarmPublicId, hive.PublicId)
+	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Beekeeper, apiaryPublicId, swarmPublicId, hive.PublicId)
 	return err
 }
 
@@ -86,14 +86,14 @@ const queryGetHives = `
 			APIARY.HONEY_KIND,
 			COUNT(*) AS HIVE_COUNT
 		FROM APIARY
-		JOIN USERS ON USERS.ID=APIARY.OWNER_ID
+		JOIN USERS ON USERS.ID=APIARY.USER_ID
 		JOIN HIVE ON HIVE.APIARY_ID=APIARY.ID
 		GROUP BY 1, 2, 3, 4, 5
 	)
 	SELECT 
 		HIVE.PUBLIC_ID, 
 		HIVE.NAME,
-		HIVE.CONDITION,
+		HIVE.BEEKEEPER,
 		APIARIES.PUBLIC_ID,
 		COALESCE(APIARIES.NAME, ''),
 		COALESCE(APIARIES.LOCATION, ''),
@@ -105,7 +105,7 @@ const queryGetHives = `
 		USERS.PUBLIC_ID,
 		USERS.PUBLIC_ID
 	FROM HIVE
-	JOIN USERS ON USERS.ID=HIVE.OWNER_ID
+	JOIN USERS ON USERS.ID=HIVE.USER_ID
 	LEFT JOIN APIARIES ON APIARIES.ID=HIVE.APIARY_ID
 	LEFT JOIN SWARM ON SWARM.ID=HIVE.SWARM_ID
 `
@@ -117,7 +117,7 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 	err := rows.Scan(
 		&hive.PublicId,
 		&hive.Name,
-		&hive.Condition,
+		&hive.Beekeeper,
 		&apiary.PublicId,
 		&apiary.Name,
 		&apiary.Location,
@@ -126,8 +126,8 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 		&swarm.PublicId,
 		&swarm.Year,
 		&swarm.Health,
-		&apiary.Owner,
-		&hive.Owner,
+		&apiary.User,
+		&hive.User,
 	)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Could not build Hive from result: %s", err))
@@ -141,9 +141,9 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 	return &hive, nil
 }
 
-func GetHives(ctx context.Context, ownerId *uuid.UUID) ([]*models.Hive, error) {
+func GetHives(ctx context.Context, userId *uuid.UUID) ([]*models.Hive, error) {
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE USERS.PUBLIC_ID=$1 ORDER BY HIVE.DATE_CREATION DESC", queryGetHives), ownerId)
+	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE USERS.PUBLIC_ID=$1 ORDER BY HIVE.DATE_CREATION DESC", queryGetHives), userId)
 	defer rows.Close()
 
 	if err != nil {
@@ -181,10 +181,10 @@ func GetHive(ctx context.Context, hivePublicId *uuid.UUID) (*models.Hive, error)
 	return hive, err
 }
 
-func GetHiveValues(ctx context.Context, value string, ownerId *uuid.UUID) []string {
+func GetHiveValues(ctx context.Context, value string, userId *uuid.UUID) []string {
 	results := []string{}
 
-	if value != "condition" {
+	if value != "beekeeper" {
 		log.Printf("Wrong choice of value: %s", value)
 		return results
 	}
@@ -192,12 +192,12 @@ func GetHiveValues(ctx context.Context, value string, ownerId *uuid.UUID) []stri
 	queryGetHiveValue := fmt.Sprintf(`
 		SELECT DISTINCT %s
 		FROM HIVE
-		JOIN USERS ON USERS.ID=HIVE.OWNER_ID
+		JOIN USERS ON USERS.ID=HIVE.USER_ID
 		WHERE USERS.PUBLIC_ID=$1
 	`, value)
 
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetHiveValue, ownerId)
+	rows, err := db.QueryContext(ctx, queryGetHiveValue, userId)
 	defer rows.Close()
 
 	if err != nil {

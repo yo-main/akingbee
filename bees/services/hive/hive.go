@@ -11,21 +11,21 @@ import (
 
 type CreateHiveCommand struct {
 	Name        string
-	Condition   string
+	Beekeeper   string
 	Apiary      *uuid.UUID
 	SwarmHealth string
-	Owner       *uuid.UUID
+	User        *uuid.UUID
 }
 
 func (c *CreateHiveCommand) Validate() error {
 	if len(c.Name) == 0 {
 		return errors.New("Name has not been provided")
 	}
-	if len(c.Condition) == 0 {
-		return errors.New("Condition has not been provided")
+	if len(c.Beekeeper) == 0 {
+		return errors.New("Beekeeper has not been provided")
 	}
-	if c.Owner == nil {
-		return errors.New("Owner has not been provided")
+	if c.User == nil {
+		return errors.New("User has not been provided")
 	}
 
 	return nil
@@ -33,8 +33,8 @@ func (c *CreateHiveCommand) Validate() error {
 
 type UpdateHiveCommand struct {
 	Name      string
-	Condition string
-	Owner     *uuid.UUID
+	Beekeeper string
+	User      *uuid.UUID
 	PublicId  *uuid.UUID
 }
 
@@ -42,8 +42,8 @@ func (c *UpdateHiveCommand) Validate() error {
 	if len(c.Name) == 0 {
 		return errors.New("Name has not been provided")
 	}
-	if len(c.Condition) == 0 {
-		return errors.New("Location has not been provided")
+	if len(c.Beekeeper) == 0 {
+		return errors.New("Beekeeper has not been provided")
 	}
 	return nil
 }
@@ -56,8 +56,8 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 
 	hive := models.Hive{
 		Name:      command.Name,
-		Condition: command.Condition,
-		Owner:     *command.Owner,
+		Beekeeper: command.Beekeeper,
+		User:      *command.User,
 		PublicId:  uuid.New(),
 	}
 
@@ -68,8 +68,8 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 			return nil, errors.New("Could not find Apiary")
 		}
 
-		if apiary.Owner != *command.Owner {
-			log.Printf("Forbidden: apiary %s does not belong to current user %s", command.Apiary, command.Owner)
+		if apiary.User != *command.User {
+			log.Printf("Forbidden: apiary %s does not belong to current user %s", command.Apiary, command.User)
 			return nil, errors.New("Forbidden access")
 		}
 

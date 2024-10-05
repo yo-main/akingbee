@@ -17,8 +17,8 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
             name BLOB NOT NULL UNIQUE,
             location BLOB NOT NULL,
             honey_kind BLOB NOT NULL,
-			owner_id INTEGER NOT NULL,
-			FOREIGN KEY(owner_id) REFERENCES USERS(id)
+			user_id INTEGER NOT NULL,
+			FOREIGN KEY(user_id) REFERENCES USERS(id)
         );
     `)
 

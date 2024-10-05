@@ -29,11 +29,11 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
 			date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
 			public_id BLOB NOT NULL UNIQUE,
             name BLOB NOT NULL UNIQUE,
-			condition BLOB NOT NULL,
+			beekeeper BLOB NOT NULL,
             apiary_id INTEGER,
 			swarm_id INTEGER,
-			owner_id INTEGER NOT NULL,
-			FOREIGN KEY(owner_id) REFERENCES USERS(id),
+			user_id INTEGER NOT NULL,
+			FOREIGN KEY(user_id) REFERENCES USERS(id),
 			FOREIGN KEY(apiary_id) REFERENCES APIARY(id),
 			FOREIGN KEY(swarm_id) REFERENCES SWARM(id)
         );

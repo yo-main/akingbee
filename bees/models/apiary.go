@@ -10,16 +10,16 @@ type Apiary struct {
 	HoneyKind string
 	HiveCount int
 	PublicId  uuid.UUID
-	Owner     uuid.UUID
+	User      uuid.UUID
 }
 
 type Hive struct {
 	Name      string
 	PublicId  uuid.UUID
-	Condition string
+	Beekeeper string
 	Apiary    *Apiary
 	Swarm     *Swarm
-	Owner     uuid.UUID
+	User      uuid.UUID
 }
 
 type Swarm struct {
