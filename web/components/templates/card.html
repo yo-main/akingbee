@@ -1,0 +1,32 @@
+<div class="card">
+  {{ with .Header }}
+  <header class="card-header">
+    <p class="card-header-title">{{ .Title }}</p>
+    {{ if .Button }}<div class="card-header-item"> {{ template "button.html" .Button }} </div>{{ end}}
+  </header>
+  {{ end }}
+
+  {{ with .Content }}
+  <div class="card-content">
+    {{ with .HorizontalTable }}
+    <div class="fixed-grid">
+      <div class="grid">
+        {{ range .Values }}
+        <div class="cell has-text-right heading mr-5">{{ .Key }}</div>
+        <div class="cell"><i>{{ .Value }}</i></div>
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+  {{ end }}
+
+  {{ with .Footer }}
+  <footer class="card-footer">
+    {{ range .Buttons }}
+    <div class="card-footer-item">{{ template "button.html" .}}</div>
+    {{ end }}
+  </footer>
+  {{ end }}
+
+</div>
