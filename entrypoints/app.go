@@ -43,5 +43,8 @@ func ApiServe() {
 	// http.Handle("/", fs)
 
 	log.Print("Listing on port 8080...\n")
-	http.ListenAndServe(":8080", mux)
+	err := http.ListenAndServe(":8080", mux)
+	if err != nil {
+		log.Printf("Server failed: %s", err)
+	}
 }

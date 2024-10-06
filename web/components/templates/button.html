@@ -1,12 +1,16 @@
-<div {{ if .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }} {{ if .Url }}hx-{{ .Method }}="{{ .Url }}" {{ end }}>
+<div {{ if .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }} {{ if .Url }}hx-{{ .Method }}="{{ .Url }}" {{ end }} {{ if
+  .PushUrl }}hx-push-url="{{ .Url }}" {{ end }} {{ if .Swap }}hx-swap="{{ .Swap }}" {{ end }} {{ if .Target
+  }}hx-target="{{ .Target }}" {{ end }}>
   {{ if .Label }}
   <button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
     {{ .Label }}
   </button>
   {{ else if .Icon }}
-  <span class="icon">
-    <img src="/icon-{{ .Icon }}.svg">
-  </span>
+  <button>
+    <span class="icon">
+      <img src="/icon-{{ .Icon }}.svg">
+    </span>
+  </button>
   {{ .Label }}
   {{ end }}
 </div>

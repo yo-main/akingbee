@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"time"
 )
 
 type Apiary struct {
@@ -26,4 +27,11 @@ type Swarm struct {
 	PublicId uuid.UUID
 	Year     int
 	Health   string
+}
+
+type Comment struct {
+	PublicId uuid.UUID
+	Date     time.Time
+	Content  string
+	Hive     *Hive
 }

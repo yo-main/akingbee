@@ -31,4 +31,5 @@ type Input struct {
 	ChoicesFree   []Choice
 	ChoicesStrict []Choice
 	Default       string
+	RichEditor    bool
 }

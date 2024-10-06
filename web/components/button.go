@@ -13,6 +13,9 @@ type Button struct {
 	FormId  string
 	Icon    string
 	Confirm string
-	Url     string
 	Method  string
+	Url     string
+	PushUrl bool
+	Swap    string
+	Target  string
 }
