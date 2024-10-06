@@ -19,7 +19,8 @@ import (
 var hiveDetailPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail.html"))
 
 type hiveDetailPageParameter struct {
-	Card components.Card
+	Card         components.Card
+	Commentaries components.Table
 }
 
 func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
@@ -29,6 +30,10 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 		return nil, err
 	}
 
+	var apiaryName string
+	if hive.Apiary != nil {
+		apiaryName = hive.Apiary.Name
+	}
 	params := hiveDetailPageParameter{
 		Card: components.Card{
 			Header: components.CardHeader{
@@ -38,15 +43,47 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 				HorizontalTable: components.HorizontalTable{
 					Values: []components.HorizontalTableValue{
 						{Key: "Apiculteur", Value: hive.Beekeeper},
-						{Key: "Rucher", Value: hive.Apiary.Name},
+						{Key: "Rucher", Value: apiaryName},
 						{Key: "Santé de l'essaim", Value: hive.Swarm.Health},
 					},
 				},
 			},
 			Footer: components.CardFooter{
 				Buttons: []components.Button{
-					{Label: "Éditer"},
-					{Label: "Supprimer"},
+					{Label: "Éditer", Type: "is-ghost"},
+					{Label: "Supprimer", Type: "is-ghost"},
+				},
+			},
+		},
+		Commentaries: components.Table{
+			IsFullWidth: true,
+			IsStripped:  true,
+			Headers: []components.Header{
+				{Label: "Date"},
+				{Label: "Type"},
+				{Label: "Comment"},
+			},
+			Rows: []components.Row{
+				{
+					Cells: []components.Cell{
+						{Label: "2024-09-02"},
+						{Label: "Nourriture"},
+						{Label: "3L avec 1/8Kg sucre"},
+					},
+				},
+				{
+					Cells: []components.Cell{
+						{Label: "2024-09-01"},
+						{Label: "Note"},
+						{Label: "Blablabla azheaziej"},
+					},
+				},
+				{
+					Cells: []components.Cell{
+						{Label: "2024-08-31"},
+						{Label: "Note"},
+						{Label: "Blablabla azheaziej"},
+					},
 				},
 			},
 		},
