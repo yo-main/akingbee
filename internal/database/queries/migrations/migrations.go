@@ -4,6 +4,7 @@ import (
 	"akingbee/internal/database/queries/migrations/M0001"
 	"akingbee/internal/database/queries/migrations/M0002"
 	"akingbee/internal/database/queries/migrations/M0003"
+	"akingbee/internal/database/queries/migrations/M0004"
 	"context"
 	"database/sql"
 	"fmt"
@@ -26,6 +27,12 @@ func Upgrade(ctx context.Context, db *sql.DB) {
 	}
 
 	err = M0003.Upgrade(ctx, db)
+	if err != nil {
+		log.Printf(fmt.Sprintf("Migration failed: %s", err))
+		return
+	}
+
+	err = M0004.Upgrade(ctx, db)
 	if err != nil {
 		log.Printf(fmt.Sprintf("Migration failed: %s", err))
 		return

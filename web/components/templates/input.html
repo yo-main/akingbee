@@ -1,3 +1,14 @@
+{{ if .RichEditor }}
+
+<input hidden name="{{ .Name }}">
+<div id='coucou' class="rich-editor" hx-trigger="load" hx-get="data:text/html," hx-swap='none'
+  hx-on:htmx:after-request="console.log('coucou'); const quill = new Quill('#coucou', {theme: 'snow'});">
+</div>
+
+
+{{ else }}
+
+
 {{ if .ChoicesStrict }}
 <div class="select is-fullwidth">
   <select name="{{ .Name }}">
@@ -9,6 +20,7 @@
 </div>
 
 {{ else }}
+
 {{ if .ChoicesFree }}
 <datalist id="datalist-{{ .Name }}">
   {{ range .ChoicesFree }}
@@ -20,4 +32,7 @@
 <input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
   hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
   .ChoicesFree }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>
+{{ end }}
+
+
 {{ end }}
