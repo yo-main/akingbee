@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"akingbee/bees/models"
 	"akingbee/bees/repositories"
 	"akingbee/internal/htmx"
 	"akingbee/user/services"
@@ -12,15 +13,35 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 var hiveDetailPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail.html"))
+var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/comment_detail.html"))
 
 type hiveDetailPageParameter struct {
-	Card         components.Card
-	Commentaries components.Table
+	Card          components.Card
+	CommentDetail commentDetailParameter
+}
+
+type commentDetailParameter struct {
+	CreateCommentForm components.ModalForm
+	Commentaries      components.Table
+}
+
+func GetCommentRow(comment *models.Comment) (bytes.Buffer, error) {
+	params := components.Row{
+		Cells: []components.Cell{
+			{Label: comment.Date.Format("%Y-%m-%d")},
+			{Label: comment.Type},
+			{Label: comment.Body},
+		},
+	}
+	var commentRow bytes.Buffer
+	err := pages.HtmlPage.ExecuteTemplate(&commentRow, "table_row.html", &params)
+	return commentRow, err
 }
 
 func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
@@ -55,34 +76,80 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 				},
 			},
 		},
-		Commentaries: components.Table{
-			IsFullWidth: true,
-			IsStripped:  true,
-			Headers: []components.Header{
-				{Label: "Date"},
-				{Label: "Type"},
-				{Label: "Comment"},
+		CommentDetail: commentDetailParameter{
+			CreateCommentForm: components.ModalForm{
+				Title: "Nouveau commentaire",
+				ShowModalButton: components.Button{
+					Label: "Nouveau commentaire",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Créer",
+					FormId: "create-comment",
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					Id:     "create-comment",
+					Method: "post",
+					Url:    "/comment",
+					Swap:   "none",
+					Inputs: []components.Input{
+						{
+							GroupedInput: []components.Input{
+								{
+									Name:     "type",
+									Required: true,
+									Narrow:   true,
+									ChoicesStrict: []components.Choice{
+										{Key: "note", Label: "note"},
+										{Key: "feed", Label: "nourriture"},
+										{Key: "todo", Label: "action"},
+									},
+								},
+								{
+									Name:     "date",
+									Required: true,
+									Type:     "date",
+									Default:  time.Now().Format("2006-01-02"),
+								},
+							},
+						},
+						{
+							Name:       "body",
+							Required:   true,
+							RichEditor: true,
+						},
+					},
+				},
 			},
-			Rows: []components.Row{
-				{
-					Cells: []components.Cell{
-						{Label: "2024-09-02"},
-						{Label: "Nourriture"},
-						{Label: "3L avec 1/8Kg sucre"},
-					},
+			Commentaries: components.Table{
+				IsFullWidth: true,
+				IsStripped:  true,
+				Headers: []components.Header{
+					{Label: "Date"},
+					{Label: "Type"},
+					{Label: "Comment"},
 				},
-				{
-					Cells: []components.Cell{
-						{Label: "2024-09-01"},
-						{Label: "Note"},
-						{Label: "Blablabla azheaziej"},
+				Rows: []components.Row{
+					{
+						Cells: []components.Cell{
+							{Label: "2024-09-02"},
+							{Label: "Nourriture"},
+							{Label: "3L avec 1/8Kg sucre"},
+						},
 					},
-				},
-				{
-					Cells: []components.Cell{
-						{Label: "2024-08-31"},
-						{Label: "Note"},
-						{Label: "Blablabla azheaziej"},
+					{
+						Cells: []components.Cell{
+							{Label: "2024-09-01"},
+							{Label: "Note"},
+							{Label: "Blablabla azheaziej"},
+						},
+					},
+					{
+						Cells: []components.Cell{
+							{Label: "2024-08-31"},
+							{Label: "Note"},
+							{Label: "Blablabla azheaziej"},
+						},
 					},
 				},
 			},

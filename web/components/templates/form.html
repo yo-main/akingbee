@@ -4,15 +4,11 @@
   <div class="column is-narrow">
 
     {{ range .Inputs }}
-    <div class="field is-horizontal">
-      <div class="field-label is-normal is-flex-grow-4">{{ .Label }}</div>
-      <div class="field-body">
-        <div class="control">
-          {{ template "input.html" . }}
-        </div>
-      </div>
+    <div class="field">
+      {{ template "input.html" . }}
     </div>
     {{ end }}
+
 
   </div>
 </form>
