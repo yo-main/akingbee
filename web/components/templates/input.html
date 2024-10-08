@@ -1,38 +1,61 @@
-{{ if .RichEditor }}
+{{ define "baseInput" }}
+<div class="field is-horizontal {{ if .Narrow }}is-narrow{{end}} {{ if .RichEditor}}is-flex-direction-column{{ end }}">
 
-<input hidden name="{{ .Name }}">
-<div id='coucou' class="rich-editor" hx-trigger="load" hx-get="data:text/html," hx-swap='none'
-  hx-on:htmx:after-request="console.log('coucou'); const quill = new Quill('#coucou', {theme: 'snow'});">
-</div>
+  {{ if .Label }}<div class="field-label is-normal">{{ .Label }}</div>{{ end }}
+
+  <div class="control">
+    {{ if .RichEditor }}
+    <input hidden name="{{ .Name }}">
+    <div class="rich-editor" hx-trigger="load" hx-get="data:text/html," hx-swap='none'
+      hx-on:htmx:after-request="console.log('coucou'); const quill = new Quill(this, {modules: {toolbar: [['bold', 'italic', 'underline', 'strike'], [{'list': 'bullet'}, {'list': 'ordered'}], [{'color': []}, {'background': []}, 'list']]}, theme: 'snow'});">
+    </div>
 
 
-{{ else }}
+    {{ else }}
 
 
-{{ if .ChoicesStrict }}
-<div class="select is-fullwidth">
-  <select name="{{ .Name }}">
-    {{ range .ChoicesStrict }}
-    <option {{ if .Disabled }}disabled{{end}} {{ if .Selected }}selected{{ end }} value="{{ .Key }}">{{ .Label }}
-    </option>
+    {{ if .ChoicesStrict }}
+    <div class="select is-fullwidth">
+      <select name="{{ .Name }}">
+        {{ range .ChoicesStrict }}
+        <option {{ if .Disabled }}disabled{{end}} {{ if .Selected }}selected{{ end }} value="{{ .Key }}">{{ .Label
+          }}
+        </option>
+        {{ end }}
+      </select>
+    </div>
+
+    {{ else }}
+
+    {{ if .ChoicesFree }}
+    <datalist id="datalist-{{ .Name }}">
+      {{ range .ChoicesFree }}
+      <option {{ if .Disabled }}disabled{{end}} {{ if .Selected }}selected{{ end }} value="{{ .Key }}">{{ .Label }}
+      </option>
+      {{ end }}
+    </datalist>
     {{ end }}
-  </select>
+
+    <input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
+      hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
+      .ChoicesFree }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>
+    {{ end }}
+
+
+    {{ end }}
+  </div>
 </div>
+{{ end }}
 
-{{ else }}
+<div class="field-body">
+  {{ if .GroupedInput }}
 
-{{ if .ChoicesFree }}
-<datalist id="datalist-{{ .Name }}">
-  {{ range .ChoicesFree }}
-  <option {{ if .Disabled }}disabled{{end}} {{ if .Selected }}selected{{ end }} value="{{ .Key }}">{{ .Label }}</option>
+  {{ range .GroupedInput}}
+  {{ template "baseInput" .}}
+
   {{ end }}
-</datalist>
-{{ end }}
+  {{ else }}
+  {{ template "baseInput" .}}
 
-<input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
-  hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
-  .ChoicesFree }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>
-{{ end }}
-
-
-{{ end }}
+  {{ end }}
+</div>

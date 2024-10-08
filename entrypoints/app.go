@@ -36,6 +36,8 @@ func ApiServe() {
 	mux.HandleFunc("PUT /hive/{hivePublicId}", api_bees.HandlePutHive)
 	mux.HandleFunc("DELETE /hive/{hivePublicId}", api_bees.HandleDeleteHive)
 
+	mux.HandleFunc("POST /comment", api_bees.HandlePostComment)
+
 	// http.HandleFunc("POST /login", login.UserLogin)
 
 	// http.HandleFunc("GET /user/{id}", user.GetUser)

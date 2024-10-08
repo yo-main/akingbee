@@ -1,0 +1,17 @@
+<div class="column is-three-quarters">
+  <div class="tabs">
+    <ul>
+      <li class="is-active"><a>Suivi</a></li>
+      <li><a>Recolte</a></li>
+    </ul>
+  </div>
+
+  <div class="block is-pulled-right" hx-target="#page-body" hx-swap="innerHTML">
+    {{ template "modal.html" .CreateCommentForm}}
+  </div>
+
+  <div class="block">
+    {{ template "table.html" .Commentaries }}
+  </div>
+
+</div>

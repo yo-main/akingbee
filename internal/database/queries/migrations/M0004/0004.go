@@ -15,6 +15,7 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
 			date_creation DATETIME DEFAULT CURRENT_TIMESTAMP,
 			public_id BLOB NOT NULL UNIQUE,
 			date DATE NOT NULL,
+			type BLOB NOT NULL,
 			body BLOB NOT NULL,
 			hive_id INTEGER NOT NULL,
 			FOREIGN KEY(hive_id) REFERENCES HIVE(id)

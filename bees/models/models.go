@@ -30,8 +30,9 @@ type Swarm struct {
 }
 
 type Comment struct {
-	PublicId uuid.UUID
-	Date     time.Time
-	Content  string
-	Hive     *Hive
+	PublicId     uuid.UUID
+	Date         time.Time
+	Type         string
+	Body         string
+	HivePublicId *uuid.UUID
 }

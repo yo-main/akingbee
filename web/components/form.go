@@ -32,4 +32,6 @@ type Input struct {
 	ChoicesStrict []Choice
 	Default       string
 	RichEditor    bool
+	GroupedInput  []Input
+	Narrow        bool
 }
