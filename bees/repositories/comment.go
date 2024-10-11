@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+
 	"github.com/google/uuid"
 )
 
@@ -26,7 +28,7 @@ func CreateComment(ctx context.Context, comment *models.Comment) error {
 
 	_, err := db.ExecContext(
 		ctx,
-		queryCreateSwarm,
+		queryCreateComment,
 		comment.PublicId,
 		comment.Date,
 		comment.Type,
@@ -39,24 +41,24 @@ func CreateComment(ctx context.Context, comment *models.Comment) error {
 
 const queryGetComment = `
 	SELECT 
-		PUBLIC_ID,
+		COMMENT.PUBLIC_ID,
 		DATE,
 		TYPE,
 		BODY,
 		HIVE.PUBLIC_ID
 	FROM COMMENT
 	JOIN HIVE ON COMMENT.HIVE_ID=HIVE.ID
-	WHERE PUBLIC_ID=$1
 `
 
 func GetComment(ctx context.Context, commentPublicId *uuid.UUID) (*models.Comment, error) {
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetComment, commentPublicId)
-	defer rows.Close()
+	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE COMMENT.PUBLIC_ID=$1", queryGetComment), commentPublicId)
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
 	}
+
+	defer rows.Close()
 
 	var comment models.Comment
 
@@ -74,6 +76,38 @@ func GetComment(ctx context.Context, commentPublicId *uuid.UUID) (*models.Commen
 	}
 
 	return &comment, nil
+}
+
+func GetComments(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Comment, error) {
+	db := database.GetDb()
+	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1", queryGetComment), hivePublicId)
+
+	if err != nil {
+		log.Printf("%s", err)
+		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+	}
+
+	defer rows.Close()
+
+	var comments []models.Comment
+
+	for rows.Next() {
+		var comment models.Comment
+		err := rows.Scan(
+			&comment.PublicId,
+			&comment.Date,
+			&comment.Type,
+			&comment.Body,
+			&comment.HivePublicId,
+		)
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("Could not build Comment from result: %s", err))
+		}
+
+		comments = append(comments, comment)
+	}
+
+	return comments, nil
 }
 
 const queryUpdateComment = `

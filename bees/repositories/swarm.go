@@ -68,12 +68,13 @@ func GetSwarmValues(ctx context.Context, value string, userId *uuid.UUID) []stri
 
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, queryGetSwarmValue, userId)
-	defer rows.Close()
 
 	if err != nil {
 		log.Printf("Error executing query: %s", err)
 		return nil
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var value string
