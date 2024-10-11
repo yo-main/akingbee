@@ -97,7 +97,7 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	commentDate, err := time.Parse(time.RFC3339, req.FormValue("date"))
+	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
 	if err != nil {
 		log.Printf("Date is not correctly formatted: %s", err)
 	}
