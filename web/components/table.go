@@ -30,6 +30,7 @@ type UpdateRowStrategy struct {
 
 type Cell struct {
 	Label        string
+	HTMLContent  template.HTML
 	UpdateRow    UpdateRowStrategy
 	ModalForm    ModalForm
 	Button       Button
