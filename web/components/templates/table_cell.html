@@ -2,6 +2,7 @@
   {{ with .UpdateRow.Swap }}
   <div hx-target="closest tr" hx-swap="{{ . }}">{{ end }}
     {{ if .Label }} {{ .Label }} {{end}}
+    {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
     {{ if .Button }} {{ template "button.html" .Button }} {{ end}}
     {{ if .ModalForm }} {{ template "modal.html" .ModalForm }} {{ end }}
     {{ if .GroupedCells }}

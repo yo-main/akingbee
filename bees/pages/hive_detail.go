@@ -37,7 +37,7 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 		Cells: []components.Cell{
 			{Label: comment.Date.Format("2006-01-02")},
 			{Label: comment.Type},
-			{Label: comment.Body},
+			{HTMLContent: template.HTML(comment.Body)},
 		},
 	}
 
