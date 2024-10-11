@@ -7,7 +7,7 @@
     {{ if .RichEditor }}
     <input hidden name="{{ .Name }}">
     <div class="rich-editor" hx-trigger="load" hx-get="data:text/html," hx-swap='none'
-      hx-on:htmx:after-request="console.log('coucou'); const quill = new Quill(this, {modules: {toolbar: [['bold', 'italic', 'underline', 'strike'], [{'list': 'bullet'}, {'list': 'ordered'}], [{'color': []}, {'background': []}, 'list']]}, theme: 'snow'});">
+      hx-on:htmx:after-request="const quill = new Quill(this, {modules: {toolbar: [['bold', 'italic', 'underline', 'strike'], [{'list': 'bullet'}, {'list': 'ordered'}], [{'color': []}, {'background': []}, 'list']]}, theme: 'snow'}); quill.on('text-change', (range, oldRange, source) => {this.previousSibling.previousSibling.previousSibling.value=quill.getSemanticHTML()});">
     </div>
 
 

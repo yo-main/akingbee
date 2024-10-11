@@ -5,7 +5,6 @@
   {{ if .IsBordered}}is-bordered{{ end }}
   {{ if .IsStripped}}is-stripped{{ end }}
   {{ if .IsFullWidth}}is-fullwidth{{ end }}
-  
 ">
 
   <thead>
@@ -16,7 +15,7 @@
     </tr>
   </thead>
 
-  <tbody>
+  <tbody {{ if .Id }}id="{{ .Id }}" {{ end }}>
     {{ range .Rows }}
     {{ template "table_row.html" .}}
     {{ end }}

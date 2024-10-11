@@ -52,7 +52,6 @@ func GetApiaryTableRow(apiary *models.Apiary) components.Row {
 								Id:     fmt.Sprintf("apiary-edit-%s", apiary.Name),
 								Method: "put",
 								Url:    fmt.Sprintf("/apiary/%s", apiary.PublicId),
-								Swap:   "none",
 								Inputs: []components.Input{
 									{
 										Name:     "name",
@@ -132,7 +131,6 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 				Id:     "createApiary",
 				Method: "post",
 				Url:    "/apiary",
-				Swap:   "none",
 				Inputs: []components.Input{
 					{
 						Name:     "name",

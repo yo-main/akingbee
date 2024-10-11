@@ -12,6 +12,7 @@ var tableRowTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/t
 var tableCellTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/table_cell.html"))
 
 type Table struct {
+	Id          string
 	Headers     []Header
 	Rows        []Row
 	IsBordered  bool
