@@ -32,6 +32,7 @@ type Input struct {
 	ChoicesFree   []Choice
 	ChoicesStrict []Choice
 	Default       string
+	DefaultHTML   template.HTML
 	RichEditor    bool
 	GroupedInput  []Input
 	Narrow        bool

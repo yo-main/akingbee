@@ -10,6 +10,7 @@ import (
 	"akingbee/web/pages"
 	"bytes"
 	"context"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -35,6 +36,69 @@ type commentDetailParameter struct {
 func GetCommentRow(comment *models.Comment) *components.Row {
 	params := components.Row{
 		Cells: []components.Cell{
+			{
+				GroupedCells: []components.Cell{
+					{
+						UpdateRow: components.UpdateRowStrategy{Swap: "delete"},
+						Button: components.Button{
+							Icon:    "delete",
+							Confirm: "Supprimer le commentaire ?",
+							Url:     fmt.Sprintf("/comment/%s", comment.PublicId),
+							Method:  "delete",
+						},
+					},
+					{
+						UpdateRow: components.UpdateRowStrategy{
+							Swap: "outerHTML",
+						},
+						ModalForm: components.ModalForm{
+							Title: "Editer le commentaire",
+							ShowModalButton: components.Button{
+								Icon: "edit",
+							},
+							SubmitFormButton: components.Button{
+								Label:  "Sauvegarder",
+								Type:   "is-link",
+								FormId: fmt.Sprintf("comment-edit-%s", comment.PublicId),
+							},
+							Form: components.Form{
+								Id:     fmt.Sprintf("comment-edit-%s", comment.PublicId),
+								Method: "put",
+								Url:    fmt.Sprintf("/comment/%s", comment.PublicId),
+								Inputs: []components.Input{
+									{
+										GroupedInput: []components.Input{
+											{
+												Name:     "type",
+												Required: true,
+												Narrow:   true,
+												ChoicesStrict: []components.Choice{
+													{Key: "note", Label: "note"},
+													{Key: "feed", Label: "nourriture"},
+													{Key: "todo", Label: "action"},
+												},
+												Default: comment.Type,
+											},
+											{
+												Name:     "date",
+												Required: true,
+												Type:     "date",
+												Default:  comment.Date.Format("2006-01-02"),
+											},
+										},
+									},
+									{
+										Name:       "body",
+										Required:   true,
+										RichEditor: true,
+										Default:    comment.Body,
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 			{Label: comment.Date.Format("2006-01-02")},
 			{Label: comment.Type},
 			{HTMLContent: template.HTML(comment.Body)},
@@ -144,6 +208,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 				IsFullWidth: true,
 				IsStripped:  true,
 				Headers: []components.Header{
+					{Label: "Actions"},
 					{Label: "Date"},
 					{Label: "Type"},
 					{Label: "Comment"},

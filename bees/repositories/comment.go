@@ -118,7 +118,7 @@ const queryUpdateComment = `
 
 func UpdateComment(ctx context.Context, comment *models.Comment) error {
 	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryUpdateSwarm, comment.Date, comment.Type, comment.Body, comment.PublicId)
+	_, err := db.ExecContext(ctx, queryUpdateComment, comment.Date, comment.Type, comment.Body, comment.PublicId)
 	return err
 }
 
@@ -129,6 +129,6 @@ const queryDeleteComment = `
 
 func DeleteComment(ctx context.Context, comment *models.Comment) error {
 	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryDeleteSwarm, comment.PublicId)
+	_, err := db.ExecContext(ctx, queryDeleteComment, comment.PublicId)
 	return err
 }
