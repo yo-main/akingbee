@@ -43,7 +43,6 @@ func GetLoginPage() (*bytes.Buffer, error) {
 			Id:     "login",
 			Method: "post",
 			Url:    "/login",
-			Swap:   "none",
 			Inputs: []components.Input{
 				{
 					Name:     "username",

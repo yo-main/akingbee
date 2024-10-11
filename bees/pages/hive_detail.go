@@ -29,6 +29,7 @@ type hiveDetailPageParameter struct {
 type commentDetailParameter struct {
 	CreateCommentForm components.ModalForm
 	Commentaries      components.Table
+	HivePublicId      *uuid.UUID
 }
 
 func GetCommentRow(comment *models.Comment) (bytes.Buffer, error) {
@@ -91,7 +92,8 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 					Id:     "create-comment",
 					Method: "post",
 					Url:    "/comment",
-					Swap:   "none",
+					Target: "#table-hive-comments",
+					Swap:   "afterbegin",
 					Inputs: []components.Input{
 						{
 							GroupedInput: []components.Input{
@@ -118,10 +120,16 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 							Required:   true,
 							RichEditor: true,
 						},
+						{
+							Name:    "hive_id",
+							Type:    "hidden",
+							Default: hivePublicId.String(),
+						},
 					},
 				},
 			},
 			Commentaries: components.Table{
+				Id:          "table-hive-comments",
 				IsFullWidth: true,
 				IsStripped:  true,
 				Headers: []components.Header{

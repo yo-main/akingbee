@@ -29,7 +29,6 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 			Id:     "post-user",
 			Method: "post",
 			Url:    "/users",
-			Swap:   "none",
 			Inputs: []components.Input{
 				{
 					Name:     "email",

@@ -70,7 +70,6 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 								Id:     fmt.Sprintf("hive-edit-%s", hive.Name),
 								Method: "put",
 								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
-								Swap:   "none",
 								Inputs: []components.Input{
 									{
 										Name:     "name",
@@ -159,7 +158,6 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 				Id:     "createHive",
 				Method: "post",
 				Url:    "/hive",
-				Swap:   "none",
 				Inputs: []components.Input{
 					{
 						Name:     "name",
