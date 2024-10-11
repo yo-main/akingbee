@@ -35,7 +35,7 @@ type commentDetailParameter struct {
 func GetCommentRow(comment *models.Comment) *components.Row {
 	params := components.Row{
 		Cells: []components.Cell{
-			{Label: comment.Date.Format("%Y-%m-%d")},
+			{Label: comment.Date.Format("2006-01-02")},
 			{Label: comment.Type},
 			{Label: comment.Body},
 		},
