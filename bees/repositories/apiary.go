@@ -68,11 +68,12 @@ const queryGetApiaries = `
 func GetApiaries(ctx context.Context, userId *uuid.UUID) ([]models.Apiary, error) {
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, queryGetApiaries, userId)
-	defer rows.Close()
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
 	}
+
+	defer rows.Close()
 
 	apiaries := []models.Apiary{}
 
@@ -104,11 +105,12 @@ const queryGetApiary = `
 func GetApiary(ctx context.Context, apiaryPublicId *uuid.UUID) (*models.Apiary, error) {
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, queryGetApiary, apiaryPublicId)
-	defer rows.Close()
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
 	}
+
+	defer rows.Close()
 
 	var apiary models.Apiary
 	rows.Next()
@@ -137,12 +139,13 @@ func GetApiaryValues(ctx context.Context, value string, userId *uuid.UUID) []str
 
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, queryGetApiaryValue, userId)
-	defer rows.Close()
 
 	if err != nil {
 		log.Printf("Error executing query: %s", err)
 		return nil
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var value string

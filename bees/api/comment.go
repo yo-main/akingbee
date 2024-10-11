@@ -34,9 +34,12 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	commentDate, err := time.Parse(time.RFC3339, req.FormValue("date"))
+	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
 	if err != nil {
 		log.Printf("Date is not correctly formatted: %s", err)
+		web.PrepareFailedNotification(response, fmt.Sprintf("Date not correctly formatted: %s", req.FormValue("date")))
+		response.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	command := comment_services.CreateCommentCommand{
@@ -54,7 +57,7 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	commentRow, err := pages.GetCommentRow(comment)
+	commentRow, err := pages.GetCommentRow(comment).Build()
 	if err != nil {
 		log.Printf("Could not get comment row: %s", err)
 		http.Redirect(response, req, "/", http.StatusBadRequest)
@@ -110,7 +113,7 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	tableRow, err := pages.GetCommentRow(comment)
+	tableRow, err := pages.GetCommentRow(comment).Build()
 	if err != nil {
 		log.Printf("Could not get table row: %s", err)
 		http.Redirect(response, req, "/", http.StatusBadRequest)

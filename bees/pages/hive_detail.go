@@ -32,7 +32,7 @@ type commentDetailParameter struct {
 	HivePublicId      *uuid.UUID
 }
 
-func GetCommentRow(comment *models.Comment) (bytes.Buffer, error) {
+func GetCommentRow(comment *models.Comment) *components.Row {
 	params := components.Row{
 		Cells: []components.Cell{
 			{Label: comment.Date.Format("%Y-%m-%d")},
@@ -40,9 +40,8 @@ func GetCommentRow(comment *models.Comment) (bytes.Buffer, error) {
 			{Label: comment.Body},
 		},
 	}
-	var commentRow bytes.Buffer
-	err := pages.HtmlPage.ExecuteTemplate(&commentRow, "table_row.html", &params)
-	return commentRow, err
+
+	return &params
 }
 
 func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
@@ -52,10 +51,22 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 		return nil, err
 	}
 
+	comments, err := repositories.GetComments(ctx, &hive.PublicId)
+	if err != nil {
+		log.Printf("Could not get comments: %s", err)
+		return nil, err
+	}
+
+	var commentRows []components.Row
+	for _, comment := range comments {
+		commentRows = append(commentRows, *GetCommentRow(&comment))
+	}
+
 	var apiaryName string
 	if hive.Apiary != nil {
 		apiaryName = hive.Apiary.Name
 	}
+
 	params := hiveDetailPageParameter{
 		Card: components.Card{
 			Header: components.CardHeader{
@@ -137,29 +148,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 					{Label: "Type"},
 					{Label: "Comment"},
 				},
-				Rows: []components.Row{
-					{
-						Cells: []components.Cell{
-							{Label: "2024-09-02"},
-							{Label: "Nourriture"},
-							{Label: "3L avec 1/8Kg sucre"},
-						},
-					},
-					{
-						Cells: []components.Cell{
-							{Label: "2024-09-01"},
-							{Label: "Note"},
-							{Label: "Blablabla azheaziej"},
-						},
-					},
-					{
-						Cells: []components.Cell{
-							{Label: "2024-08-31"},
-							{Label: "Note"},
-							{Label: "Blablabla azheaziej"},
-						},
-					},
-				},
+				Rows: commentRows,
 			},
 		},
 	}

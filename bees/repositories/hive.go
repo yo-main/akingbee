@@ -144,11 +144,12 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 func GetHives(ctx context.Context, userId *uuid.UUID) ([]*models.Hive, error) {
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE USERS.PUBLIC_ID=$1 ORDER BY HIVE.DATE_CREATION DESC", queryGetHives), userId)
-	defer rows.Close()
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
 	}
+
+	defer rows.Close()
 
 	hives := []*models.Hive{}
 
@@ -166,11 +167,12 @@ func GetHives(ctx context.Context, userId *uuid.UUID) ([]*models.Hive, error) {
 func GetHive(ctx context.Context, hivePublicId *uuid.UUID) (*models.Hive, error) {
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1", queryGetHives), hivePublicId)
-	defer rows.Close()
 
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
 	}
+
+	defer rows.Close()
 
 	rows.Next()
 	hive, err := scanHive(rows)
@@ -198,12 +200,13 @@ func GetHiveValues(ctx context.Context, value string, userId *uuid.UUID) []strin
 
 	db := database.GetDb()
 	rows, err := db.QueryContext(ctx, queryGetHiveValue, userId)
-	defer rows.Close()
 
 	if err != nil {
 		log.Printf("Error executing query: %s", err)
 		return nil
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var value string
