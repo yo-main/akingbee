@@ -80,7 +80,7 @@ func GetComment(ctx context.Context, commentPublicId *uuid.UUID) (*models.Commen
 
 func GetComments(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Comment, error) {
 	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1", queryGetComment), hivePublicId)
+	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1 ORDER BY COMMENT.DATE_CREATION DESC", queryGetComment), hivePublicId)
 
 	if err != nil {
 		log.Printf("%s", err)
