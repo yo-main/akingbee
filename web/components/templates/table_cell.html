@@ -1,25 +1,18 @@
 <td>
-  {{ with .UpdateRow.Swap }}
-  <div hx-target="closest tr" hx-swap="{{ . }}">{{ end }}
-    {{ if .Label }} {{ .Label }} {{end}}
-    {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
-    {{ if .Button }} {{ template "button.html" .Button }} {{ end}}
-    {{ if .ModalForm }} {{ template "modal.html" .ModalForm }} {{ end }}
-    {{ if .GroupedCells }}
-    <nav class="level">
-      <div class="level-left">
-        {{ range .GroupedCells }}
-        <div class="level-item">
-          <div {{ with .UpdateRow.Swap}}hx-target="closest tr" hx-swap="{{ . }}" {{ end }}>
-            {{ if .Label }} {{ .Label }} {{end}}
-            {{ if .Button }} {{ template "button.html" .Button }} {{ end}}
-            {{ if .ModalForm }} {{ template "modal.html" .ModalForm }} {{ end }}
-          </div>
-        </div>
-        {{ end }}
+  {{ if .Label }} {{ .Label }} {{end}}
+  {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
+  <!-- {{ with .UpdateStrategy }}{{ template "update_strategy.html" . }}{{ end }} -->
+  {{ if .GroupedCells }}
+  <nav class="level">
+    <div class="level-left">
+      {{ range .GroupedCells }}
+      <div class="level-item">
+        {{ with .UpdateStrategy }}{{ template "update_strategy.html" . }}{{ end }}
+        {{ if .Label }} {{ .Label }} {{end}}
+        {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
       </div>
-    </nav>
-    {{ end }}
-    {{ if .UpdateRow}}
-  </div>{{ end }}
+      {{ end }}
+    </div>
+  </nav>
+  {{ end }}
 </td>

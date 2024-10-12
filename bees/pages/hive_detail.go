@@ -28,7 +28,7 @@ type hiveDetailPageParameter struct {
 }
 
 type commentDetailParameter struct {
-	CreateCommentForm components.ModalForm
+	CreateCommentForm components.UpdateStrategy
 	Commentaries      components.Table
 	HivePublicId      *uuid.UUID
 }
@@ -39,59 +39,61 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 			{
 				GroupedCells: []components.Cell{
 					{
-						UpdateRow: components.UpdateRowStrategy{Swap: "delete"},
-						Button: components.Button{
-							Icon:    "delete",
-							Confirm: "Supprimer le commentaire ?",
-							Url:     fmt.Sprintf("/comment/%s", comment.PublicId),
-							Method:  "delete",
+						UpdateStrategy: &components.UpdateStrategy{
+							Swap: "delete",
+							Button: &components.Button{
+								Icon:    "delete",
+								Confirm: "Supprimer le commentaire ?",
+								Url:     fmt.Sprintf("/comment/%s", comment.PublicId),
+								Method:  "delete",
+							},
 						},
 					},
 					{
-						UpdateRow: components.UpdateRowStrategy{
+						UpdateStrategy: &components.UpdateStrategy{
 							Swap: "outerHTML",
-						},
-						ModalForm: components.ModalForm{
-							Title: "Editer le commentaire",
-							ShowModalButton: components.Button{
-								Icon: "edit",
-							},
-							SubmitFormButton: components.Button{
-								Label:  "Sauvegarder",
-								Type:   "is-link",
-								FormId: fmt.Sprintf("comment-edit-%s", comment.PublicId),
-							},
-							Form: components.Form{
-								Id:     fmt.Sprintf("comment-edit-%s", comment.PublicId),
-								Method: "put",
-								Url:    fmt.Sprintf("/comment/%s", comment.PublicId),
-								Inputs: []components.Input{
-									{
-										GroupedInput: []components.Input{
-											{
-												Name:     "type",
-												Required: true,
-												Narrow:   true,
-												ChoicesStrict: []components.Choice{
-													{Key: "note", Label: "note"},
-													{Key: "feed", Label: "nourriture"},
-													{Key: "todo", Label: "action"},
+							Modal: &components.ModalForm{
+								Title: "Editer le commentaire",
+								ShowModalButton: components.Button{
+									Icon: "edit",
+								},
+								SubmitFormButton: components.Button{
+									Label:  "Sauvegarder",
+									Type:   "is-link",
+									FormId: fmt.Sprintf("comment-edit-%s", comment.PublicId),
+								},
+								Form: components.Form{
+									Id:     fmt.Sprintf("comment-edit-%s", comment.PublicId),
+									Method: "put",
+									Url:    fmt.Sprintf("/comment/%s", comment.PublicId),
+									Inputs: []components.Input{
+										{
+											GroupedInput: []components.Input{
+												{
+													Name:     "type",
+													Required: true,
+													Narrow:   true,
+													ChoicesStrict: []components.Choice{
+														{Key: "note", Label: "note"},
+														{Key: "feed", Label: "nourriture"},
+														{Key: "todo", Label: "action"},
+													},
+													Default: comment.Type,
 												},
-												Default: comment.Type,
-											},
-											{
-												Name:     "date",
-												Required: true,
-												Type:     "date",
-												Default:  comment.Date.Format("2006-01-02"),
+												{
+													Name:     "date",
+													Required: true,
+													Type:     "date",
+													Default:  comment.Date.Format("2006-01-02"),
+												},
 											},
 										},
-									},
-									{
-										Name:       "body",
-										Required:   true,
-										RichEditor: true,
-										Default:    comment.Body,
+										{
+											Name:       "body",
+											Required:   true,
+											RichEditor: true,
+											Default:    comment.Body,
+										},
 									},
 								},
 							},
@@ -146,59 +148,77 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 				},
 			},
 			Footer: components.CardFooter{
-				Buttons: []components.Button{
-					{Label: "Éditer", Type: "is-ghost"},
-					{Label: "Supprimer", Type: "is-ghost"},
+				Items: []components.CardFooterItem{
+					{
+						UpdateStrategy: components.UpdateStrategy{
+							Swap: "innerHTML",
+						},
+						Modal: *EditHiveModal(
+							hive,
+							components.Button{
+								Label: "Éditer",
+								Type:  "is-ghost",
+							},
+						),
+					},
+					{
+						Button: components.Button{
+							Label: "Supprimer",
+							Type:  "is-ghost",
+						},
+					},
 				},
 			},
 		},
 		CommentDetail: commentDetailParameter{
-			CreateCommentForm: components.ModalForm{
-				Title: "Nouveau commentaire",
-				ShowModalButton: components.Button{
-					Label: "Nouveau commentaire",
-				},
-				SubmitFormButton: components.Button{
-					Label:  "Créer",
-					FormId: "create-comment",
-					Type:   "is-link",
-				},
-				Form: components.Form{
-					Id:     "create-comment",
-					Method: "post",
-					Url:    "/comment",
-					Target: "#table-hive-comments",
-					Swap:   "afterbegin",
-					Inputs: []components.Input{
-						{
-							GroupedInput: []components.Input{
-								{
-									Name:     "type",
-									Required: true,
-									Narrow:   true,
-									ChoicesStrict: []components.Choice{
-										{Key: "note", Label: "note"},
-										{Key: "feed", Label: "nourriture"},
-										{Key: "todo", Label: "action"},
+			CreateCommentForm: components.UpdateStrategy{
+				Target: "#table-hive-comments",
+				Swap:   "afterbegin",
+				Modal: &components.ModalForm{
+					Title: "Nouveau commentaire",
+					ShowModalButton: components.Button{
+						Label: "Nouveau commentaire",
+					},
+					SubmitFormButton: components.Button{
+						Label:  "Créer",
+						FormId: "create-comment",
+						Type:   "is-link",
+					},
+					Form: components.Form{
+						Id:     "create-comment",
+						Method: "post",
+						Url:    "/comment",
+						Inputs: []components.Input{
+							{
+								GroupedInput: []components.Input{
+									{
+										Name:     "type",
+										Required: true,
+										Narrow:   true,
+										ChoicesStrict: []components.Choice{
+											{Key: "note", Label: "note"},
+											{Key: "feed", Label: "nourriture"},
+											{Key: "todo", Label: "action"},
+										},
+									},
+									{
+										Name:     "date",
+										Required: true,
+										Type:     "date",
+										Default:  time.Now().Format("2006-01-02"),
 									},
 								},
-								{
-									Name:     "date",
-									Required: true,
-									Type:     "date",
-									Default:  time.Now().Format("2006-01-02"),
-								},
 							},
-						},
-						{
-							Name:       "body",
-							Required:   true,
-							RichEditor: true,
-						},
-						{
-							Name:    "hive_id",
-							Type:    "hidden",
-							Default: hivePublicId.String(),
+							{
+								Name:       "body",
+								Required:   true,
+								RichEditor: true,
+							},
+							{
+								Name:    "hive_id",
+								Type:    "hidden",
+								Default: hivePublicId.String(),
+							},
 						},
 					},
 				},

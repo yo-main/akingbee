@@ -18,8 +18,14 @@ type CardHeader struct {
 	Button Button
 }
 
+type CardFooterItem struct {
+	UpdateStrategy UpdateStrategy
+	Modal          ModalForm
+	Button         Button
+}
+
 type CardFooter struct {
-	Buttons []Button
+	Items []CardFooterItem
 }
 
 type CardContent struct {

@@ -24,6 +24,41 @@ type hivePageParameter struct {
 	Table           components.Table
 }
 
+func EditHiveModal(hive *models.Hive, showModalButton components.Button) *components.ModalForm {
+	modal := components.ModalForm{
+		Title:           "Editer la ruche",
+		ShowModalButton: showModalButton,
+		SubmitFormButton: components.Button{
+			Label:  "Sauvegarder",
+			Type:   "is-link",
+			FormId: fmt.Sprintf("hive-edit-%s", hive.Name),
+		},
+		Form: components.Form{
+			Id:     fmt.Sprintf("hive-edit-%s", hive.Name),
+			Method: "put",
+			Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+			Inputs: []components.Input{
+				{
+					Name:     "name",
+					Label:    "Nom",
+					Type:     "text",
+					Required: true,
+					Default:  hive.Name,
+				},
+				{
+					Name:     "beekeeper",
+					Label:    "État",
+					Type:     "text",
+					Required: true,
+					Default:  hive.Beekeeper,
+				},
+			},
+		},
+	}
+
+	return &modal
+}
+
 func GetHiveTableRow(hive *models.Hive) components.Row {
 	var apiaryName string
 	if hive.Apiary != nil {
@@ -43,61 +78,39 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 			{
 				GroupedCells: []components.Cell{
 					{
-						Button: components.Button{
-							Icon:    "eye",
-							Method:  "get",
-							Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
-							PushUrl: true,
-							Swap:    "innerHTML",
-							Target:  "#page-body",
+						UpdateStrategy: &components.UpdateStrategy{
+							Target: "#page-body",
+							Swap:   "innerHTML",
+							Button: &components.Button{
+								Icon:    "eye",
+								Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
+								PushUrl: true,
+								Method:  "get",
+							},
 						},
 					},
 					{
-						UpdateRow: components.UpdateRowStrategy{
-							Swap: "outerHTML",
-						},
-						ModalForm: components.ModalForm{
-							Title: "Editer la ruche",
-							ShowModalButton: components.Button{
-								Icon: "edit",
-							},
-							SubmitFormButton: components.Button{
-								Label:  "Sauvegarder",
-								Type:   "is-link",
-								FormId: fmt.Sprintf("hive-edit-%s", hive.Name),
-							},
-							Form: components.Form{
-								Id:     fmt.Sprintf("hive-edit-%s", hive.Name),
-								Method: "put",
-								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
-								Inputs: []components.Input{
-									{
-										Name:     "name",
-										Label:    "Nom",
-										Type:     "text",
-										Required: true,
-										Default:  hive.Name,
-									},
-									{
-										Name:     "beekeeper",
-										Label:    "État",
-										Type:     "text",
-										Required: true,
-										Default:  hive.Beekeeper,
-									},
+						UpdateStrategy: &components.UpdateStrategy{
+							Target: "closest tr",
+							Swap:   "outerHTML",
+							Modal: EditHiveModal(
+								hive,
+								components.Button{
+									Icon: "edit",
 								},
-							},
+							),
 						},
 					},
 					{
-						UpdateRow: components.UpdateRowStrategy{
-							Swap: "delete",
-						},
-						Button: components.Button{
-							Icon:    "delete",
-							Confirm: "Supprimer la ruche ?",
-							Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
-							Method:  "delete",
+						UpdateStrategy: &components.UpdateStrategy{
+							Target: "closest tr",
+							Swap:   "delete",
+							Button: &components.Button{
+								Icon:    "delete",
+								Confirm: "Supprimer la ruche ?",
+								Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
+								Method:  "delete",
+							},
 						},
 					},
 				},

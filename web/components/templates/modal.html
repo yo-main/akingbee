@@ -1,4 +1,4 @@
-<div class="modal" hx-on:htmx:after-request=" this.classList.remove('is-active')">
+<div class="modal" hx-on:htmx:after-request="this.classList.remove('is-active')">
   <div hx-trigger="keyup from:body" hx-get="data:text/html," hx-swap="none"
     hx-on:htmx:before-request="if (event.detail.requestConfig.triggeringEvent.key !== 'Escape') {event.preventDefault()}">
   </div>

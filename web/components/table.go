@@ -25,22 +25,16 @@ type Header struct {
 	Label string
 }
 
-type UpdateRowStrategy struct {
-	Swap string
-}
-
 type ColumnSize struct {
 	Span  string
 	Style string
 }
 
 type Cell struct {
-	Label        string
-	HTMLContent  template.HTML
-	UpdateRow    UpdateRowStrategy
-	ModalForm    ModalForm
-	Button       Button
-	GroupedCells []Cell
+	Label          string
+	HTMLContent    template.HTML
+	UpdateStrategy *UpdateStrategy
+	GroupedCells   []Cell
 }
 
 type Row struct {
