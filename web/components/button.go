@@ -16,6 +16,4 @@ type Button struct {
 	Method  string
 	Url     string
 	PushUrl bool
-	Swap    string
-	Target  string
 }

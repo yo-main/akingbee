@@ -23,8 +23,10 @@
 
   {{ with .Footer }}
   <footer class="card-footer">
-    {{ range .Buttons }}
-    <div class="card-footer-item">{{ template "button.html" .}}</div>
+    {{ range .Items }}
+    <div class="card-footer-item">
+      {{ with .UpdateStrategy }}{{ template "update_strategy.html" . }}{{ end }}
+    </div>
     {{ end }}
   </footer>
   {{ end }}

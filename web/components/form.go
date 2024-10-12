@@ -19,8 +19,6 @@ type Form struct {
 	Id     string
 	Method string
 	Url    string
-	Target string
-	Swap   string
 	Inputs []Input
 }
 
