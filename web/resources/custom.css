@@ -1,3 +1,9 @@
+.content {
+  --bulma-content-heading-line-height: 0;
+  --bulma-content-block-margin-bottom: 0em;
+}
+
+
 #notificationBox {
   position: fixed !important;
   top: 6rem;
