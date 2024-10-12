@@ -8,9 +8,13 @@ import (
 var updateStrategyTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/update_strategy.html"))
 
 type UpdateStrategy struct {
-	Swap   string
-	Target string
-	Modal  *ModalForm
-	Form   *Form
-	Button *Button
+	Swap    string
+	Target  string
+	PushUrl bool
+	Method  string
+	Url     string
+	Confirm string
+	Modal   *ModalForm
+	Form    *Form
+	Button  *Button
 }
