@@ -20,43 +20,45 @@ import (
 var hivePageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive.html"))
 
 type hivePageParameter struct {
-	CreateHiveModal components.ModalForm
+	CreateHiveModal components.UpdateStrategy
 	Table           components.Table
 }
 
-func EditHiveModal(hive *models.Hive, showModalButton components.Button) *components.ModalForm {
-	modal := components.ModalForm{
-		Title:           "Editer la ruche",
-		ShowModalButton: showModalButton,
-		SubmitFormButton: components.Button{
-			Label:  "Sauvegarder",
-			Type:   "is-link",
-			FormId: fmt.Sprintf("hive-edit-%s", hive.Name),
-		},
-		Form: components.Form{
-			Id:     fmt.Sprintf("hive-edit-%s", hive.Name),
-			Method: "put",
-			Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
-			Inputs: []components.Input{
-				{
-					Name:     "name",
-					Label:    "Nom",
-					Type:     "text",
-					Required: true,
-					Default:  hive.Name,
-				},
-				{
-					Name:     "beekeeper",
-					Label:    "État",
-					Type:     "text",
-					Required: true,
-					Default:  hive.Beekeeper,
+func EditHiveModal(hive *models.Hive, showModalButton components.Button, target string, swap string) *components.UpdateStrategy {
+	return &components.UpdateStrategy{
+		Target: target,
+		Swap:   swap,
+		Modal: &components.ModalForm{
+			Title:           "Editer la ruche",
+			ShowModalButton: showModalButton,
+			SubmitFormButton: components.Button{
+				Label:  "Sauvegarder",
+				Type:   "is-link",
+				FormId: fmt.Sprintf("hive-edit-%s", hive.Name),
+			},
+			Form: components.Form{
+				Id:     fmt.Sprintf("hive-edit-%s", hive.Name),
+				Method: "put",
+				Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+				Inputs: []components.Input{
+					{
+						Name:     "name",
+						Label:    "Nom",
+						Type:     "text",
+						Required: true,
+						Default:  hive.Name,
+					},
+					{
+						Name:     "beekeeper",
+						Label:    "État",
+						Type:     "text",
+						Required: true,
+						Default:  hive.Beekeeper,
+					},
 				},
 			},
 		},
 	}
-
-	return &modal
 }
 
 func GetHiveTableRow(hive *models.Hive) components.Row {
@@ -81,35 +83,31 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 						UpdateStrategy: &components.UpdateStrategy{
 							Target:  "#page-body",
 							Swap:    "innerHTML",
-							Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
 							PushUrl: true,
-							Method:  "get",
 							Button: &components.Button{
-								Icon: "eye",
+								Icon:   "eye",
+								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+								Method: "get",
 							},
 						},
 					},
 					{
-						UpdateStrategy: &components.UpdateStrategy{
-							Target: "closest tr",
-							Swap:   "outerHTML",
-							Modal: EditHiveModal(
-								hive,
-								components.Button{
-									Icon: "edit",
-								},
-							),
-						},
+						UpdateStrategy: EditHiveModal(
+							hive,
+							components.Button{Icon: "edit"},
+							"closest tr",
+							"outerHTML",
+						),
 					},
 					{
 						UpdateStrategy: &components.UpdateStrategy{
 							Target:  "closest tr",
 							Swap:    "delete",
-							Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
-							Method:  "delete",
 							Confirm: "Supprimer la ruche ?",
 							Button: &components.Button{
-								Icon: "delete",
+								Icon:   "delete",
+								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+								Method: "delete",
 							},
 						},
 					},
@@ -157,47 +155,51 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 	}
 
 	params := hivePageParameter{
-		CreateHiveModal: components.ModalForm{
-			Title: "Création d'une nouvelle ruche",
-			ShowModalButton: components.Button{
-				Label: "Nouvelle ruche",
-			},
-			SubmitFormButton: components.Button{
-				Label:  "Créer",
-				FormId: "createHive",
-				Type:   "is-link",
-			},
-			Form: components.Form{
-				Id:     "createHive",
-				Method: "post",
-				Url:    "/hive",
-				Inputs: []components.Input{
-					{
-						Name:     "name",
-						Label:    "Nom",
-						Type:     "text",
-						Required: true,
-					},
-					{
-						Name:        "beekeeper",
-						Label:       "Apiculteur",
-						Type:        "text",
-						Required:    true,
-						ChoicesFree: beekeepers,
-					},
-					{
-						Name:        "swarm_health",
-						Label:       "Santé de l'essaim",
-						Type:        "text",
-						Required:    true,
-						ChoicesFree: swarmHealths,
-					},
-					{
-						Name:          "apiary",
-						Label:         "Rucher",
-						Type:          "text",
-						Required:      true,
-						ChoicesStrict: apiaryChoices,
+		CreateHiveModal: components.UpdateStrategy{
+			Target: "#page-body",
+			Swap:   "innerHTML",
+			Modal: &components.ModalForm{
+				Title: "Création d'une nouvelle ruche",
+				ShowModalButton: components.Button{
+					Label: "Nouvelle ruche",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Créer",
+					FormId: "createHive",
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					Id:     "createHive",
+					Method: "post",
+					Url:    "/hive",
+					Inputs: []components.Input{
+						{
+							Name:     "name",
+							Label:    "Nom",
+							Type:     "text",
+							Required: true,
+						},
+						{
+							Name:        "beekeeper",
+							Label:       "Apiculteur",
+							Type:        "text",
+							Required:    true,
+							ChoicesFree: beekeepers,
+						},
+						{
+							Name:        "swarm_health",
+							Label:       "Santé de l'essaim",
+							Type:        "text",
+							Required:    true,
+							ChoicesFree: swarmHealths,
+						},
+						{
+							Name:          "apiary",
+							Label:         "Rucher",
+							Type:          "text",
+							Required:      true,
+							ChoicesStrict: apiaryChoices,
+						},
 					},
 				},
 			},
