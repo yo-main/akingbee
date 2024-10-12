@@ -10,7 +10,6 @@ var updateStrategyTemplate = template.Must(pages.HtmlPage.ParseFiles("web/compon
 type UpdateStrategy struct {
 	Swap    string
 	Target  string
-	PushUrl bool
 	Confirm string
 	Modal   *ModalForm
 	Form    *Form

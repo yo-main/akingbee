@@ -81,13 +81,13 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 				GroupedCells: []components.Cell{
 					{
 						UpdateStrategy: &components.UpdateStrategy{
-							Target:  "#page-body",
-							Swap:    "innerHTML",
-							PushUrl: true,
+							Target: "#page-body",
+							Swap:   "innerHTML",
 							Button: &components.Button{
-								Icon:   "eye",
-								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
-								Method: "get",
+								Icon:    "eye",
+								Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
+								Method:  "get",
+								PushUrl: true,
 							},
 						},
 					},
