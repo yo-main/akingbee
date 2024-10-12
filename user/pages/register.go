@@ -15,7 +15,7 @@ var registerPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/t
 
 type registerPageParams struct {
 	SubmitButton components.Button
-	Form         components.Form
+	Form         components.UpdateStrategy
 }
 
 func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
@@ -25,28 +25,32 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 			FormId: "post-user",
 			Type:   "is-link",
 		},
-		Form: components.Form{
-			Id:     "post-user",
-			Method: "post",
-			Url:    "/users",
-			Inputs: []components.Input{
-				{
-					Name:     "email",
-					Label:    "Email",
-					Type:     "email",
-					Required: true,
-				},
-				{
-					Name:     "username",
-					Label:    "Identifiant",
-					Type:     "text",
-					Required: true,
-				},
-				{
-					Name:     "password",
-					Label:    "Mot de passe",
-					Type:     "password",
-					Required: true,
+		Form: components.UpdateStrategy{
+			Target: "#page-body",
+			Swap:   "innerHTML",
+			Form: &components.Form{
+				Id:     "post-user",
+				Url:    "/users",
+				Method: "post",
+				Inputs: []components.Input{
+					{
+						Name:     "email",
+						Label:    "Email",
+						Type:     "email",
+						Required: true,
+					},
+					{
+						Name:     "username",
+						Label:    "Identifiant",
+						Type:     "text",
+						Required: true,
+					},
+					{
+						Name:     "password",
+						Label:    "Mot de passe",
+						Type:     "password",
+						Required: true,
+					},
 				},
 			},
 		},

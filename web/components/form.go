@@ -17,8 +17,8 @@ type Choice struct {
 
 type Form struct {
 	Id     string
-	Method string
 	Url    string
+	Method string
 	Inputs []Input
 }
 

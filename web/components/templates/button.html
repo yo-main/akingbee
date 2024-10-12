@@ -1,4 +1,4 @@
-<div>
+<div {{if .Url }}hx-{{ .Method }}="{{ .Url }}" {{ end }}>
   {{ if .Label }}
   <button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
     {{ .Label }}

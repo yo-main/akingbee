@@ -15,7 +15,7 @@ import (
 var loginPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/templates/login.html"))
 
 type LoginPageBuilder struct {
-	Form         components.Form
+	Form         components.UpdateStrategy
 	SubmitButton components.Button
 }
 
@@ -39,22 +39,24 @@ func GetLoginPage() (*bytes.Buffer, error) {
 			Type:   "is-link",
 			FormId: "login",
 		},
-		Form: components.Form{
-			Id:     "login",
-			Method: "post",
-			Url:    "/login",
-			Inputs: []components.Input{
-				{
-					Name:     "username",
-					Label:    "Identifiant",
-					Type:     "text",
-					Required: true,
-				},
-				{
-					Name:     "password",
-					Label:    "Mot de passe",
-					Type:     "password",
-					Required: true,
+		Form: components.UpdateStrategy{
+			Form: &components.Form{
+				Id:     "login",
+				Method: "post",
+				Url:    "/login",
+				Inputs: []components.Input{
+					{
+						Name:     "username",
+						Label:    "Identifiant",
+						Type:     "text",
+						Required: true,
+					},
+					{
+						Name:     "password",
+						Label:    "Mot de passe",
+						Type:     "password",
+						Required: true,
+					},
 				},
 			},
 		}}

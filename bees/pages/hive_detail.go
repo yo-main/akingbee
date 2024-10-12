@@ -42,10 +42,10 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 						UpdateStrategy: &components.UpdateStrategy{
 							Swap:    "delete",
 							Confirm: "Supprimer le commentaire ?",
-							Url:     fmt.Sprintf("/comment/%s", comment.PublicId),
-							Method:  "delete",
 							Button: &components.Button{
-								Icon: "delete",
+								Icon:   "delete",
+								Url:    fmt.Sprintf("/comment/%s", comment.PublicId),
+								Method: "delete",
 							},
 						},
 					},
@@ -139,6 +139,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 				Title: hive.Name,
 			},
 			Content: components.CardContent{
+				Id: "card-hive-detail",
 				HorizontalTable: components.HorizontalTable{
 					Values: []components.HorizontalTableValue{
 						{Key: "Apiculteur", Value: hive.Beekeeper},
@@ -150,21 +151,25 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 			Footer: components.CardFooter{
 				Items: []components.CardFooterItem{
 					{
-						UpdateStrategy: components.UpdateStrategy{
-							Swap: "innerHTML",
-						},
-						Modal: *EditHiveModal(
+						UpdateStrategy: EditHiveModal(
 							hive,
 							components.Button{
 								Label: "Éditer",
 								Type:  "is-ghost",
 							},
+							"#card-hive-detail",
+							"innerHTML",
 						),
 					},
 					{
-						Button: components.Button{
-							Label: "Supprimer",
-							Type:  "is-ghost",
+						UpdateStrategy: &components.UpdateStrategy{
+							Confirm: "Supprimer la ruche ?",
+							Button: &components.Button{
+								Label:  "Supprimer",
+								Type:   "is-ghost",
+								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+								Method: "delete",
+							},
 						},
 					},
 				},

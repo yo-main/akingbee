@@ -11,8 +11,6 @@ type UpdateStrategy struct {
 	Swap    string
 	Target  string
 	PushUrl bool
-	Method  string
-	Url     string
 	Confirm string
 	Modal   *ModalForm
 	Form    *Form

@@ -21,7 +21,7 @@ import (
 var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
 
 type apiaryPageParameter struct {
-	CreateApiaryModal components.ModalForm
+	CreateApiaryModal components.UpdateStrategy
 	Table             components.Table
 }
 
@@ -84,10 +84,10 @@ func GetApiaryTableRow(apiary *models.Apiary) components.Row {
 							Swap:    "delete",
 							Target:  "closest tr",
 							Confirm: "Supprimer le rucher ?",
-							Url:     fmt.Sprintf("/apiary/%s", apiary.PublicId),
-							Method:  "delete",
 							Button: &components.Button{
-								Icon: "delete",
+								Icon:   "delete",
+								Url:    fmt.Sprintf("/apiary/%s", apiary.PublicId),
+								Method: "delete",
 							},
 						},
 					},
@@ -121,40 +121,44 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 	}
 
 	params := apiaryPageParameter{
-		CreateApiaryModal: components.ModalForm{
-			Title: "Création un nouveau rucher",
-			ShowModalButton: components.Button{
-				Label: "Nouveau rucher",
-			},
-			SubmitFormButton: components.Button{
-				Label:  "Créer",
-				FormId: "createApiary",
-				Type:   "is-link",
-			},
-			Form: components.Form{
-				Id:     "createApiary",
-				Method: "post",
-				Url:    "/apiary",
-				Inputs: []components.Input{
-					{
-						Name:     "name",
-						Label:    "Nom",
-						Type:     "text",
-						Required: true,
-					},
-					{
-						Name:        "location",
-						Label:       "Location",
-						Type:        "text",
-						Required:    true,
-						ChoicesFree: locations,
-					},
-					{
-						Name:        "honeyKind",
-						Label:       "Type de miel",
-						Type:        "text",
-						Required:    true,
-						ChoicesFree: honeyKinds,
+		CreateApiaryModal: components.UpdateStrategy{
+			Target: "#page-body",
+			Swap:   "innerHTML",
+			Modal: &components.ModalForm{
+				Title: "Création un nouveau rucher",
+				ShowModalButton: components.Button{
+					Label: "Nouveau rucher",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Créer",
+					FormId: "createApiary",
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					Id:     "createApiary",
+					Method: "post",
+					Url:    "/apiary",
+					Inputs: []components.Input{
+						{
+							Name:     "name",
+							Label:    "Nom",
+							Type:     "text",
+							Required: true,
+						},
+						{
+							Name:        "location",
+							Label:       "Location",
+							Type:        "text",
+							Required:    true,
+							ChoicesFree: locations,
+						},
+						{
+							Name:        "honeyKind",
+							Label:       "Type de miel",
+							Type:        "text",
+							Required:    true,
+							ChoicesFree: honeyKinds,
+						},
 					},
 				},
 			},

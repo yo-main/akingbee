@@ -19,9 +19,7 @@ type CardHeader struct {
 }
 
 type CardFooterItem struct {
-	UpdateStrategy UpdateStrategy
-	Modal          ModalForm
-	Button         Button
+	UpdateStrategy *UpdateStrategy
 }
 
 type CardFooter struct {
@@ -29,6 +27,7 @@ type CardFooter struct {
 }
 
 type CardContent struct {
+	Id              string
 	HorizontalTable HorizontalTable
 }
 

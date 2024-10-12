@@ -7,7 +7,7 @@
   {{ end }}
 
   {{ with .Content }}
-  <div class="card-content">
+  <div class="card-content" {{ if .Id }}id="{{ .Id }}" {{ end }}>
     {{ with .HorizontalTable }}
     <div class="fixed-grid">
       <div class="grid">
