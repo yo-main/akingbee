@@ -213,6 +213,12 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 					{Label: "Type"},
 					{Label: "Comment"},
 				},
+				ColumnSizes: []components.ColumnSize{
+					{Span: "1", Style: "width: 10%"},
+					{Span: "1", Style: "width: 10%"},
+					{Span: "1", Style: "width: 10%"},
+					{Span: "1", Style: "width: 70%"},
+				},
 				Rows: commentRows,
 			},
 		},

@@ -13,6 +13,7 @@ var tableCellTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/
 
 type Table struct {
 	Id          string
+	ColumnSizes []ColumnSize
 	Headers     []Header
 	Rows        []Row
 	IsBordered  bool
@@ -26,6 +27,11 @@ type Header struct {
 
 type UpdateRowStrategy struct {
 	Swap string
+}
+
+type ColumnSize struct {
+	Span  string
+	Style string
 }
 
 type Cell struct {
