@@ -41,6 +41,7 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 					{
 						UpdateStrategy: &components.UpdateStrategy{
 							Swap:    "delete",
+							Target:  "closest tr",
 							Confirm: "Supprimer le commentaire ?",
 							Button: &components.Button{
 								Icon:   "delete",
@@ -51,7 +52,8 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 					},
 					{
 						UpdateStrategy: &components.UpdateStrategy{
-							Swap: "outerHTML",
+							Swap:   "outerHTML",
+							Target: "closest tr",
 							Modal: &components.ModalForm{
 								Title: "Editer le commentaire",
 								ShowModalButton: components.Button{
