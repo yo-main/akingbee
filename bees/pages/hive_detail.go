@@ -101,7 +101,7 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 			},
 			{Label: comment.Date.Format("2006-01-02")},
 			{Label: comment.Type},
-			{HTMLContent: template.HTML(comment.Body)},
+			{HTMLContent: template.HTML(fmt.Sprintf("<div class=\"content\">%s</div>", comment.Body))},
 		},
 	}
 
