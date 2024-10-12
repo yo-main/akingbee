@@ -7,6 +7,14 @@
   {{ if .IsFullWidth}}is-fullwidth{{ end }}
 ">
 
+  {{ if .ColumnSizes }}
+  <colgroup>
+    {{ range .ColumnSizes }}
+    <col span="{{ .Span }}" style="{{ .Style }}">
+    {{ end }}
+  </colgroup>
+  {{ end }}
+
   <thead>
     <tr>
       {{ range .Headers }}
