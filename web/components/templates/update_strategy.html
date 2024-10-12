@@ -1,4 +1,6 @@
-<div {{ if .Swap }}hx-swap="{{ .Swap }}" {{ end }} {{ if .Target }}hx-target="{{ .Target }}" {{ end }}>
+<div {{ if .Swap }}hx-swap="{{ .Swap }}" {{ end }} {{ if .Target }}hx-target="{{ .Target }}" {{ end }} {{ if .Url
+  }}hx-{{ .Method }}="{{ .Url }}" {{ end }} {{ if .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }} {{ if .PushUrl
+  }}hx-push-url="{{ .Url }}" {{ end }}>
   {{ with .Button }}{{ template "button.html" . }}{{ end }}
   {{ with .Form }}{{ template "form.html" . }}{{ end }}
   {{ with .Modal }}{{ template "modal.html" . }}{{ end }}

@@ -79,13 +79,13 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 				GroupedCells: []components.Cell{
 					{
 						UpdateStrategy: &components.UpdateStrategy{
-							Target: "#page-body",
-							Swap:   "innerHTML",
+							Target:  "#page-body",
+							Swap:    "innerHTML",
+							Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
+							PushUrl: true,
+							Method:  "get",
 							Button: &components.Button{
-								Icon:    "eye",
-								Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
-								PushUrl: true,
-								Method:  "get",
+								Icon: "eye",
 							},
 						},
 					},
@@ -103,13 +103,13 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 					},
 					{
 						UpdateStrategy: &components.UpdateStrategy{
-							Target: "closest tr",
-							Swap:   "delete",
+							Target:  "closest tr",
+							Swap:    "delete",
+							Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
+							Method:  "delete",
+							Confirm: "Supprimer la ruche ?",
 							Button: &components.Button{
-								Icon:    "delete",
-								Confirm: "Supprimer la ruche ?",
-								Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
-								Method:  "delete",
+								Icon: "delete",
 							},
 						},
 					},

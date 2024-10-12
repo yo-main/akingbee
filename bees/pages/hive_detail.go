@@ -40,12 +40,12 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 				GroupedCells: []components.Cell{
 					{
 						UpdateStrategy: &components.UpdateStrategy{
-							Swap: "delete",
+							Swap:    "delete",
+							Confirm: "Supprimer le commentaire ?",
+							Url:     fmt.Sprintf("/comment/%s", comment.PublicId),
+							Method:  "delete",
 							Button: &components.Button{
-								Icon:    "delete",
-								Confirm: "Supprimer le commentaire ?",
-								Url:     fmt.Sprintf("/comment/%s", comment.PublicId),
-								Method:  "delete",
+								Icon: "delete",
 							},
 						},
 					},

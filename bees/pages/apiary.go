@@ -81,13 +81,13 @@ func GetApiaryTableRow(apiary *models.Apiary) components.Row {
 					},
 					{
 						UpdateStrategy: &components.UpdateStrategy{
-							Swap:   "delete",
-							Target: "closest tr",
+							Swap:    "delete",
+							Target:  "closest tr",
+							Confirm: "Supprimer le rucher ?",
+							Url:     fmt.Sprintf("/apiary/%s", apiary.PublicId),
+							Method:  "delete",
 							Button: &components.Button{
-								Icon:    "delete",
-								Confirm: "Supprimer le rucher ?",
-								Url:     fmt.Sprintf("/apiary/%s", apiary.PublicId),
-								Method:  "delete",
+								Icon: "delete",
 							},
 						},
 					},

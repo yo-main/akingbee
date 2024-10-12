@@ -1,5 +1,4 @@
-<div {{ if .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }} {{ if .Url }}hx-{{ .Method }}="{{ .Url }}" {{ end }} {{ if
-  .PushUrl }}hx-push-url="{{ .Url }}" {{ end }}>
+<div>
   {{ if .Label }}
   <button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
     {{ .Label }}
