@@ -7,6 +7,7 @@ import (
 	hive_services "akingbee/bees/services/hive"
 	user_services "akingbee/user/services"
 	"akingbee/web"
+	"bytes"
 	"fmt"
 	"log"
 	"net/http"
@@ -139,18 +140,29 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	tableRow := pages.GetHiveTableRow(
-		hive,
-		pages.GetApiariesChoices(apiaries, hive),
-		pages.GetSwarmHealthChoices(swarmHealths, hive),
-		pages.GetBeekeeperChoices(beekeepers, hive),
-	)
+	var content *bytes.Buffer
+	if req.FormValue("elementType") == "card" {
+		card := pages.GetHiveDetailCard(ctx, userId, hive)
+		content, err = card.Build()
+		if err != nil {
+			log.Printf("Could not get table card: %s", err)
+			http.Redirect(response, req, "/", http.StatusBadRequest)
+			return
+		}
+	} else {
+		tableRow := pages.GetHiveTableRow(
+			hive,
+			pages.GetApiariesChoices(apiaries, hive),
+			pages.GetSwarmHealthChoices(swarmHealths, hive),
+			pages.GetBeekeeperChoices(beekeepers, hive),
+		)
 
-	content, err := tableRow.Build()
-	if err != nil {
-		log.Printf("Could not get table row: %s", err)
-		http.Redirect(response, req, "/", http.StatusBadRequest)
-		return
+		content, err = tableRow.Build()
+		if err != nil {
+			log.Printf("Could not get table row: %s", err)
+			http.Redirect(response, req, "/", http.StatusBadRequest)
+			return
+		}
 	}
 
 	web.PrepareSuccessNotification(response, "Hive updated successfully")

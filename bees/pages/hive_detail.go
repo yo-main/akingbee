@@ -112,6 +112,59 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 	return &params
 }
 
+func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive) components.Card {
+	apiaryName := hive.GetApiaryName()
+	apiaries, _ := repositories.GetApiaries(ctx, userId)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+
+	return components.Card{
+		Header: components.CardHeader{
+			Title: hive.Name,
+		},
+		Content: components.CardContent{
+			Id: "card-hive-detail",
+			HorizontalTable: components.HorizontalTable{
+				Values: []components.HorizontalTableValue{
+					{Key: "Apiculteur", Value: hive.Beekeeper},
+					{Key: "Rucher", Value: apiaryName},
+					{Key: "Santé de l'essaim", Value: hive.GetSwarmHealth()},
+				},
+			},
+		},
+		Footer: components.CardFooter{
+			Items: []components.CardFooterItem{
+				{
+					UpdateStrategy: EditHiveModal(
+						hive,
+						GetApiariesChoices(apiaries, hive),
+						GetSwarmHealthChoices(swarmHealths, hive),
+						GetBeekeeperChoices(beekeepers, hive),
+						components.Button{
+							Label: "Éditer",
+							Type:  "is-ghost",
+						},
+						"#card-hive-detail",
+						"innerHTML",
+						"card",
+					),
+				},
+				{
+					UpdateStrategy: &components.UpdateStrategy{
+						Confirm: "Supprimer la ruche ?",
+						Button: &components.Button{
+							Label:  "Supprimer",
+							Type:   "is-ghost",
+							Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+							Method: "delete",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
 func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
 	hive, err := repositories.GetHive(ctx, hivePublicId)
 	if err != nil {
@@ -130,56 +183,8 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 		commentRows = append(commentRows, *GetCommentRow(&comment))
 	}
 
-	apiaryName := hive.GetApiaryName()
-	apiaries, _ := repositories.GetApiaries(ctx, userId)
-	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
-	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
-
 	params := hiveDetailPageParameter{
-		Card: components.Card{
-			Header: components.CardHeader{
-				Title: hive.Name,
-			},
-			Content: components.CardContent{
-				Id: "card-hive-detail",
-				HorizontalTable: components.HorizontalTable{
-					Values: []components.HorizontalTableValue{
-						{Key: "Apiculteur", Value: hive.Beekeeper},
-						{Key: "Rucher", Value: apiaryName},
-						{Key: "Santé de l'essaim", Value: hive.GetSwarmHealth()},
-					},
-				},
-			},
-			Footer: components.CardFooter{
-				Items: []components.CardFooterItem{
-					{
-						UpdateStrategy: EditHiveModal(
-							hive,
-							GetApiariesChoices(apiaries, hive),
-							GetSwarmHealthChoices(swarmHealths, hive),
-							GetBeekeeperChoices(beekeepers, hive),
-							components.Button{
-								Label: "Éditer",
-								Type:  "is-ghost",
-							},
-							"#card-hive-detail",
-							"innerHTML",
-						),
-					},
-					{
-						UpdateStrategy: &components.UpdateStrategy{
-							Confirm: "Supprimer la ruche ?",
-							Button: &components.Button{
-								Label:  "Supprimer",
-								Type:   "is-ghost",
-								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
-								Method: "delete",
-							},
-						},
-					},
-				},
-			},
-		},
+		Card: GetHiveDetailCard(ctx, userId, hive),
 		CommentDetail: commentDetailParameter{
 			CreateCommentForm: components.UpdateStrategy{
 				Target: "#table-hive-comments",

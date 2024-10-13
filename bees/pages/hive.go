@@ -32,6 +32,7 @@ func EditHiveModal(
 	showModalButton components.Button,
 	target string,
 	swap string,
+	elementType string,
 ) *components.UpdateStrategy {
 	return &components.UpdateStrategy{
 		Target: target,
@@ -80,6 +81,14 @@ func EditHiveModal(
 						ChoicesStrict: apiaryChoices,
 						Default:       hive.GetApiaryPublicId(),
 					},
+					{
+						Name:     "elementType",
+						Label:    "elementType",
+						Type:     "text",
+						Required: true,
+						Default:  elementType,
+						Hidden:   true,
+					},
 				},
 			},
 		},
@@ -124,6 +133,7 @@ func GetHiveTableRow(
 							components.Button{Icon: "edit"},
 							"closest tr",
 							"outerHTML",
+							"row",
 						),
 					},
 					{

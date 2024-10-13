@@ -2,7 +2,9 @@ package components
 
 import (
 	"akingbee/web/pages"
+	"bytes"
 	"html/template"
+	"log"
 )
 
 var cardTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/card.html"))
@@ -11,6 +13,18 @@ type Card struct {
 	Header  CardHeader
 	Content CardContent
 	Footer  CardFooter
+}
+
+func (card *Card) Build() (*bytes.Buffer, error) {
+	var content bytes.Buffer
+	err := pages.HtmlPage.ExecuteTemplate(&content, "card.html", card)
+
+	if err != nil {
+		log.Printf("Failed to build card: %s", err)
+		return nil, err
+	}
+
+	return &content, nil
 }
 
 type CardHeader struct {
