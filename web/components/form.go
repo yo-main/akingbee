@@ -34,4 +34,5 @@ type Input struct {
 	RichEditor    bool
 	GroupedInput  []Input
 	Narrow        bool
+	Hidden        bool
 }

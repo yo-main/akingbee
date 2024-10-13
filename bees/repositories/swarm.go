@@ -29,13 +29,13 @@ func CreateSwarm(ctx context.Context, swarm *models.Swarm) error {
 
 const queryUpdateSwarm = `
 	UPDATE SWARM 
-	SET YEAR=$1, HEALTH=$2, HIVE_ID=(SELECT HIVE.ID FROM HIVE WHERE HIVE.PUBLIC_ID=$3)
-	WHERE PUBLIC_ID=$4
+	SET YEAR=$1, HEALTH=$2
+	WHERE PUBLIC_ID=$3
 `
 
 func UpdateSwarm(ctx context.Context, swarm *models.Swarm) error {
 	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryUpdateSwarm, swarm.Year, swarm.Health)
+	_, err := db.ExecContext(ctx, queryUpdateSwarm, swarm.Year, swarm.Health, swarm.PublicId)
 	return err
 }
 
