@@ -74,6 +74,13 @@ func EditHiveModal(
 						Default:     hive.GetSwarmHealth(),
 					},
 					{
+						Name:     "swarm_year",
+						Label:    "Année de la reine",
+						Type:     "integer",
+						Required: true,
+						Default:  hive.GetSwarmYear(),
+					},
+					{
 						Name:          "apiary",
 						Label:         "Rucher",
 						Type:          "text",
