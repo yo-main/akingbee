@@ -119,11 +119,11 @@ func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive
 	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
 
 	return components.Card{
+		Id: "card-hive-detail",
 		Header: components.CardHeader{
 			Title: hive.Name,
 		},
 		Content: components.CardContent{
-			Id: "card-hive-detail",
 			HorizontalTable: components.HorizontalTable{
 				Values: []components.HorizontalTableValue{
 					{Key: "Apiculteur", Value: hive.Beekeeper},

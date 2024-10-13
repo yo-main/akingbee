@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card" {{ if .Id }}id="{{ .Id }}" {{ end }}>
   {{ with .Header }}
   <header class="card-header">
     <p class="card-header-title">{{ .Title }}</p>
