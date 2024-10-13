@@ -18,9 +18,49 @@ type Hive struct {
 	Name      string
 	PublicId  uuid.UUID
 	Beekeeper string
-	Apiary    *Apiary
-	Swarm     *Swarm
+	apiary    *Apiary
+	swarm     *Swarm
 	User      uuid.UUID
+}
+
+func (hive *Hive) GetApiaryPublicId() *uuid.UUID {
+	if hive.apiary == nil {
+		return nil
+	}
+
+	return &hive.apiary.PublicId
+}
+
+func (hive *Hive) GetApiaryName() string {
+	if hive.apiary == nil {
+		return "Stock"
+	}
+
+	return hive.apiary.Name
+}
+
+func (hive *Hive) SetApiary(apiary *Apiary) {
+	hive.apiary = apiary
+}
+
+func (hive *Hive) GetSwarmPublicId() *uuid.UUID {
+	if hive.swarm == nil {
+		return nil
+	}
+
+	return &hive.swarm.PublicId
+}
+
+func (hive *Hive) GetSwarmHealth() string {
+	if hive.swarm == nil {
+		return ""
+	}
+
+	return hive.swarm.Health
+}
+
+func (hive *Hive) SetSwarm(swarm *Swarm) {
+	hive.swarm = swarm
 }
 
 type Swarm struct {
