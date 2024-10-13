@@ -2,9 +2,9 @@ package models
 
 import (
 	"errors"
-	"time"
-
+	"fmt"
 	"github.com/google/uuid"
+	"time"
 )
 
 type Apiary struct {
@@ -69,6 +69,14 @@ func (hive *Hive) GetSwarmHealth() string {
 	return hive.swarm.Health
 }
 
+func (hive *Hive) GetSwarmYear() string {
+	if hive.swarm == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%d", hive.swarm.Year)
+}
+
 func (hive *Hive) SetSwarm(swarm *Swarm) {
 	hive.swarm = swarm
 }
@@ -79,6 +87,15 @@ func (hive *Hive) SetSwarmHealth(health string) error {
 	}
 
 	hive.swarm.Health = health
+	return nil
+}
+
+func (hive *Hive) SetSwarmYear(year int) error {
+	if hive.swarm == nil {
+		return errors.New("Can't set swarm year if it does not exist")
+	}
+
+	hive.swarm.Year = year
 	return nil
 }
 

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -131,6 +132,15 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 		}
 		hive.SetSwarm(swarm)
 	}
+
+	swarmYear, err := strconv.Atoi(req.FormValue("swarm_year"))
+	if err != nil {
+		log.Printf("Not a correct year: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	hive.SetSwarmYear(swarmYear)
 
 	err = hive_services.UpdateHive(ctx, hive)
 	if err != nil {
