@@ -109,7 +109,17 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	tableRow := pages.GetHiveTableRow(hive)
+	apiaries, _ := repositories.GetApiaries(ctx, userId)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+
+	tableRow := pages.GetHiveTableRow(
+		hive,
+		pages.GetApiariesChoices(apiaries, hive),
+		pages.GetSwarmHealthChoices(swarmHealths, hive),
+		pages.GetBeekeeperChoices(beekeepers, hive),
+	)
+
 	content, err := tableRow.Build()
 	if err != nil {
 		log.Printf("Could not get table row: %s", err)

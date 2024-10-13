@@ -131,6 +131,9 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 	}
 
 	apiaryName := hive.GetApiaryName()
+	apiaries, _ := repositories.GetApiaries(ctx, userId)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
 
 	params := hiveDetailPageParameter{
 		Card: components.Card{
@@ -152,6 +155,9 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 					{
 						UpdateStrategy: EditHiveModal(
 							hive,
+							GetApiariesChoices(apiaries, hive),
+							GetSwarmHealthChoices(swarmHealths, hive),
+							GetBeekeeperChoices(beekeepers, hive),
 							components.Button{
 								Label: "Éditer",
 								Type:  "is-ghost",

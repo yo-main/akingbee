@@ -24,7 +24,15 @@ type hivePageParameter struct {
 	Table           components.Table
 }
 
-func EditHiveModal(hive *models.Hive, showModalButton components.Button, target string, swap string) *components.UpdateStrategy {
+func EditHiveModal(
+	hive *models.Hive,
+	apiaryChoices []components.Choice,
+	swarmHealthChoices []components.Choice,
+	beekeeperChoices []components.Choice,
+	showModalButton components.Button,
+	target string,
+	swap string,
+) *components.UpdateStrategy {
 	return &components.UpdateStrategy{
 		Target: target,
 		Swap:   swap,
@@ -49,11 +57,28 @@ func EditHiveModal(hive *models.Hive, showModalButton components.Button, target 
 						Default:  hive.Name,
 					},
 					{
-						Name:     "beekeeper",
-						Label:    "État",
-						Type:     "text",
-						Required: true,
-						Default:  hive.Beekeeper,
+						Name:        "beekeeper",
+						Label:       "Apiculteur",
+						Type:        "text",
+						Required:    true,
+						ChoicesFree: beekeeperChoices,
+						Default:     hive.Beekeeper,
+					},
+					{
+						Name:        "swarm_health",
+						Label:       "Santé de l'essaim",
+						Type:        "text",
+						Required:    true,
+						ChoicesFree: swarmHealthChoices,
+						Default:     hive.GetSwarmHealth(),
+					},
+					{
+						Name:          "apiary",
+						Label:         "Rucher",
+						Type:          "text",
+						Required:      true,
+						ChoicesStrict: apiaryChoices,
+						Default:       hive.GetApiaryPublicId(),
 					},
 				},
 			},
@@ -61,7 +86,12 @@ func EditHiveModal(hive *models.Hive, showModalButton components.Button, target 
 	}
 }
 
-func GetHiveTableRow(hive *models.Hive) components.Row {
+func GetHiveTableRow(
+	hive *models.Hive,
+	apiaryChoices []components.Choice,
+	swarmHealthChoices []components.Choice,
+	beekeeperChoices []components.Choice,
+) components.Row {
 	apiaryName := hive.GetApiaryName()
 
 	swarmHealth := hive.GetSwarmHealth()
@@ -89,6 +119,9 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 					{
 						UpdateStrategy: EditHiveModal(
 							hive,
+							apiaryChoices,
+							swarmHealthChoices,
+							beekeeperChoices,
 							components.Button{Icon: "edit"},
 							"closest tr",
 							"outerHTML",
@@ -113,6 +146,64 @@ func GetHiveTableRow(hive *models.Hive) components.Row {
 
 }
 
+func GetApiariesChoices(apiaries []models.Apiary, hive *models.Hive) []components.Choice {
+	var apiaryChoices = []components.Choice{
+		{Key: "none", Label: "Stock", Selected: true, Disabled: true},
+	}
+
+	for _, apiary := range apiaries {
+		var selected bool
+		if hive != nil {
+			selected = hive.GetApiaryName() == apiary.Name
+		}
+
+		apiaryChoices = append(apiaryChoices, components.Choice{
+			Key:      apiary.PublicId.String(),
+			Label:    apiary.Name,
+			Selected: selected,
+		})
+	}
+
+	return apiaryChoices
+}
+
+func GetSwarmHealthChoices(swarmHealths []string, hive *models.Hive) []components.Choice {
+	var swarmHealthChoices []components.Choice
+
+	for _, swarmHealth := range swarmHealths {
+		var selected bool
+		if hive != nil {
+			selected = hive.GetSwarmHealth() == swarmHealth
+		}
+
+		swarmHealthChoices = append(swarmHealthChoices, components.Choice{
+			Key:      swarmHealth,
+			Label:    swarmHealth,
+			Selected: selected,
+		})
+	}
+	return swarmHealthChoices
+}
+
+func GetBeekeeperChoices(beekeepers []string, hive *models.Hive) []components.Choice {
+	var beekeeperChoices []components.Choice
+
+	for _, beekeeper := range beekeepers {
+		var selected bool
+		if hive != nil {
+			selected = hive.Beekeeper == beekeeper
+		}
+
+		beekeeperChoices = append(beekeeperChoices, components.Choice{
+			Key:      beekeeper,
+			Label:    beekeeper,
+			Selected: selected,
+		})
+	}
+
+	return beekeeperChoices
+}
+
 func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error) {
 	hives, err := repositories.GetHives(ctx, userId)
 	if err != nil {
@@ -120,33 +211,21 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 		return nil, err
 	}
 
+	apiaries, _ := repositories.GetApiaries(ctx, userId)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+
 	rows := []components.Row{}
 	for _, hive := range hives {
-		rows = append(rows, GetHiveTableRow(hive))
-	}
-
-	var beekeepers []components.Choice
-	for _, beekeeper := range repositories.GetHiveValues(ctx, "beekeeper", userId) {
-		beekeepers = append(beekeepers, components.Choice{Key: beekeeper, Label: beekeeper})
-	}
-
-	apiaries, err := repositories.GetApiaries(ctx, userId)
-	if err != nil {
-		log.Printf("Could not load apiaries: %s", err)
-		return nil, err
-	}
-
-	var apiaryChoices = []components.Choice{
-		{Key: "none", Label: "Aucun", Selected: true, Disabled: true},
-	}
-
-	var swarmHealths []components.Choice
-	for _, swarmHealth := range repositories.GetSwarmValues(ctx, "health", userId) {
-		swarmHealths = append(swarmHealths, components.Choice{Key: swarmHealth, Label: swarmHealth})
-	}
-
-	for _, apiary := range apiaries {
-		apiaryChoices = append(apiaryChoices, components.Choice{Key: apiary.PublicId.String(), Label: apiary.Name})
+		rows = append(
+			rows,
+			GetHiveTableRow(
+				hive,
+				GetApiariesChoices(apiaries, hive),
+				GetSwarmHealthChoices(swarmHealths, hive),
+				GetBeekeeperChoices(beekeepers, hive),
+			),
+		)
 	}
 
 	params := hivePageParameter{
@@ -179,21 +258,21 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 							Label:       "Apiculteur",
 							Type:        "text",
 							Required:    true,
-							ChoicesFree: beekeepers,
+							ChoicesFree: GetBeekeeperChoices(beekeepers, nil),
 						},
 						{
 							Name:        "swarm_health",
 							Label:       "Santé de l'essaim",
 							Type:        "text",
 							Required:    true,
-							ChoicesFree: swarmHealths,
+							ChoicesFree: GetSwarmHealthChoices(swarmHealths, nil),
 						},
 						{
 							Name:          "apiary",
 							Label:         "Rucher",
 							Type:          "text",
 							Required:      true,
-							ChoicesStrict: apiaryChoices,
+							ChoicesStrict: GetApiariesChoices(apiaries, nil),
 						},
 					},
 				},
