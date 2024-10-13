@@ -73,7 +73,7 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 			return nil, errors.New("Forbidden access")
 		}
 
-		hive.Apiary = apiary
+		hive.SetApiary(apiary)
 	}
 
 	if command.SwarmHealth != "" {
@@ -88,7 +88,7 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 			return nil, errors.New("Could not create swarm")
 		}
 
-		hive.Swarm = &swarm
+		hive.SetSwarm(&swarm)
 	}
 
 	err = repositories.CreateHive(ctx, &hive)

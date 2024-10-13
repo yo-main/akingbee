@@ -62,15 +62,10 @@ func EditHiveModal(hive *models.Hive, showModalButton components.Button, target 
 }
 
 func GetHiveTableRow(hive *models.Hive) components.Row {
-	var apiaryName string
-	if hive.Apiary != nil {
-		apiaryName = hive.Apiary.Name
-	}
+	apiaryName := hive.GetApiaryName()
 
-	var swarmHealth string
-	if hive.Swarm != nil {
-		swarmHealth = hive.Swarm.Health
-	}
+	swarmHealth := hive.GetSwarmHealth()
+
 	return components.Row{
 		Cells: []components.Cell{
 			{Label: hive.Name},

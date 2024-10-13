@@ -130,10 +130,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 		commentRows = append(commentRows, *GetCommentRow(&comment))
 	}
 
-	var apiaryName string
-	if hive.Apiary != nil {
-		apiaryName = hive.Apiary.Name
-	}
+	apiaryName := hive.GetApiaryName()
 
 	params := hiveDetailPageParameter{
 		Card: components.Card{
@@ -146,7 +143,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 					Values: []components.HorizontalTableValue{
 						{Key: "Apiculteur", Value: hive.Beekeeper},
 						{Key: "Rucher", Value: apiaryName},
-						{Key: "Santé de l'essaim", Value: hive.Swarm.Health},
+						{Key: "Santé de l'essaim", Value: hive.GetSwarmHealth()},
 					},
 				},
 			},

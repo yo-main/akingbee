@@ -28,14 +28,9 @@ const queryCreateHive = `
 func CreateHive(ctx context.Context, hive *models.Hive) error {
 	db := database.GetDb()
 
-	var apiaryPublicId uuid.UUID
-	if hive.Apiary != nil {
-		apiaryPublicId = hive.Apiary.PublicId
-	}
-	var swarmPublicId uuid.UUID
-	if hive.Swarm != nil {
-		swarmPublicId = hive.Swarm.PublicId
-	}
+	apiaryPublicId := hive.GetApiaryPublicId()
+	swarmPublicId := hive.GetSwarmPublicId()
+
 	_, err := db.ExecContext(ctx, queryCreateHive, hive.PublicId, hive.Name, hive.Beekeeper, apiaryPublicId, swarmPublicId, hive.User)
 
 	return err
@@ -53,14 +48,10 @@ const queryUpdateHive = `
 
 func UpdateHive(ctx context.Context, hive *models.Hive) error {
 	db := database.GetDb()
-	var apiaryPublicId uuid.UUID
-	if hive.Apiary != nil {
-		apiaryPublicId = hive.Apiary.PublicId
-	}
-	var swarmPublicId uuid.UUID
-	if hive.Swarm != nil {
-		swarmPublicId = hive.Swarm.PublicId
-	}
+
+	apiaryPublicId := hive.GetApiaryPublicId()
+	swarmPublicId := hive.GetSwarmPublicId()
+
 	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Beekeeper, apiaryPublicId, swarmPublicId, hive.PublicId)
 	return err
 }
@@ -133,11 +124,12 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 		return nil, errors.New(fmt.Sprintf("Could not build Hive from result: %s", err))
 	}
 	if apiary.PublicId != uuid.Nil {
-		hive.Apiary = &apiary
+		hive.SetApiary(&apiary)
 	}
 	if swarm.PublicId != uuid.Nil {
-		hive.Swarm = &swarm
+		hive.SetSwarm(&swarm)
 	}
+
 	return &hive, nil
 }
 
