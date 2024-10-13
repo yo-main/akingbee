@@ -93,7 +93,6 @@ func GetHiveTableRow(
 	beekeeperChoices []components.Choice,
 ) components.Row {
 	apiaryName := hive.GetApiaryName()
-
 	swarmHealth := hive.GetSwarmHealth()
 
 	return components.Row{
@@ -148,7 +147,7 @@ func GetHiveTableRow(
 
 func GetApiariesChoices(apiaries []models.Apiary, hive *models.Hive) []components.Choice {
 	var apiaryChoices = []components.Choice{
-		{Key: "none", Label: "Stock", Selected: true, Disabled: true},
+		{Key: "none", Label: "Stock", Selected: true},
 	}
 
 	for _, apiary := range apiaries {

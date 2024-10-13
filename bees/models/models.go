@@ -1,8 +1,10 @@
 package models
 
 import (
-	"github.com/google/uuid"
+	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Apiary struct {
@@ -21,6 +23,14 @@ type Hive struct {
 	apiary    *Apiary
 	swarm     *Swarm
 	User      uuid.UUID
+}
+
+func (hive *Hive) GetApiary() *Apiary {
+	return hive.apiary
+}
+
+func (hive *Hive) GetSwarm() *Swarm {
+	return hive.swarm
 }
 
 func (hive *Hive) GetApiaryPublicId() string {
@@ -63,10 +73,27 @@ func (hive *Hive) SetSwarm(swarm *Swarm) {
 	hive.swarm = swarm
 }
 
+func (hive *Hive) SetSwarmHealth(health string) error {
+	if hive.swarm == nil {
+		return errors.New("Can't set swarm health if it does not exist")
+	}
+
+	hive.swarm.Health = health
+	return nil
+}
+
 type Swarm struct {
 	PublicId uuid.UUID
 	Year     int
 	Health   string
+}
+
+func NewSwarm(swarmHealth string) *Swarm {
+	return &Swarm{
+		PublicId: uuid.New(),
+		Health:   swarmHealth,
+		Year:     time.Now().Year(),
+	}
 }
 
 type Comment struct {
