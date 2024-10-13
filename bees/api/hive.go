@@ -1,6 +1,7 @@
 package api
 
 import (
+	"akingbee/bees/models"
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	hive_services "akingbee/bees/services/hive"
@@ -98,8 +99,37 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	apiaries, _ := repositories.GetApiaries(ctx, userId)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+
 	hive.Name = req.FormValue("name")
 	hive.Beekeeper = req.FormValue("beekeeper")
+
+	if req.FormValue("apiary") == "none" {
+		hive.SetApiary(nil)
+	} else {
+		for _, apiary := range apiaries {
+			// TODO: ensure the apiary is correct
+			if apiary.PublicId.String() == req.FormValue("apiary") {
+				hive.SetApiary(&apiary)
+			}
+		}
+
+	}
+
+	err = hive.SetSwarmHealth(req.FormValue("swarm_health"))
+	if err != nil {
+		swarm := models.NewSwarm(req.FormValue("swarm"))
+		err = repositories.CreateSwarm(ctx, swarm)
+		if err != nil {
+			log.Printf("Could not update hive: %s", err)
+			web.PrepareFailedNotification(response, err.Error())
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		hive.SetSwarm(swarm)
+	}
 
 	err = hive_services.UpdateHive(ctx, hive)
 	if err != nil {
@@ -108,10 +138,6 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	apiaries, _ := repositories.GetApiaries(ctx, userId)
-	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
-	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
 
 	tableRow := pages.GetHiveTableRow(
 		hive,

@@ -77,18 +77,14 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 	}
 
 	if command.SwarmHealth != "" {
-		swarm := models.Swarm{
-			PublicId: uuid.New(),
-			Year:     0,
-			Health:   command.SwarmHealth,
-		}
-		err := repositories.CreateSwarm(ctx, &swarm)
+		swarm := models.NewSwarm(command.SwarmHealth)
+		err := repositories.CreateSwarm(ctx, swarm)
 		if err != nil {
 			log.Printf("Could not create swarm %s", err)
 			return nil, errors.New("Could not create swarm")
 		}
 
-		hive.SetSwarm(&swarm)
+		hive.SetSwarm(swarm)
 	}
 
 	err = repositories.CreateHive(ctx, &hive)
@@ -105,6 +101,14 @@ func UpdateHive(ctx context.Context, hive *models.Hive) error {
 	if err != nil {
 		log.Printf("Could not update hive: %s", err)
 		return errors.New("Couldn't update the hive")
+	}
+
+	if hive.GetSwarm() != nil {
+		repositories.UpdateSwarm(ctx, hive.GetSwarm())
+	}
+
+	if hive.GetApiary() != nil {
+		repositories.UpdateApiary(ctx, hive.GetApiary())
 	}
 
 	return nil
