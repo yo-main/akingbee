@@ -23,12 +23,12 @@ type Hive struct {
 	User      uuid.UUID
 }
 
-func (hive *Hive) GetApiaryPublicId() *uuid.UUID {
+func (hive *Hive) GetApiaryPublicId() string {
 	if hive.apiary == nil {
-		return nil
+		return ""
 	}
 
-	return &hive.apiary.PublicId
+	return hive.apiary.PublicId.String()
 }
 
 func (hive *Hive) GetApiaryName() string {
