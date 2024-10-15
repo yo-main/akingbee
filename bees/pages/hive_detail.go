@@ -152,6 +152,9 @@ func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive
 				{
 					UpdateStrategy: &components.UpdateStrategy{
 						Confirm: "Supprimer la ruche ?",
+						AdditionalValue: `{
+							"redirectTo": "/hive"
+						}`,
 						Button: &components.Button{
 							Label:  "Supprimer",
 							Type:   "is-ghost",
