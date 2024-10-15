@@ -5,6 +5,7 @@ import (
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	hive_services "akingbee/bees/services/hive"
+	"akingbee/internal/htmx"
 	user_services "akingbee/user/services"
 	"akingbee/web"
 	"bytes"
@@ -223,5 +224,11 @@ func HandleDeleteHive(response http.ResponseWriter, req *http.Request) {
 	}
 
 	web.PrepareSuccessNotification(response, "Hive deleted successfully")
+
+	if req.FormValue("redirectTo") != "" {
+		htmx.Redirect(response, req.FormValue("redirectTo"))
+		return
+	}
+
 	response.WriteHeader(http.StatusOK)
 }

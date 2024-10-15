@@ -1,5 +1,5 @@
 <div {{ if .Swap }}hx-swap="{{ .Swap }}" {{ end }} {{ if .Target }}hx-target="{{ .Target }}" {{ end }} {{ if
-  .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }}>
+  .Confirm}}hx-confirm="{{ .Confirm }}" {{ end }} {{ with .AdditionalValue}}hx-vals="{{ . }}" {{ end }}>
   {{ with .Button }}{{ template "button.html" . }}{{ end }}
   {{ with .Form }}{{ template "form.html" . }}{{ end }}
   {{ with .Modal }}{{ template "modal.html" . }}{{ end }}
