@@ -25,12 +25,12 @@ var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/
 type hiveDetailPageParameter struct {
 	Card          components.Card
 	CommentDetail commentDetailParameter
+	HivePublicId  *uuid.UUID
 }
 
 type commentDetailParameter struct {
 	CreateCommentForm components.UpdateStrategy
 	Commentaries      components.Table
-	HivePublicId      *uuid.UUID
 }
 
 func GetCommentRow(comment *models.Comment) *components.Row {
@@ -273,6 +273,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 	params := hiveDetailPageParameter{
 		Card:          GetHiveDetailCard(ctx, userId, hive),
 		CommentDetail: *commentSection,
+		HivePublicId:  &hive.PublicId,
 	}
 
 	var hiveDetailPage bytes.Buffer

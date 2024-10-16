@@ -5,6 +5,7 @@ import (
 	"akingbee/internal/database"
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -36,7 +37,7 @@ func CreateHarvest(ctx context.Context, harvest *models.Harvest) error {
 }
 
 const queryGetHarvest = `
-	SELECT PUBLIC_ID, DATE, QUANTITY, HIVE.PUBLIC_ID
+	SELECT HARVEST.PUBLIC_ID, DATE, QUANTITY, HIVE.PUBLIC_ID
 	FROM HARVEST
 	JOIN HIVE ON HIVE.ID=HARVEST.HIVE_ID
 `
@@ -51,6 +52,11 @@ func GetHarvests(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Harvest
 		fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1", queryGetHarvest),
 		hivePublicId,
 	)
+
+	if err != nil {
+		log.Printf("Error while querying harvest: %s", err)
+		return nil, err
+	}
 
 	for rows.Next() {
 		var harvest models.Harvest
