@@ -21,6 +21,19 @@ type Table struct {
 	IsFullWidth bool
 }
 
+func (table *Table) Build() (*bytes.Buffer, error) {
+	var content bytes.Buffer
+	err := pages.HtmlPage.ExecuteTemplate(&content, "table.html", table)
+
+	if err != nil {
+		log.Printf("Failed to build table: %s", err)
+		return nil, err
+	}
+
+	return &content, nil
+
+}
+
 type Header struct {
 	Label string
 }
