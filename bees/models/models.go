@@ -120,3 +120,10 @@ type Comment struct {
 	Body         string
 	HivePublicId *uuid.UUID
 }
+
+type Harvest struct {
+	PublicId     uuid.UUID
+	Date         time.Time
+	Quantity     int
+	HivePublicId *uuid.UUID
+}

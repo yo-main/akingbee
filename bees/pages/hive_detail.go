@@ -20,7 +20,7 @@ import (
 )
 
 var hiveDetailPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail.html"))
-var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/comment_detail.html"))
+var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail_comment.html"))
 
 type hiveDetailPageParameter struct {
 	Card          components.Card
@@ -168,12 +168,7 @@ func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive
 	}
 }
 
-func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
-	hive, err := repositories.GetHive(ctx, hivePublicId)
-	if err != nil {
-		log.Printf("Could not load hive: %s", err)
-		return nil, err
-	}
+func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailParameter, error) {
 
 	comments, err := repositories.GetComments(ctx, &hive.PublicId)
 	if err != nil {
@@ -186,80 +181,98 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 		commentRows = append(commentRows, *GetCommentRow(&comment))
 	}
 
-	params := hiveDetailPageParameter{
-		Card: GetHiveDetailCard(ctx, userId, hive),
-		CommentDetail: commentDetailParameter{
-			CreateCommentForm: components.UpdateStrategy{
-				Target: "#table-hive-comments",
-				Swap:   "afterbegin",
-				Modal: &components.ModalForm{
-					Title: "Nouveau commentaire",
-					ShowModalButton: components.Button{
-						Label: "Nouveau commentaire",
-					},
-					SubmitFormButton: components.Button{
-						Label:  "Créer",
-						FormId: "create-comment",
-						Type:   "is-link",
-					},
-					Form: components.Form{
-						Id:     "create-comment",
-						Method: "post",
-						Url:    "/comment",
-						Inputs: []components.Input{
-							{
-								GroupedInput: []components.Input{
-									{
-										Name:     "type",
-										Required: true,
-										Narrow:   true,
-										ChoicesStrict: []components.Choice{
-											{Key: "note", Label: "note"},
-											{Key: "feed", Label: "nourriture"},
-											{Key: "todo", Label: "action"},
-										},
-									},
-									{
-										Name:     "date",
-										Required: true,
-										Type:     "date",
-										Default:  time.Now().Format("2006-01-02"),
+	params := commentDetailParameter{
+		CreateCommentForm: components.UpdateStrategy{
+			Target: "#table-hive-comments",
+			Swap:   "afterbegin",
+			Modal: &components.ModalForm{
+				Title: "Nouveau commentaire",
+				ShowModalButton: components.Button{
+					Label: "Nouveau commentaire",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Créer",
+					FormId: "create-comment",
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					Id:     "create-comment",
+					Method: "post",
+					Url:    "/comment",
+					Inputs: []components.Input{
+						{
+							GroupedInput: []components.Input{
+								{
+									Name:     "type",
+									Required: true,
+									Narrow:   true,
+									ChoicesStrict: []components.Choice{
+										{Key: "note", Label: "note"},
+										{Key: "feed", Label: "nourriture"},
+										{Key: "todo", Label: "action"},
 									},
 								},
+								{
+									Name:     "date",
+									Required: true,
+									Type:     "date",
+									Default:  time.Now().Format("2006-01-02"),
+								},
 							},
-							{
-								Name:       "body",
-								Required:   true,
-								RichEditor: true,
-							},
-							{
-								Name:    "hive_id",
-								Type:    "hidden",
-								Default: hivePublicId.String(),
-							},
+						},
+						{
+							Name:       "body",
+							Required:   true,
+							RichEditor: true,
+						},
+						{
+							Name:    "hive_id",
+							Type:    "hidden",
+							Default: hive.PublicId.String(),
 						},
 					},
 				},
 			},
-			Commentaries: components.Table{
-				Id:          "table-hive-comments",
-				IsFullWidth: true,
-				IsStripped:  true,
-				Headers: []components.Header{
-					{Label: "Actions"},
-					{Label: "Date"},
-					{Label: "Type"},
-					{Label: "Comment"},
-				},
-				ColumnSizes: []components.ColumnSize{
-					{Span: "1", Style: "width: 10%"},
-					{Span: "1", Style: "width: 10%"},
-					{Span: "1", Style: "width: 10%"},
-					{Span: "1", Style: "width: 70%"},
-				},
-				Rows: commentRows,
-			},
 		},
+		Commentaries: components.Table{
+			Id:          "table-hive-comments",
+			IsFullWidth: true,
+			IsStripped:  true,
+			Headers: []components.Header{
+				{Label: "Actions"},
+				{Label: "Date"},
+				{Label: "Type"},
+				{Label: "Comment"},
+			},
+			ColumnSizes: []components.ColumnSize{
+				{Span: "1", Style: "width: 10%"},
+				{Span: "1", Style: "width: 10%"},
+				{Span: "1", Style: "width: 10%"},
+				{Span: "1", Style: "width: 70%"},
+			},
+			Rows: commentRows,
+		},
+	}
+
+	return &params, nil
+}
+
+func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
+	hive, err := repositories.GetHive(ctx, hivePublicId)
+	if err != nil {
+		log.Printf("Could not load hive: %s", err)
+		return nil, err
+	}
+
+	commentSection, err := GetCommentSection(ctx, hive)
+	if err != nil {
+		log.Printf("Could not load comment section: %s", err)
+		return nil, err
+	}
+
+	params := hiveDetailPageParameter{
+		Card:          GetHiveDetailCard(ctx, userId, hive),
+		CommentDetail: *commentSection,
 	}
 
 	var hiveDetailPage bytes.Buffer
