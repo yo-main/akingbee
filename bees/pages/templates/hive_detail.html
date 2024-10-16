@@ -4,8 +4,9 @@
     <div class="column is-three-quarters">
       <div class="tabs">
         <ul>
-          <li class="is-active"><a>Suivi</a></li>
-          <li><a>Recolte</a></li>
+          <li class="is-active"><a hx-get="/hive/{{ .HivePublicId }}/comments" hx-swap="innerHTML"
+              hx-target="hive-detail-table">Suivi</a></li>
+          <li><a hx-get="hive/{{ .HivePublicId }}/harvests" hx-swap="innerHTML" hx-target="innerHTML">Recolte</a></li>
         </ul>
       </div>
 

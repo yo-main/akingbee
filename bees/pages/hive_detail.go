@@ -317,3 +317,54 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 		web.ReturnFullPage(ctx, response, *hiveDetailPage, userId)
 	}
 }
+
+func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	userId, err := services.AuthenticateUser(req)
+
+	if err != nil {
+		log.Printf("Could not authenticate user: %s", err)
+		web.PrepareFailedNotification(response, "Not authenticated")
+		response.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
+	if err != nil {
+		log.Printf("The provided hive id is incorrect: %s", err)
+		web.PrepareFailedNotification(response, "Not Found")
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	hive, err := repositories.GetHive(ctx, &hivePublicId)
+	if err != nil {
+		web.PrepareFailedNotification(response, "Not Found")
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if hive.User != *userId {
+		web.PrepareFailedNotification(response, "Forbidden")
+		response.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	commentSection, err := GetCommentSection(ctx, hive)
+	if err != nil {
+		web.PrepareFailedNotification(response, "Could not get comment section")
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var body bytes.Buffer
+	err = pages.HtmlPage.ExecuteTemplate(&body, "hive_detail_comment.html", &commentSection)
+	if err != nil {
+		web.PrepareFailedNotification(response, "Could not build comment section")
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	response.Write(body.Bytes())
+}

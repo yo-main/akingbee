@@ -89,7 +89,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	response.WriteHeader(http.StatusOK)
 }
 
-func HandleGetHarvests(response http.ResponseWriter, req *http.Request) {
+func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	userId, err := user_services.AuthenticateUser(req)
