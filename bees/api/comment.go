@@ -147,20 +147,20 @@ func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 
 	comment, err := repositories.GetComment(ctx, &commentPublicId)
 	if err != nil {
-		log.Printf("Hive not found: %s", err)
-		web.PrepareFailedNotification(response, "Hive not found")
+		log.Printf("Comment not found: %s", err)
+		web.PrepareFailedNotification(response, "Comment not found")
 		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	err = comment_services.DeleteComment(ctx, comment)
 	if err != nil {
-		log.Printf("Could not delete hive: %s", err)
+		log.Printf("Could not delete comment: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	web.PrepareSuccessNotification(response, "Hive deleted successfully")
+	web.PrepareSuccessNotification(response, "Comment deleted successfully")
 	response.WriteHeader(http.StatusOK)
 }

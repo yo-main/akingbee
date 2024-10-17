@@ -17,7 +17,7 @@ const queryCreateHarvest = `
 		$1, 
 		$2,
 		$3,
-		(SELECT HIVE.ID WHERE HIVE.PUBLIC_ID=$4)
+		(SELECT HIVE.ID FROM HIVE WHERE HIVE.PUBLIC_ID=$4)
 	)
 `
 
@@ -49,7 +49,7 @@ func GetHarvests(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Harvest
 
 	rows, err := db.QueryContext(
 		ctx,
-		fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1", queryGetHarvest),
+		fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1 ORDER BY HARVEST.DATE DESC, HARVEST.DATE_CREATION DESC", queryGetHarvest),
 		hivePublicId,
 	)
 
@@ -75,6 +75,37 @@ func GetHarvests(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Harvest
 	}
 
 	return harvests, err
+}
+
+func GetHarvest(ctx context.Context, harvestPublicId *uuid.UUID) (*models.Harvest, error) {
+	db := database.GetDb()
+
+	rows, err := db.QueryContext(
+		ctx,
+		fmt.Sprintf("%s WHERE HARVEST.PUBLIC_ID=$1", queryGetHarvest),
+		harvestPublicId,
+	)
+	defer rows.Close()
+
+	if err != nil {
+		log.Printf("Error while querying harvest: %s", err)
+		return nil, err
+	}
+
+	var harvest models.Harvest
+
+	rows.Next()
+	err = rows.Scan(
+		&harvest.PublicId,
+		&harvest.Date,
+		&harvest.Quantity,
+		&harvest.HivePublicId,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &harvest, err
 }
 
 const queryDeleteHarvest = `

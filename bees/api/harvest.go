@@ -3,19 +3,27 @@ package api
 import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
-
 	services "akingbee/bees/services/harvest"
 	user_services "akingbee/user/services"
 	"akingbee/web"
 	"akingbee/web/components"
+	"akingbee/web/pages"
+	"bytes"
 	"fmt"
+	"github.com/google/uuid"
+	"html/template"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/google/uuid"
 )
+
+var HarvestDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail_harvest.html"))
+
+type HiveHarvestDetail struct {
+	CreateHarvestForm components.UpdateStrategy
+	HarvestsTable     components.Table
+}
 
 func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
@@ -129,37 +137,81 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	table, err := GetHarvestsTable(harvests).Build()
+	params := GetHarvestsDetail(hive, harvests)
+
+	var content bytes.Buffer
+	err = pages.HtmlPage.ExecuteTemplate(&content, "hive_detail_harvest.html", &params)
+
 	if err != nil {
 		web.PrepareFailedNotification(response, "Could not build harvest table")
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	response.Write(table.Bytes())
+	response.Write(content.Bytes())
 }
 
-func GetHarvestsTable(harvests []models.Harvest) *components.Table {
+func GetHarvestsDetail(hive *models.Hive, harvests []models.Harvest) *HiveHarvestDetail {
 	var harvestRows []components.Row
 	for _, harvest := range harvests {
 		harvestRows = append(harvestRows, *GetHarvestRow(&harvest))
 	}
 
-	return &components.Table{
-		Id:          "table-hive-harvests",
-		IsFullWidth: true,
-		IsStripped:  true,
-		Headers: []components.Header{
-			{Label: "Actions"},
-			{Label: "Date"},
-			{Label: "Quantity"},
+	return &HiveHarvestDetail{
+		CreateHarvestForm: components.UpdateStrategy{
+			Target: "#table-hive-harvests",
+			Swap:   "afterbegin",
+			Modal: &components.ModalForm{
+				Title: "Nouvelle récolte",
+				ShowModalButton: components.Button{
+					Label: "Nouvelle récolte",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Créer",
+					FormId: "create-harvest",
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					Id:     "create-harvest",
+					Method: "post",
+					Url:    fmt.Sprintf("/hive/%s/harvests", hive.PublicId),
+					Inputs: []components.Input{
+						{
+							GroupedInput: []components.Input{
+								{
+									Name:     "quantity",
+									Required: true,
+									Narrow:   true,
+									Type:     "number",
+								},
+								{
+									Name:     "date",
+									Required: true,
+									Type:     "date",
+									Default:  time.Now().Format("2006-01-02"),
+								},
+							},
+						},
+					},
+				},
+			},
 		},
-		ColumnSizes: []components.ColumnSize{
-			{Span: "1", Style: "width: 10%"},
-			{Span: "1", Style: "width: 30%"},
-			{Span: "1", Style: "width: 60%"},
+		HarvestsTable: components.Table{
+			Id:          "table-hive-harvests",
+			IsFullWidth: true,
+			IsStripped:  true,
+			Headers: []components.Header{
+				{Label: "Actions"},
+				{Label: "Date"},
+				{Label: "Quantity"},
+			},
+			ColumnSizes: []components.ColumnSize{
+				{Span: "1", Style: "width: 10%"},
+				{Span: "1", Style: "width: 30%"},
+				{Span: "1", Style: "width: 60%"},
+			},
+			Rows: harvestRows,
 		},
-		Rows: harvestRows,
 	}
 }
 
@@ -175,7 +227,7 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 							Confirm: "Supprimer la recolte ?",
 							Button: &components.Button{
 								Icon:   "delete",
-								Url:    fmt.Sprintf("/hive/%s/harvest/%s", harvest.HivePublicId, harvest.PublicId),
+								Url:    fmt.Sprintf("/hive/%s/harvests/%s", harvest.HivePublicId, harvest.PublicId),
 								Method: "delete",
 							},
 						},
@@ -188,4 +240,44 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 	}
 
 	return &params
+}
+
+func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	_, err := user_services.AuthenticateUser(req)
+
+	if err != nil {
+		log.Printf("Could not authenticate user: %s", err)
+		web.PrepareFailedNotification(response, "Not authenticated")
+		response.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	harvestPublicId, err := uuid.Parse(req.PathValue("harvestPublicId"))
+	if err != nil {
+		log.Printf("The provided harvest id is incorrect: %s", err)
+		web.PrepareFailedNotification(response, "Bad request")
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	harvest, err := repositories.GetHarvest(ctx, &harvestPublicId)
+	if err != nil {
+		log.Printf("Harvest not found: %s", err)
+		web.PrepareFailedNotification(response, "Harvest not found")
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	err = repositories.DeleteHarvest(ctx, harvest)
+	if err != nil {
+		log.Printf("Could not delete harvest: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	web.PrepareSuccessNotification(response, "Harvest deleted successfully")
+	response.WriteHeader(http.StatusOK)
 }
