@@ -1,4 +1,4 @@
-<nav class="navbar is-fixed-top has-background-warning-95 has-shadow">
+<nav class="navbar is-warning is-fixed-top has-background-warning-95 has-shadow">
   <div class="navbar-brand">
     <img src="/logo.svg">
     <img src="/akingbee.svg">
@@ -7,19 +7,15 @@
 
     <div class="navbar-end pr-5">
 
-      <p class="navbar-item">
-        <a class="has-text-warning-95-invert" hx-get="/login" hx-target="#page-body" hx-swap="innerHTML"
-          hx-push-url="/login">
-          Connexion
-        </a>
-      </p>
+      <a class="navbar-item has-text-warning-95-invert" hx-get="/login" hx-target="#page-body" hx-swap="innerHTML"
+        hx-push-url="/login">
+        Connexion
+      </a>
 
-      <p class="navbar-item">
-        <a class="has-text-warning-95-invert" hx-get="/register" hx-target="#page-body" hx-swap="innerHTML"
-          hx-push-url="/register">
-          Inscription
-        </a>
-      </p>
+      <a class="navbar-item has-text-warning-95-invert" hx-get="/register" hx-target="#page-body" hx-swap="innerHTML"
+        hx-push-url="/register">
+        Inscription
+      </a>
 
     </div>
   </div>

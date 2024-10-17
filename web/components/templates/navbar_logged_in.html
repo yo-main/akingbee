@@ -1,4 +1,4 @@
-<nav class="navbar is-fixed-top has-background-warning-95 has-shadow">
+<nav class="navbar is-fixed-top is-warning has-background-warning-95 has-shadow">
   <div class="navbar-brand">
     <img src="/logo.svg">
     <img src="/akingbee.svg">
@@ -6,17 +6,16 @@
   <div class="navbar-menu has-text-inherit">
 
     <div class="navbar-start has-text-inherit">
-      <p class="navbar-item"><a class="has-text-warning-95-invert" hx-get="/hive" hx-target="#page-body"
-          hx-swap="innerHTML" hx-push-url="/hive">Ruches</a></p>
-      <p class="navbar-item"><a class="has-text-warning-95-invert" hx-get="/apiary" hx-target="#page-body"
-          hx-swap="innerHTML" hx-push-url="/apiary">Ruchers</a></p>
-      <p class="navbar-item"><a class="has-text-warning-95-invert">Paramètres</a></p>
+      <a class="navbar-item has-text-warning-95-invert" hx-get="/hive" hx-target="#page-body" hx-swap="innerHTML"
+        hx-push-url="/hive">Ruches</a>
+      <a class="navbar-item has-text-warning-95-invert" hx-get="/apiary" hx-target="#page-body" hx-swap="innerHTML"
+        hx-push-url="/apiary">Ruchers</a>
     </div>
 
     <div class="navbar-end pr-5">
       <p class="navbar-item"><strong class="has-text-warning-95-invert">Bienvenue {{ .Username }}</strong></p>
-      <p class="navbar-item"><a class="has-text-warning-95-invert" hx-post="/logout" hx-swap="none" hx-push-url="/"
-          hx-target="#page-body">Déconnexion</a></p>
+      <a class="navbar-item has-text-warning-95-invert" hx-post="/logout" hx-swap="none" hx-push-url="/"
+        hx-target="#page-body">Déconnexion</a>
     </div>
   </div>
 </nav>
