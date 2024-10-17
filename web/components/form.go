@@ -35,4 +35,5 @@ type Input struct {
 	GroupedInput  []Input
 	Narrow        bool
 	Hidden        bool
+	Placeholder   string
 }

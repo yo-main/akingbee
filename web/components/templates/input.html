@@ -39,7 +39,8 @@
 
     <input class="input" type="{{ .Type }}" name="{{ .Name }}" onkeyup="this.setCustomValidity('')" {{ if .Required }}
       hx-on:htmx:validation:validate="if (this.value.length < 1) {this.setCustomValidity('Required')}" {{ end}} {{ if
-      .ChoicesFree }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }}>
+      .ChoicesFree }} list="datalist-{{ .Name }}" {{ end }} {{ if .Default }}value="{{ .Default }}" {{ end }} {{ if
+      .Placeholder}}placeholder="{{.Placeholder}}" {{end}}>
     {{ end }}
 
 

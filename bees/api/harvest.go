@@ -177,20 +177,18 @@ func GetHarvestsDetail(hive *models.Hive, harvests []models.Harvest) *HiveHarves
 					Url:    fmt.Sprintf("/hive/%s/harvests", hive.PublicId),
 					Inputs: []components.Input{
 						{
-							GroupedInput: []components.Input{
-								{
-									Name:     "quantity",
-									Required: true,
-									Narrow:   true,
-									Type:     "number",
-								},
-								{
-									Name:     "date",
-									Required: true,
-									Type:     "date",
-									Default:  time.Now().Format("2006-01-02"),
-								},
-							},
+							Name:        "quantity",
+							Label:       "Quantité",
+							Required:    true,
+							Type:        "number",
+							Placeholder: "en gramme",
+						},
+						{
+							Name:     "date",
+							Label:    "Date de la récolte",
+							Required: true,
+							Type:     "date",
+							Default:  time.Now().Format("2006-01-02"),
 						},
 					},
 				},
