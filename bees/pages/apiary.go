@@ -210,6 +210,6 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 	if htmx.IsHtmxRequest(req) {
 		response.Write(apiaryPage.Bytes())
 	} else {
-		web.ReturnFullPage(ctx, response, *apiaryPage, userId)
+		web.ReturnFullPage(ctx, req, response, *apiaryPage, userId)
 	}
 }

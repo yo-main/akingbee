@@ -75,7 +75,7 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 	if htmx.IsHtmxRequest(req) {
 		response.Write(loginPage.Bytes())
 	} else {
-		web.ReturnFullPage(req.Context(), response, *loginPage, nil)
+		web.ReturnFullPage(req.Context(), req, response, *loginPage, nil)
 	}
 }
 
@@ -98,6 +98,6 @@ func HandleWelcomePage(response http.ResponseWriter, req *http.Request) {
 		response.Write([]byte(welcomePage.Bytes()))
 	} else {
 		userId, _ := services.AuthenticateUser(req)
-		web.ReturnFullPage(req.Context(), response, *welcomePage, userId)
+		web.ReturnFullPage(req.Context(), req, response, *welcomePage, userId)
 	}
 }

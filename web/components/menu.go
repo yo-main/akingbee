@@ -4,10 +4,12 @@ import (
 	"akingbee/web/pages"
 	"bytes"
 	"html/template"
+	"strings"
 )
 
 type LoggedInMenuComponent struct {
 	Username string
+	Entity   string
 }
 
 type LoggedOutMenuComponent struct {
@@ -16,9 +18,11 @@ type LoggedOutMenuComponent struct {
 var loggedOutMenu = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/navbar_logged_out.html"))
 var loggedInMenu = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/navbar_logged_in.html"))
 
-func GetLoggedInMenu(username string) (*bytes.Buffer, error) {
+func GetLoggedInMenu(username string, url string) (*bytes.Buffer, error) {
+	url_parts := strings.Split(url, "/")
 	params := LoggedInMenuComponent{
 		Username: username,
+		Entity:   url_parts[len(url_parts)-1],
 	}
 
 	var buffer bytes.Buffer

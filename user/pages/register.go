@@ -67,6 +67,6 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	if htmx.IsHtmxRequest(req) {
 		response.Write(registerPage.Bytes())
 	} else {
-		web.ReturnFullPage(req.Context(), response, *&registerPage, nil)
+		web.ReturnFullPage(req.Context(), req, response, *&registerPage, nil)
 	}
 }

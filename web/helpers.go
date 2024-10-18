@@ -31,7 +31,7 @@ func getEventMap(response http.ResponseWriter, headerKey string) map[string]inte
 	return events
 }
 
-func ReturnFullPage(ctx context.Context, response http.ResponseWriter, content bytes.Buffer, userId *uuid.UUID) {
+func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content bytes.Buffer, userId *uuid.UUID) {
 	var menu *bytes.Buffer
 	var err error
 
@@ -42,7 +42,7 @@ func ReturnFullPage(ctx context.Context, response http.ResponseWriter, content b
 			return
 		}
 
-		menu, err = components.GetLoggedInMenu(user.Credentials.Username)
+		menu, err = components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
 		if err != nil {
 			log.Printf("Could not get logged in menu: %s", err)
 			return
@@ -117,8 +117,8 @@ func prepareMenuEvent(response http.ResponseWriter, menu *bytes.Buffer) {
 	response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
 }
 
-func PrepareLoggedInMenu(response http.ResponseWriter, username string) {
-	menu, err := components.GetLoggedInMenu(username)
+func PrepareLoggedInMenu(req *http.Request, response http.ResponseWriter, username string) {
+	menu, err := components.GetLoggedInMenu(username, req.URL.Path)
 	if err != nil {
 		log.Printf("Could not generate menu: %s", err)
 		return

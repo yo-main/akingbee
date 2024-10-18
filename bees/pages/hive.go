@@ -341,6 +341,6 @@ func HandleGetHive(response http.ResponseWriter, req *http.Request) {
 	if htmx.IsHtmxRequest(req) {
 		response.Write(hivePage.Bytes())
 	} else {
-		web.ReturnFullPage(ctx, response, *hivePage, userId)
+		web.ReturnFullPage(ctx, req, response, *hivePage, userId)
 	}
 }
