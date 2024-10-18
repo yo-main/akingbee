@@ -6,10 +6,15 @@
   <div class="navbar-menu has-text-inherit">
 
     <div class="navbar-start has-text-inherit">
-      <a class="navbar-item has-text-warning-95-invert" hx-get="/hive" hx-target="#page-body" hx-swap="innerHTML"
-        hx-push-url="/hive">Ruches</a>
-      <a class="navbar-item has-text-warning-95-invert" hx-get="/apiary" hx-target="#page-body" hx-swap="innerHTML"
-        hx-push-url="/apiary">Ruchers</a>
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "hive" }}is-selected{{end}}' hx-get="/hive"
+        hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/hive"
+        hx-on:htmx:after-request="this.nextSibling.nextSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
+        Ruches</a>
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "apiary" }}is-selected{{ end }}'
+        hx-get="/apiary" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/apiary"
+        hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
+
+        Ruchers</a>
     </div>
 
     <div class="navbar-end pr-5">

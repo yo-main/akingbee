@@ -71,7 +71,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	welcomePage, err := user_pages.GetWelcomePage(req)
 
 	htmx.PushUrl(response, "/")
-	web.PrepareLoggedInMenu(response, username)
+	web.PrepareLoggedInMenu(req, response, username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
 	response.Write(welcomePage.Bytes())
