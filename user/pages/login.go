@@ -15,8 +15,9 @@ import (
 var loginPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/templates/login.html"))
 
 type LoginPageBuilder struct {
-	Form         components.UpdateStrategy
-	SubmitButton components.Button
+	Form                 components.UpdateStrategy
+	SubmitButton         components.Button
+	ForgotPasswordButton components.Button
 }
 
 func (data *LoginPageBuilder) Build() (*bytes.Buffer, error) {
@@ -40,6 +41,8 @@ func GetLoginPage() (*bytes.Buffer, error) {
 			FormId: "login",
 		},
 		Form: components.UpdateStrategy{
+			Target: "#page-body",
+			Swap:   "innerHTML",
 			Form: &components.Form{
 				Id:     "login",
 				Method: "post",
@@ -59,7 +62,14 @@ func GetLoginPage() (*bytes.Buffer, error) {
 					},
 				},
 			},
-		}}
+		},
+		ForgotPasswordButton: components.Button{
+			Label:   "Mot de passe oublié",
+			Url:     "password-reset",
+			PushUrl: true,
+			Method:  "get",
+		},
+	}
 
 	loginPage, err := loginParams.Build()
 	return loginPage, err
