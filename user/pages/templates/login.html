@@ -5,14 +5,14 @@
       <p class="subtitle">Bienvenue sur <strong>Akingbee</strong>!</p>
     </div>
 
-    <div hx-target="#page-body" hx-swap="innerHTML">
+    {{ template "update_strategy.html" .Form }}
 
-      {{ template "update_strategy.html" .Form }}
-
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          {{ template "button.html" .SubmitButton }}
-        </div>
+    <div class="field is-grouped is-grouped-right">
+      <div class="control">
+        {{ template "button.html" .ForgotPasswordButton }}
+      </div>
+      <div class="control">
+        {{ template "button.html" .SubmitButton }}
       </div>
     </div>
   </div>
