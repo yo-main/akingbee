@@ -7,9 +7,9 @@ import (
 	"log"
 )
 
-var tableTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/table.html"))
-var tableRowTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/table_row.html"))
-var tableCellTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/table_cell.html"))
+var tableTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table.html"))
+var tableRowTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table_row.html"))
+var tableCellTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table_cell.html"))
 
 type Table struct {
 	Id          string

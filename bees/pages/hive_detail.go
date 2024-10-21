@@ -19,8 +19,8 @@ import (
 	"github.com/google/uuid"
 )
 
-var hiveDetailPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail.html"))
-var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail_comment.html"))
+var hiveDetailPageTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive_detail.html"))
+var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive_detail_comment.html"))
 
 type hiveDetailPageParameter struct {
 	Card          components.Card

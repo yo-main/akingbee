@@ -17,7 +17,7 @@ import (
 	"net/http"
 )
 
-var hivePageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive.html"))
+var hivePageTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive.html"))
 
 type hivePageParameter struct {
 	CreateHiveModal components.UpdateStrategy

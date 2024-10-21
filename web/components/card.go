@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-var cardTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/card.html"))
+var cardTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/card.html"))
 
 type Card struct {
 	Id      string

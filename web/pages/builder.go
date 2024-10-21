@@ -2,9 +2,14 @@ package pages
 
 import (
 	"bytes"
+	"embed"
 	"html/template"
 	"log"
 )
+
+//go:embed templates/*
+
+var templatesFS embed.FS
 
 type htmlBodyComponent struct {
 	Menu    template.HTML
@@ -15,8 +20,8 @@ type htmlPageComponent struct {
 	Body htmlBodyComponent
 }
 
-var HtmlPage = template.Must(template.ParseFiles("web/pages/templates/index.html"))
-var htmlBody = template.Must(HtmlPage.ParseFiles("web/pages/templates/body.html"))
+var HtmlPage = template.Must(template.ParseFS(templatesFS, "templates/index.html"))
+var htmlBody = template.Must(HtmlPage.ParseFS(templatesFS, "templates/body.html"))
 
 func BuildPage(body htmlBodyComponent) ([]byte, error) {
 

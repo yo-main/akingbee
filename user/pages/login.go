@@ -7,12 +7,16 @@ import (
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
+	"embed"
 	"html/template"
 	"log"
 	"net/http"
 )
 
-var loginPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/templates/login.html"))
+//go:embed templates/*
+var templatesFS embed.FS
+
+var loginPageTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/login.html"))
 
 type LoginPageBuilder struct {
 	Form                 components.UpdateStrategy

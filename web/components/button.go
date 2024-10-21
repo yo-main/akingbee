@@ -5,7 +5,7 @@ import (
 	"html/template"
 )
 
-var buttonTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/button.html"))
+var buttonTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/button.html"))
 
 type Button struct {
 	Label   string

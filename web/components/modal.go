@@ -5,7 +5,7 @@ import (
 	"html/template"
 )
 
-var modalTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/modal.html"))
+var modalTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/modal.html"))
 
 type ModalForm struct {
 	Title            string

@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-var registerPageTemplate = template.Must(pages.HtmlPage.ParseFiles("user/pages/templates/register.html"))
+var registerPageTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/register.html"))
 
 type registerPageParams struct {
 	SubmitButton components.Button

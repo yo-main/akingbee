@@ -3,9 +3,13 @@ package components
 import (
 	"akingbee/web/pages"
 	"bytes"
+	"embed"
 	"html/template"
 	"strings"
 )
+
+//go:embed templates/*
+var templatesFS embed.FS
 
 type LoggedInMenuComponent struct {
 	Username string
@@ -15,8 +19,8 @@ type LoggedInMenuComponent struct {
 type LoggedOutMenuComponent struct {
 }
 
-var loggedOutMenu = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/navbar_logged_out.html"))
-var loggedInMenu = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/navbar_logged_in.html"))
+var loggedOutMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_out.html"))
+var loggedInMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_in.html"))
 
 func GetLoggedInMenu(username string, url string) (*bytes.Buffer, error) {
 	url_parts := strings.Split(url, "/")
