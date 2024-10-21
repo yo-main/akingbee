@@ -10,6 +10,7 @@ import (
 	"akingbee/web/pages"
 	"bytes"
 	"context"
+	"embed"
 	"fmt"
 	"github.com/google/uuid"
 	"html/template"
@@ -18,7 +19,10 @@ import (
 	"strconv"
 )
 
-var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/apiary.html"))
+//go:embed templates/*
+var TemplatesFS embed.FS
+
+var apiaryPageTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/apiary.html"))
 
 type apiaryPageParameter struct {
 	CreateApiaryModal components.UpdateStrategy

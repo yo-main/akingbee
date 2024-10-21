@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-var notificationComponent = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/notification.html"))
+var notificationComponent = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/notification.html"))
 
 type NotificationComponent struct {
 	Type    string

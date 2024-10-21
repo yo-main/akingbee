@@ -5,8 +5,8 @@ import (
 	"html/template"
 )
 
-var formTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/form.html"))
-var inputTemplate = template.Must(pages.HtmlPage.ParseFiles("web/components/templates/input.html"))
+var formTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/form.html"))
+var inputTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/input.html"))
 
 type Choice struct {
 	Key      string

@@ -2,6 +2,7 @@ package api
 
 import (
 	"akingbee/bees/models"
+	hive_pages "akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	services "akingbee/bees/services/harvest"
 	user_services "akingbee/user/services"
@@ -18,7 +19,7 @@ import (
 	"time"
 )
 
-var HarvestDetailTemplate = template.Must(pages.HtmlPage.ParseFiles("bees/pages/templates/hive_detail_harvest.html"))
+var HarvestDetailTemplate = template.Must(pages.HtmlPage.ParseFS(hive_pages.TemplatesFS, "templates/hive_detail_harvest.html"))
 
 type HiveHarvestDetail struct {
 	CreateHarvestForm components.UpdateStrategy
