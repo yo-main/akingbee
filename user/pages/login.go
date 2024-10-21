@@ -80,9 +80,7 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 }
 
 func GetWelcomePage(req *http.Request) (*bytes.Buffer, error) {
-
 	var page bytes.Buffer
-	page.WriteString("COUCOU")
 	return &page, nil
 }
 
