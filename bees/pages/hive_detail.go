@@ -4,7 +4,6 @@ import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
 	"akingbee/internal/htmx"
-	"akingbee/user/services"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -287,21 +286,13 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 	return &hiveDetailPage, nil
 }
 
-func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
+func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
 		log.Printf("hive id is not an uuid: %s", err)
 		response.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	userId, err := services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		response.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -319,17 +310,8 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
+func HandleGetHiveComments(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
 	"akingbee/internal/htmx"
-	"akingbee/user/services"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -320,16 +319,8 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 
 }
 
-func HandleGetHive(response http.ResponseWriter, req *http.Request) {
+func HandleGetHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePage, err := GetHivesBody(ctx, userId)
 	if err != nil {

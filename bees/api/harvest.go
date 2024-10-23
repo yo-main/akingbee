@@ -5,7 +5,6 @@ import (
 	hive_pages "akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	services "akingbee/bees/services/harvest"
-	user_services "akingbee/user/services"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -26,17 +25,8 @@ type HiveHarvestDetail struct {
 	HarvestsTable     components.Table
 }
 
-func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
+func HandlePostHarvest(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -98,17 +88,8 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	response.WriteHeader(http.StatusOK)
 }
 
-func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
+func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -241,17 +222,8 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 	return &params
 }
 
-func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
+func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	_, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	harvestPublicId, err := uuid.Parse(req.PathValue("harvestPublicId"))
 	if err != nil {
