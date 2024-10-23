@@ -4,8 +4,6 @@ import (
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	apiary_services "akingbee/bees/services/apiary"
-
-	user_services "akingbee/user/services"
 	"akingbee/web"
 	"log"
 	"net/http"
@@ -13,17 +11,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
+func HandlePostApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	command := apiary_services.CreateApiaryCommand{
 		Name:      req.FormValue("name"),
@@ -32,7 +21,7 @@ func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 		User:      userId,
 	}
 
-	_, err = apiary_services.CreateApiary(ctx, &command)
+	_, err := apiary_services.CreateApiary(ctx, &command)
 	if err != nil {
 		log.Printf("Could not create apiary: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -52,17 +41,8 @@ func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 	response.Write(apiaryPage.Bytes())
 }
 
-func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
+func HandlePutApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	apiaryPublicId, err := uuid.Parse(req.PathValue("apiaryPublicId"))
 	if err != nil {
@@ -111,17 +91,8 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 	response.Write(content.Bytes())
 }
 
-func HandleDeleteApiary(response http.ResponseWriter, req *http.Request) {
+func HandleDeleteApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	apiaryPublicId, err := uuid.Parse(req.PathValue("apiaryPublicId"))
 	if err != nil {

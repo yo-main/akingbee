@@ -4,7 +4,6 @@ import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
 	"akingbee/internal/htmx"
-	"akingbee/user/services"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -193,16 +192,8 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 
 }
 
-func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
+func HandleGetApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	apiaryPage, err := GetApiaryBody(ctx, userId)
 	if err != nil {

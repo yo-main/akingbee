@@ -6,7 +6,6 @@ import (
 	"akingbee/bees/repositories"
 	hive_services "akingbee/bees/services/hive"
 	"akingbee/internal/htmx"
-	user_services "akingbee/user/services"
 	"akingbee/web"
 	"bytes"
 	"fmt"
@@ -17,17 +16,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlePostHive(response http.ResponseWriter, req *http.Request) {
+func HandlePostHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	var apiaryPublicId *uuid.UUID
 	if !(req.FormValue("apiary") == "none" || req.FormValue("apiary") == "") {
@@ -48,7 +38,7 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 		User:        userId,
 	}
 
-	_, err = hive_services.CreateHive(ctx, &command)
+	_, err := hive_services.CreateHive(ctx, &command)
 	if err != nil {
 		log.Printf("Could not create hive: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -68,17 +58,8 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 	response.Write(hivePage.Bytes())
 }
 
-func HandlePutHive(response http.ResponseWriter, req *http.Request) {
+func HandlePutHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -181,17 +162,8 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 	response.Write(content.Bytes())
 }
 
-func HandleDeleteHive(response http.ResponseWriter, req *http.Request) {
+func HandleDeleteHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	userId, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {

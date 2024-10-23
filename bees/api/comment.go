@@ -4,7 +4,6 @@ import (
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	comment_services "akingbee/bees/services/comment"
-	user_services "akingbee/user/services"
 	"akingbee/web"
 	"fmt"
 	"log"
@@ -14,17 +13,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlePostComment(response http.ResponseWriter, req *http.Request) {
+func HandlePostComment(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	_, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	hivePublicId, err := uuid.Parse(req.FormValue("hive_id"))
 	if err != nil {
@@ -69,17 +59,8 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	response.Write(commentRow.Bytes())
 }
 
-func HandlePutComment(response http.ResponseWriter, req *http.Request) {
+func HandlePutComment(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	_, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	commentPublicId, err := uuid.Parse(req.PathValue("commentPublicId"))
 	if err != nil {
@@ -125,17 +106,8 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 	response.Write(tableRow.Bytes())
 }
 
-func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
+func HandleDeleteComment(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
 	ctx := req.Context()
-
-	_, err := user_services.AuthenticateUser(req)
-
-	if err != nil {
-		log.Printf("Could not authenticate user: %s", err)
-		web.PrepareFailedNotification(response, "Not authenticated")
-		response.WriteHeader(http.StatusUnauthorized)
-		return
-	}
 
 	commentPublicId, err := uuid.Parse(req.PathValue("commentPublicId"))
 	if err != nil {
