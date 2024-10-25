@@ -3,8 +3,7 @@ package pages
 import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
-	"akingbee/internal/htmx"
-	"akingbee/web"
+	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -319,19 +318,19 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 
 }
 
-func HandleGetHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleGetHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	hivePage, err := GetHivesBody(ctx, userId)
-	if err != nil {
-		log.Printf("Could not get hive page: %s", err)
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if htmx.IsHtmxRequest(req) {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+		hivePage, err := GetHivesBody(ctx, &user.PublicId)
+		if err != nil {
+			log.Printf("Could not get hive page: %s", err)
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		response.Write(hivePage.Bytes())
 	} else {
-		web.ReturnFullPage(ctx, req, response, *hivePage, userId)
+		panic("unreacheable")
 	}
+
 }

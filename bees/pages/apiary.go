@@ -3,8 +3,8 @@ package pages
 import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
-	"akingbee/internal/htmx"
-	"akingbee/web"
+
+	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -192,19 +192,20 @@ func GetApiaryBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error
 
 }
 
-func HandleGetApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	apiaryPage, err := GetApiaryBody(ctx, userId)
-	if err != nil {
-		log.Printf("Could not get apiry page: %s", err)
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+		apiaryPage, err := GetApiaryBody(ctx, &user.PublicId)
+		if err != nil {
+			log.Printf("Could not get apiry page: %s", err)
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-	if htmx.IsHtmxRequest(req) {
 		response.Write(apiaryPage.Bytes())
 	} else {
-		web.ReturnFullPage(ctx, req, response, *apiaryPage, userId)
+		panic("unreacheable")
 	}
+
 }

@@ -5,6 +5,7 @@ import (
 	hive_pages "akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	services "akingbee/bees/services/harvest"
+	user_models "akingbee/user/models"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -25,8 +26,13 @@ type HiveHarvestDetail struct {
 	HarvestsTable     components.Table
 }
 
-func HandlePostHarvest(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -42,7 +48,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request, userId *
 		response.WriteHeader(http.StatusNotFound)
 		return
 	}
-	if hive.User != *userId {
+	if hive.User != user.PublicId {
 		web.PrepareFailedNotification(response, "Forbidden")
 		response.WriteHeader(http.StatusForbidden)
 		return
@@ -88,8 +94,13 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request, userId *
 	response.WriteHeader(http.StatusOK)
 }
 
-func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -106,7 +117,7 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request, user
 		return
 	}
 
-	if hive.User != *userId {
+	if hive.User != user.PublicId {
 		web.PrepareFailedNotification(response, "Forbidden")
 		response.WriteHeader(http.StatusForbidden)
 		return
@@ -222,8 +233,12 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 	return &params
 }
 
-func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	harvestPublicId, err := uuid.Parse(req.PathValue("harvestPublicId"))
 	if err != nil {

@@ -1,8 +1,6 @@
 package pages
 
 import (
-	"akingbee/internal/htmx"
-	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -64,9 +62,5 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if htmx.IsHtmxRequest(req) {
-		response.Write(registerPage.Bytes())
-	} else {
-		web.ReturnFullPage(req.Context(), req, response, *&registerPage, nil)
-	}
+	response.Write(registerPage.Bytes())
 }

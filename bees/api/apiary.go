@@ -4,6 +4,7 @@ import (
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	apiary_services "akingbee/bees/services/apiary"
+	user_models "akingbee/user/models"
 	"akingbee/web"
 	"log"
 	"net/http"
@@ -11,38 +12,48 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlePostApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	command := apiary_services.CreateApiaryCommand{
-		Name:      req.FormValue("name"),
-		Location:  req.FormValue("location"),
-		HoneyKind: req.FormValue("honeyKind"),
-		User:      userId,
-	}
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
 
-	_, err := apiary_services.CreateApiary(ctx, &command)
-	if err != nil {
-		log.Printf("Could not create apiary: %s", err)
-		web.PrepareFailedNotification(response, err.Error())
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
+		command := apiary_services.CreateApiaryCommand{
+			Name:      req.FormValue("name"),
+			Location:  req.FormValue("location"),
+			HoneyKind: req.FormValue("honeyKind"),
+			User:      &user.PublicId,
+		}
 
-	apiaryPage, err := pages.GetApiaryBody(ctx, userId)
-	if err != nil {
-		log.Printf("Could not get apiary page: %s", err)
-		http.Redirect(response, req, "/", http.StatusMovedPermanently)
-		return
-	}
+		_, err := apiary_services.CreateApiary(ctx, &command)
+		if err != nil {
+			log.Printf("Could not create apiary: %s", err)
+			web.PrepareFailedNotification(response, err.Error())
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-	web.PrepareSuccessNotification(response, "Apiary created successfully")
-	response.WriteHeader(http.StatusOK)
-	response.Write(apiaryPage.Bytes())
+		apiaryPage, err := pages.GetApiaryBody(ctx, &user.PublicId)
+		if err != nil {
+			log.Printf("Could not get apiary page: %s", err)
+			http.Redirect(response, req, "/", http.StatusMovedPermanently)
+			return
+		}
+
+		web.PrepareSuccessNotification(response, "Apiary created successfully")
+		response.WriteHeader(http.StatusOK)
+		response.Write(apiaryPage.Bytes())
+	} else {
+		panic("unreacheable")
+	}
 }
 
-func HandlePutApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	apiaryPublicId, err := uuid.Parse(req.PathValue("apiaryPublicId"))
 	if err != nil {
@@ -60,7 +71,7 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request, userId *uu
 		return
 	}
 
-	if apiary.User != *userId {
+	if apiary.User != user.PublicId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return
@@ -91,8 +102,13 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request, userId *uu
 	response.Write(content.Bytes())
 }
 
-func HandleDeleteApiary(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleDeleteApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	apiaryPublicId, err := uuid.Parse(req.PathValue("apiaryPublicId"))
 	if err != nil {
@@ -110,7 +126,7 @@ func HandleDeleteApiary(response http.ResponseWriter, req *http.Request, userId 
 		return
 	}
 
-	if apiary.User != *userId {
+	if apiary.User != user.PublicId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return

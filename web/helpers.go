@@ -1,13 +1,12 @@
 package web
 
 import (
-	user_services "akingbee/user/services"
+	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/google/uuid"
 	"html/template"
 	"log"
 	"net/http"
@@ -29,40 +28,6 @@ func getEventMap(response http.ResponseWriter, headerKey string) map[string]inte
 	}
 
 	return events
-}
-
-func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content bytes.Buffer, userId *uuid.UUID) {
-	var menu *bytes.Buffer
-	var err error
-
-	if userId != nil {
-		user, err := user_services.GetUser(ctx, userId)
-		if err != nil {
-			log.Printf("User not found: %s", err)
-			return
-		}
-
-		menu, err = components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
-		if err != nil {
-			log.Printf("Could not get logged in menu: %s", err)
-			return
-		}
-	} else {
-		menu, err = components.GetLoggedOutMenu()
-		if err != nil {
-			log.Printf("Could not build logged out menu: %s", err)
-			return
-		}
-	}
-
-	page, err := pages.BuildPage(pages.GetBody(template.HTML(content.Bytes()), template.HTML(menu.Bytes())))
-	if err != nil {
-		log.Printf("Could not buiild full page: %s", err)
-		return
-	}
-
-	response.Write([]byte(page))
-
 }
 
 func prepareNotification(response http.ResponseWriter, notification *components.NotificationComponent) {
@@ -135,4 +100,32 @@ func PrepareLoggedOutMenu(response http.ResponseWriter) {
 	}
 
 	prepareMenuEvent(response, menu)
+}
+
+func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content []byte) {
+	var menu *bytes.Buffer
+	var err error
+
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+		menu, err = components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
+		if err != nil {
+			log.Printf("Could not get logged in menu: %s", err)
+			return
+		}
+	} else {
+		menu, err = components.GetLoggedOutMenu()
+		if err != nil {
+			log.Printf("Could not build logged out menu: %s", err)
+			return
+		}
+	}
+
+	page, err := pages.BuildPage(pages.GetBody(template.HTML(content), template.HTML(menu.Bytes())))
+	if err != nil {
+		log.Printf("Could not build full page: %s", err)
+		return
+	}
+
+	response.Write([]byte(page))
+
 }

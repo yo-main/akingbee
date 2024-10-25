@@ -3,7 +3,7 @@ package pages
 import (
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
-	"akingbee/internal/htmx"
+	user_models "akingbee/user/models"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -286,7 +286,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 	return &hiveDetailPage, nil
 }
 
-func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
@@ -296,21 +296,20 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request, userId
 		return
 	}
 
-	hiveDetailPage, err := GetHiveDetailBody(ctx, &hivePublicId, userId)
-	if err != nil {
-		log.Printf("Could not get hive detail page: %s", err)
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if htmx.IsHtmxRequest(req) {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+		hiveDetailPage, err := GetHiveDetailBody(ctx, &hivePublicId, &user.PublicId)
+		if err != nil {
+			log.Printf("Could not get hive detail page: %s", err)
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
 		response.Write(hiveDetailPage.Bytes())
 	} else {
-		web.ReturnFullPage(ctx, req, response, *hiveDetailPage, userId)
+		panic("unreacheable")
 	}
 }
 
-func HandleGetHiveComments(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
@@ -328,26 +327,31 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request, user
 		return
 	}
 
-	if hive.User != *userId {
-		web.PrepareFailedNotification(response, "Forbidden")
-		response.WriteHeader(http.StatusForbidden)
-		return
-	}
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
 
-	commentSection, err := GetCommentSection(ctx, hive)
-	if err != nil {
-		web.PrepareFailedNotification(response, "Could not get comment section")
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
+		if hive.User != user.PublicId {
+			web.PrepareFailedNotification(response, "Forbidden")
+			response.WriteHeader(http.StatusForbidden)
+			return
+		}
 
-	var body bytes.Buffer
-	err = pages.HtmlPage.ExecuteTemplate(&body, "hive_detail_comment.html", &commentSection)
-	if err != nil {
-		web.PrepareFailedNotification(response, "Could not build comment section")
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
+		commentSection, err := GetCommentSection(ctx, hive)
+		if err != nil {
+			web.PrepareFailedNotification(response, "Could not get comment section")
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-	response.Write(body.Bytes())
+		var body bytes.Buffer
+		err = pages.HtmlPage.ExecuteTemplate(&body, "hive_detail_comment.html", &commentSection)
+		if err != nil {
+			web.PrepareFailedNotification(response, "Could not build comment section")
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		response.Write(body.Bytes())
+	} else {
+		panic("unreacheable")
+	}
 }
