@@ -5,11 +5,9 @@ import (
 	"akingbee/user/models"
 	"errors"
 	"fmt"
-	"time"
-
-	"github.com/google/uuid"
-
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
+	"time"
 )
 
 func CreateToken(user *models.User) (string, error) {
