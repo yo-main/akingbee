@@ -1,9 +1,6 @@
 package pages
 
 import (
-	"akingbee/internal/htmx"
-	"akingbee/user/services"
-	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 	"bytes"
@@ -82,15 +79,11 @@ func GetLoginPage() (*bytes.Buffer, error) {
 func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 	loginPage, err := GetLoginPage()
 	if err != nil {
-		log.Printf("Could not build llogin page: %s", err)
+		log.Printf("Could not build login page: %s", err)
 		return
 	}
 
-	if htmx.IsHtmxRequest(req) {
-		response.Write(loginPage.Bytes())
-	} else {
-		web.ReturnFullPage(req.Context(), req, response, *loginPage, nil)
-	}
+	response.Write(loginPage.Bytes())
 }
 
 func GetWelcomePage(req *http.Request) (*bytes.Buffer, error) {
@@ -106,10 +99,5 @@ func HandleWelcomePage(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if htmx.IsHtmxRequest(req) {
-		response.Write([]byte(welcomePage.Bytes()))
-	} else {
-		userId, _ := services.AuthenticateUser(req)
-		web.ReturnFullPage(req.Context(), req, response, *welcomePage, userId)
-	}
+	response.Write([]byte(welcomePage.Bytes()))
 }

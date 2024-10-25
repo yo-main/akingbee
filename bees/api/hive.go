@@ -6,6 +6,7 @@ import (
 	"akingbee/bees/repositories"
 	hive_services "akingbee/bees/services/hive"
 	"akingbee/internal/htmx"
+	user_models "akingbee/user/models"
 	"akingbee/web"
 	"bytes"
 	"fmt"
@@ -16,8 +17,13 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlePostHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	var apiaryPublicId *uuid.UUID
 	if !(req.FormValue("apiary") == "none" || req.FormValue("apiary") == "") {
@@ -35,7 +41,7 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request, userId *uui
 		Beekeeper:   req.FormValue("beekeeper"),
 		SwarmHealth: req.FormValue("swarm_health"),
 		Apiary:      apiaryPublicId,
-		User:        userId,
+		User:        &user.PublicId,
 	}
 
 	_, err := hive_services.CreateHive(ctx, &command)
@@ -46,7 +52,7 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request, userId *uui
 		return
 	}
 
-	hivePage, err := pages.GetHivesBody(ctx, userId)
+	hivePage, err := pages.GetHivesBody(ctx, &user.PublicId)
 	if err != nil {
 		log.Printf("Could not get hives page: %s", err)
 		http.Redirect(response, req, "/", http.StatusMovedPermanently)
@@ -58,8 +64,12 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request, userId *uui
 	response.Write(hivePage.Bytes())
 }
 
-func HandlePutHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -77,15 +87,15 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request, userId *uuid
 		return
 	}
 
-	if hive.User != *userId {
+	if hive.User != user.PublicId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return
 	}
 
-	apiaries, _ := repositories.GetApiaries(ctx, userId)
-	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
-	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+	apiaries, _ := repositories.GetApiaries(ctx, &user.PublicId)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", &user.PublicId)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", &user.PublicId)
 
 	hive.Name = req.FormValue("name")
 	hive.Beekeeper = req.FormValue("beekeeper")
@@ -134,7 +144,7 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request, userId *uuid
 
 	var content *bytes.Buffer
 	if req.FormValue("elementType") == "card" {
-		card := pages.GetHiveDetailCard(ctx, userId, hive)
+		card := pages.GetHiveDetailCard(ctx, &user.PublicId, hive)
 		content, err = card.Build()
 		if err != nil {
 			log.Printf("Could not get table card: %s", err)
@@ -162,8 +172,12 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request, userId *uuid
 	response.Write(content.Bytes())
 }
 
-func HandleDeleteHive(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleDeleteHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
@@ -181,7 +195,7 @@ func HandleDeleteHive(response http.ResponseWriter, req *http.Request, userId *u
 		return
 	}
 
-	if hive.User != *userId {
+	if hive.User != user.PublicId {
 		response.WriteHeader(http.StatusForbidden)
 		web.PrepareFailedNotification(response, "Forbidden")
 		return

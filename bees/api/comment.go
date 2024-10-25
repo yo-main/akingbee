@@ -4,6 +4,7 @@ import (
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	comment_services "akingbee/bees/services/comment"
+	user_models "akingbee/user/models"
 	"akingbee/web"
 	"fmt"
 	"log"
@@ -13,8 +14,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlePostComment(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	hivePublicId, err := uuid.Parse(req.FormValue("hive_id"))
 	if err != nil {
@@ -59,8 +64,12 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request, userId *
 	response.Write(commentRow.Bytes())
 }
 
-func HandlePutComment(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	commentPublicId, err := uuid.Parse(req.PathValue("commentPublicId"))
 	if err != nil {
@@ -106,8 +115,12 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request, userId *u
 	response.Write(tableRow.Bytes())
 }
 
-func HandleDeleteComment(response http.ResponseWriter, req *http.Request, userId *uuid.UUID) {
+func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
+	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	if ok == false {
+		panic("unreacheable")
+	}
 
 	commentPublicId, err := uuid.Parse(req.PathValue("commentPublicId"))
 	if err != nil {
