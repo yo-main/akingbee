@@ -7,3 +7,5 @@ tags
 docker-compose*
 \.*
 infra/
+tmp/
+akingbee.db
