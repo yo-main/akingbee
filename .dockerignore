@@ -8,4 +8,3 @@ docker-compose*
 \.*
 infra/
 tmp/
-akingbee.db
