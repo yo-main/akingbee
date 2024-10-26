@@ -6,7 +6,7 @@
 
   <div class="control">
     {{ if .RichEditor }}
-    <input hidden name="{{ .Name }}">
+    <input hidden name="{{ .Name }}" {{ if .Default}}value="{{ .Default }}" {{end}}>
     <div class="rich-editor" hx-trigger="load" hx-disinherit="*" hx-get="data:text/html," hx-swap='none'
       hx-on:htmx:after-request="const quill = new Quill(this, {modules: {toolbar: [['bold', 'italic', 'underline', 'strike'], [{'list': 'bullet'}, {'list': 'ordered'}], [{'color': []}, {'background': []}, 'list']]}, theme: 'snow'}); quill.on('text-change', (range, oldRange, source) => {this.previousSibling.previousSibling.previousSibling.value=quill.getSemanticHTML()});{{ if .Default}}quill.clipboard.dangerouslyPasteHTML('{{ .Default }}'){{end}}">
     </div>
@@ -60,4 +60,3 @@
   {{ template "baseInput" .}}
 
   {{ end }}
-</div>

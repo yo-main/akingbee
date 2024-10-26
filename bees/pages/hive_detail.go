@@ -1,12 +1,6 @@
 package pages
 
 import (
-	"akingbee/bees/models"
-	"akingbee/bees/repositories"
-	user_models "akingbee/user/models"
-	"akingbee/web"
-	"akingbee/web/components"
-	"akingbee/web/pages"
 	"bytes"
 	"context"
 	"fmt"
@@ -14,6 +8,13 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"akingbee/bees/models"
+	"akingbee/bees/repositories"
+	user_models "akingbee/user/models"
+	"akingbee/web"
+	"akingbee/web/components"
+	"akingbee/web/pages"
 
 	"github.com/google/uuid"
 )
@@ -76,8 +77,8 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 													Narrow:   true,
 													ChoicesStrict: []components.Choice{
 														{Key: "note", Label: "note"},
-														{Key: "feed", Label: "nourriture"},
-														{Key: "todo", Label: "action"},
+														{Key: "nourriture", Label: "nourriture"},
+														{Key: "action", Label: "action"},
 													},
 													Default: comment.Type,
 												},
@@ -207,8 +208,8 @@ func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailPa
 									Narrow:   true,
 									ChoicesStrict: []components.Choice{
 										{Key: "note", Label: "note"},
-										{Key: "feed", Label: "nourriture"},
-										{Key: "todo", Label: "action"},
+										{Key: "nourriture", Label: "nourriture"},
+										{Key: "action", Label: "action"},
 									},
 								},
 								{
