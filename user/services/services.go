@@ -6,17 +6,30 @@ import (
 	"akingbee/user/repositories"
 	"context"
 	"errors"
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 type CreateUserCommand struct {
 	Email    string
 	Username string
 	Password string
+}
+
+func HashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 func (c *CreateUserCommand) Validate() error {
@@ -76,6 +89,11 @@ func LoginUser(ctx context.Context, username string, password string) (string, e
 	user, err := repositories.GetUserByUsername(ctx, &username)
 
 	if err != nil {
+		log.Printf("Could not get user by username with %s: %s", username, err)
+		return "", errors.New("Incorrect username or password")
+	}
+
+	if CheckPasswordHash(password, user.Credentials.Password) == false {
 		log.Printf("Could not get user by username with %s: %s", username, err)
 		return "", errors.New("Incorrect username or password")
 	}
