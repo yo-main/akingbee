@@ -76,8 +76,8 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 													Narrow:   true,
 													ChoicesStrict: []components.Choice{
 														{Key: "note", Label: "note"},
-														{Key: "feed", Label: "nourriture"},
-														{Key: "todo", Label: "action"},
+														{Key: "nourriture", Label: "nourriture"},
+														{Key: "action", Label: "action"},
 													},
 													Default: comment.Type,
 												},
@@ -207,8 +207,8 @@ func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailPa
 									Narrow:   true,
 									ChoicesStrict: []components.Choice{
 										{Key: "note", Label: "note"},
-										{Key: "feed", Label: "nourriture"},
-										{Key: "todo", Label: "action"},
+										{Key: "nourriture", Label: "nourriture"},
+										{Key: "action", Label: "action"},
 									},
 								},
 								{
