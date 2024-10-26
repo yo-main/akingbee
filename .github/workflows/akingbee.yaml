@@ -11,7 +11,7 @@ on:
 
 jobs:
   validation:
-    name: lint & pytest
+    name: lint & tests
     runs-on: ubuntu-latest
 
     env:
