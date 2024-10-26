@@ -1,12 +1,6 @@
 package pages
 
 import (
-	"akingbee/bees/models"
-	"akingbee/bees/repositories"
-	user_models "akingbee/user/models"
-	"akingbee/web"
-	"akingbee/web/components"
-	"akingbee/web/pages"
 	"bytes"
 	"context"
 	"fmt"
@@ -14,6 +8,13 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"akingbee/bees/models"
+	"akingbee/bees/repositories"
+	user_models "akingbee/user/models"
+	"akingbee/web"
+	"akingbee/web/components"
+	"akingbee/web/pages"
 
 	"github.com/google/uuid"
 )
