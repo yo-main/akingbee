@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app statically
-RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o /app/akingbee .
+RUN CGO_ENABLED=1 GOOS=linux go build -o /app/akingbee .
 
 # --- Stage 2: Runner ---
 # Use a minimal base image to run the app
