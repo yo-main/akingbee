@@ -4,6 +4,11 @@ defaults:
   run:
     shell: bash
 
+on:
+  push:
+    branches:
+      - '*'
+
 jobs:
   validation:
     name: lint & pytest
