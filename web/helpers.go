@@ -103,21 +103,10 @@ func PrepareLoggedOutMenu(response http.ResponseWriter) {
 }
 
 func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content []byte) {
-	var menu *bytes.Buffer
-	var err error
-
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
-		menu, err = components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
-		if err != nil {
-			log.Printf("Could not get logged in menu: %s", err)
-			return
-		}
-	} else {
-		menu, err = components.GetLoggedOutMenu()
-		if err != nil {
-			log.Printf("Could not build logged out menu: %s", err)
-			return
-		}
+	menu, err := GetMenu(req)
+	if err != nil {
+		log.Printf("Could not get menu: %s", err)
+		return
 	}
 
 	page, err := pages.BuildPage(pages.GetBody(template.HTML(content), template.HTML(menu.Bytes())))
@@ -128,4 +117,14 @@ func ReturnFullPage(ctx context.Context, req *http.Request, response http.Respon
 
 	response.Write([]byte(page))
 
+}
+
+func GetMenu(req *http.Request) (*bytes.Buffer, error) {
+	ctx := req.Context()
+
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+		return components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
+	} else {
+		return components.GetLoggedOutMenu()
+	}
 }
