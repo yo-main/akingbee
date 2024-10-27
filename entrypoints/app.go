@@ -15,7 +15,7 @@ func ApiServe() {
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/", fs)
+	mux.Handle("/public/", fs)
 	mux.HandleFunc("GET /{$}", web.OptionallyAuthenticated(web.HtmxMiddleware(pages_user.HandleWelcomePage)))
 
 	mux.HandleFunc("POST /logout", web.OptionallyAuthenticated(api_user.HandleLogout))
@@ -45,6 +45,8 @@ func ApiServe() {
 	mux.HandleFunc("POST /comment", web.Authenticated(api_bees.HandlePostComment))
 	mux.HandleFunc("PUT /comment/{commentPublicId}", web.Authenticated(api_bees.HandlePutComment))
 	mux.HandleFunc("DELETE /comment/{commentPublicId}", web.Authenticated(api_bees.HandleDeleteComment))
+
+	mux.HandleFunc("/", web.OptionallyAuthenticated(web.HtmxMiddleware(web.HandleNotFound)))
 
 	// http.HandleFunc("POST /login", login.UserLogin)
 

@@ -2,6 +2,7 @@ package web
 
 import (
 	"akingbee/internal/htmx"
+	"akingbee/internal/web/pages"
 	user_services "akingbee/user/services"
 	"akingbee/web"
 	"context"
@@ -69,15 +70,6 @@ func HtmxMiddleware(callback func(response http.ResponseWriter, req *http.Reques
 	}
 }
 
-func AkingbeeHandler(callback func(response http.ResponseWriter, req *http.Request)) func(response http.ResponseWriter, req *http.Request) {
-
-	return func(response http.ResponseWriter, req *http.Request) {
-		wrappedResponse := Response{
-			originalResponse: response,
-		}
-
-		callback(&wrappedResponse, req)
-
-		response.Write(wrappedResponse.GetBody())
-	}
+func HandleNotFound(response http.ResponseWriter, req *http.Request) {
+	response.Write(pages.GetNotFoundContent().Bytes())
 }
