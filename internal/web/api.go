@@ -61,11 +61,23 @@ func HtmxMiddleware(callback func(response http.ResponseWriter, req *http.Reques
 
 		callback(&wrappedResponse, req)
 
-		if htmx.IsHtmxRequest(req) {
-			response.Write(wrappedResponse.GetBody())
+		if !htmx.IsHtmxRequest(req) {
+			response.Write(web.ReturnFullPage(req.Context(), req, response, wrappedResponse.GetBody()))
 		} else {
-			web.ReturnFullPage(req.Context(), req, response, wrappedResponse.GetBody())
+			response.Write(wrappedResponse.GetBody())
+		}
+	}
+}
+
+func AkingbeeHandler(callback func(response http.ResponseWriter, req *http.Request)) func(response http.ResponseWriter, req *http.Request) {
+
+	return func(response http.ResponseWriter, req *http.Request) {
+		wrappedResponse := Response{
+			originalResponse: response,
 		}
 
+		callback(&wrappedResponse, req)
+
+		response.Write(wrappedResponse.GetBody())
 	}
 }

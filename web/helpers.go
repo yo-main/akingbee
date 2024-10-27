@@ -102,20 +102,20 @@ func PrepareLoggedOutMenu(response http.ResponseWriter) {
 	prepareMenuEvent(response, menu)
 }
 
-func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content []byte) {
+func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content []byte) []byte {
 	menu, err := GetMenu(req)
 	if err != nil {
 		log.Printf("Could not get menu: %s", err)
-		return
+		return content
 	}
 
 	page, err := pages.BuildPage(pages.GetBody(template.HTML(content), template.HTML(menu.Bytes())))
 	if err != nil {
 		log.Printf("Could not build full page: %s", err)
-		return
+		return content
 	}
 
-	response.Write([]byte(page))
+	return page
 
 }
 
