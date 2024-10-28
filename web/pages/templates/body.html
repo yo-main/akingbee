@@ -1,25 +1,28 @@
 <body class="has-navbar-fixed-top">
-  <section class=" section">
-    <div hx-disinherit="*" hx-trigger="menuEvent from:body" hx-get="data:text/html," hx-swap="none"
-      hx-on:htmx:after-swap="if
+  <div
+    hx-on:htmx:send-error="htmx.swap(document.querySelector('#notificationBox'), `<div class='notification is-danger'  hx-trigger='load delay:5s' hx-target='this' hx-swap='delete' hx-get='data:text/html,'> <button class='delete' hx-get='data:text/html,'></button> <div>Network issue</div> </div>`, {swapStyle: 'afterbegin'})">
+
+    <section class=" section">
+      <div hx-disinherit="*" hx-trigger="menuEvent from:body" hx-get="data:text/html," hx-swap="none"
+        hx-on:htmx:after-swap="if
       (event.detail.requestConfig != null && event.detail.requestConfig.triggeringEvent.detail.value != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value.replaceAll('Ã©', 'é' ).replaceAll('Ã¨', 'è'), {swapStyle: 'innerHTML' })}">
-      {{ .Menu }}
+        {{ .Menu }}
+      </div>
+    </section>
+
+    <div id="notificationBox" hx-trigger="notificationEvent from:body" hx-disinherit="*" hx-get="data:text/html,"
+      hx-swap="none"
+      hx-on:htmx:after-swap="if (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value.replaceAll('Ã©', 'é' ).replaceAll('Ã¨', 'è'), {swapStyle: 'afterbegin'})}">
     </div>
-  </section>
 
-  <div id="notificationBox" hx-trigger="notificationEvent from:body" hx-disinherit="*" hx-get="data:text/html,"
-    hx-swap="none"
-    hx-on:htmx:after-swap="if (event.detail.requestConfig != null) {htmx.swap(this, event.detail.requestConfig.triggeringEvent.detail.value.replaceAll('Ã©', 'é' ).replaceAll('Ã¨', 'è'), {swapStyle: 'afterbegin'})}">
+    <!-- <section id="page-body" class="hero is-fullheight-with-navbar has-background-white-lighter"> -->
+    <div id="page-body" class="section has-background-white-lighter">
+      {{ .Content }}
+    </div>
+
+    <!-- <div class="container p-5"> -->
+    <!-- <div class="content has-text-centered"> -->
+    <!-- <p>Made with love by Yomain</p> -->
+    <!-- </div> -->
   </div>
-
-  <!-- <section id="page-body" class="hero is-fullheight-with-navbar has-background-white-lighter"> -->
-  <div id="page-body" class="section has-background-white-lighter">
-    {{ .Content }}
-  </div>
-
-  <!-- <div class="container p-5"> -->
-  <!-- <div class="content has-text-centered"> -->
-  <!-- <p>Made with love by Yomain</p> -->
-  <!-- </div> -->
-  <!-- </div> -->
 </body>
