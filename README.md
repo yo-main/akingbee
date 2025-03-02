@@ -29,10 +29,6 @@ go run .
 
 ## Infrastructure
 
-The website is hosted in my RaspBerry.
+I don't expect a high traffic load.
+The website is hosted in my RaspBerry and the database is managed through sqlite.
 
-The database (postgresql) is inside that cluster as well. It's dangerous (I already lost all my data [2] times), but it's cheaper, and I like to live dangerously (not to the point to not have any backup though).
-
-I force myself to do things correctly. All services are well tested (except poseidon, but that might come one day). CI has been implemented with github actions. 
-
-Logs are managed by the stack promtail/loki/grafana, but I'm not so sastified with the way I've done those things for now (logs could be parsed in a much better way).
