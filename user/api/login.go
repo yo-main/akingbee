@@ -38,12 +38,12 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	htmx.PushUrl(response, "/")
 	web.PrepareLoggedInMenu(req, response, username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
-	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
+	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
 	response.Write(welcomePage.Bytes())
 }
 
 func HandleLogout(response http.ResponseWriter, req *http.Request) {
-	response.Header().Set("Set-Cookie", "akingbeeToken=''; expire;")
+	response.Header().Set("Set-Cookie", "akingbeeToken=''; Path=/; expire;")
 	web.PrepareLoggedOutMenu(response)
 	htmx.PushUrl(response, "/")
 
@@ -86,6 +86,6 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareLoggedInMenu(req, response, user.Credentials.Username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))
-	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
+	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
 	response.Write(welcomePage.Bytes())
 }
