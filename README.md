@@ -32,3 +32,16 @@ go run .
 I don't expect a high traffic load.
 The website is hosted in my RaspBerry and the database is managed through sqlite.
 
+
+## Front tools
+
+### emojis
+
+They have been downloaded from:
+
+- https://ionic.io/ionicons
+- https://www.svgrepo.com/vectors
+
+### Framework
+
+The front is built using htmx, and css styling is done through bulma css
