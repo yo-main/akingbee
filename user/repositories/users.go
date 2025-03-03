@@ -58,6 +58,32 @@ func getUser(ctx context.Context, query string, params interface{}) (*models.Use
 	return &user, nil
 }
 
+func getUsers(ctx context.Context, query string) ([]*models.User, error) {
+	db := database.GetDb()
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*models.User
+
+	for rows.Next() {
+		var user models.User
+		var credentials models.Credentials
+
+		err := rows.Scan(&user.PublicId, &user.Email, &credentials.PublicId, &credentials.Username, &credentials.Password)
+		if err != nil {
+			return nil, err
+		}
+
+		user.Credentials = credentials
+		users = append(users, &user)
+
+	}
+
+	return users, nil
+}
+
 func GetUserByPublicId(ctx context.Context, publicId *uuid.UUID) (*models.User, error) {
 	query := queryGetUser + " WHERE USERS.public_id=$1"
 	return getUser(ctx, query, publicId)
@@ -71,4 +97,9 @@ func GetUserByEmail(ctx context.Context, email *string) (*models.User, error) {
 func GetUserByUsername(ctx context.Context, username *string) (*models.User, error) {
 	query := queryGetUser + " WHERE CREDENTIALS.username=$1"
 	return getUser(ctx, query, username)
+}
+
+func ListUsers(ctx context.Context) ([]*models.User, error) {
+	query := queryGetUser
+	return getUsers(ctx, query)
 }

@@ -34,7 +34,6 @@ func GetLoggedInMenu(username string, url string) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
 	err := loggedInMenu.ExecuteTemplate(&buffer, "navbar_logged_in.html", params)
 	return &buffer, err
-
 }
 
 func GetLoggedOutMenu() (*bytes.Buffer, error) {

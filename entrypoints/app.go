@@ -26,6 +26,9 @@ func ApiServe() {
 	mux.HandleFunc("GET /register", web.OptionallyAuthenticated(web.HtmxMiddleware(pages_user.HandleGetRegister)))
 	mux.HandleFunc("POST /users", web.OptionallyAuthenticated(api_user.HandlePostUser))
 
+	mux.HandleFunc("GET /admin", web.Authenticated(web.HtmxMiddleware(pages_user.HandleGetAdmin)))
+	mux.HandleFunc("POST /user/{userPublicId}/impersonate", web.Authenticated(web.HtmxMiddleware(api_user.HandleImpersonate)))
+
 	mux.HandleFunc("GET /apiary", web.Authenticated(web.HtmxMiddleware(pages_bees.HandleGetApiary)))
 	mux.HandleFunc("POST /apiary", web.Authenticated(api_bees.HandlePostApiary))
 	mux.HandleFunc("PUT /apiary/{apiaryPublicId}", web.Authenticated(api_bees.HandlePutApiary))

@@ -107,8 +107,8 @@ func LoginUser(ctx context.Context, username string, password string) (string, e
 	return token, nil
 }
 
-func ImpersonateUser(ctx context.Context, impersonator *uuid.UUID, impersonatedUsername string) (string, error) {
-	user, err := repositories.GetUserByUsername(ctx, &impersonatedUsername)
+func ImpersonateUser(ctx context.Context, impersonator *uuid.UUID, impersonatedUsername *uuid.UUID) (string, error) {
+	user, err := repositories.GetUserByPublicId(ctx, impersonatedUsername)
 
 	if err != nil {
 		log.Printf("Could not get user by username with %s: %s", impersonatedUsername, err)
@@ -145,4 +145,13 @@ func AuthenticateUser(req *http.Request) (*uuid.UUID, error) {
 	}
 
 	return jwt.ValidateToken(cookie.Value)
+}
+
+func GetAuthenticateUser(req *http.Request) (*models.User, error) {
+	userPublicId, err := AuthenticateUser(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return GetUser(req.Context(), userPublicId)
 }

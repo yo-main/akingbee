@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
@@ -56,15 +58,14 @@ func HandleLogout(response http.ResponseWriter, req *http.Request) {
 func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	impersonatedUser := req.FormValue("user_to_impersonate")
+	impersonatedUser, err := uuid.Parse(req.PathValue("userPublicId"))
 
-	if len(impersonatedUser) == 0 {
-		log.Print("No user to impersonate provided")
-		response.WriteHeader(http.StatusBadGateway)
+	if err != nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	user, err := services.AuthenticateUser(req)
+	user, err := services.GetAuthenticateUser(req)
 	if err != nil {
 		log.Printf("Login failure: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -72,7 +73,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := services.ImpersonateUser(ctx, user, impersonatedUser)
+	token, err := services.ImpersonateUser(ctx, &user.PublicId, &impersonatedUser)
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)
@@ -83,7 +84,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 
 	welcomePage, err := user_pages.GetWelcomePage(req)
 
-	web.PrepareLoggedInMenu(req, response, impersonatedUser)
+	web.PrepareLoggedInMenu(req, response, user.Credentials.Username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
 	response.Write(welcomePage.Bytes())
