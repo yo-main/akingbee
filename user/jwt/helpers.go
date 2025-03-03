@@ -42,7 +42,6 @@ func ValidateToken(tokenString string) (*uuid.UUID, error) {
 
 	err = claim.Valid()
 	if err != nil {
-
 		return nil, err
 	}
 
