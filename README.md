@@ -45,3 +45,8 @@ They have been downloaded from:
 ### Framework
 
 The front is built using htmx, and css styling is done through bulma css
+
+## CI
+
+Lints & tests (lol) are run on the `master` branch.
+Docker images are built when publishing a new release (manual process atm)
