@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
+	"strings"
 	"time"
 )
 
@@ -45,7 +46,20 @@ func ValidateToken(tokenString string) (*uuid.UUID, error) {
 		return nil, err
 	}
 
-	tk, err := uuid.Parse(claim.Subject)
+	return parseSubject(claim.Subject)
+}
+
+func parseSubject(subject string) (*uuid.UUID, error) {
+	var userToken string
+
+	if strings.Contains(subject, ":") {
+		parts := strings.SplitN(subject, ":", 2)
+		userToken = parts[len(parts)-1]
+	} else {
+		userToken = subject
+	}
+
+	tk, err := uuid.Parse(userToken)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Subject is not an UUID: %s", err))
 	}
