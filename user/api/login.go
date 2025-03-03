@@ -52,3 +52,39 @@ func HandleLogout(response http.ResponseWriter, req *http.Request) {
 		response.Write(welcomePage.Bytes())
 	}
 }
+
+func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+
+	impersonatedUser := req.FormValue("user_to_impersonate")
+
+	if len(impersonatedUser) == 0 {
+		log.Print("No user to impersonate provided")
+		response.WriteHeader(http.StatusBadGateway)
+		return
+	}
+
+	user, err := services.AuthenticateUser(req)
+	if err != nil {
+		log.Printf("Login failure: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	token, err := services.ImpersonateUser(ctx, user, impersonatedUser)
+
+	if err != nil {
+		log.Printf("Login failure: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	welcomePage, err := user_pages.GetWelcomePage(req)
+
+	web.PrepareLoggedInMenu(req, response, impersonatedUser)
+	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))
+	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; HttpOnly; Secure", "akingbeeToken", token))
+	response.Write(welcomePage.Bytes())
+}

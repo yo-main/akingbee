@@ -98,7 +98,26 @@ func LoginUser(ctx context.Context, username string, password string) (string, e
 		return "", errors.New("Incorrect username or password")
 	}
 
-	token, err := jwt.CreateToken(user)
+	token, err := jwt.CreateToken(user.PublicId.String())
+	if err != nil {
+		log.Printf("Could not generate jwt: %s", err)
+		return "", errors.New("Could not login in the user")
+	}
+
+	return token, nil
+}
+
+func ImpersonateUser(ctx context.Context, impersonator *uuid.UUID, impersonatedUsername string) (string, error) {
+	user, err := repositories.GetUserByUsername(ctx, &impersonatedUsername)
+
+	if err != nil {
+		log.Printf("Could not get user by username with %s: %s", impersonatedUsername, err)
+		return "", errors.New("Incorrect username or password")
+	}
+
+	subject := impersonator.String() + ":" + user.PublicId.String()
+
+	token, err := jwt.CreateToken(subject)
 	if err != nil {
 		log.Printf("Could not generate jwt: %s", err)
 		return "", errors.New("Could not login in the user")

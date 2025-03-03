@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"akingbee/internal/config"
-	"akingbee/user/models"
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
@@ -11,14 +10,14 @@ import (
 	"time"
 )
 
-func CreateToken(user *models.User) (string, error) {
+func CreateToken(subject string) (string, error) {
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		jwt.StandardClaims{
 			Audience:  "all",
 			ExpiresAt: time.Now().UTC().Add(time.Second * time.Duration(config.JWT_TTL)).Unix(),
 			Issuer:    "akingbee",
-			Subject:   user.PublicId.String(),
+			Subject:   subject,
 			Id:        "akingbee",
 			IssuedAt:  time.Now().UTC().Unix(),
 			NotBefore: time.Now().UTC().Unix(),
@@ -50,14 +49,8 @@ func ValidateToken(tokenString string) (*uuid.UUID, error) {
 }
 
 func parseSubject(subject string) (*uuid.UUID, error) {
-	var userToken string
-
-	if strings.Contains(subject, ":") {
-		parts := strings.SplitN(subject, ":", 2)
-		userToken = parts[len(parts)-1]
-	} else {
-		userToken = subject
-	}
+	parts := strings.Split(subject, ":")
+	userToken := parts[len(parts)-1]
 
 	tk, err := uuid.Parse(userToken)
 	if err != nil {
