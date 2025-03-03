@@ -14,6 +14,7 @@ var templatesFS embed.FS
 type LoggedInMenuComponent struct {
 	Username string
 	Entity   string
+	IsAdmin  bool
 }
 
 type LoggedOutMenuComponent struct {
@@ -27,6 +28,7 @@ func GetLoggedInMenu(username string, url string) (*bytes.Buffer, error) {
 	params := LoggedInMenuComponent{
 		Username: username,
 		Entity:   url_parts[len(url_parts)-1],
+		IsAdmin:  username == "Romain", // :hack:
 	}
 
 	var buffer bytes.Buffer
