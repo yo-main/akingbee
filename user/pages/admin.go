@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 
+	api_helpers "akingbee/internal/web"
 	"akingbee/user/models"
 	userRepository "akingbee/user/repositories"
 	"akingbee/web/components"
@@ -27,7 +28,7 @@ func HandleGetAdmin(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	response.Write(adminPage.Bytes())
+	api_helpers.WriteToResponse(response, adminPage.Bytes())
 }
 
 func getAdminPage(ctx context.Context) (*bytes.Buffer, error) {

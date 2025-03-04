@@ -11,6 +11,7 @@ import (
 
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
+	api_helpers "akingbee/internal/web"
 	user_models "akingbee/user/models"
 	"akingbee/web"
 	"akingbee/web/components"
@@ -294,6 +295,7 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Printf("hive id is not an uuid: %s", err)
 		response.WriteHeader(http.StatusNotFound)
+
 		return
 	}
 
@@ -302,9 +304,11 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Printf("Could not get hive detail page: %s", err)
 			response.WriteHeader(http.StatusBadRequest)
+
 			return
 		}
-		response.Write(hiveDetailPage.Bytes())
+
+		api_helpers.WriteToResponse(response, hiveDetailPage.Bytes())
 	} else {
 		panic("unreacheable")
 	}
@@ -318,6 +322,7 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 		log.Printf("The provided hive id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Not Found")
 		response.WriteHeader(http.StatusNotFound)
+
 		return
 	}
 
@@ -325,14 +330,15 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		web.PrepareFailedNotification(response, "Not Found")
 		response.WriteHeader(http.StatusNotFound)
+
 		return
 	}
 
 	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
-
 		if hive.User != user.PublicID {
 			web.PrepareFailedNotification(response, "Forbidden")
 			response.WriteHeader(http.StatusForbidden)
+
 			return
 		}
 
@@ -340,18 +346,21 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			web.PrepareFailedNotification(response, "Could not get comment section")
 			response.WriteHeader(http.StatusBadRequest)
+
 			return
 		}
 
 		var body bytes.Buffer
 		err = pages.HtmlPage.ExecuteTemplate(&body, "hive_detail_comment.html", &commentSection)
+
 		if err != nil {
 			web.PrepareFailedNotification(response, "Could not build comment section")
 			response.WriteHeader(http.StatusBadRequest)
+
 			return
 		}
 
-		response.Write(body.Bytes())
+		api_helpers.WriteToResponse(response, body.Bytes())
 	} else {
 		panic("unreacheable")
 	}

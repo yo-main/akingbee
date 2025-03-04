@@ -9,6 +9,7 @@ import (
 	"akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	apiary_services "akingbee/bees/services/apiary"
+	api_helpers "akingbee/internal/web"
 	user_models "akingbee/user/models"
 	"akingbee/web"
 )
@@ -42,7 +43,7 @@ func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 
 		web.PrepareSuccessNotification(response, "Apiary created successfully")
 		response.WriteHeader(http.StatusOK)
-		response.Write(apiaryPage.Bytes())
+		api_helpers.WriteToResponse(response, apiaryPage.Bytes())
 	} else {
 		panic("unreacheable")
 	}
@@ -100,7 +101,7 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "Apiary updated successfully")
 	response.WriteHeader(http.StatusOK)
-	response.Write(content.Bytes())
+	api_helpers.WriteToResponse(response, content.Bytes())
 }
 
 func HandleDeleteApiary(response http.ResponseWriter, req *http.Request) {

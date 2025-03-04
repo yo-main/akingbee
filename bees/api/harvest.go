@@ -15,6 +15,7 @@ import (
 	hive_pages "akingbee/bees/pages"
 	"akingbee/bees/repositories"
 	services "akingbee/bees/services/harvest"
+	api_helpers "akingbee/internal/web"
 	user_models "akingbee/user/models"
 	"akingbee/web"
 	"akingbee/web/components"
@@ -92,7 +93,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	}
 
 	web.PrepareSuccessNotification(response, "Harvest created successfully")
-	response.Write(row.Bytes())
+	api_helpers.WriteToResponse(response, row.Bytes())
 	response.WriteHeader(http.StatusOK)
 }
 
@@ -143,7 +144,7 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	response.Write(content.Bytes())
+	api_helpers.WriteToResponse(response, content.Bytes())
 }
 
 func GetHarvestsDetail(hive *models.Hive, harvests []models.Harvest) *HiveHarvestDetail {

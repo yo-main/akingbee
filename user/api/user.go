@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"akingbee/internal/htmx"
+	api_helpers "akingbee/internal/web"
 	user_pages "akingbee/user/pages"
 	"akingbee/user/services"
 	"akingbee/web"
@@ -50,6 +51,6 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "User created successfully")
 	htmx.PushURL(response, "/login")
-	response.Write(loginPage.Bytes())
+	api_helpers.WriteToResponse(response, loginPage.Bytes())
 	response.WriteHeader(http.StatusOK)
 }

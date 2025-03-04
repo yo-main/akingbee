@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	api_helpers "akingbee/internal/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
 )
@@ -84,7 +85,7 @@ func HandleGetLogin(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	response.Write(loginPage.Bytes())
+	api_helpers.WriteToResponse(response, loginPage.Bytes())
 }
 
 func GetWelcomePage(req *http.Request) (*bytes.Buffer, error) {
@@ -100,5 +101,5 @@ func HandleWelcomePage(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	response.Write([]byte(welcomePage.Bytes()))
+	api_helpers.WriteToResponse(response, []byte(welcomePage.Bytes()))
 }

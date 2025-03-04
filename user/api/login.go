@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 
 	"akingbee/internal/htmx"
+	api_helpers "akingbee/internal/web"
 	user_pages "akingbee/user/pages"
 	"akingbee/user/services"
 	"akingbee/web"
@@ -40,7 +41,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	web.PrepareLoggedInMenu(req, response, username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
-	response.Write(welcomePage.Bytes())
+	api_helpers.WriteToResponse(response, welcomePage.Bytes())
 }
 
 func HandleLogout(response http.ResponseWriter, req *http.Request) {
@@ -52,7 +53,7 @@ func HandleLogout(response http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Printf("Could not load welcome page: %s", err)
 	} else {
-		response.Write(welcomePage.Bytes())
+		api_helpers.WriteToResponse(response, welcomePage.Bytes())
 	}
 }
 
@@ -88,5 +89,5 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 	web.PrepareLoggedInMenu(req, response, user.Credentials.Username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
-	response.Write(welcomePage.Bytes())
+	api_helpers.WriteToResponse(response, welcomePage.Bytes())
 }

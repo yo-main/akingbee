@@ -14,6 +14,7 @@ import (
 
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
+	api_helpers "akingbee/internal/web"
 	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -209,7 +210,7 @@ func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		response.Write(apiaryPage.Bytes())
+		api_helpers.WriteToResponse(response, apiaryPage.Bytes())
 	} else {
 		panic("unreacheable")
 	}

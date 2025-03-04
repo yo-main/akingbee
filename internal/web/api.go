@@ -86,13 +86,13 @@ func HtmxMiddleware(callback func(response http.ResponseWriter, req *http.Reques
 		callback(&wrappedResponse, req)
 
 		if !htmx.IsHtmxRequest(req) {
-			response.Write(web.ReturnFullPage(req.Context(), req, response, wrappedResponse.GetBody()))
+			WriteToResponse(response, web.ReturnFullPage(req.Context(), req, response, wrappedResponse.GetBody()))
 		} else {
-			response.Write(wrappedResponse.GetBody())
+			WriteToResponse(response, wrappedResponse.GetBody())
 		}
 	}
 }
 
 func HandleNotFound(response http.ResponseWriter, req *http.Request) {
-	response.Write(pages.GetNotFoundContent().Bytes())
+	WriteToResponse(response, pages.GetNotFoundContent().Bytes())
 }

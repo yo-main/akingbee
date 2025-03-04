@@ -1,15 +1,17 @@
 package pages
 
 import (
-	"akingbee/web/components"
-	"akingbee/web/pages"
 	"bytes"
 	"html/template"
 	"log"
 	"net/http"
+
+	api_helpers "akingbee/internal/web"
+	"akingbee/web/components"
+	"akingbee/web/pages"
 )
 
-var registerPageTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/register.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/register.html"))
 
 type registerPageParams struct {
 	SubmitButton components.Button
@@ -62,5 +64,5 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	response.Write(registerPage.Bytes())
+	api_helpers.WriteToResponse(response, registerPage.Bytes())
 }

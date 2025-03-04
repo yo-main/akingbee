@@ -12,6 +12,7 @@ import (
 
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
+	api_helpers "akingbee/internal/web"
 	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -330,7 +331,7 @@ func HandleGetHive(response http.ResponseWriter, req *http.Request) {
 			response.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		response.Write(hivePage.Bytes())
+		api_helpers.WriteToResponse(response, hivePage.Bytes())
 	} else {
 		panic("unreacheable")
 	}

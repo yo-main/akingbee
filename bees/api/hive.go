@@ -14,6 +14,7 @@ import (
 	"akingbee/bees/repositories"
 	hive_services "akingbee/bees/services/hive"
 	"akingbee/internal/htmx"
+	api_helpers "akingbee/internal/web"
 	user_models "akingbee/user/models"
 	"akingbee/web"
 )
@@ -65,7 +66,7 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "Hive created successfully")
 	response.WriteHeader(http.StatusOK)
-	response.Write(hivePage.Bytes())
+	api_helpers.WriteToResponse(response, hivePage.Bytes())
 }
 
 func HandlePutHive(response http.ResponseWriter, req *http.Request) {
@@ -182,7 +183,7 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "Hive updated successfully")
 	response.WriteHeader(http.StatusOK)
-	response.Write(content.Bytes())
+	api_helpers.WriteToResponse(response, content.Bytes())
 }
 
 func HandleDeleteHive(response http.ResponseWriter, req *http.Request) {
