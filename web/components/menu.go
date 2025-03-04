@@ -1,11 +1,12 @@
 package components
 
 import (
-	"akingbee/web/pages"
 	"bytes"
 	"embed"
 	"html/template"
 	"strings"
+
+	"akingbee/web/pages"
 )
 
 //go:embed templates/*

@@ -1,10 +1,11 @@
 package components
 
 import (
-	"akingbee/web/pages"
 	"bytes"
 	"html/template"
 	"log"
+
+	"akingbee/web/pages"
 )
 
 var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table.html"))
@@ -31,7 +32,6 @@ func (table *Table) Build() (*bytes.Buffer, error) {
 	}
 
 	return &content, nil
-
 }
 
 type Header struct {
@@ -64,5 +64,4 @@ func (row *Row) Build() (*bytes.Buffer, error) {
 	}
 
 	return &content, nil
-
 }

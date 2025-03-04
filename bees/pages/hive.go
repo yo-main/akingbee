@@ -18,7 +18,7 @@ import (
 	"akingbee/web/pages"
 )
 
-var hivePageTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive.html"))
 
 type hivePageParameter struct {
 	CreateHiveModal components.UpdateStrategy
@@ -44,12 +44,12 @@ func EditHiveModal(
 			SubmitFormButton: components.Button{
 				Label:  "Sauvegarder",
 				Type:   "is-link",
-				FormID: fmt.Sprintf("hive-edit-%s", hive.Name),
+				FormID: "hive-edit-" + hive.Name,
 			},
 			Form: components.Form{
-				ID:     fmt.Sprintf("hive-edit-%s", hive.Name),
+				ID:     "hive-edit-" + hive.Name,
 				Method: "put",
-				URL:    fmt.Sprintf("/hive/%s", hive.PublicID),
+				URL:    "/hive/" + hive.PublicID.String(),
 				Inputs: []components.Input{
 					{
 						Name:     "name",
@@ -160,7 +160,6 @@ func GetHiveTableRow(
 			},
 		},
 	}
-
 }
 
 func GetApiariesChoices(apiaries []models.Apiary, hive *models.Hive) []components.Choice {
@@ -185,37 +184,38 @@ func GetApiariesChoices(apiaries []models.Apiary, hive *models.Hive) []component
 }
 
 func GetSwarmHealthChoices(swarmHealths []string, hive *models.Hive) []components.Choice {
-	var swarmHealthChoices []components.Choice
+	var swarmHealthChoices = make([]components.Choice, len(swarmHealths))
 
-	for _, swarmHealth := range swarmHealths {
+	for index, swarmHealth := range swarmHealths {
 		var selected bool
 		if hive != nil {
 			selected = hive.GetSwarmHealth() == swarmHealth
 		}
 
-		swarmHealthChoices = append(swarmHealthChoices, components.Choice{
+		swarmHealthChoices[index] = components.Choice{
 			Key:      swarmHealth,
 			Label:    swarmHealth,
 			Selected: selected,
-		})
+		}
 	}
+
 	return swarmHealthChoices
 }
 
 func GetBeekeeperChoices(beekeepers []string, hive *models.Hive) []components.Choice {
-	var beekeeperChoices []components.Choice
+	var beekeeperChoices = make([]components.Choice, len(beekeepers))
 
-	for _, beekeeper := range beekeepers {
+	for index, beekeeper := range beekeepers {
 		var selected bool
 		if hive != nil {
 			selected = hive.Beekeeper == beekeeper
 		}
 
-		beekeeperChoices = append(beekeeperChoices, components.Choice{
+		beekeeperChoices[index] = components.Choice{
 			Key:      beekeeper,
 			Label:    beekeeper,
 			Selected: selected,
-		})
+		}
 	}
 
 	return beekeeperChoices
@@ -318,7 +318,6 @@ func GetHivesBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error)
 	}
 
 	return &hivePage, nil
-
 }
 
 func HandleGetHive(response http.ResponseWriter, req *http.Request) {
@@ -329,11 +328,12 @@ func HandleGetHive(response http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Printf("Could not get hive page: %s", err)
 			response.WriteHeader(http.StatusBadRequest)
+
 			return
 		}
+
 		api_helpers.WriteToResponse(response, hivePage.Bytes())
 	} else {
 		panic("unreacheable")
 	}
-
 }

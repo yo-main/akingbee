@@ -1,9 +1,10 @@
 package web
 
 import (
-	"akingbee/internal/web/pages"
 	"log"
 	"net/http"
+
+	"akingbee/internal/web/pages"
 )
 
 type Response struct {

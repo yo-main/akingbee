@@ -1,12 +1,15 @@
 package apiary
 
 import (
-	"akingbee/bees/models"
-	"akingbee/bees/repositories"
 	"context"
 	"errors"
-	"github.com/google/uuid"
+	"fmt"
 	"log"
+
+	"github.com/google/uuid"
+
+	"akingbee/bees/models"
+	"akingbee/bees/repositories"
 )
 
 type CreateApiaryCommand struct {
@@ -16,19 +19,26 @@ type CreateApiaryCommand struct {
 	User      *uuid.UUID
 }
 
+var errNameNotProvided = errors.New("name has not been provided")
+var errLocationNotProvided = errors.New("location has not been provided")
+var errHoneyKindNotProvided = errors.New("honeyKind has not been provided")
+var errUserNotProvided = errors.New("user has not been provided")
+
 func (c *CreateApiaryCommand) Validate() error {
 	if len(c.Name) == 0 {
-		return errors.New("Name has not been provided")
+		return errNameNotProvided
 	}
+
 	if len(c.Location) == 0 {
-		return errors.New("Location has not been provided")
+		return errLocationNotProvided
 	}
+
 	if len(c.HoneyKind) == 0 {
-		return errors.New("HoneyKind has not been provided")
+		return errHoneyKindNotProvided
 	}
 
 	if c.User == nil {
-		return errors.New("User has not been provided")
+		return errUserNotProvided
 	}
 
 	return nil
@@ -44,13 +54,15 @@ type UpdateApiaryCommand struct {
 
 func (c *UpdateApiaryCommand) Validate() error {
 	if len(c.Name) == 0 {
-		return errors.New("Name has not been provided")
+		return errNameNotProvided
 	}
+
 	if len(c.Location) == 0 {
-		return errors.New("Location has not been provided")
+		return errLocationNotProvided
 	}
+
 	if len(c.HoneyKind) == 0 {
-		return errors.New("HoneyKind has not been provided")
+		return errHoneyKindNotProvided
 	}
 
 	return nil
@@ -74,7 +86,7 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 	err = repositories.CreateApiary(ctx, &apiary)
 	if err != nil {
 		log.Printf("Could not create apiary: %s", err)
-		return nil, errors.New("Couldn't create the apiary")
+		return nil, fmt.Errorf("couldn't create the apiary: %w", err)
 	}
 
 	return &apiary, nil
@@ -84,7 +96,7 @@ func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
 	err := repositories.UpdateApiary(ctx, apiary)
 	if err != nil {
 		log.Printf("Could not update apiary: %s", err)
-		return errors.New("Couldn't update the apiary")
+		return fmt.Errorf("couldn't update the apiary: %w", err)
 	}
 
 	return nil
@@ -94,7 +106,7 @@ func DeleteApiary(ctx context.Context, apiary *models.Apiary) error {
 	err := repositories.DeleteApiary(ctx, apiary)
 	if err != nil {
 		log.Printf("Could not delete apiary: %s", err)
-		return errors.New("Couldn't delete the apiary")
+		return fmt.Errorf("couldn't delete the apiary: %w", err)
 	}
 
 	return nil

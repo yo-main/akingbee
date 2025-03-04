@@ -1,11 +1,12 @@
 package components
 
 import (
-	"akingbee/web/pages"
 	"html/template"
+
+	"akingbee/web/pages"
 )
 
-var updateStrategyTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/update_strategy.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/update_strategy.html"))
 
 type UpdateStrategy struct {
 	Swap            string

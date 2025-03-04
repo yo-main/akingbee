@@ -1,12 +1,13 @@
 package harvest
 
 import (
-	"akingbee/bees/models"
-	"akingbee/bees/repositories"
 	"context"
 	"time"
 
 	"github.com/google/uuid"
+
+	"akingbee/bees/models"
+	"akingbee/bees/repositories"
 )
 
 type CreateHarvestCommand struct {

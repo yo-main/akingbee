@@ -1,8 +1,9 @@
 package components
 
 import (
-	"akingbee/web/pages"
 	"html/template"
+
+	"akingbee/web/pages"
 )
 
 var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/form.html"))

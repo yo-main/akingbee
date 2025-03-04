@@ -1,10 +1,11 @@
 package components
 
 import (
-	"akingbee/web/pages"
 	"bytes"
 	"html/template"
 	"log"
+
+	"akingbee/web/pages"
 )
 
 var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/card.html"))

@@ -1,14 +1,15 @@
 package repositories
 
 import (
-	"akingbee/bees/models"
-	"akingbee/internal/database"
 	"context"
 	"database/sql"
 	"fmt"
 	"log"
 
 	"github.com/google/uuid"
+
+	"akingbee/bees/models"
+	"akingbee/internal/database"
 )
 
 const queryCreateHive = `
@@ -172,7 +173,7 @@ func GetHive(ctx context.Context, hivePublicID *uuid.UUID) (*models.Hive, error)
 		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	rows.Next()
 	hive, err := scanHive(rows)

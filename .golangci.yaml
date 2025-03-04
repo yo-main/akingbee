@@ -9,6 +9,8 @@ linters:
     - mnd
     - gomnd
     - gochecknoglobals
+    - dupl 
+    - funlen
     - sqlclosecheck # broken
     - execinquery # broken
 

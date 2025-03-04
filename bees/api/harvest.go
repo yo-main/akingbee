@@ -22,7 +22,9 @@ import (
 	"akingbee/web/pages"
 )
 
-var HarvestDetailTemplate = template.Must(pages.HtmlPage.ParseFS(hive_pages.TemplatesFS, "templates/hive_detail_harvest.html"))
+var HarvestDetailTemplate = template.Must(
+	pages.HtmlPage.ParseFS(hive_pages.TemplatesFS, "templates/hive_detail_harvest.html"),
+)
 
 type HiveHarvestDetail struct {
 	CreateHarvestForm components.UpdateStrategy
@@ -33,7 +35,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
-	if ok == false {
+	if !ok {
 		panic("unreacheable")
 	}
 
@@ -51,6 +53,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 		response.WriteHeader(http.StatusNotFound)
 		return
 	}
+
 	if hive.User != user.PublicID {
 		web.PrepareFailedNotification(response, "Forbidden")
 		response.WriteHeader(http.StatusForbidden)
@@ -64,6 +67,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	date, err := time.Parse("2006-01-02", req.FormValue("date"))
 	if err != nil {
 		log.Printf("The provided date is incorrect: %s", err)
@@ -101,7 +105,7 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
-	if ok == false {
+	if !ok {
 		panic("unreacheable")
 	}
 
@@ -148,9 +152,9 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 }
 
 func GetHarvestsDetail(hive *models.Hive, harvests []models.Harvest) *HiveHarvestDetail {
-	var harvestRows []components.Row
-	for _, harvest := range harvests {
-		harvestRows = append(harvestRows, *GetHarvestRow(&harvest))
+	var harvestRows = make([]components.Row, len(harvests))
+	for i, harvest := range harvests {
+		harvestRows[i] = *GetHarvestRow(&harvest)
 	}
 
 	return &HiveHarvestDetail{
@@ -229,7 +233,7 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 				},
 			},
 			{Label: harvest.Date.Format("2006-01-02")},
-			{Label: fmt.Sprintf("%d", harvest.Quantity)},
+			{Label: strconv.Itoa(harvest.Quantity)},
 		},
 	}
 
@@ -239,7 +243,8 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
-	if ok == false {
+
+	if !ok {
 		panic("unreacheable")
 	}
 

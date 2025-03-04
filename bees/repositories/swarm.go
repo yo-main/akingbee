@@ -1,13 +1,14 @@
 package repositories
 
 import (
-	"akingbee/bees/models"
-	"akingbee/internal/database"
 	"context"
 	"fmt"
 	"log"
 
 	"github.com/google/uuid"
+
+	"akingbee/bees/models"
+	"akingbee/internal/database"
 )
 
 const queryCreateSwarm = `
@@ -37,6 +38,7 @@ const queryUpdateSwarm = `
 func UpdateSwarm(ctx context.Context, swarm *models.Swarm) error {
 	db := database.GetDB()
 	_, err := db.ExecContext(ctx, queryUpdateSwarm, swarm.Year, swarm.Health, swarm.PublicID)
+
 	return err
 }
 
@@ -48,6 +50,7 @@ const queryDeleteSwarm = `
 func DeleteSwarm(ctx context.Context, swarm *models.Swarm) error {
 	db := database.GetDB()
 	_, err := db.ExecContext(ctx, queryDeleteSwarm, swarm.PublicID)
+
 	return err
 }
 
@@ -75,12 +78,23 @@ func GetSwarmValues(ctx context.Context, value string, userID *uuid.UUID) []stri
 		return nil
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	for rows.Next() {
 		var value string
-		rows.Scan(&value)
+		err = rows.Scan(&value)
+
+		if err != nil {
+			log.Printf("Error while scanning row: %s", err)
+			return nil
+		}
+
 		results = append(results, value)
+	}
+
+	if rows.Err() != nil {
+		log.Printf("rows closed unexpectedly: %s", rows.Err())
+		return nil
 	}
 
 	return results

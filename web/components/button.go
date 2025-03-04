@@ -1,11 +1,12 @@
 package components
 
 import (
-	"akingbee/web/pages"
 	"html/template"
+
+	"akingbee/web/pages"
 )
 
-var buttonTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/button.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/button.html"))
 
 type Button struct {
 	Label   string

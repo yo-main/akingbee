@@ -1,13 +1,14 @@
 package repositories
 
 import (
-	"akingbee/bees/models"
-	"akingbee/internal/database"
 	"context"
 	"fmt"
 	"log"
 
 	"github.com/google/uuid"
+
+	"akingbee/bees/models"
+	"akingbee/internal/database"
 )
 
 const queryCreateComment = `

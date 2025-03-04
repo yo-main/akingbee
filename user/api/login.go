@@ -23,6 +23,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	if len(username) == 0 || len(password) == 0 {
 		log.Print("No parameter provided")
 		response.WriteHeader(http.StatusBadGateway)
+
 		return
 	}
 
@@ -32,10 +33,18 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 		log.Printf("Login failure: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
+
 		return
 	}
 
 	welcomePage, err := user_pages.GetWelcomePage(req)
+	if err != nil {
+		log.Printf("Could not build welcome page: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
 
 	htmx.PushURL(response, "/")
 	web.PrepareLoggedInMenu(req, response, username)
@@ -72,6 +81,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		log.Printf("Login failure: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
+
 		return
 	}
 
@@ -81,10 +91,18 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		log.Printf("Login failure: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
 		response.WriteHeader(http.StatusBadRequest)
+
 		return
 	}
 
 	welcomePage, err := user_pages.GetWelcomePage(req)
+	if err != nil {
+		log.Printf("Could not build welcome page: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
 
 	web.PrepareLoggedInMenu(req, response, user.Credentials.Username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))

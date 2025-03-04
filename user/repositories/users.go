@@ -1,11 +1,12 @@
 package repositories
 
 import (
-	"akingbee/internal/database"
-	"akingbee/user/models"
 	"context"
 
 	"github.com/google/uuid"
+
+	"akingbee/internal/database"
+	"akingbee/user/models"
 )
 
 const queryCreateCredentials = `
