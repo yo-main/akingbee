@@ -5,8 +5,9 @@ import (
 	"akingbee/internal/database"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 const queryCreateSwarm = `
@@ -20,9 +21,9 @@ const queryCreateSwarm = `
 `
 
 func CreateSwarm(ctx context.Context, swarm *models.Swarm) error {
-	db := database.GetDb()
+	db := database.GetDB()
 
-	_, err := db.ExecContext(ctx, queryCreateSwarm, swarm.PublicId, swarm.Year, swarm.Health)
+	_, err := db.ExecContext(ctx, queryCreateSwarm, swarm.PublicID, swarm.Year, swarm.Health)
 
 	return err
 }
@@ -34,8 +35,8 @@ const queryUpdateSwarm = `
 `
 
 func UpdateSwarm(ctx context.Context, swarm *models.Swarm) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryUpdateSwarm, swarm.Year, swarm.Health, swarm.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryUpdateSwarm, swarm.Year, swarm.Health, swarm.PublicID)
 	return err
 }
 
@@ -45,12 +46,12 @@ const queryDeleteSwarm = `
 `
 
 func DeleteSwarm(ctx context.Context, swarm *models.Swarm) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryDeleteSwarm, swarm.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryDeleteSwarm, swarm.PublicID)
 	return err
 }
 
-func GetSwarmValues(ctx context.Context, value string, userId *uuid.UUID) []string {
+func GetSwarmValues(ctx context.Context, value string, userID *uuid.UUID) []string {
 	results := []string{}
 
 	if value != "health" {
@@ -66,8 +67,8 @@ func GetSwarmValues(ctx context.Context, value string, userId *uuid.UUID) []stri
 		WHERE USERS.PUBLIC_ID=$1
 	`, value)
 
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetSwarmValue, userId)
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetSwarmValue, userID)
 
 	if err != nil {
 		log.Printf("Error executing query: %s", err)

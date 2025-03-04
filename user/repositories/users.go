@@ -4,6 +4,7 @@ import (
 	"akingbee/internal/database"
 	"akingbee/user/models"
 	"context"
+
 	"github.com/google/uuid"
 )
 
@@ -16,8 +17,9 @@ const queryCreateCredentials = `
 `
 
 func CreateCredentials(ctx context.Context, credentials *models.Credentials) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryCreateCredentials, credentials.PublicId, credentials.Username, credentials.Password)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryCreateCredentials, credentials.PublicID, credentials.Username, credentials.Password)
+
 	return err
 }
 
@@ -30,8 +32,9 @@ const queryCreateUser = `
 `
 
 func CreateUser(ctx context.Context, user *models.User) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryCreateUser, user.PublicId, user.Email, user.Credentials.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryCreateUser, user.PublicID, user.Email, user.Credentials.PublicID)
+
 	return err
 }
 
@@ -42,25 +45,27 @@ const queryGetUser = `
 `
 
 func getUser(ctx context.Context, query string, params interface{}) (*models.User, error) {
-	db := database.GetDb()
+	db := database.GetDB()
 	row := db.QueryRowContext(ctx, query, params)
 
 	var user models.User
 	var credentials models.Credentials
 
-	err := row.Scan(&user.PublicId, &user.Email, &credentials.PublicId, &credentials.Username, &credentials.Password)
+	err := row.Scan(&user.PublicID, &user.Email, &credentials.PublicID, &credentials.Username, &credentials.Password)
 
 	if err != nil {
 		return nil, err
 	}
+
 	user.Credentials = credentials
 
 	return &user, nil
 }
 
 func getUsers(ctx context.Context, query string) ([]*models.User, error) {
-	db := database.GetDb()
+	db := database.GetDB()
 	rows, err := db.QueryContext(ctx, query)
+
 	if err != nil {
 		return nil, err
 	}
@@ -71,22 +76,21 @@ func getUsers(ctx context.Context, query string) ([]*models.User, error) {
 		var user models.User
 		var credentials models.Credentials
 
-		err := rows.Scan(&user.PublicId, &user.Email, &credentials.PublicId, &credentials.Username, &credentials.Password)
+		err := rows.Scan(&user.PublicID, &user.Email, &credentials.PublicID, &credentials.Username, &credentials.Password)
 		if err != nil {
 			return nil, err
 		}
 
 		user.Credentials = credentials
 		users = append(users, &user)
-
 	}
 
 	return users, nil
 }
 
-func GetUserByPublicId(ctx context.Context, publicId *uuid.UUID) (*models.User, error) {
+func GetUserByPublicID(ctx context.Context, publicID *uuid.UUID) (*models.User, error) {
 	query := queryGetUser + " WHERE USERS.public_id=$1"
-	return getUser(ctx, query, publicId)
+	return getUser(ctx, query, publicID)
 }
 
 func GetUserByEmail(ctx context.Context, email *string) (*models.User, error) {

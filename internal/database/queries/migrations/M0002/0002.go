@@ -3,12 +3,10 @@ package M0002
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
 func Upgrade(ctx context.Context, db *sql.DB) error {
-
 	_, err := db.ExecContext(ctx, `
         CREATE TABLE IF NOT EXISTS APIARY (
             id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -23,18 +21,17 @@ func Upgrade(ctx context.Context, db *sql.DB) error {
     `)
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Migration rollbacked: %s", err))
+		return fmt.Errorf("migration rollbacked: %w", err)
 	}
 
 	return nil
 }
 
 func Downgrade(ctx context.Context, db *sql.DB) error {
-
 	_, err := db.ExecContext(ctx, "DROP TABLE APIARY")
 
 	if err != nil {
-		return errors.New(fmt.Sprintf("Migration rollbacked: %s", err))
+		return fmt.Errorf("migration rollbacked: %w", err)
 	}
 
 	return nil

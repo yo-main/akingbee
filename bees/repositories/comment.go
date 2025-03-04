@@ -4,7 +4,6 @@ import (
 	"akingbee/bees/models"
 	"akingbee/internal/database"
 	"context"
-	"errors"
 	"fmt"
 	"log"
 
@@ -24,16 +23,16 @@ const queryCreateComment = `
 `
 
 func CreateComment(ctx context.Context, comment *models.Comment) error {
-	db := database.GetDb()
+	db := database.GetDB()
 
 	_, err := db.ExecContext(
 		ctx,
 		queryCreateComment,
-		comment.PublicId,
+		comment.PublicID,
 		comment.Date,
 		comment.Type,
 		comment.Body,
-		comment.HivePublicId,
+		comment.HivePublicID,
 	)
 
 	return err
@@ -50,61 +49,71 @@ const queryGetComment = `
 	JOIN HIVE ON COMMENT.HIVE_ID=HIVE.ID
 `
 
-func GetComment(ctx context.Context, commentPublicId *uuid.UUID) (*models.Comment, error) {
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE COMMENT.PUBLIC_ID=$1", queryGetComment), commentPublicId)
+func GetComment(ctx context.Context, commentPublicID *uuid.UUID) (*models.Comment, error) {
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetComment+" WHERE COMMENT.PUBLIC_ID=$1", commentPublicID)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	var comment models.Comment
 
 	for rows.Next() {
 		err := rows.Scan(
-			&comment.PublicId,
+			&comment.PublicID,
 			&comment.Date,
 			&comment.Type,
 			&comment.Body,
-			&comment.HivePublicId,
+			&comment.HivePublicID,
 		)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Could not build Comment from result: %s", err))
+			return nil, fmt.Errorf("could not build Comment from result: %w", err)
 		}
+	}
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", rows.Err())
 	}
 
 	return &comment, nil
 }
 
-func GetComments(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Comment, error) {
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1 ORDER BY COMMENT.DATE_CREATION DESC", queryGetComment), hivePublicId)
+func GetComments(ctx context.Context, hivePublicID *uuid.UUID) ([]models.Comment, error) {
+	db := database.GetDB()
+	query := queryGetComment + " WHERE HIVE.PUBLIC_ID=$1 ORDER BY COMMENT.DATE_CREATION DESC"
+	rows, err := db.QueryContext(ctx, query, hivePublicID)
 
 	if err != nil {
 		log.Printf("%s", err)
-		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	var comments []models.Comment
 
 	for rows.Next() {
 		var comment models.Comment
 		err := rows.Scan(
-			&comment.PublicId,
+			&comment.PublicID,
 			&comment.Date,
 			&comment.Type,
 			&comment.Body,
-			&comment.HivePublicId,
+			&comment.HivePublicID,
 		)
+
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Could not build Comment from result: %s", err))
+			return nil, fmt.Errorf("could not build Comment from result: %w", err)
 		}
 
 		comments = append(comments, comment)
+	}
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", rows.Err())
 	}
 
 	return comments, nil
@@ -117,8 +126,9 @@ const queryUpdateComment = `
 `
 
 func UpdateComment(ctx context.Context, comment *models.Comment) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryUpdateComment, comment.Date, comment.Type, comment.Body, comment.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryUpdateComment, comment.Date, comment.Type, comment.Body, comment.PublicID)
+
 	return err
 }
 
@@ -128,7 +138,8 @@ const queryDeleteComment = `
 `
 
 func DeleteComment(ctx context.Context, comment *models.Comment) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryDeleteComment, comment.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryDeleteComment, comment.PublicID)
+
 	return err
 }

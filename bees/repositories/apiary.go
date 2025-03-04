@@ -4,7 +4,6 @@ import (
 	"akingbee/bees/models"
 	"akingbee/internal/database"
 	"context"
-	"errors"
 	"fmt"
 	"log"
 
@@ -20,10 +19,12 @@ const queryCreateApiary = `
 `
 
 func CreateApiary(ctx context.Context, apiary *models.Apiary) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryCreateApiary, apiary.PublicId, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.User)
+	db := database.GetDB()
+	_, err := db.ExecContext(
+		ctx, queryCreateApiary, apiary.PublicID, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.User,
+	)
 
-	return err
+	return fmt.Errorf("could not create apiary: %w", err)
 }
 
 const queryUpdateApiary = `
@@ -33,9 +34,10 @@ const queryUpdateApiary = `
 `
 
 func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryUpdateApiary, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.PublicId)
-	return err
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryUpdateApiary, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.PublicID)
+
+	return fmt.Errorf("could not update apiary: %w", err)
 }
 
 const queryDeleteApiary = `
@@ -44,9 +46,10 @@ const queryDeleteApiary = `
 `
 
 func DeleteApiary(ctx context.Context, apiary *models.Apiary) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryDeleteApiary, apiary.PublicId)
-	return err
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryDeleteApiary, apiary.PublicID)
+
+	return fmt.Errorf("could not delete apiary: %w", err)
 }
 
 const queryGetApiaries = `
@@ -65,28 +68,34 @@ const queryGetApiaries = `
 	ORDER BY APIARY.DATE_CREATION DESC
 `
 
-func GetApiaries(ctx context.Context, userId *uuid.UUID) ([]models.Apiary, error) {
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetApiaries, userId)
+func GetApiaries(ctx context.Context, userID *uuid.UUID) ([]models.Apiary, error) {
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetApiaries, userID)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	apiaries := []models.Apiary{}
 
 	for rows.Next() {
 		var apiary models.Apiary
-		err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
+		err = rows.Scan(&apiary.PublicID, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
+
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("Could not build Apiary from result: %s", err))
+			return nil, fmt.Errorf("could not build Apiary from result: %w", err)
 		}
+
 		apiaries = append(apiaries, apiary)
 	}
 
-	return apiaries, err
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", rows.Err())
+	}
+
+	return apiaries, nil
 }
 
 const queryGetApiary = `
@@ -102,31 +111,38 @@ const queryGetApiary = `
 	WHERE APIARY.PUBLIC_ID=$1
 `
 
-func GetApiary(ctx context.Context, apiaryPublicId *uuid.UUID) (*models.Apiary, error) {
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetApiary, apiaryPublicId)
+func GetApiary(ctx context.Context, apiaryPublicID *uuid.UUID) (*models.Apiary, error) {
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetApiary, apiaryPublicID)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	var apiary models.Apiary
+
 	rows.Next()
-	err = rows.Scan(&apiary.PublicId, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
+	err = rows.Scan(&apiary.PublicID, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
+
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Could not build Apiary from result: %s", err))
+		return nil, fmt.Errorf("could not build Apiary from result: %w", err)
 	}
 
-	return &apiary, err
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("connection closed unexpectedly: %w", rows.Err())
+	}
+
+	return &apiary, nil
 }
 
-func GetApiaryValues(ctx context.Context, value string, userId *uuid.UUID) []string {
+func GetApiaryValues(ctx context.Context, value string, userID *uuid.UUID) []string {
 	results := []string{}
 
 	if !(value == "location" || value == "honey_kind") {
 		log.Printf("Wrong choice of value: %s", value)
+
 		return results
 	}
 
@@ -137,20 +153,32 @@ func GetApiaryValues(ctx context.Context, value string, userId *uuid.UUID) []str
 		WHERE USERS.PUBLIC_ID=$1
 	`, value)
 
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetApiaryValue, userId)
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetApiaryValue, userID)
 
 	if err != nil {
 		log.Printf("Error executing query: %s", err)
+
 		return nil
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	for rows.Next() {
 		var value string
-		rows.Scan(&value)
+		err = rows.Scan(&value)
+
+		if err != nil {
+			log.Println("Could not scan row: %w", err)
+
+			return nil
+		}
+
 		results = append(results, value)
+	}
+
+	if rows.Err() != nil {
+		return nil
 	}
 
 	return results

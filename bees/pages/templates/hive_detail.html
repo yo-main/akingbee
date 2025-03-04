@@ -6,12 +6,12 @@
         <ul>
           <li class="is-active"
             hx-on:htmx:after-request="this.nextSibling.nextSibling.classList.remove('is-active'); this.classList.add('is-active')">
-            <a hx-get="/hive/{{ .HivePublicId }}/comments" hx-swap="innerHTML" hx-target="#hive-detail-table"
+            <a hx-get="/hive/{{ .HivePublicID }}/comments" hx-swap="innerHTML" hx-target="#hive-detail-table"
               hx-trigger="click">Suivi</a>
           </li>
           <li
             hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-active'); this.classList.add('is-active')">
-            <a hx-get="/hive/{{ .HivePublicId }}/harvests" hx-swap="innerHTML" hx-target="#hive-detail-table"
+            <a hx-get="/hive/{{ .HivePublicID }}/harvests" hx-swap="innerHTML" hx-target="#hive-detail-table"
               hx-trigger="click">Recolte</a>
           </li>
         </ul>

@@ -12,6 +12,8 @@ pkgs.mkShellNoCC {
   packages = with pkgs; [ 
     unstable.go
     unstable.gopls
+    unstable.golangci-lint
+    unstable.golangci-lint-langserver
     sqlite
     air
     gcc

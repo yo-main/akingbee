@@ -5,13 +5,13 @@ import (
 )
 
 func IsHtmxRequest(req *http.Request) bool {
-	return req.Header.Get("HX-Request") != ""
+	return req.Header.Get("Hx-Request") != ""
 }
 
 func Redirect(response http.ResponseWriter, url string) {
-	response.Header().Set("HX-Redirect", url)
+	response.Header().Set("Hx-Redirect", url)
 }
 
-func PushUrl(response http.ResponseWriter, url string) {
-	response.Header().Set("HX-Push-Url", url)
+func PushURL(response http.ResponseWriter, url string) {
+	response.Header().Set("Hx-Push-Url", url)
 }

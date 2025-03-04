@@ -20,15 +20,15 @@ func HandleGetRegister(response http.ResponseWriter, req *http.Request) {
 	params := registerPageParams{
 		SubmitButton: components.Button{
 			Label:  "S'enregistrer",
-			FormId: "post-user",
+			FormID: "post-user",
 			Type:   "is-link",
 		},
 		Form: components.UpdateStrategy{
 			Target: "#page-body",
 			Swap:   "innerHTML",
 			Form: &components.Form{
-				Id:     "post-user",
-				Url:    "/users",
+				ID:     "post-user",
+				URL:    "/users",
 				Method: "post",
 				Inputs: []components.Input{
 					{

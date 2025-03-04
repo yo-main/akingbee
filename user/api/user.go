@@ -1,12 +1,13 @@
 package user
 
 import (
+	"log"
+	"net/http"
+
 	"akingbee/internal/htmx"
 	user_pages "akingbee/user/pages"
 	"akingbee/user/services"
 	"akingbee/web"
-	"log"
-	"net/http"
 )
 
 func HandlePostUser(response http.ResponseWriter, req *http.Request) {
@@ -48,7 +49,7 @@ func HandlePostUser(response http.ResponseWriter, req *http.Request) {
 	}
 
 	web.PrepareSuccessNotification(response, "User created successfully")
-	htmx.PushUrl(response, "/login")
+	htmx.PushURL(response, "/login")
 	response.Write(loginPage.Bytes())
 	response.WriteHeader(http.StatusOK)
 }

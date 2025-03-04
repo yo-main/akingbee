@@ -12,15 +12,15 @@ import (
 type CreateHarvestCommand struct {
 	Date         time.Time
 	Quantity     int
-	HivePublicId *uuid.UUID
+	HivePublicID *uuid.UUID
 }
 
 func CreateHarvest(ctx context.Context, command *CreateHarvestCommand) (*models.Harvest, error) {
 	harvest := models.Harvest{
-		PublicId:     uuid.New(),
+		PublicID:     uuid.New(),
 		Date:         command.Date,
 		Quantity:     command.Quantity,
-		HivePublicId: command.HivePublicId,
+		HivePublicID: command.HivePublicID,
 	}
 
 	err := repositories.CreateHarvest(ctx, &harvest)

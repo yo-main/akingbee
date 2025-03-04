@@ -25,7 +25,7 @@ var CommentDetailTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "t
 type hiveDetailPageParameter struct {
 	Card          components.Card
 	CommentDetail commentDetailParameter
-	HivePublicId  *uuid.UUID
+	HivePublicID  *uuid.UUID
 }
 
 type commentDetailParameter struct {
@@ -45,7 +45,7 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 							Confirm: "Supprimer le commentaire ?",
 							Button: &components.Button{
 								Icon:   "delete",
-								Url:    fmt.Sprintf("/comment/%s", comment.PublicId),
+								URL:    fmt.Sprintf("/comment/%s", comment.PublicID),
 								Method: "delete",
 							},
 						},
@@ -62,12 +62,12 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 								SubmitFormButton: components.Button{
 									Label:  "Sauvegarder",
 									Type:   "is-link",
-									FormId: fmt.Sprintf("comment-edit-%s", comment.PublicId),
+									FormID: fmt.Sprintf("comment-edit-%s", comment.PublicID),
 								},
 								Form: components.Form{
-									Id:     fmt.Sprintf("comment-edit-%s", comment.PublicId),
+									ID:     fmt.Sprintf("comment-edit-%s", comment.PublicID),
 									Method: "put",
-									Url:    fmt.Sprintf("/comment/%s", comment.PublicId),
+									URL:    fmt.Sprintf("/comment/%s", comment.PublicID),
 									Inputs: []components.Input{
 										{
 											GroupedInput: []components.Input{
@@ -112,14 +112,14 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 	return &params
 }
 
-func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive) components.Card {
+func GetHiveDetailCard(ctx context.Context, userID *uuid.UUID, hive *models.Hive) components.Card {
 	apiaryName := hive.GetApiaryName()
-	apiaries, _ := repositories.GetApiaries(ctx, userId)
-	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
-	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+	apiaries, _ := repositories.GetApiaries(ctx, userID)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userID)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userID)
 
 	return components.Card{
-		Id: "card-hive-detail",
+		ID: "card-hive-detail",
 		Header: components.CardHeader{
 			Title: hive.Name,
 		},
@@ -158,7 +158,7 @@ func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive
 						Button: &components.Button{
 							Label:  "Supprimer",
 							Type:   "is-ghost",
-							Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+							URL:    fmt.Sprintf("/hive/%s", hive.PublicID),
 							Method: "delete",
 						},
 					},
@@ -170,7 +170,7 @@ func GetHiveDetailCard(ctx context.Context, userId *uuid.UUID, hive *models.Hive
 
 func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailParameter, error) {
 
-	comments, err := repositories.GetComments(ctx, &hive.PublicId)
+	comments, err := repositories.GetComments(ctx, &hive.PublicID)
 	if err != nil {
 		log.Printf("Could not get comments: %s", err)
 		return nil, err
@@ -192,13 +192,13 @@ func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailPa
 				},
 				SubmitFormButton: components.Button{
 					Label:  "Créer",
-					FormId: "create-comment",
+					FormID: "create-comment",
 					Type:   "is-link",
 				},
 				Form: components.Form{
-					Id:     "create-comment",
+					ID:     "create-comment",
 					Method: "post",
-					Url:    "/comment",
+					URL:    "/comment",
 					Inputs: []components.Input{
 						{
 							GroupedInput: []components.Input{
@@ -228,14 +228,14 @@ func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailPa
 						{
 							Name:    "hive_id",
 							Type:    "hidden",
-							Default: hive.PublicId.String(),
+							Default: hive.PublicID.String(),
 						},
 					},
 				},
 			},
 		},
 		Commentaries: components.Table{
-			Id:          "table-hive-comments",
+			ID:          "table-hive-comments",
 			IsFullWidth: true,
 			IsStripped:  true,
 			Headers: []components.Header{
@@ -257,8 +257,8 @@ func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailPa
 	return &params, nil
 }
 
-func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uuid.UUID) (*bytes.Buffer, error) {
-	hive, err := repositories.GetHive(ctx, hivePublicId)
+func GetHiveDetailBody(ctx context.Context, hivePublicID *uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
+	hive, err := repositories.GetHive(ctx, hivePublicID)
 	if err != nil {
 		log.Printf("Could not load hive: %s", err)
 		return nil, err
@@ -271,9 +271,9 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 	}
 
 	params := hiveDetailPageParameter{
-		Card:          GetHiveDetailCard(ctx, userId, hive),
+		Card:          GetHiveDetailCard(ctx, userID, hive),
 		CommentDetail: *commentSection,
-		HivePublicId:  &hive.PublicId,
+		HivePublicID:  &hive.PublicID,
 	}
 
 	var hiveDetailPage bytes.Buffer
@@ -290,7 +290,7 @@ func GetHiveDetailBody(ctx context.Context, hivePublicId *uuid.UUID, userId *uui
 func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
+	hivePublicID, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
 		log.Printf("hive id is not an uuid: %s", err)
 		response.WriteHeader(http.StatusNotFound)
@@ -298,7 +298,7 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 	}
 
 	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
-		hiveDetailPage, err := GetHiveDetailBody(ctx, &hivePublicId, &user.PublicId)
+		hiveDetailPage, err := GetHiveDetailBody(ctx, &hivePublicID, &user.PublicID)
 		if err != nil {
 			log.Printf("Could not get hive detail page: %s", err)
 			response.WriteHeader(http.StatusBadRequest)
@@ -313,7 +313,7 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
+	hivePublicID, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
 		log.Printf("The provided hive id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Not Found")
@@ -321,7 +321,7 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	hive, err := repositories.GetHive(ctx, &hivePublicId)
+	hive, err := repositories.GetHive(ctx, &hivePublicID)
 	if err != nil {
 		web.PrepareFailedNotification(response, "Not Found")
 		response.WriteHeader(http.StatusNotFound)
@@ -330,7 +330,7 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 
 	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
 
-		if hive.User != user.PublicId {
+		if hive.User != user.PublicID {
 			web.PrepareFailedNotification(response, "Forbidden")
 			response.WriteHeader(http.StatusForbidden)
 			return

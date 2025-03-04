@@ -22,15 +22,15 @@ const queryCreateHarvest = `
 `
 
 func CreateHarvest(ctx context.Context, harvest *models.Harvest) error {
-	db := database.GetDb()
+	db := database.GetDB()
 
 	_, err := db.ExecContext(
 		ctx,
 		queryCreateHarvest,
-		harvest.PublicId,
+		harvest.PublicID,
 		harvest.Date,
 		harvest.Quantity,
-		harvest.HivePublicId,
+		harvest.HivePublicID,
 	)
 
 	return err
@@ -42,19 +42,20 @@ const queryGetHarvest = `
 	JOIN HIVE ON HIVE.ID=HARVEST.HIVE_ID
 `
 
-func GetHarvests(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Harvest, error) {
+func GetHarvests(ctx context.Context, hivePublicID *uuid.UUID) ([]models.Harvest, error) {
 	var harvests []models.Harvest
 
-	db := database.GetDb()
+	db := database.GetDB()
 
 	rows, err := db.QueryContext(
 		ctx,
-		fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1 ORDER BY HARVEST.DATE DESC, HARVEST.DATE_CREATION DESC", queryGetHarvest),
-		hivePublicId,
+		queryGetHarvest+" WHERE HIVE.PUBLIC_ID=$1 ORDER BY HARVEST.DATE DESC, HARVEST.DATE_CREATION DESC",
+		hivePublicID,
 	)
 
 	if err != nil {
 		log.Printf("Error while querying harvest: %s", err)
+
 		return nil, err
 	}
 
@@ -62,10 +63,10 @@ func GetHarvests(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Harvest
 		var harvest models.Harvest
 
 		err := rows.Scan(
-			&harvest.PublicId,
+			&harvest.PublicID,
 			&harvest.Date,
 			&harvest.Quantity,
-			&harvest.HivePublicId,
+			&harvest.HivePublicID,
 		)
 		if err != nil {
 			return nil, err
@@ -74,21 +75,27 @@ func GetHarvests(ctx context.Context, hivePublicId *uuid.UUID) ([]models.Harvest
 		harvests = append(harvests, harvest)
 	}
 
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", rows.Err())
+	}
+
 	return harvests, err
 }
 
-func GetHarvest(ctx context.Context, harvestPublicId *uuid.UUID) (*models.Harvest, error) {
-	db := database.GetDb()
+func GetHarvest(ctx context.Context, harvestPublicID *uuid.UUID) (*models.Harvest, error) {
+	db := database.GetDB()
 
 	rows, err := db.QueryContext(
 		ctx,
-		fmt.Sprintf("%s WHERE HARVEST.PUBLIC_ID=$1", queryGetHarvest),
-		harvestPublicId,
+		queryGetHarvest+" WHERE HARVEST.PUBLIC_ID=$1",
+		harvestPublicID,
 	)
-	defer rows.Close()
+
+	defer database.CloseRows(rows)
 
 	if err != nil {
 		log.Printf("Error while querying harvest: %s", err)
+
 		return nil, err
 	}
 
@@ -96,11 +103,16 @@ func GetHarvest(ctx context.Context, harvestPublicId *uuid.UUID) (*models.Harves
 
 	rows.Next()
 	err = rows.Scan(
-		&harvest.PublicId,
+		&harvest.PublicID,
 		&harvest.Date,
 		&harvest.Quantity,
-		&harvest.HivePublicId,
+		&harvest.HivePublicID,
 	)
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", rows.Err())
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +126,8 @@ const queryDeleteHarvest = `
 `
 
 func DeleteHarvest(ctx context.Context, harvest *models.Harvest) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryDeleteHarvest, harvest.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryDeleteHarvest, harvest.PublicID)
+
 	return err
 }

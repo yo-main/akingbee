@@ -1,19 +1,20 @@
 package web
 
 import (
+	"context"
+	"log"
+	"net/http"
+
 	"akingbee/internal/htmx"
 	"akingbee/internal/web/pages"
 	user_services "akingbee/user/services"
 	"akingbee/web"
-	"context"
-	"log"
-	"net/http"
 )
 
 func Authenticated(callback func(response http.ResponseWriter, req *http.Request)) func(response http.ResponseWriter, req *http.Request) {
 
 	return func(response http.ResponseWriter, req *http.Request) {
-		userId, err := user_services.AuthenticateUser(req)
+		userID, err := user_services.AuthenticateUser(req)
 
 		if err != nil {
 			log.Printf("Could not authenticate user: %s", err)
@@ -21,9 +22,9 @@ func Authenticated(callback func(response http.ResponseWriter, req *http.Request
 			return
 		}
 
-		user, err := user_services.GetUser(req.Context(), userId)
+		user, err := user_services.GetUser(req.Context(), userID)
 		if err != nil {
-			log.Printf("User %s not found: %s", userId, err)
+			log.Printf("User %s not found: %s", userID, err)
 			response.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -35,7 +36,7 @@ func Authenticated(callback func(response http.ResponseWriter, req *http.Request
 func AuthenticatedAsAdmin(callback func(response http.ResponseWriter, req *http.Request)) func(response http.ResponseWriter, req *http.Request) {
 
 	return func(response http.ResponseWriter, req *http.Request) {
-		userId, err := user_services.AuthenticateUser(req)
+		userID, err := user_services.AuthenticateUser(req)
 
 		if err != nil {
 			log.Printf("Could not authenticate user: %s", err)
@@ -43,9 +44,9 @@ func AuthenticatedAsAdmin(callback func(response http.ResponseWriter, req *http.
 			return
 		}
 
-		user, err := user_services.GetUser(req.Context(), userId)
+		user, err := user_services.GetUser(req.Context(), userID)
 		if err != nil {
-			log.Printf("User %s not found: %s", userId, err)
+			log.Printf("User %s not found: %s", userID, err)
 			response.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -57,12 +58,12 @@ func AuthenticatedAsAdmin(callback func(response http.ResponseWriter, req *http.
 func OptionallyAuthenticated(callback func(response http.ResponseWriter, req *http.Request)) func(response http.ResponseWriter, req *http.Request) {
 
 	return func(response http.ResponseWriter, req *http.Request) {
-		userId, err := user_services.AuthenticateUser(req)
+		userID, err := user_services.AuthenticateUser(req)
 
 		if err == nil {
-			user, err := user_services.GetUser(req.Context(), userId)
+			user, err := user_services.GetUser(req.Context(), userID)
 			if err != nil {
-				log.Printf("User %s not found: %s", userId, err)
+				log.Printf("User %s not found: %s", userID, err)
 				response.WriteHeader(http.StatusUnauthorized)
 				return
 			}

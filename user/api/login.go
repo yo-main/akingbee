@@ -1,15 +1,16 @@
 package user
 
 import (
-	"akingbee/internal/htmx"
-	user_pages "akingbee/user/pages"
-	"akingbee/user/services"
-	"akingbee/web"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/google/uuid"
+
+	"akingbee/internal/htmx"
+	user_pages "akingbee/user/pages"
+	"akingbee/user/services"
+	"akingbee/web"
 )
 
 func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
@@ -35,7 +36,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 
 	welcomePage, err := user_pages.GetWelcomePage(req)
 
-	htmx.PushUrl(response, "/")
+	htmx.PushURL(response, "/")
 	web.PrepareLoggedInMenu(req, response, username)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
@@ -45,7 +46,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 func HandleLogout(response http.ResponseWriter, req *http.Request) {
 	response.Header().Set("Set-Cookie", "akingbeeToken=''; Path=/; expire;")
 	web.PrepareLoggedOutMenu(response)
-	htmx.PushUrl(response, "/")
+	htmx.PushURL(response, "/")
 
 	welcomePage, err := user_pages.GetWelcomePage(req)
 	if err != nil {
@@ -73,7 +74,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := services.ImpersonateUser(ctx, &user.PublicId, &impersonatedUser)
+	token, err := services.ImpersonateUser(ctx, &user.PublicID, &impersonatedUser)
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)

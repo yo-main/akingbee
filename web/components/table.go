@@ -7,12 +7,12 @@ import (
 	"log"
 )
 
-var tableTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table.html"))
-var tableRowTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table_row.html"))
-var tableCellTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table_cell.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table_row.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/table_cell.html"))
 
 type Table struct {
-	Id          string
+	ID          string
 	ColumnSizes []ColumnSize
 	Headers     []Header
 	Rows        []Row

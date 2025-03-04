@@ -23,7 +23,7 @@
     </tr>
   </thead>
 
-  <tbody {{ if .Id }}id="{{ .Id }}" {{ end }}>
+  <tbody {{ if .ID }}id="{{ .ID }}" {{ end }}>
     {{ range .Rows }}
     {{ template "table_row.html" .}}
     {{ end }}

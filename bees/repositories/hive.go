@@ -5,7 +5,6 @@ import (
 	"akingbee/internal/database"
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 
@@ -26,12 +25,14 @@ const queryCreateHive = `
 `
 
 func CreateHive(ctx context.Context, hive *models.Hive) error {
-	db := database.GetDb()
+	db := database.GetDB()
 
-	apiaryPublicId := hive.GetApiaryPublicId()
-	swarmPublicId := hive.GetSwarmPublicId()
+	apiaryPublicID := hive.GetApiaryPublicID()
+	swarmPublicID := hive.GetSwarmPublicID()
 
-	_, err := db.ExecContext(ctx, queryCreateHive, hive.PublicId, hive.Name, hive.Beekeeper, apiaryPublicId, swarmPublicId, hive.User)
+	_, err := db.ExecContext(
+		ctx, queryCreateHive, hive.PublicID, hive.Name, hive.Beekeeper, apiaryPublicID, swarmPublicID, hive.User,
+	)
 
 	return err
 }
@@ -47,12 +48,13 @@ const queryUpdateHive = `
 `
 
 func UpdateHive(ctx context.Context, hive *models.Hive) error {
-	db := database.GetDb()
+	db := database.GetDB()
 
-	apiaryPublicId := hive.GetApiaryPublicId()
-	swarmPublicId := hive.GetSwarmPublicId()
+	apiaryPublicID := hive.GetApiaryPublicID()
+	swarmPublicID := hive.GetSwarmPublicID()
 
-	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Beekeeper, apiaryPublicId, swarmPublicId, hive.PublicId)
+	_, err := db.ExecContext(ctx, queryUpdateHive, hive.Name, hive.Beekeeper, apiaryPublicID, swarmPublicID, hive.PublicID)
+
 	return err
 }
 
@@ -62,8 +64,9 @@ const queryDeleteHive = `
 `
 
 func DeleteHive(ctx context.Context, hive *models.Hive) error {
-	db := database.GetDb()
-	_, err := db.ExecContext(ctx, queryDeleteHive, hive.PublicId)
+	db := database.GetDB()
+	_, err := db.ExecContext(ctx, queryDeleteHive, hive.PublicID)
+
 	return err
 }
 
@@ -106,42 +109,46 @@ func scanHive(rows *sql.Rows) (*models.Hive, error) {
 	var hive models.Hive
 	var swarm models.Swarm
 	err := rows.Scan(
-		&hive.PublicId,
+		&hive.PublicID,
 		&hive.Name,
 		&hive.Beekeeper,
-		&apiary.PublicId,
+		&apiary.PublicID,
 		&apiary.Name,
 		&apiary.Location,
 		&apiary.HoneyKind,
 		&apiary.HiveCount,
-		&swarm.PublicId,
+		&swarm.PublicID,
 		&swarm.Year,
 		&swarm.Health,
 		&apiary.User,
 		&hive.User,
 	)
+
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Could not build Hive from result: %s", err))
+		return nil, fmt.Errorf("could not build Hive from result: %w", err)
 	}
-	if apiary.PublicId != uuid.Nil {
+
+	if apiary.PublicID != uuid.Nil {
 		hive.SetApiary(&apiary)
 	}
-	if swarm.PublicId != uuid.Nil {
+
+	if swarm.PublicID != uuid.Nil {
 		hive.SetSwarm(&swarm)
 	}
 
 	return &hive, nil
 }
 
-func GetHives(ctx context.Context, userId *uuid.UUID) ([]*models.Hive, error) {
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE USERS.PUBLIC_ID=$1 ORDER BY HIVE.DATE_CREATION DESC", queryGetHives), userId)
+func GetHives(ctx context.Context, userID *uuid.UUID) ([]*models.Hive, error) {
+	db := database.GetDB()
+	query := queryGetHives + " WHERE USERS.PUBLIC_ID=$1 ORDER BY HIVE.DATE_CREATION DESC"
+	rows, err := db.QueryContext(ctx, query, userID)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	hives := []*models.Hive{}
 
@@ -150,32 +157,34 @@ func GetHives(ctx context.Context, userId *uuid.UUID) ([]*models.Hive, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		hives = append(hives, hive)
 	}
 
 	return hives, err
 }
 
-func GetHive(ctx context.Context, hivePublicId *uuid.UUID) (*models.Hive, error) {
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, fmt.Sprintf("%s WHERE HIVE.PUBLIC_ID=$1", queryGetHives), hivePublicId)
+func GetHive(ctx context.Context, hivePublicID *uuid.UUID) (*models.Hive, error) {
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetHives+" WHERE HIVE.PUBLIC_ID=$1", hivePublicID)
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error executing query: %s", err))
+		return nil, fmt.Errorf("error executing query: %w", err)
 	}
 
 	defer rows.Close()
 
 	rows.Next()
 	hive, err := scanHive(rows)
+
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Could not build Hive from result: %s", err))
+		return nil, fmt.Errorf("could not build Hive from result: %w", err)
 	}
 
 	return hive, err
 }
 
-func GetHiveValues(ctx context.Context, value string, userId *uuid.UUID) []string {
+func GetHiveValues(ctx context.Context, value string, userID *uuid.UUID) []string {
 	results := []string{}
 
 	if value != "beekeeper" {
@@ -190,20 +199,31 @@ func GetHiveValues(ctx context.Context, value string, userId *uuid.UUID) []strin
 		WHERE USERS.PUBLIC_ID=$1
 	`, value)
 
-	db := database.GetDb()
-	rows, err := db.QueryContext(ctx, queryGetHiveValue, userId)
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryGetHiveValue, userID)
 
 	if err != nil {
 		log.Printf("Error executing query: %s", err)
 		return nil
 	}
 
-	defer rows.Close()
+	defer database.CloseRows(rows)
 
 	for rows.Next() {
 		var value string
-		rows.Scan(&value)
+		err = rows.Scan(&value)
+
+		if err != nil {
+			log.Println("Could not scan value correctly: %w", err)
+			return nil
+		}
+
 		results = append(results, value)
+	}
+
+	if rows.Err() != nil {
+		log.Println("rows closed unexpectedly: %w", rows.Err())
+		return nil
 	}
 
 	return results

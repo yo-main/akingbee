@@ -1,18 +1,20 @@
 package pages
 
 import (
+	"bytes"
+	"context"
+	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+
+	"github.com/google/uuid"
+
 	"akingbee/bees/models"
 	"akingbee/bees/repositories"
 	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
-	"bytes"
-	"context"
-	"fmt"
-	"github.com/google/uuid"
-	"html/template"
-	"log"
-	"net/http"
 )
 
 var hivePageTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive.html"))
@@ -41,12 +43,12 @@ func EditHiveModal(
 			SubmitFormButton: components.Button{
 				Label:  "Sauvegarder",
 				Type:   "is-link",
-				FormId: fmt.Sprintf("hive-edit-%s", hive.Name),
+				FormID: fmt.Sprintf("hive-edit-%s", hive.Name),
 			},
 			Form: components.Form{
-				Id:     fmt.Sprintf("hive-edit-%s", hive.Name),
+				ID:     fmt.Sprintf("hive-edit-%s", hive.Name),
 				Method: "put",
-				Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+				URL:    fmt.Sprintf("/hive/%s", hive.PublicID),
 				Inputs: []components.Input{
 					{
 						Name:     "name",
@@ -84,7 +86,7 @@ func EditHiveModal(
 						Type:          "text",
 						Required:      true,
 						ChoicesStrict: apiaryChoices,
-						Default:       hive.GetApiaryPublicId(),
+						Default:       hive.GetApiaryPublicID(),
 					},
 					{
 						Name:     "elementType",
@@ -123,9 +125,9 @@ func GetHiveTableRow(
 							Swap:   "innerHTML",
 							Button: &components.Button{
 								Icon:    "eye",
-								Url:     fmt.Sprintf("/hive/%s", hive.PublicId),
+								URL:     fmt.Sprintf("/hive/%s", hive.PublicID),
 								Method:  "get",
-								PushUrl: true,
+								PushURL: true,
 							},
 						},
 					},
@@ -148,7 +150,7 @@ func GetHiveTableRow(
 							Confirm: "Supprimer la ruche ?",
 							Button: &components.Button{
 								Icon:   "delete",
-								Url:    fmt.Sprintf("/hive/%s", hive.PublicId),
+								URL:    fmt.Sprintf("/hive/%s", hive.PublicID),
 								Method: "delete",
 							},
 						},
@@ -172,7 +174,7 @@ func GetApiariesChoices(apiaries []models.Apiary, hive *models.Hive) []component
 		}
 
 		apiaryChoices = append(apiaryChoices, components.Choice{
-			Key:      apiary.PublicId.String(),
+			Key:      apiary.PublicID.String(),
 			Label:    apiary.Name,
 			Selected: selected,
 		})
@@ -218,16 +220,16 @@ func GetBeekeeperChoices(beekeepers []string, hive *models.Hive) []components.Ch
 	return beekeeperChoices
 }
 
-func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error) {
-	hives, err := repositories.GetHives(ctx, userId)
+func GetHivesBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error) {
+	hives, err := repositories.GetHives(ctx, userID)
 	if err != nil {
 		log.Printf("Could not get hives: %s", err)
 		return nil, err
 	}
 
-	apiaries, _ := repositories.GetApiaries(ctx, userId)
-	swarmHealths := repositories.GetSwarmValues(ctx, "health", userId)
-	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userId)
+	apiaries, _ := repositories.GetApiaries(ctx, userID)
+	swarmHealths := repositories.GetSwarmValues(ctx, "health", userID)
+	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userID)
 
 	rows := []components.Row{}
 	for _, hive := range hives {
@@ -253,13 +255,13 @@ func GetHivesBody(ctx context.Context, userId *uuid.UUID) (*bytes.Buffer, error)
 				},
 				SubmitFormButton: components.Button{
 					Label:  "Créer",
-					FormId: "createHive",
+					FormID: "createHive",
 					Type:   "is-link",
 				},
 				Form: components.Form{
-					Id:     "createHive",
+					ID:     "createHive",
 					Method: "post",
-					Url:    "/hive",
+					URL:    "/hive",
 					Inputs: []components.Input{
 						{
 							Name:     "name",
@@ -322,7 +324,7 @@ func HandleGetHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
-		hivePage, err := GetHivesBody(ctx, &user.PublicId)
+		hivePage, err := GetHivesBody(ctx, &user.PublicID)
 		if err != nil {
 			log.Printf("Could not get hive page: %s", err)
 			response.WriteHeader(http.StatusBadRequest)

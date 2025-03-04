@@ -1,52 +1,61 @@
 package migrations
 
 import (
+	"context"
+	"database/sql"
+	"log"
+
 	"akingbee/internal/database/queries/migrations/M0001"
 	"akingbee/internal/database/queries/migrations/M0002"
 	"akingbee/internal/database/queries/migrations/M0003"
 	"akingbee/internal/database/queries/migrations/M0004"
 	"akingbee/internal/database/queries/migrations/M0005"
-	"context"
-	"database/sql"
-	"fmt"
-	"log"
 )
 
-func Upgrade(ctx context.Context, db *sql.DB) {
+func Upgrade(ctx context.Context, dbClient *sql.DB) {
 	log.Print("Running migrations")
 
-	err := M0001.Upgrade(ctx, db)
+	err := M0001.Upgrade(ctx, dbClient)
 	if err != nil {
-		log.Printf(fmt.Sprintf("Migration failed: %s", err))
+		log.Printf("Migration failed: %s", err)
 		return
 	}
 
-	err = M0002.Upgrade(ctx, db)
+	err = M0002.Upgrade(ctx, dbClient)
 	if err != nil {
-		log.Printf(fmt.Sprintf("Migration failed: %s", err))
+		log.Printf("Migration failed: %s", err)
 		return
 	}
 
-	err = M0003.Upgrade(ctx, db)
+	err = M0003.Upgrade(ctx, dbClient)
 	if err != nil {
-		log.Printf(fmt.Sprintf("Migration failed: %s", err))
+		log.Printf("Migration failed: %s", err)
 		return
 	}
 
-	err = M0004.Upgrade(ctx, db)
+	err = M0004.Upgrade(ctx, dbClient)
 	if err != nil {
-		log.Printf(fmt.Sprintf("Migration failed: %s", err))
+		log.Printf("Migration failed: %s", err)
 		return
 	}
 
-	err = M0005.Upgrade(ctx, db)
+	err = M0005.Upgrade(ctx, dbClient)
 	if err != nil {
-		log.Printf(fmt.Sprintf("Migration failed: %s", err))
+		log.Printf("Migration failed: %s", err)
 		return
 	}
 }
 
-func Downgrade(ctx context.Context, db *sql.DB) {
-	M0002.Downgrade(ctx, db)
-	M0001.Downgrade(ctx, db)
+func Downgrade(ctx context.Context, dbClient *sql.DB) {
+	err := M0002.Downgrade(ctx, dbClient)
+	if err != nil {
+		log.Printf("Migration failed: %s", err)
+		return
+	}
+
+	err = M0001.Downgrade(ctx, dbClient)
+	if err != nil {
+		log.Printf("Migration failed: %s", err)
+		return
+	}
 }

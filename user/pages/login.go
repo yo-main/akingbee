@@ -1,13 +1,14 @@
 package pages
 
 import (
-	"akingbee/web/components"
-	"akingbee/web/pages"
 	"bytes"
 	"embed"
 	"html/template"
 	"log"
 	"net/http"
+
+	"akingbee/web/components"
+	"akingbee/web/pages"
 )
 
 //go:embed templates/*
@@ -39,15 +40,15 @@ func GetLoginPage() (*bytes.Buffer, error) {
 		SubmitButton: components.Button{
 			Label:  "Se connecter",
 			Type:   "is-link",
-			FormId: "login",
+			FormID: "login",
 		},
 		Form: components.UpdateStrategy{
 			Target: "#page-body",
 			Swap:   "innerHTML",
 			Form: &components.Form{
-				Id:     "login",
+				ID:     "login",
 				Method: "post",
-				Url:    "/login",
+				URL:    "/login",
 				Inputs: []components.Input{
 					{
 						Name:     "username",
@@ -66,8 +67,8 @@ func GetLoginPage() (*bytes.Buffer, error) {
 		},
 		ForgotPasswordButton: components.Button{
 			Label:   "Mot de passe oublié",
-			Url:     "password-reset",
-			PushUrl: true,
+			URL:     "password-reset",
+			PushURL: true,
 			Method:  "get",
 		},
 	}

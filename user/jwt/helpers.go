@@ -1,13 +1,14 @@
 package jwt
 
 import (
-	"akingbee/internal/config"
-	"errors"
 	"fmt"
-	"github.com/golang-jwt/jwt"
-	"github.com/google/uuid"
 	"strings"
 	"time"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
+
+	"akingbee/internal/config"
 )
 
 func CreateToken(subject string) (string, error) {
@@ -35,7 +36,7 @@ func ValidateToken(tokenString string) (*uuid.UUID, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) { return config.APP_PRIVATE_KEY, nil })
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("JWT could not be parsed: %s", err))
+		return nil, fmt.Errorf("JWT could not be parsed: %s", err)
 	}
 
 	claim := token.Claims.(*jwt.StandardClaims)
@@ -54,7 +55,7 @@ func parseSubject(subject string) (*uuid.UUID, error) {
 
 	tk, err := uuid.Parse(userToken)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Subject is not an UUID: %s", err))
+		return nil, fmt.Errorf("Subject is not an UUID: %s", err)
 	}
 
 	return &tk, nil

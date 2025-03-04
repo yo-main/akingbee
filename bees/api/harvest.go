@@ -1,6 +1,16 @@
 package api
 
 import (
+	"bytes"
+	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/google/uuid"
+
 	"akingbee/bees/models"
 	hive_pages "akingbee/bees/pages"
 	"akingbee/bees/repositories"
@@ -9,14 +19,6 @@ import (
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
-	"bytes"
-	"fmt"
-	"github.com/google/uuid"
-	"html/template"
-	"log"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 var HarvestDetailTemplate = template.Must(pages.HtmlPage.ParseFS(hive_pages.TemplatesFS, "templates/hive_detail_harvest.html"))
@@ -34,7 +36,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 		panic("unreacheable")
 	}
 
-	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
+	hivePublicID, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
 		log.Printf("The provided hive id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Not Found")
@@ -42,13 +44,13 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	hive, err := repositories.GetHive(ctx, &hivePublicId)
+	hive, err := repositories.GetHive(ctx, &hivePublicID)
 	if err != nil {
 		web.PrepareFailedNotification(response, "Not Found")
 		response.WriteHeader(http.StatusNotFound)
 		return
 	}
-	if hive.User != user.PublicId {
+	if hive.User != user.PublicID {
 		web.PrepareFailedNotification(response, "Forbidden")
 		response.WriteHeader(http.StatusForbidden)
 		return
@@ -72,7 +74,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	command := services.CreateHarvestCommand{
 		Date:         date,
 		Quantity:     quantity,
-		HivePublicId: &hivePublicId,
+		HivePublicID: &hivePublicID,
 	}
 
 	harvest, err := services.CreateHarvest(ctx, &command)
@@ -102,7 +104,7 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 		panic("unreacheable")
 	}
 
-	hivePublicId, err := uuid.Parse(req.PathValue("hivePublicId"))
+	hivePublicID, err := uuid.Parse(req.PathValue("hivePublicId"))
 	if err != nil {
 		log.Printf("The provided hive id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Not Found")
@@ -110,20 +112,20 @@ func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	hive, err := repositories.GetHive(ctx, &hivePublicId)
+	hive, err := repositories.GetHive(ctx, &hivePublicID)
 	if err != nil {
 		web.PrepareFailedNotification(response, "Not Found")
 		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	if hive.User != user.PublicId {
+	if hive.User != user.PublicID {
 		web.PrepareFailedNotification(response, "Forbidden")
 		response.WriteHeader(http.StatusForbidden)
 		return
 	}
 
-	harvests, err := repositories.GetHarvests(ctx, &hivePublicId)
+	harvests, err := repositories.GetHarvests(ctx, &hivePublicID)
 	if err != nil {
 		web.PrepareFailedNotification(response, "Could not get harvests")
 		response.WriteHeader(http.StatusBadRequest)
@@ -161,13 +163,13 @@ func GetHarvestsDetail(hive *models.Hive, harvests []models.Harvest) *HiveHarves
 				},
 				SubmitFormButton: components.Button{
 					Label:  "Créer",
-					FormId: "create-harvest",
+					FormID: "create-harvest",
 					Type:   "is-link",
 				},
 				Form: components.Form{
-					Id:     "create-harvest",
+					ID:     "create-harvest",
 					Method: "post",
-					Url:    fmt.Sprintf("/hive/%s/harvests", hive.PublicId),
+					URL:    fmt.Sprintf("/hive/%s/harvests", hive.PublicID),
 					Inputs: []components.Input{
 						{
 							Name:        "quantity",
@@ -188,7 +190,7 @@ func GetHarvestsDetail(hive *models.Hive, harvests []models.Harvest) *HiveHarves
 			},
 		},
 		HarvestsTable: components.Table{
-			Id:          "table-hive-harvests",
+			ID:          "table-hive-harvests",
 			IsFullWidth: true,
 			IsStripped:  true,
 			Headers: []components.Header{
@@ -218,7 +220,7 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 							Confirm: "Supprimer la recolte ?",
 							Button: &components.Button{
 								Icon:   "delete",
-								Url:    fmt.Sprintf("/hive/%s/harvests/%s", harvest.HivePublicId, harvest.PublicId),
+								URL:    fmt.Sprintf("/hive/%s/harvests/%s", harvest.HivePublicID, harvest.PublicID),
 								Method: "delete",
 							},
 						},
@@ -240,7 +242,7 @@ func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
 		panic("unreacheable")
 	}
 
-	harvestPublicId, err := uuid.Parse(req.PathValue("harvestPublicId"))
+	harvestPublicID, err := uuid.Parse(req.PathValue("harvestPublicId"))
 	if err != nil {
 		log.Printf("The provided harvest id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Bad request")
@@ -248,7 +250,7 @@ func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	harvest, err := repositories.GetHarvest(ctx, &harvestPublicId)
+	harvest, err := repositories.GetHarvest(ctx, &harvestPublicID)
 	if err != nil {
 		log.Printf("Harvest not found: %s", err)
 		web.PrepareFailedNotification(response, "Harvest not found")

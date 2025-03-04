@@ -1,11 +1,12 @@
 package web
 
 import (
-	"github.com/google/uuid"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 type Request struct {
-	UserId          *uuid.UUID
+	UserID          *uuid.UUID
 	OriginalRequest *http.Request
 }

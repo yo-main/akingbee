@@ -1,15 +1,16 @@
 package web
 
 import (
-	user_models "akingbee/user/models"
-	"akingbee/web/components"
-	"akingbee/web/pages"
 	"bytes"
 	"context"
-	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
+
+	user_models "akingbee/user/models"
+	"akingbee/web/components"
+	"akingbee/web/pages"
+	"encoding/json"
 )
 
 func getEventMap(response http.ResponseWriter, headerKey string) map[string]interface{} {
@@ -20,9 +21,9 @@ func getEventMap(response http.ResponseWriter, headerKey string) map[string]inte
 		err := json.Unmarshal([]byte(headerValue), &events)
 		if err != nil {
 			log.Printf("Error while unparsing header %s: %s", headerKey, err)
+
 			return map[string]interface{}{}
 		}
-
 	} else {
 		events = map[string]interface{}{}
 	}
@@ -34,6 +35,7 @@ func prepareNotification(response http.ResponseWriter, notification *components.
 	html, err := notification.Build()
 	if err != nil {
 		log.Printf("Could not build notification: %s", err)
+
 		return
 	}
 
@@ -47,7 +49,13 @@ func prepareNotification(response http.ResponseWriter, notification *components.
 	events := getEventMap(response, headerKey)
 
 	events["notificationEvent"] = html
-	triggerHeader, _ := json.Marshal(events)
+	triggerHeader, err := json.Marshal(events)
+
+	if err != nil {
+		log.Println("Error when converting events to json: %w", err)
+
+		return
+	}
 
 	if notification.Type == "success" {
 		response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
@@ -77,7 +85,13 @@ func prepareMenuEvent(response http.ResponseWriter, menu *bytes.Buffer) {
 	events := getEventMap(response, "HX-Trigger-After-Swap")
 
 	events["menuEvent"] = template.HTML(menu.String())
-	triggerHeader, _ := json.Marshal(events)
+	triggerHeader, err := json.Marshal(events)
+
+	if err != nil {
+		log.Println("Error when converting events to json: %w", err)
+
+		return
+	}
 
 	response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
 }
@@ -86,6 +100,7 @@ func PrepareLoggedInMenu(req *http.Request, response http.ResponseWriter, userna
 	menu, err := components.GetLoggedInMenu(username, req.URL.Path)
 	if err != nil {
 		log.Printf("Could not generate menu: %s", err)
+
 		return
 	}
 
@@ -96,35 +111,39 @@ func PrepareLoggedOutMenu(response http.ResponseWriter) {
 	menu, err := components.GetLoggedOutMenu()
 	if err != nil {
 		log.Printf("Could not generate menu: %s", err)
+
 		return
 	}
 
 	prepareMenuEvent(response, menu)
 }
 
-func ReturnFullPage(ctx context.Context, req *http.Request, response http.ResponseWriter, content []byte) []byte {
+func ReturnFullPage(_ context.Context, req *http.Request, _ http.ResponseWriter, content []byte) []byte {
 	menu, err := GetMenu(req)
 	if err != nil {
 		log.Printf("Could not get menu: %s", err)
+
 		return content
 	}
 
 	page, err := pages.BuildPage(pages.GetBody(template.HTML(content), template.HTML(menu.Bytes())))
 	if err != nil {
 		log.Printf("Could not build full page: %s", err)
+
 		return content
 	}
 
 	return page
-
 }
 
 func GetMenu(req *http.Request) (*bytes.Buffer, error) {
 	ctx := req.Context()
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+
+	if ok {
 		return components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
-	} else {
-		return components.GetLoggedOutMenu()
 	}
+
+	return components.GetLoggedOutMenu()
 }

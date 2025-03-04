@@ -39,7 +39,7 @@ type UpdateApiaryCommand struct {
 	Location  string
 	HoneyKind string
 	User      *uuid.UUID
-	PublicId  *uuid.UUID
+	PublicID  *uuid.UUID
 }
 
 func (c *UpdateApiaryCommand) Validate() error {
@@ -68,7 +68,7 @@ func CreateApiary(ctx context.Context, command *CreateApiaryCommand) (*models.Ap
 		Location:  command.Location,
 		User:      *command.User,
 		HiveCount: 0,
-		PublicId:  uuid.New(),
+		PublicID:  uuid.New(),
 	}
 
 	err = repositories.CreateApiary(ctx, &apiary)

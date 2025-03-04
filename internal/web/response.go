@@ -2,6 +2,7 @@ package web
 
 import (
 	"akingbee/internal/web/pages"
+	"log"
 	"net/http"
 )
 
@@ -31,4 +32,12 @@ func (response *Response) GetBody() []byte {
 	}
 
 	return response.body
+}
+
+func WriteToResponse(response http.ResponseWriter, bytes []byte) {
+	_, err := response.Write(bytes)
+
+	if err != nil {
+		log.Println("Failed to write to response: %w", err)
+	}
 }

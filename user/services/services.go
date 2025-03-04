@@ -1,16 +1,19 @@
 package services
 
 import (
-	"akingbee/user/jwt"
-	"akingbee/user/models"
-	"akingbee/user/repositories"
 	"context"
 	"errors"
-	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
+
+	"akingbee/user/jwt"
+	"akingbee/user/models"
+	"akingbee/user/repositories"
 )
 
 type CreateUserCommand struct {
@@ -24,6 +27,7 @@ func HashPassword(password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return string(hashedPassword), nil
 }
 
@@ -32,24 +36,37 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+var errNoEmail = errors.New("email has not been provided")
+var errInvalidEmail = errors.New("email is not valid")
+var errNoUsername = errors.New("username has not been provided")
+var errInvalidUsername = errors.New("username is too short")
+var errNoPassword = errors.New("password has not been provided")
+var errInvalidPassword = errors.New("password should have at least 8 characters")
+var errInvalidCredentials = errors.New("credentials are incorrect")
+
 func (c *CreateUserCommand) Validate() error {
 	if len(c.Email) == 0 {
-		return errors.New("Email has not been provided")
+		return errNoEmail
 	}
+
 	if len(c.Username) == 0 {
-		return errors.New("Username has not been provided")
+		return errNoUsername
 	}
+
 	if len(c.Password) == 0 {
-		return errors.New("Password has not been provided")
+		return errNoPassword
 	}
+
 	if len(c.Email) < 3 {
-		return errors.New("Email is not valid")
+		return errInvalidEmail
 	}
+
 	if len(c.Username) < 3 {
-		return errors.New("Username is too short")
+		return errInvalidUsername
 	}
+
 	if len(c.Password) < 8 {
-		return errors.New("Password should have at least 8 characters")
+		return errInvalidPassword
 	}
 
 	return nil
@@ -57,7 +74,7 @@ func (c *CreateUserCommand) Validate() error {
 
 func CreateUser(ctx context.Context, command *CreateUserCommand) (*models.User, error) {
 	credentials := models.Credentials{
-		PublicId: uuid.New(),
+		PublicID: uuid.New(),
 		Username: command.Username,
 		Password: command.Password,
 	}
@@ -65,21 +82,24 @@ func CreateUser(ctx context.Context, command *CreateUserCommand) (*models.User, 
 	err := repositories.CreateCredentials(ctx, &credentials)
 	if err != nil {
 		log.Printf("Could not create credentials: %s", err)
+
 		if strings.Contains(err.Error(), "UNIQUE constraint") {
-			return nil, errors.New("Email or Username already taken")
+			return nil, fmt.Errorf("email or username already taken: %w", err)
 		}
-		return nil, errors.New("Couldn't create the user")
+
+		return nil, fmt.Errorf("couldn't create the user: %w", err)
 	}
 
 	user := models.User{
-		PublicId:    uuid.New(),
+		PublicID:    uuid.New(),
 		Email:       command.Email,
 		Credentials: credentials,
 	}
 	err = repositories.CreateUser(ctx, &user)
+
 	if err != nil {
 		log.Printf("Could not create user: %s", err)
-		return nil, err
+		return nil, fmt.Errorf("could not create user: %w", err)
 	}
 
 	return &user, nil
@@ -90,68 +110,72 @@ func LoginUser(ctx context.Context, username string, password string) (string, e
 
 	if err != nil {
 		log.Printf("Could not get user by username with %s: %s", username, err)
-		return "", errors.New("Incorrect username or password")
+		return "", errInvalidCredentials
 	}
 
-	if CheckPasswordHash(password, user.Credentials.Password) == false {
+	if !CheckPasswordHash(password, user.Credentials.Password) {
 		log.Printf("Could not get user by username with %s: %s", username, err)
-		return "", errors.New("Incorrect username or password")
+		return "", errInvalidCredentials
 	}
 
-	token, err := jwt.CreateToken(user.PublicId.String())
+	token, err := jwt.CreateToken(user.PublicID.String())
 	if err != nil {
 		log.Printf("Could not generate jwt: %s", err)
-		return "", errors.New("Could not login in the user")
+		return "", fmt.Errorf("could not login with the user: %w", err)
 	}
 
 	return token, nil
 }
 
 func ImpersonateUser(ctx context.Context, impersonator *uuid.UUID, impersonatedUsername *uuid.UUID) (string, error) {
-	user, err := repositories.GetUserByPublicId(ctx, impersonatedUsername)
+	user, err := repositories.GetUserByPublicID(ctx, impersonatedUsername)
 
 	if err != nil {
 		log.Printf("Could not get user by username with %s: %s", impersonatedUsername, err)
-		return "", errors.New("Incorrect username or password")
+		return "", errInvalidCredentials
 	}
 
-	subject := impersonator.String() + ":" + user.PublicId.String()
+	subject := impersonator.String() + ":" + user.PublicID.String()
 
 	token, err := jwt.CreateToken(subject)
 	if err != nil {
 		log.Printf("Could not generate jwt: %s", err)
-		return "", errors.New("Could not login in the user")
+		return "", fmt.Errorf("could not login with the user: %w", err)
 	}
 
 	return token, nil
 }
 
-func GetUser(ctx context.Context, userId *uuid.UUID) (*models.User, error) {
-	user, err := repositories.GetUserByPublicId(ctx, userId)
+var errUserNotFound = errors.New("user not found")
+
+func GetUser(ctx context.Context, userID *uuid.UUID) (*models.User, error) {
+	user, err := repositories.GetUserByPublicID(ctx, userID)
 
 	if err != nil {
 		log.Printf("User could not be found: %s", err)
-		return nil, errors.New("User not found")
+		return nil, errUserNotFound
 	}
 
 	return user, nil
 }
 
+var errUserNotAuthenticated = errors.New("user not authenticated")
+
 func AuthenticateUser(req *http.Request) (*uuid.UUID, error) {
 	cookie, err := req.Cookie("akingbeeToken")
 
 	if err != nil {
-		return nil, errors.New("Not authenticated")
+		return nil, errUserNotAuthenticated
 	}
 
 	return jwt.ValidateToken(cookie.Value)
 }
 
 func GetAuthenticateUser(req *http.Request) (*models.User, error) {
-	userPublicId, err := AuthenticateUser(req)
+	userPublicID, err := AuthenticateUser(req)
 	if err != nil {
 		return nil, err
 	}
 
-	return GetUser(req.Context(), userPublicId)
+	return GetUser(req.Context(), userPublicID)
 }

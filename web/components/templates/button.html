@@ -1,6 +1,6 @@
-<div {{if .Url }}hx-{{ .Method }}="{{ .Url }}" {{ end }} {{ if .PushUrl}} hx-push-url="{{ .Url }}" {{ end }}>
+<div {{if .URL }}hx-{{ .Method }}="{{ .URL }}" {{ end }} {{ if .PushURL}} hx-push-url="{{ .URL }}" {{ end }}>
   {{ if .Label }}
-  <button class="button {{ .Type }}" {{ if .FormId }}form="{{ .FormId }}" {{ end }}>
+  <button class="button {{ .Type }}" {{ if .FormID }}form="{{ .FormID }}" {{ end }}>
     {{ .Label }}
   </button>
   {{ else if .Icon }}

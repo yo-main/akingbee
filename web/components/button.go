@@ -10,9 +10,9 @@ var buttonTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "template
 type Button struct {
 	Label   string
 	Type    string
-	FormId  string
+	FormID  string
 	Icon    string
-	Url     string
+	URL     string
 	Method  string
-	PushUrl bool
+	PushURL bool
 }

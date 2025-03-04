@@ -1,16 +1,17 @@
 package pages
 
 import (
-	"akingbee/user/models"
-	userRepository "akingbee/user/repositories"
-	"akingbee/web/components"
-	"akingbee/web/pages"
 	"bytes"
 	"context"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+
+	"akingbee/user/models"
+	userRepository "akingbee/user/repositories"
+	"akingbee/web/components"
+	"akingbee/web/pages"
 )
 
 var adminPageTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/admin.html"))
@@ -42,7 +43,7 @@ func getAdminPage(ctx context.Context) (*bytes.Buffer, error) {
 
 	params := AdminPageBuilder{
 		UserTable: components.Table{
-			Id:          "table-users",
+			ID:          "table-users",
 			IsFullWidth: true,
 			IsStripped:  true,
 			Headers: []components.Header{
@@ -81,7 +82,7 @@ func getUserRow(user *models.User) components.Row {
 							Swap: "none",
 							Button: &components.Button{
 								Icon:   "ninja",
-								Url:    fmt.Sprintf("/user/%s/impersonate", user.PublicId.String()),
+								URL:    fmt.Sprintf("/user/%s/impersonate", user.PublicID.String()),
 								Method: "post",
 							},
 						},

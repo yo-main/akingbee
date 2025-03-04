@@ -15,7 +15,7 @@ type CreateCommentCommand struct {
 	Date         time.Time
 	Type         string
 	Body         string
-	HivePublicId uuid.UUID
+	HivePublicID uuid.UUID
 	User         *uuid.UUID
 }
 
@@ -40,8 +40,8 @@ func CreateComment(ctx context.Context, command *CreateCommentCommand) (*models.
 		Date:         command.Date,
 		Type:         command.Type,
 		Body:         command.Body,
-		HivePublicId: &command.HivePublicId,
-		PublicId:     uuid.New(),
+		HivePublicID: &command.HivePublicID,
+		PublicID:     uuid.New(),
 	}
 
 	err = repositories.CreateComment(ctx, &comment)

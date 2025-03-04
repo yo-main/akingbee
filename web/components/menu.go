@@ -24,15 +24,16 @@ var loggedOutMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates
 var loggedInMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_in.html"))
 
 func GetLoggedInMenu(username string, url string) (*bytes.Buffer, error) {
-	url_parts := strings.Split(url, "/")
+	urlParts := strings.Split(url, "/")
 	params := LoggedInMenuComponent{
 		Username: username,
-		Entity:   url_parts[len(url_parts)-1],
+		Entity:   urlParts[len(urlParts)-1],
 		IsAdmin:  username == "Romain", // :hack:
 	}
 
 	var buffer bytes.Buffer
 	err := loggedInMenu.ExecuteTemplate(&buffer, "navbar_logged_in.html", params)
+
 	return &buffer, err
 }
 

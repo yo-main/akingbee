@@ -35,7 +35,7 @@ type UpdateHiveCommand struct {
 	Name      string
 	Beekeeper string
 	User      *uuid.UUID
-	PublicId  *uuid.UUID
+	PublicID  *uuid.UUID
 }
 
 func (c *UpdateHiveCommand) Validate() error {
@@ -58,7 +58,7 @@ func CreateHive(ctx context.Context, command *CreateHiveCommand) (*models.Hive, 
 		Name:      command.Name,
 		Beekeeper: command.Beekeeper,
 		User:      *command.User,
-		PublicId:  uuid.New(),
+		PublicID:  uuid.New(),
 	}
 
 	if command.Apiary != nil {

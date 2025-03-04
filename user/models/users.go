@@ -5,13 +5,13 @@ import (
 )
 
 type User struct {
-	PublicId    uuid.UUID
+	PublicID    uuid.UUID
 	Email       string
 	Credentials Credentials
 }
 
 type Credentials struct {
-	PublicId uuid.UUID
+	PublicID uuid.UUID
 	Username string
 	Password string
 }

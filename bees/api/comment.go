@@ -1,30 +1,32 @@
 package api
 
 import (
-	"akingbee/bees/pages"
-	"akingbee/bees/repositories"
-	comment_services "akingbee/bees/services/comment"
-	user_models "akingbee/user/models"
-	"akingbee/web"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
+
+	"akingbee/bees/pages"
+	"akingbee/bees/repositories"
+	comment_services "akingbee/bees/services/comment"
+	api_helpers "akingbee/internal/web"
+	user_models "akingbee/user/models"
+	"akingbee/web"
 )
 
 func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
-	if ok == false {
+
+	if !ok {
 		panic("unreacheable")
 	}
 
-	hivePublicId, err := uuid.Parse(req.FormValue("hive_id"))
+	hivePublicID, err := uuid.Parse(req.FormValue("hive_id"))
 	if err != nil {
 		log.Printf("Wrong hive id: %s", req.FormValue("hive_id"))
-		web.PrepareFailedNotification(response, fmt.Sprintf("Invalid hive id: %s", req.FormValue("hive_id")))
+		web.PrepareFailedNotification(response, "Invalid hive id: "+req.FormValue("hive_id"))
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -32,7 +34,7 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
 	if err != nil {
 		log.Printf("Date is not correctly formatted: %s", err)
-		web.PrepareFailedNotification(response, fmt.Sprintf("Date not correctly formatted: %s", req.FormValue("date")))
+		web.PrepareFailedNotification(response, "Date not correctly formatted: "+req.FormValue("date"))
 		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -41,7 +43,7 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 		Date:         commentDate,
 		Type:         req.FormValue("type"),
 		Body:         req.FormValue("body"),
-		HivePublicId: hivePublicId,
+		HivePublicID: hivePublicID,
 	}
 
 	comment, err := comment_services.CreateComment(ctx, &command)
@@ -61,17 +63,18 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "Comment created successfully")
 	response.WriteHeader(http.StatusOK)
-	response.Write(commentRow.Bytes())
+	api_helpers.WriteToResponse(response, commentRow.Bytes())
 }
 
 func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
-	if ok == false {
+
+	if !ok {
 		panic("unreacheable")
 	}
 
-	commentPublicId, err := uuid.Parse(req.PathValue("commentPublicId"))
+	commentPublicID, err := uuid.Parse(req.PathValue("commentPublicId"))
 	if err != nil {
 		log.Printf("The provided comment id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Not Found")
@@ -79,7 +82,7 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	comment, err := repositories.GetComment(ctx, &commentPublicId)
+	comment, err := repositories.GetComment(ctx, &commentPublicID)
 	if err != nil {
 		log.Printf("Comment not found: %s", err)
 		web.PrepareFailedNotification(response, "Comment not found")
@@ -91,6 +94,7 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Printf("Date is not correctly formatted: %s", err)
 	}
+
 	comment.Date = commentDate
 	comment.Type = req.FormValue("type")
 	comment.Body = req.FormValue("body")
@@ -112,17 +116,18 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "Comment updated successfully")
 	response.WriteHeader(http.StatusOK)
-	response.Write(tableRow.Bytes())
+	api_helpers.WriteToResponse(response, tableRow.Bytes())
 }
 
 func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
-	if ok == false {
+
+	if !ok {
 		panic("unreacheable")
 	}
 
-	commentPublicId, err := uuid.Parse(req.PathValue("commentPublicId"))
+	commentPublicID, err := uuid.Parse(req.PathValue("commentPublicId"))
 	if err != nil {
 		log.Printf("The provided comment id is incorrect: %s", err)
 		web.PrepareFailedNotification(response, "Bad request")
@@ -130,7 +135,7 @@ func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	comment, err := repositories.GetComment(ctx, &commentPublicId)
+	comment, err := repositories.GetComment(ctx, &commentPublicID)
 	if err != nil {
 		log.Printf("Comment not found: %s", err)
 		web.PrepareFailedNotification(response, "Comment not found")

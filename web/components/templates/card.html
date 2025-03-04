@@ -1,4 +1,4 @@
-<div class="card" {{ if .Id }}id="{{ .Id }}" {{ end }}>
+<div class="card" {{ if .ID }}id="{{ .ID }}" {{ end }}>
   {{ with .Header }}
   <header class="card-header">
     <p class="card-header-title">{{ .Title }}</p>
@@ -7,7 +7,7 @@
   {{ end }}
 
   {{ with .Content }}
-  <div class="card-content" {{ if .Id }}id="{{ .Id }}" {{ end }}>
+  <div class="card-content" {{ if .ID }}id="{{ .ID }}" {{ end }}>
     {{ with .HorizontalTable }}
     <div class="fixed-grid">
       <div class="grid">

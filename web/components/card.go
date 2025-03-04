@@ -7,10 +7,10 @@ import (
 	"log"
 )
 
-var cardTemplate = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/card.html"))
+var _ = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/card.html"))
 
 type Card struct {
-	Id      string
+	ID      string
 	Header  CardHeader
 	Content CardContent
 	Footer  CardFooter
@@ -42,7 +42,7 @@ type CardFooter struct {
 }
 
 type CardContent struct {
-	Id              string
+	ID              string
 	HorizontalTable HorizontalTable
 }
 

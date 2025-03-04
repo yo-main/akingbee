@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
+
 	"akingbee/entrypoints"
 	"akingbee/internal/database"
 	"akingbee/internal/database/queries/migrations"
-	"context"
 )
 
 func main() {
-	db := database.GetDb()
+	db := database.GetDB()
 	ctx := context.TODO()
 
 	migrations.Upgrade(ctx, db)

@@ -2,23 +2,26 @@ package models
 
 import (
 	"errors"
-	"fmt"
-	"github.com/google/uuid"
+	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
+
+var errSwarmNotFound = errors.New("can't set swarm health if it does not exist")
 
 type Apiary struct {
 	Name      string
 	Location  string
 	HoneyKind string
 	HiveCount int
-	PublicId  uuid.UUID
+	PublicID  uuid.UUID
 	User      uuid.UUID
 }
 
 type Hive struct {
 	Name      string
-	PublicId  uuid.UUID
+	PublicID  uuid.UUID
 	Beekeeper string
 	apiary    *Apiary
 	swarm     *Swarm
@@ -33,12 +36,12 @@ func (hive *Hive) GetSwarm() *Swarm {
 	return hive.swarm
 }
 
-func (hive *Hive) GetApiaryPublicId() string {
+func (hive *Hive) GetApiaryPublicID() string {
 	if hive.apiary == nil {
 		return ""
 	}
 
-	return hive.apiary.PublicId.String()
+	return hive.apiary.PublicID.String()
 }
 
 func (hive *Hive) GetApiaryName() string {
@@ -53,12 +56,12 @@ func (hive *Hive) SetApiary(apiary *Apiary) {
 	hive.apiary = apiary
 }
 
-func (hive *Hive) GetSwarmPublicId() *uuid.UUID {
+func (hive *Hive) GetSwarmPublicID() *uuid.UUID {
 	if hive.swarm == nil {
 		return nil
 	}
 
-	return &hive.swarm.PublicId
+	return &hive.swarm.PublicID
 }
 
 func (hive *Hive) GetSwarmHealth() string {
@@ -74,7 +77,7 @@ func (hive *Hive) GetSwarmYear() string {
 		return ""
 	}
 
-	return fmt.Sprintf("%d", hive.swarm.Year)
+	return strconv.Itoa(hive.swarm.Year)
 }
 
 func (hive *Hive) SetSwarm(swarm *Swarm) {
@@ -83,47 +86,49 @@ func (hive *Hive) SetSwarm(swarm *Swarm) {
 
 func (hive *Hive) SetSwarmHealth(health string) error {
 	if hive.swarm == nil {
-		return errors.New("Can't set swarm health if it does not exist")
+		return errSwarmNotFound
 	}
 
 	hive.swarm.Health = health
+
 	return nil
 }
 
 func (hive *Hive) SetSwarmYear(year int) error {
 	if hive.swarm == nil {
-		return errors.New("Can't set swarm year if it does not exist")
+		return errSwarmNotFound
 	}
 
 	hive.swarm.Year = year
+
 	return nil
 }
 
 type Swarm struct {
-	PublicId uuid.UUID
+	PublicID uuid.UUID
 	Year     int
 	Health   string
 }
 
 func NewSwarm(swarmHealth string) *Swarm {
 	return &Swarm{
-		PublicId: uuid.New(),
+		PublicID: uuid.New(),
 		Health:   swarmHealth,
 		Year:     time.Now().Year(),
 	}
 }
 
 type Comment struct {
-	PublicId     uuid.UUID
+	PublicID     uuid.UUID
 	Date         time.Time
 	Type         string
 	Body         string
-	HivePublicId *uuid.UUID
+	HivePublicID *uuid.UUID
 }
 
 type Harvest struct {
-	PublicId     uuid.UUID
+	PublicID     uuid.UUID
 	Date         time.Time
 	Quantity     int
-	HivePublicId *uuid.UUID
+	HivePublicID *uuid.UUID
 }
