@@ -39,8 +39,9 @@ func AuthenticatedAsAdmin(callback func(response http.ResponseWriter, req *http.
 
 		user, err := user_services.GetUser(req.Context(), &loggedUser.PublicID)
 		if err != nil {
-			log.Printf("User %s not found: %s", loggedUser, err)
+			log.Printf("User %s not found: %s", loggedUser.PublicID, err)
 			response.WriteHeader(http.StatusUnauthorized)
+
 			return
 		}
 
@@ -56,8 +57,9 @@ func OptionallyAuthenticated(callback func(response http.ResponseWriter, req *ht
 		if err == nil {
 			user, err := user_services.GetUser(req.Context(), &loggedUser.PublicID)
 			if err != nil {
-				log.Printf("User %s not found: %s", loggedUser, err)
+				log.Printf("User %s not found: %s", loggedUser.PublicID, err)
 				response.WriteHeader(http.StatusUnauthorized)
+
 				return
 			}
 
