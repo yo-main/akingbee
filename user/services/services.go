@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
-	"akingbee/user/jwt"
+	"akingbee/auth/token"
 	"akingbee/user/models"
 	"akingbee/user/repositories"
 )
@@ -105,20 +105,13 @@ func CreateUser(ctx context.Context, command *CreateUserCommand) (*models.User, 
 	return &user, nil
 }
 
-func LoginUser(ctx context.Context, username string, password string) (string, error) {
-	user, err := repositories.GetUserByUsername(ctx, &username)
-
-	if err != nil {
-		log.Printf("Could not get user by username with %s: %s", username, err)
-		return "", errInvalidCredentials
-	}
-
+func LoginUser(password string, user *models.User) (string, error) {
 	if !CheckPasswordHash(password, user.Credentials.Password) {
-		log.Printf("Could not get user by username with %s: %s", username, err)
+		log.Printf("Failed login for user %s (invalid password)", user.Credentials.Username)
 		return "", errInvalidCredentials
 	}
 
-	token, err := jwt.CreateToken(user.PublicID.String())
+	token, err := token.CreateToken(user.PublicID.String(), user.IsAdmin())
 	if err != nil {
 		log.Printf("Could not generate jwt: %s", err)
 		return "", fmt.Errorf("could not login with the user: %w", err)
@@ -135,9 +128,11 @@ func ImpersonateUser(ctx context.Context, impersonator *uuid.UUID, impersonatedU
 		return "", errInvalidCredentials
 	}
 
-	subject := impersonator.String() + ":" + user.PublicID.String()
-
-	token, err := jwt.CreateToken(subject)
+	token, err := token.CreateTokenWithImpersonator(
+		user.PublicID.String(),
+		user.IsAdmin(),
+		impersonator.String(),
+	)
 	if err != nil {
 		log.Printf("Could not generate jwt: %s", err)
 		return "", fmt.Errorf("could not login with the user: %w", err)
@@ -164,11 +159,17 @@ var errUserNotAuthenticated = errors.New("user not authenticated")
 func AuthenticateUser(req *http.Request) (*uuid.UUID, error) {
 	cookie, err := req.Cookie("akingbeeToken")
 
-	if err != nil {
+	if err != nil || len(cookie.Value) <= 2 {
 		return nil, errUserNotAuthenticated
 	}
 
-	return jwt.ValidateToken(cookie.Value)
+	subject, err := token.ValidateToken(cookie.Value)
+	if err != nil {
+		log.Printf("Invalid token: %s", err)
+		return nil, errUserNotAuthenticated
+	}
+
+	return parseSubject(subject)
 }
 
 func GetAuthenticateUser(req *http.Request) (*models.User, error) {
@@ -178,4 +179,16 @@ func GetAuthenticateUser(req *http.Request) (*models.User, error) {
 	}
 
 	return GetUser(req.Context(), userPublicID)
+}
+
+func parseSubject(subject string) (*uuid.UUID, error) {
+	parts := strings.Split(subject, ":")
+	userToken := parts[len(parts)-1]
+
+	tk, err := uuid.Parse(userToken)
+	if err != nil {
+		return nil, fmt.Errorf("Subject is not an UUID: %s", err)
+	}
+
+	return &tk, nil
 }

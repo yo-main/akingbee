@@ -15,3 +15,7 @@ type Credentials struct {
 	Username string
 	Password string
 }
+
+func (u *User) IsAdmin() bool {
+	return u.Credentials.Username == "Romain"
+}

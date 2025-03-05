@@ -10,6 +10,7 @@ import (
 	"akingbee/internal/htmx"
 	api_helpers "akingbee/internal/web"
 	user_pages "akingbee/user/pages"
+	"akingbee/user/repositories"
 	"akingbee/user/services"
 	"akingbee/web"
 )
@@ -27,11 +28,20 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := services.LoginUser(ctx, username, password)
+	user, err := repositories.GetUserByUsername(ctx, &username)
+	if err != nil {
+		log.Printf("Could not get user by username with %s: %s", username, err)
+		web.PrepareFailedNotification(response, "Invalid Credentials")
+		response.WriteHeader(http.StatusBadRequest)
+
+		return
+	}
+
+	token, err := services.LoginUser(password, user)
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)
-		web.PrepareFailedNotification(response, err.Error())
+		web.PrepareFailedNotification(response, "Invalid Credentials")
 		response.WriteHeader(http.StatusBadRequest)
 
 		return
@@ -47,7 +57,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	}
 
 	htmx.PushURL(response, "/")
-	web.PrepareLoggedInMenu(req, response, username)
+	web.PrepareLoggedInMenu(req, response, user)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
 	api_helpers.WriteToResponse(response, welcomePage.Bytes())
@@ -76,7 +86,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	user, err := services.GetAuthenticateUser(req)
+	loggedInUser, err := services.GetAuthenticateUser(req)
 	if err != nil {
 		log.Printf("Login failure: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -85,7 +95,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := services.ImpersonateUser(ctx, &user.PublicID, &impersonatedUser)
+	token, err := services.ImpersonateUser(ctx, &loggedInUser.PublicID, &impersonatedUser)
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)
@@ -104,7 +114,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	web.PrepareLoggedInMenu(req, response, user.Credentials.Username)
+	web.PrepareLoggedInMenu(req, response, loggedInUser)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
 	api_helpers.WriteToResponse(response, welcomePage.Bytes())

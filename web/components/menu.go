@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"strings"
 
+	"akingbee/user/models"
 	"akingbee/web/pages"
 )
 
@@ -24,12 +25,12 @@ type LoggedOutMenuComponent struct {
 var loggedOutMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_out.html"))
 var loggedInMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_in.html"))
 
-func GetLoggedInMenu(username string, url string) (*bytes.Buffer, error) {
+func GetLoggedInMenu(user *models.User, url string) (*bytes.Buffer, error) {
 	urlParts := strings.Split(url, "/")
 	params := LoggedInMenuComponent{
-		Username: username,
+		Username: user.Credentials.Username,
 		Entity:   urlParts[len(urlParts)-1],
-		IsAdmin:  username == "Romain", // :hack:
+		IsAdmin:  user.IsAdmin(),
 	}
 
 	var buffer bytes.Buffer

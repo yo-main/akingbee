@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"akingbee/user/models"
 	user_models "akingbee/user/models"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -96,8 +97,8 @@ func prepareMenuEvent(response http.ResponseWriter, menu *bytes.Buffer) {
 	response.Header().Set("HX-Trigger-After-Swap", string(triggerHeader))
 }
 
-func PrepareLoggedInMenu(req *http.Request, response http.ResponseWriter, username string) {
-	menu, err := components.GetLoggedInMenu(username, req.URL.Path)
+func PrepareLoggedInMenu(req *http.Request, response http.ResponseWriter, user *models.User) {
+	menu, err := components.GetLoggedInMenu(user, req.URL.Path)
 	if err != nil {
 		log.Printf("Could not generate menu: %s", err)
 
@@ -142,7 +143,7 @@ func GetMenu(req *http.Request) (*bytes.Buffer, error) {
 	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
 
 	if ok {
-		return components.GetLoggedInMenu(user.Credentials.Username, req.URL.Path)
+		return components.GetLoggedInMenu(user, req.URL.Path)
 	}
 
 	return components.GetLoggedOutMenu()
