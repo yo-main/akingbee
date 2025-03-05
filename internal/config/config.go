@@ -7,12 +7,11 @@ import (
 )
 
 func getEnv(key string, defaultValue string) string {
-	value, exist := os.LookupEnv(key)
-	if exist {
+	if value, exist := os.LookupEnv(key); exist {
 		return value
-	} else {
-		return defaultValue
 	}
+
+	return defaultValue
 }
 
 func toInt(value string) int {
@@ -24,5 +23,5 @@ func toInt(value string) int {
 	return valueInt
 }
 
-var APP_PRIVATE_KEY = []byte(getEnv("APP_PRIVATE_KEY", "VERY_PRIVATE_KEY"))
-var JWT_TTL = toInt(getEnv("TOKEN_TTL", "300000"))
+var AppPrivateKey = []byte(getEnv("APP_PRIVATE_KEY", "VERY_PRIVATE_KEY"))
+var TokenTTL = toInt(getEnv("TOKEN_TTL", "300000")) // in nanoseconds

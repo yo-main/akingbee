@@ -14,9 +14,9 @@ import (
 var templatesFS embed.FS
 
 type LoggedInMenuComponent struct {
-	Username string
-	Entity   string
-	IsAdmin  bool
+	Username       string
+	Entity         string
+	CanImpersonate bool
 }
 
 type LoggedOutMenuComponent struct {
@@ -25,12 +25,12 @@ type LoggedOutMenuComponent struct {
 var loggedOutMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_out.html"))
 var loggedInMenu = template.Must(pages.HtmlPage.ParseFS(templatesFS, "templates/navbar_logged_in.html"))
 
-func GetLoggedInMenu(user *models.User, url string) (*bytes.Buffer, error) {
+func GetLoggedInMenu(user *models.AuthenticatedUser, url string) (*bytes.Buffer, error) {
 	urlParts := strings.Split(url, "/")
 	params := LoggedInMenuComponent{
-		Username: user.Credentials.Username,
-		Entity:   urlParts[len(urlParts)-1],
-		IsAdmin:  user.IsAdmin(),
+		Username:       user.Credentials.Username,
+		Entity:         urlParts[len(urlParts)-1],
+		CanImpersonate: user.IsAdmin() || user.Impersonator != nil,
 	}
 
 	var buffer bytes.Buffer

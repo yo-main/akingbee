@@ -34,7 +34,7 @@ type HiveHarvestDetail struct {
 func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if !ok {
 		panic("unreacheable")
 	}
@@ -104,7 +104,7 @@ func HandlePostHarvest(response http.ResponseWriter, req *http.Request) {
 func HandleGetHiveHarvests(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if !ok {
 		panic("unreacheable")
 	}
@@ -242,7 +242,7 @@ func GetHarvestRow(harvest *models.Harvest) *components.Row {
 
 func HandleDeleteHarvest(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
 	if !ok {
 		panic("unreacheable")

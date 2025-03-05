@@ -9,6 +9,7 @@ import (
 
 	"akingbee/internal/htmx"
 	api_helpers "akingbee/internal/web"
+	"akingbee/user/models"
 	user_pages "akingbee/user/pages"
 	"akingbee/user/repositories"
 	"akingbee/user/services"
@@ -57,7 +58,7 @@ func HandlePostLogin(response http.ResponseWriter, req *http.Request) {
 	}
 
 	htmx.PushURL(response, "/")
-	web.PrepareLoggedInMenu(req, response, user)
+	web.PrepareLoggedInMenu(req, response, &models.AuthenticatedUser{User: user, Impersonator: nil})
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Hello %s !", username))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
 	api_helpers.WriteToResponse(response, welcomePage.Bytes())
@@ -86,7 +87,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	loggedInUser, err := services.GetAuthenticateUser(req)
+	loggedUser, err := services.AuthenticateUser(req)
 	if err != nil {
 		log.Printf("Login failure: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -95,7 +96,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token, err := services.ImpersonateUser(ctx, &loggedInUser.PublicID, &impersonatedUser)
+	token, err := services.ImpersonateUser(ctx, &loggedUser.User.PublicID, &impersonatedUser)
 
 	if err != nil {
 		log.Printf("Login failure: %s", err)
@@ -114,7 +115,7 @@ func HandleImpersonate(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	web.PrepareLoggedInMenu(req, response, loggedInUser)
+	web.PrepareLoggedInMenu(req, response, loggedUser)
 	web.PrepareSuccessNotification(response, fmt.Sprintf("Successfully impersonating user %s !", impersonatedUser))
 	response.Header().Set("Set-Cookie", fmt.Sprintf("%s=%s; Path=/; HttpOnly; Secure", "akingbeeToken", token))
 	api_helpers.WriteToResponse(response, welcomePage.Bytes())

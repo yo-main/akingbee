@@ -19,3 +19,8 @@ type Credentials struct {
 func (u *User) IsAdmin() bool {
 	return u.Credentials.Username == "Romain"
 }
+
+type AuthenticatedUser struct {
+	*User
+	Impersonator *uuid.UUID
+}

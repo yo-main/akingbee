@@ -201,7 +201,7 @@ func GetApiaryBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error
 func HandleGetApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
 		apiaryPage, err := GetApiaryBody(ctx, &user.PublicID)
 		if err != nil {
 			log.Printf("Could not get apiry page: %s", err)

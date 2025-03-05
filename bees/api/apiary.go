@@ -17,7 +17,7 @@ import (
 func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
 
 		command := apiary_services.CreateApiaryCommand{
 			Name:      req.FormValue("name"),
@@ -52,7 +52,7 @@ func HandlePostApiary(response http.ResponseWriter, req *http.Request) {
 func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if ok == false {
 		panic("unreacheable")
 	}
@@ -106,7 +106,7 @@ func HandlePutApiary(response http.ResponseWriter, req *http.Request) {
 
 func HandleDeleteApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
 	if ok == false {
 		panic("unreacheable")

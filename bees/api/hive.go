@@ -22,7 +22,7 @@ import (
 func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if ok == false {
 		panic("unreacheable")
 	}
@@ -71,7 +71,7 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 
 func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if ok == false {
 		panic("unreacheable")
 	}
@@ -188,7 +188,7 @@ func HandlePutHive(response http.ResponseWriter, req *http.Request) {
 
 func HandleDeleteHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	user, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if ok == false {
 		panic("unreacheable")
 	}

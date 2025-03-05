@@ -299,7 +299,7 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
 		hiveDetailPage, err := GetHiveDetailBody(ctx, &hivePublicID, &user.PublicID)
 		if err != nil {
 			log.Printf("Could not get hive detail page: %s", err)
@@ -334,7 +334,7 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
 		if hive.User != user.PublicID {
 			web.PrepareFailedNotification(response, "Forbidden")
 			response.WriteHeader(http.StatusForbidden)

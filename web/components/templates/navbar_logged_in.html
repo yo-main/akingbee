@@ -15,7 +15,7 @@
         hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
 
         Ruchers</a>
-      {{ if .IsAdmin }}
+      {{ if .CanImpersonate }}
       <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "admin" }}is-selected{{ end }}'
         hx-get="/admin" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/admin"
         hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-selected'); this.classList.add('is-selected')">

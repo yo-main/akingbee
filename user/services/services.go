@@ -155,40 +155,46 @@ func GetUser(ctx context.Context, userID *uuid.UUID) (*models.User, error) {
 }
 
 var errUserNotAuthenticated = errors.New("user not authenticated")
+var errIncorrectToken = errors.New("token is not a user token")
 
-func AuthenticateUser(req *http.Request) (*uuid.UUID, error) {
+func AuthenticateUser(req *http.Request) (*models.AuthenticatedUser, error) {
 	cookie, err := req.Cookie("akingbeeToken")
 
 	if err != nil || len(cookie.Value) <= 2 {
 		return nil, errUserNotAuthenticated
 	}
 
-	subject, err := token.ValidateToken(cookie.Value)
+	token, err := token.ValidateToken(cookie.Value)
 	if err != nil {
 		log.Printf("Invalid token: %s", err)
 		return nil, errUserNotAuthenticated
 	}
 
-	return parseSubject(subject)
-}
-
-func GetAuthenticateUser(req *http.Request) (*models.User, error) {
-	userPublicID, err := AuthenticateUser(req)
+	userPublicID, err := uuid.Parse(token.Subject)
 	if err != nil {
-		return nil, err
+		log.Printf("Invalid token: %s", err)
+		return nil, errIncorrectToken
 	}
 
-	return GetUser(req.Context(), userPublicID)
-}
+	var impersonatorPublicId *uuid.UUID
 
-func parseSubject(subject string) (*uuid.UUID, error) {
-	parts := strings.Split(subject, ":")
-	userToken := parts[len(parts)-1]
+	if token.Impersonator != "" {
+		publicID, err := uuid.Parse(token.Impersonator)
+		if err != nil {
+			log.Printf("Invalid token: %s", err)
+			return nil, errIncorrectToken
+		}
 
-	tk, err := uuid.Parse(userToken)
-	if err != nil {
-		return nil, fmt.Errorf("Subject is not an UUID: %s", err)
+		impersonatorPublicId = &publicID
 	}
 
-	return &tk, nil
+	user, err := GetUser(req.Context(), &userPublicID)
+	if err != nil {
+		return nil, errUserNotFound
+	}
+
+	return &models.AuthenticatedUser{
+		User:         user,
+		Impersonator: impersonatorPublicId,
+	}, nil
 }

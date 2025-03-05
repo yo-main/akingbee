@@ -9,9 +9,15 @@ import (
 	"akingbee/internal/config"
 )
 
+type Token struct {
+	Subject      string
+	IsAdmin      bool
+	Impersonator string
+}
+
 func signToken(claim Claim) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	jwt, err := token.SignedString(config.APP_PRIVATE_KEY)
+	jwt, err := token.SignedString(config.AppPrivateKey)
 
 	if err != nil {
 		return "", err
@@ -23,7 +29,7 @@ func signToken(claim Claim) (string, error) {
 func getStandardClaim(subject string) jwt.StandardClaims {
 	return jwt.StandardClaims{
 		Audience:  "all",
-		ExpiresAt: time.Now().UTC().Add(time.Second * time.Duration(config.JWT_TTL)).Unix(),
+		ExpiresAt: time.Now().UTC().Add(time.Second * time.Duration(config.TokenTTL)).Unix(),
 		Issuer:    "akingbee",
 		Subject:   subject,
 		Id:        "akingbee",
@@ -51,21 +57,25 @@ func CreateTokenWithImpersonator(subject string, isAdmin bool, impersonator stri
 	return signToken(token)
 }
 
-func ValidateToken(tokenString string) (string, error) {
+func ValidateToken(tokenString string) (*Token, error) {
 	claim := Claim{}
 	getKeyFunction := func(_ *jwt.Token) (interface{}, error) {
-		return config.APP_PRIVATE_KEY, nil
+		return config.AppPrivateKey, nil
 	}
 	token, err := jwt.ParseWithClaims(tokenString, &claim, getKeyFunction)
 
 	if err != nil {
-		return "", fmt.Errorf("JWT could not be parsed: %w", err)
+		return nil, fmt.Errorf("JWT could not be parsed: %w", err)
 	}
 
 	err = token.Claims.Valid()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return claim.Subject, nil
+	return &Token{
+		Subject:      claim.Subject,
+		IsAdmin:      claim.IsAdmin,
+		Impersonator: claim.Impersonator,
+	}, nil
 }

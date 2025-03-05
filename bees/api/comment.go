@@ -17,7 +17,7 @@ import (
 
 func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
 	if !ok {
 		panic("unreacheable")
@@ -68,7 +68,7 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 
 func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
 	if !ok {
 		panic("unreacheable")
@@ -121,7 +121,7 @@ func HandlePutComment(response http.ResponseWriter, req *http.Request) {
 
 func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	_, ok := ctx.Value("authenticatedUser").(*user_models.User)
+	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
 	if !ok {
 		panic("unreacheable")

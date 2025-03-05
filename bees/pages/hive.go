@@ -323,7 +323,7 @@ func GetHivesBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error)
 func HandleGetHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.User); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
 		hivePage, err := GetHivesBody(ctx, &user.PublicID)
 		if err != nil {
 			log.Printf("Could not get hive page: %s", err)
