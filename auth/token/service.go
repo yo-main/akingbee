@@ -53,10 +53,13 @@ func CreateTokenWithImpersonator(subject string, isAdmin bool, impersonator stri
 
 func ValidateToken(tokenString string) (string, error) {
 	claim := Claim{}
-	token, err := jwt.ParseWithClaims(tokenString, &claim, func(t *jwt.Token) (interface{}, error) { return config.APP_PRIVATE_KEY, nil })
+	getKeyFunction := func(_ *jwt.Token) (interface{}, error) {
+		return config.APP_PRIVATE_KEY, nil
+	}
+	token, err := jwt.ParseWithClaims(tokenString, &claim, getKeyFunction)
 
 	if err != nil {
-		return "", fmt.Errorf("JWT could not be parsed: %s\n%s", err, tokenString)
+		return "", fmt.Errorf("JWT could not be parsed: %w", err)
 	}
 
 	err = token.Claims.Valid()
