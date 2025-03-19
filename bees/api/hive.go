@@ -23,7 +23,7 @@ func HandlePostHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 
 	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
-	if ok == false {
+	if !ok {
 		panic("unreacheable")
 	}
 

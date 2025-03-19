@@ -90,4 +90,5 @@ func HtmxMiddleware(callback func(response http.ResponseWriter, req *http.Reques
 
 func HandleNotFound(response http.ResponseWriter, req *http.Request) {
 	WriteToResponse(response, pages.GetNotFoundContent().Bytes())
+	response.WriteHeader(http.StatusNotFound)
 }
