@@ -24,12 +24,6 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	}
 
 	hivePublicID, err := uuid.Parse(req.FormValue("hive_id"))
-	if err != nil {
-		log.Printf("Wrong hive id: %s", req.FormValue("hive_id"))
-		web.PrepareFailedNotification(response, "Invalid hive id: "+req.FormValue("hive_id"))
-		response.WriteHeader(http.StatusBadRequest)
-		return
-	}
 
 	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
 	if err != nil {
@@ -43,7 +37,7 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 		Date:         commentDate,
 		Type:         req.FormValue("type"),
 		Body:         req.FormValue("body"),
-		HivePublicID: hivePublicID,
+		HivePublicID: &hivePublicID,
 	}
 
 	comment, err := comment_services.CreateComment(ctx, &command)
