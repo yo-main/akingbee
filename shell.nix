@@ -1,6 +1,6 @@
 let
   unstable = import 
-    (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/71e91c409d1e654808b2621f28a327acfdad8dc2")
+    (builtins.fetchTarball "https://github.com/nixos/nixpkgs/tarball/063dece00c5a77e4a0ea24e5e5a5bd75232806f8")
     # reuse the current configuration
     { config = {allowUnfree=true;}; };
 in 

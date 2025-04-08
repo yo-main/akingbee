@@ -1,29 +1,44 @@
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
     - depguard
-    - gci
-    - gofumpt
+    - dupl
     - exhaustruct
-    - wrapcheck
-    - mnd
-    - gomnd
-    - gochecknoglobals
-    - dupl 
     - funlen
+    - gochecknoglobals
+    - mnd
+    - sqlclosecheck
     - testpackage
-    - sqlclosecheck # broken
-    - execinquery # broken
-
-linters-settings:
-  gosec:
-    excludes:
-      - G101 # Potential hardcoded credentials
-      - G201 # SQL query construction using format string
-      - G203 # used ethod does not handle autoescape HTML (cross site scripting vulnerability)
-
-  wsl:
-    allow-cuddle-declarations: true
-
-  nlreturn:
-    block-size: 2
+    - wrapcheck
+  settings:
+    gosec:
+      excludes:
+        - G101
+        - G201
+        - G203
+    nlreturn:
+      block-size: 2
+    wsl:
+      allow-cuddle-declarations: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
