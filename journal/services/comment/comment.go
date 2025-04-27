@@ -1,8 +1,8 @@
 package comment
 
 import (
-	"akingbee/bees/models"
-	"akingbee/bees/repositories"
+	"akingbee/journal/models"
+	"akingbee/journal/repositories"
 	"context"
 	"errors"
 	"log"

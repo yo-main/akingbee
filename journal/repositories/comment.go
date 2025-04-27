@@ -7,8 +7,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"akingbee/bees/models"
 	"akingbee/internal/database"
+	"akingbee/journal/models"
 )
 
 const queryCreateComment = `

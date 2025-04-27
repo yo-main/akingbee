@@ -118,14 +118,6 @@ func NewSwarm(swarmHealth string) *Swarm {
 	}
 }
 
-type Comment struct {
-	PublicID     uuid.UUID
-	Date         time.Time
-	Type         string
-	Body         string
-	HivePublicID *uuid.UUID
-}
-
 type Harvest struct {
 	PublicID     uuid.UUID
 	Date         time.Time

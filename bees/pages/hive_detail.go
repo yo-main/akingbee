@@ -9,10 +9,12 @@ import (
 	"net/http"
 	"time"
 
-	"akingbee/bees/models"
-	"akingbee/bees/repositories"
+	models_bees "akingbee/bees/models"
+	repositories_bees "akingbee/bees/repositories"
 	api_helpers "akingbee/internal/web"
-	user_models "akingbee/user/models"
+	models_journal "akingbee/journal/models"
+	repositories_journal "akingbee/journal/repositories"
+	models_user "akingbee/user/models"
 	"akingbee/web"
 	"akingbee/web/components"
 	"akingbee/web/pages"
@@ -34,7 +36,7 @@ type commentDetailParameter struct {
 	Commentaries      components.Table
 }
 
-func GetCommentRow(comment *models.Comment) *components.Row {
+func GetCommentRow(comment *models_journal.Comment) *components.Row {
 	params := components.Row{
 		Cells: []components.Cell{
 			{
@@ -113,11 +115,11 @@ func GetCommentRow(comment *models.Comment) *components.Row {
 	return &params
 }
 
-func GetHiveDetailCard(ctx context.Context, userID *uuid.UUID, hive *models.Hive) components.Card {
+func GetHiveDetailCard(ctx context.Context, userID *uuid.UUID, hive *models_bees.Hive) components.Card {
 	apiaryName := hive.GetApiaryName()
-	apiaries, _ := repositories.GetApiaries(ctx, userID)
-	swarmHealths := repositories.GetSwarmValues(ctx, "health", userID)
-	beekeepers := repositories.GetHiveValues(ctx, "beekeeper", userID)
+	apiaries, _ := repositories_bees.GetApiaries(ctx, userID)
+	swarmHealths := repositories_bees.GetSwarmValues(ctx, "health", userID)
+	beekeepers := repositories_bees.GetHiveValues(ctx, "beekeeper", userID)
 
 	return components.Card{
 		ID: "card-hive-detail",
@@ -169,9 +171,9 @@ func GetHiveDetailCard(ctx context.Context, userID *uuid.UUID, hive *models.Hive
 	}
 }
 
-func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailParameter, error) {
+func GetCommentSection(ctx context.Context, hive *models_bees.Hive) (*commentDetailParameter, error) {
 
-	comments, err := repositories.GetComments(ctx, &hive.PublicID)
+	comments, err := repositories_journal.GetComments(ctx, &hive.PublicID)
 	if err != nil {
 		log.Printf("Could not get comments: %s", err)
 		return nil, err
@@ -259,7 +261,7 @@ func GetCommentSection(ctx context.Context, hive *models.Hive) (*commentDetailPa
 }
 
 func GetHiveDetailBody(ctx context.Context, hivePublicID *uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
-	hive, err := repositories.GetHive(ctx, hivePublicID)
+	hive, err := repositories_bees.GetHive(ctx, hivePublicID)
 	if err != nil {
 		log.Printf("Could not load hive: %s", err)
 		return nil, err
@@ -299,7 +301,7 @@ func HandleGetHiveDetail(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*models_user.AuthenticatedUser); ok {
 		hiveDetailPage, err := GetHiveDetailBody(ctx, &hivePublicID, &user.PublicID)
 		if err != nil {
 			log.Printf("Could not get hive detail page: %s", err)
@@ -326,7 +328,7 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	hive, err := repositories.GetHive(ctx, &hivePublicID)
+	hive, err := repositories_bees.GetHive(ctx, &hivePublicID)
 	if err != nil {
 		web.PrepareFailedNotification(response, "Not Found")
 		response.WriteHeader(http.StatusNotFound)
@@ -334,7 +336,7 @@ func HandleGetHiveComments(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser); ok {
+	if user, ok := ctx.Value("authenticatedUser").(*models_user.AuthenticatedUser); ok {
 		if hive.User != user.PublicID {
 			web.PrepareFailedNotification(response, "Forbidden")
 			response.WriteHeader(http.StatusForbidden)

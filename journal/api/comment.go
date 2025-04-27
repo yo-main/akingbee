@@ -8,9 +8,9 @@ import (
 	"github.com/google/uuid"
 
 	"akingbee/bees/pages"
-	"akingbee/bees/repositories"
-	comment_services "akingbee/bees/services/comment"
 	api_helpers "akingbee/internal/web"
+	"akingbee/journal/repositories"
+	comment_services "akingbee/journal/services/comment"
 	user_models "akingbee/user/models"
 	"akingbee/web"
 )

@@ -7,6 +7,7 @@ import (
 	api_bees "akingbee/bees/api"
 	pages_bees "akingbee/bees/pages"
 	"akingbee/internal/web"
+	api_journal "akingbee/journal/api"
 	api_user "akingbee/user/api"
 	pages_user "akingbee/user/pages"
 )
@@ -46,9 +47,9 @@ func ApiServe() {
 	mux.HandleFunc("POST /hive/{hivePublicId}/harvests", web.Authenticated(web.HtmxMiddleware(api_bees.HandlePostHarvest)))
 	mux.HandleFunc("DELETE /hive/{hivePublicId}/harvests/{harvestPublicId}", web.Authenticated(web.HtmxMiddleware(api_bees.HandleDeleteHarvest)))
 
-	mux.HandleFunc("POST /comment", web.Authenticated(api_bees.HandlePostComment))
-	mux.HandleFunc("PUT /comment/{commentPublicId}", web.Authenticated(api_bees.HandlePutComment))
-	mux.HandleFunc("DELETE /comment/{commentPublicId}", web.Authenticated(api_bees.HandleDeleteComment))
+	mux.HandleFunc("POST /comment", web.Authenticated(api_journal.HandlePostComment))
+	mux.HandleFunc("PUT /comment/{commentPublicId}", web.Authenticated(api_journal.HandlePutComment))
+	mux.HandleFunc("DELETE /comment/{commentPublicId}", web.Authenticated(api_journal.HandleDeleteComment))
 
 	mux.HandleFunc("/", web.OptionallyAuthenticated(web.HtmxMiddleware(web.HandleNotFound)))
 
