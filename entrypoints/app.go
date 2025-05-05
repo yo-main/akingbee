@@ -47,6 +47,8 @@ func ApiServe() {
 	mux.HandleFunc("POST /hive/{hivePublicId}/harvests", web.Authenticated(web.HtmxMiddleware(api_bees.HandlePostHarvest)))
 	mux.HandleFunc("DELETE /hive/{hivePublicId}/harvests/{harvestPublicId}", web.Authenticated(web.HtmxMiddleware(api_bees.HandleDeleteHarvest)))
 
+	mux.HandleFunc("GET /overview", web.Authenticated(web.HtmxMiddleware(api_journal.HandleGetOverview)))
+
 	mux.HandleFunc("POST /comment", web.Authenticated(api_journal.HandlePostComment))
 	mux.HandleFunc("PUT /comment/{commentPublicId}", web.Authenticated(api_journal.HandlePutComment))
 	mux.HandleFunc("DELETE /comment/{commentPublicId}", web.Authenticated(api_journal.HandleDeleteComment))
