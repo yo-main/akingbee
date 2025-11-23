@@ -23,9 +23,9 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 	err := pages.HtmlPage.ExecuteTemplate(&overviewPage, "overview.html", nil)
 
 	if err != nil {
-		log.Printf("Failed to build apiary page: %s", err)
+		log.Printf("Failed to build overview page: %s", err)
 
-		return nil, fmt.Errorf("failed to build apiary: %w", err)
+		return nil, fmt.Errorf("failed to build overview: %w", err)
 	}
 
 	return &overviewPage, nil
