@@ -11,6 +11,7 @@ import (
 	"akingbee/internal/database/queries/migrations/M0004"
 	"akingbee/internal/database/queries/migrations/M0005"
 	"akingbee/internal/database/queries/migrations/M0006"
+	"akingbee/internal/database/queries/migrations/M0007"
 )
 
 func Upgrade(ctx context.Context, dbClient *sql.DB) {
@@ -26,11 +27,13 @@ func Upgrade(ctx context.Context, dbClient *sql.DB) {
 	execUpgrade(M0004.Upgrade, ctx, dbClient, &currentVersion, 4)
 	execUpgrade(M0005.Upgrade, ctx, dbClient, &currentVersion, 5)
 	execUpgrade(M0006.Upgrade, ctx, dbClient, &currentVersion, 6)
+	execUpgrade(M0007.Upgrade, ctx, dbClient, &currentVersion, 7)
 }
 
 func Downgrade(ctx context.Context, dbClient *sql.DB) {
 	currentVersion := getCurrentVersion(ctx, dbClient)
 
+	execDowngrade(M0007.Downgrade, ctx, dbClient, &currentVersion, 6)
 	execDowngrade(M0006.Downgrade, ctx, dbClient, &currentVersion, 5)
 	execDowngrade(M0005.Downgrade, ctx, dbClient, &currentVersion, 4)
 	execDowngrade(M0004.Downgrade, ctx, dbClient, &currentVersion, 3)
