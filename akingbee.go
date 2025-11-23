@@ -10,7 +10,7 @@ import (
 
 func main() {
 	db := database.GetDB()
-	ctx := context.TODO()
+	ctx := context.Background()
 
 	migrations.Upgrade(ctx, db)
 
