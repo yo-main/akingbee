@@ -1,18 +1,22 @@
 <td>
-  {{ if .Label }} {{ .Label }} {{end}}
-  {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
-  <!-- {{ with .UpdateStrategy }}{{ template "update_strategy.html" . }}{{ end }} -->
-  {{ if .GroupedCells }}
   <nav class="level">
     <div class="level-left">
+
+      {{ if .Image.File }} <div style="color:{{ .Image.Color }};"> {{ .Image.File }} </div>{{ end }}
+      {{ if .Label }} {{ .Label }} {{end}}
+      {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
+
+      {{ if .GroupedCells }}
       {{ range .GroupedCells }}
       <div class="level-item">
         {{ with .UpdateStrategy }}{{ template "update_strategy.html" . }}{{ end }}
+        {{ if .Image.File }} <div style="color:{{ .Image.Color }};"> {{ .Image.File }} </div> {{ end }}
         {{ if .Label }} {{ .Label }} {{end}}
         {{ if .HTMLContent }} {{ .HTMLContent }} {{end}}
       </div>
       {{ end }}
+      {{ end }}
+
     </div>
   </nav>
-  {{ end }}
 </td>

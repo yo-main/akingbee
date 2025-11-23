@@ -43,7 +43,14 @@ type ColumnSize struct {
 	Style string
 }
 
+type ImageCell struct {
+	File  template.HTML
+	Color string
+	Size  string
+}
+
 type Cell struct {
+	Image          ImageCell
 	Label          string
 	HTMLContent    template.HTML
 	UpdateStrategy *UpdateStrategy

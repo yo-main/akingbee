@@ -72,6 +72,28 @@ func (hive *Hive) GetSwarmHealth() string {
 	return hive.swarm.Health
 }
 
+func (hive *Hive) GetQueenColor() string {
+	if hive.swarm == nil {
+		return ""
+	}
+
+	var color string
+	switch hive.swarm.Year % 10 {
+	case 0, 5:
+		color = "#34aeeb" // blue
+	case 1, 6:
+		color = "#bfbfbf" // white
+	case 2, 7:
+		color = "#e8eb46" // yellow
+	case 3, 8:
+		color = "#eb746a" // red
+	case 4, 9:
+		color = "#64d149" // green
+	}
+
+	return color
+}
+
 func (hive *Hive) GetSwarmYear() string {
 	if hive.swarm == nil {
 		return ""

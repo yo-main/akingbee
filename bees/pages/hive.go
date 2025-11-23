@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/google/uuid"
 
@@ -19,6 +20,7 @@ import (
 )
 
 var _ = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/hive.html"))
+var svgQueen, _ = os.ReadFile("web/resources/public/queen.svg")
 
 type hivePageParameter struct {
 	CreateHiveModal components.UpdateStrategy
@@ -116,7 +118,10 @@ func GetHiveTableRow(
 		Cells: []components.Cell{
 			{Label: hive.Name},
 			{Label: hive.Beekeeper},
-			{Label: swarmHealth},
+			{Label: swarmHealth, Image: components.ImageCell{
+				File:  template.HTML(svgQueen),
+				Color: hive.GetQueenColor(),
+			}},
 			{Label: apiaryName},
 			{
 				GroupedCells: []components.Cell{

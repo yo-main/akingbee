@@ -38,7 +38,7 @@ func UpdateApiary(ctx context.Context, apiary *models.Apiary) error {
 	db := database.GetDB()
 	_, err := db.ExecContext(ctx, queryUpdateApiary, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.PublicID)
 
-	return fmt.Errorf("could not update apiary: %w", err)
+	return err
 }
 
 const queryDeleteApiary = `
