@@ -13,13 +13,14 @@ import (
 
 const queryCreateComment = `
 	INSERT INTO COMMENT (
-		public_id, date, type, body, hive_id
+		public_id, date, type, body, hive_id, apiary_id
 	) VALUES (
 		$1, 
 		$2,
 		$3,
 		$4,
-		(SELECT HIVE.ID FROM HIVE WHERE HIVE.PUBLIC_ID=$5)
+		(SELECT HIVE.ID FROM HIVE WHERE HIVE.PUBLIC_ID=$5),
+		(SELECT APIARY.ID FROM APIARY WHERE APIARY.PUBLIC_ID=$6)
 	)
 `
 
@@ -34,6 +35,7 @@ func CreateComment(ctx context.Context, comment *models.Comment) error {
 		comment.Type,
 		comment.Body,
 		comment.HivePublicID,
+		comment.ApiaryPublicID,
 	)
 
 	return err
@@ -45,9 +47,11 @@ const queryGetComment = `
 		DATE,
 		TYPE,
 		BODY,
-		HIVE.PUBLIC_ID
+		HIVE.PUBLIC_ID AS HIVE_PUBLIC_ID,
+		APIARY.PUBLIC_ID AS APIARY_PUBLIC_ID
 	FROM COMMENT
-	JOIN HIVE ON COMMENT.HIVE_ID=HIVE.ID
+	LEFT JOIN HIVE ON COMMENT.HIVE_ID=HIVE.ID
+	LEFT JOIN APIARY ON COMMENT.APIARY_ID=APIARY.ID
 `
 
 func GetComment(ctx context.Context, commentPublicID *uuid.UUID) (*models.Comment, error) {
@@ -69,6 +73,7 @@ func GetComment(ctx context.Context, commentPublicID *uuid.UUID) (*models.Commen
 			&comment.Type,
 			&comment.Body,
 			&comment.HivePublicID,
+			&comment.ApiaryPublicID,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("could not build Comment from result: %w", err)
@@ -104,6 +109,7 @@ func GetComments(ctx context.Context, hivePublicID *uuid.UUID) ([]models.Comment
 			&comment.Type,
 			&comment.Body,
 			&comment.HivePublicID,
+			&comment.ApiaryPublicID,
 		)
 
 		if err != nil {

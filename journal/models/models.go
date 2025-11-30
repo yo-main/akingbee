@@ -7,9 +7,10 @@ import (
 )
 
 type Comment struct {
-	PublicID     uuid.UUID
-	Date         time.Time
-	Type         string
-	Body         string
-	HivePublicID *uuid.UUID
+	PublicID       uuid.UUID
+	Date           time.Time
+	Type           string
+	Body           string
+	HivePublicID   *uuid.UUID
+	ApiaryPublicID *uuid.UUID
 }

@@ -12,11 +12,12 @@ import (
 )
 
 type CreateCommentCommand struct {
-	Date         time.Time
-	Type         string
-	Body         string
-	HivePublicID *uuid.UUID
-	User         *uuid.UUID
+	Date           time.Time
+	Type           string
+	Body           string
+	HivePublicID   *uuid.UUID
+	ApiaryPublicID *uuid.UUID
+	User           *uuid.UUID
 }
 
 func (c *CreateCommentCommand) Validate() error {
@@ -37,11 +38,12 @@ func CreateComment(ctx context.Context, command *CreateCommentCommand) (*models.
 	}
 
 	comment := models.Comment{
-		Date:         command.Date,
-		Type:         command.Type,
-		Body:         command.Body,
-		HivePublicID: command.HivePublicID,
-		PublicID:     uuid.New(),
+		Date:           command.Date,
+		Type:           command.Type,
+		Body:           command.Body,
+		HivePublicID:   command.HivePublicID,
+		ApiaryPublicID: command.ApiaryPublicID,
+		PublicID:       uuid.New(),
 	}
 
 	err = repositories.CreateComment(ctx, &comment)

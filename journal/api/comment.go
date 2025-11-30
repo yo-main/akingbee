@@ -23,7 +23,32 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 		panic("unreacheable")
 	}
 
-	hivePublicID, err := uuid.Parse(req.FormValue("hive_id"))
+	var err error
+	var hivePublicID *uuid.UUID
+	if value := req.FormValue("hive_id"); value != "" {
+		publicID, err := uuid.Parse(req.FormValue("hive_id"))
+		if err != nil {
+			log.Printf("Incorrect UUID: %s", err)
+			web.PrepareFailedNotification(response, "Incorrect hive id: "+req.FormValue("hive_id"))
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		hivePublicID = &publicID
+
+	}
+
+	var apiaryPublicID *uuid.UUID
+	if value := req.FormValue("apiary_id"); value != "" {
+		publicID, err := uuid.Parse(req.FormValue("apiary_id"))
+		if err != nil {
+			log.Printf("Incorrect UUID: %s", err)
+			web.PrepareFailedNotification(response, "Incorrect apiary id: "+req.FormValue("apiary_id"))
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		apiaryPublicID = &publicID
+
+	}
 
 	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
 	if err != nil {
@@ -34,10 +59,11 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	}
 
 	command := comment_services.CreateCommentCommand{
-		Date:         commentDate,
-		Type:         req.FormValue("type"),
-		Body:         req.FormValue("body"),
-		HivePublicID: &hivePublicID,
+		Date:           commentDate,
+		Type:           req.FormValue("type"),
+		Body:           req.FormValue("body"),
+		HivePublicID:   hivePublicID,
+		ApiaryPublicID: apiaryPublicID,
 	}
 
 	comment, err := comment_services.CreateComment(ctx, &command)
