@@ -7,40 +7,32 @@
         <hr>
       </div>
       <div class="columns">
+        {{ range .Apiaries }}
         <div class="column">
           <div class="card">
             <div class="card-header">
-              <p class="card-header-title">Apiary #1</p>
+              <p class="card-header-title">Apiary {{ .ApiaryName }}</p>
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
                   <img src="/public/icon-angle-down.svg">
                 </span>
               </button>
             </div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <p class="card-header-title">Apiary #2</p>
-              <button class="card-header-icon" aria-label="more options">
-                <span class="icon">
-                  <img src="/public/icon-angle-down.svg">
-                </span>
-              </button>
-            </div>
+            {{ if .CommentBody }}
             <div class="card-content">
               <div class="content">
-                Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec
-                id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus
-                et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis
-                consectetur purus sit amet fermentum.
+                aaze
+                {{ .CommentBody }}
               </div>
             </div>
+            {{ end }}
             <footer class="card-footer">
               <a href="#" class="card-footer-item">Nouveau</a>
               <a href="#" class="card-footer-item">Editer</a>
             </footer>
           </div>
         </div>
+        {{ end }}
       </div>
   </section>
 </div>

@@ -150,3 +150,56 @@ func DeleteComment(ctx context.Context, comment *models.Comment) error {
 
 	return err
 }
+
+const queryListApiariesWithComment = `
+	SELECT 
+		APIARY.PUBLIC_ID AS APIARY_PUBLIC_ID,
+		APIARY.NAME AS APIARY_NAME,
+		USERS.PUBLIC_ID AS USER_PUBLIC_ID, 
+		COMMENT.PUBLIC_ID AS COMMENT_PUBLIC_ID,
+		COALESCE(COMMENT.BODY, '') AS COMMENT_BODY,
+		COMMENT.DATE AS COMMENT_DATE,
+		COALESCE(COMMENT.TYPE, '') AS COMMENT_TYPE
+	FROM APIARY
+	JOIN USERS ON USERS.ID=APIARY.USER_ID
+	LEFT JOIN COMMENT ON COMMENT.APIARY_ID=APIARY.ID
+	WHERE USERS.PUBLIC_ID = $1
+`
+
+func ListApiariesWithComment(ctx context.Context, userPublicId *uuid.UUID) ([]models.ApiaryWithComment, error) {
+	db := database.GetDB()
+	rows, err := db.QueryContext(ctx, queryListApiariesWithComment, userPublicId)
+
+	if err != nil {
+		return nil, fmt.Errorf("error executing query: %w", err)
+	}
+
+	defer database.CloseRows(rows)
+
+	var comments []models.ApiaryWithComment
+
+	for rows.Next() {
+		var comment models.ApiaryWithComment
+
+		err := rows.Scan(
+			&comment.ApiaryPublicID,
+			&comment.ApiaryName,
+			&comment.ApiaryUser,
+			&comment.CommentPublicId,
+			&comment.CommentBody,
+			&comment.CommentDate,
+			&comment.CommentType,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("could not build ApiaryWithComment from result: %w", err)
+		}
+
+		comments = append(comments, comment)
+	}
+
+	if rows.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", rows.Err())
+	}
+
+	return comments, nil
+}

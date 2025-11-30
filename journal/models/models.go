@@ -14,3 +14,13 @@ type Comment struct {
 	HivePublicID   *uuid.UUID
 	ApiaryPublicID *uuid.UUID
 }
+
+type ApiaryWithComment struct {
+	CommentPublicId *uuid.UUID
+	CommentDate     *time.Time
+	CommentBody     string
+	CommentType     string
+	ApiaryName      string
+	ApiaryPublicID  uuid.UUID
+	ApiaryUser      uuid.UUID
+}
