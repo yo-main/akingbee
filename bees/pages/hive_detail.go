@@ -70,7 +70,7 @@ func GetCommentRow(comment *models_journal.Comment) *components.Row {
 								Form: components.Form{
 									ID:     fmt.Sprintf("comment-edit-%s", comment.PublicID),
 									Method: "put",
-									URL:    fmt.Sprintf("/comment/%s", comment.PublicID),
+									URL:    fmt.Sprintf("/hive/%s/comment/%s", comment.HivePublicID, comment.PublicID),
 									Inputs: []components.Input{
 										{
 											GroupedInput: []components.Input{
@@ -201,7 +201,7 @@ func GetCommentSection(ctx context.Context, hive *models_bees.Hive) (*commentDet
 				Form: components.Form{
 					ID:     "create-comment",
 					Method: "post",
-					URL:    "/comment",
+					URL:    fmt.Sprintf("/hive/%s/comments", hive.PublicID.String()),
 					Inputs: []components.Input{
 						{
 							GroupedInput: []components.Input{

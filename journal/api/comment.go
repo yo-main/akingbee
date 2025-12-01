@@ -15,7 +15,7 @@ import (
 	"akingbee/web"
 )
 
-func HandlePostComment(response http.ResponseWriter, req *http.Request) {
+func HandlePostCommentHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
@@ -25,17 +25,14 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 
 	var err error
 	var hivePublicID *uuid.UUID
-	if value := req.FormValue("hive_id"); value != "" {
-		publicID, err := uuid.Parse(req.FormValue("hive_id"))
-		if err != nil {
-			log.Printf("Incorrect UUID: %s", err)
-			web.PrepareFailedNotification(response, "Incorrect hive id: "+req.FormValue("hive_id"))
-			response.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		hivePublicID = &publicID
-
+	publicID, err := uuid.Parse(req.PathValue("hivePublicId"))
+	if err != nil {
+		log.Printf("Incorrect UUID: %s", err)
+		web.PrepareFailedNotification(response, "Incorrect hive id: "+req.FormValue("hive_id"))
+		response.WriteHeader(http.StatusNotFound)
+		return
 	}
+	hivePublicID = &publicID
 
 	var apiaryPublicID *uuid.UUID
 	if value := req.FormValue("apiary_id"); value != "" {
@@ -47,7 +44,6 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 			return
 		}
 		apiaryPublicID = &publicID
-
 	}
 
 	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
@@ -86,7 +82,7 @@ func HandlePostComment(response http.ResponseWriter, req *http.Request) {
 	api_helpers.WriteToResponse(response, commentRow.Bytes())
 }
 
-func HandlePutComment(response http.ResponseWriter, req *http.Request) {
+func HandlePutCommentHive(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 
