@@ -1,6 +1,5 @@
 <div>
   <section class="section">
-    <!-- <div class="box" style="box-shadow: 0px 0.0125em 0.0625em;"> -->
     <div class="block">
       <div class="content">
         <h1 class="title">Rapports</h1>
@@ -11,24 +10,29 @@
         <div class="column">
           <div class="card">
             <div class="card-header">
-              <p class="card-header-title">Apiary {{ .ApiaryName }}</p>
+              <p class="card-header-title">Apiary {{ .Apiary.ApiaryName }}</p>
               <button class="card-header-icon" aria-label="more options">
                 <span class="icon">
                   <img src="/public/icon-angle-down.svg">
                 </span>
               </button>
             </div>
-            {{ if .CommentBody }}
+            {{ if .Apiary.CommentBody }}
             <div class="card-content">
-              <div class="content">
-                aaze
-                {{ .CommentBody }}
+              <div id="apiary-{{ .Apiary.ApiaryPublicID }}-comment-body" class="content">
+                {{ .Apiary.CommentBody }}
               </div>
             </div>
             {{ end }}
             <footer class="card-footer">
-              <a href="#" class="card-footer-item">Nouveau</a>
+              <div class="card-footer-item">
+                <div class="block is-pulled-right">
+                  {{ template "update_strategy.html" .CreateCommentForm}}
+                </div>
+              </div>
+              {{ if .Apiary.CommentBody }}
               <a href="#" class="card-footer-item">Editer</a>
+              {{ end }}
             </footer>
           </div>
         </div>

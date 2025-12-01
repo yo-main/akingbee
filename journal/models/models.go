@@ -1,6 +1,7 @@
 package models
 
 import (
+	"html/template"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,7 +19,7 @@ type Comment struct {
 type ApiaryWithComment struct {
 	CommentPublicId *uuid.UUID
 	CommentDate     *time.Time
-	CommentBody     string
+	CommentBody     template.HTML
 	CommentType     string
 	ApiaryName      string
 	ApiaryPublicID  uuid.UUID
