@@ -114,7 +114,7 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 			Apiary: apiary,
 			CreateCommentForm: components.UpdateStrategy{
 				Target: fmt.Sprintf("#apiary-%s-comment-body", apiary.ApiaryPublicID.String()),
-				Swap:   "afterbegin",
+				Swap:   "innerHTML",
 				Modal: &components.ModalForm{
 					Title: "Nouveau commentaire",
 					ShowModalButton: components.Button{
