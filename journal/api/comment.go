@@ -13,6 +13,7 @@ import (
 	comment_services "akingbee/journal/services/comment"
 	user_models "akingbee/user/models"
 	"akingbee/web"
+	overview_pages "akingbee/journal/pages"
 )
 
 func HandlePostCommentHive(response http.ResponseWriter, req *http.Request) {
@@ -169,4 +170,121 @@ func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 
 	web.PrepareSuccessNotification(response, "Comment deleted successfully")
 	response.WriteHeader(http.StatusOK)
+}
+
+func HandlePostCommentApiary(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
+	if !ok {
+		panic("unreacheable")
+	}
+
+	// Parse apiary_id from form
+	apiaryPublicID, err := uuid.Parse(req.FormValue("apiary_id"))
+	if err != nil {
+		log.Printf("Incorrect UUID: %s", err)
+		web.PrepareFailedNotification(response, "Incorrect apiary id: "+req.FormValue("apiary_id"))
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Parse date
+	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
+	if err != nil {
+		log.Printf("Date is not correctly formatted: %s", err)
+		web.PrepareFailedNotification(response, "Date not correctly formatted: "+req.FormValue("date"))
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Create command
+	command := comment_services.CreateCommentCommand{
+		Date:           commentDate,
+		Type:           req.FormValue("type"),
+		Body:           req.FormValue("body"),
+		HivePublicID:   nil,
+		ApiaryPublicID: &apiaryPublicID,
+	}
+
+	// Create comment
+	comment, err := comment_services.CreateComment(ctx, &command)
+	if err != nil {
+		log.Printf("Could not create comment: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Get comment body fragment
+	commentBody, err := overview_pages.GetCommentBodyFragment(comment.Body)
+	if err != nil {
+		log.Printf("Could not get comment body fragment: %s", err)
+		http.Redirect(response, req, "/overview", http.StatusBadRequest)
+		return
+	}
+
+	web.PrepareSuccessNotification(response, "Comment created successfully")
+	response.WriteHeader(http.StatusOK)
+	api_helpers.WriteToResponse(response, commentBody.Bytes())
+}
+
+func HandlePutCommentApiary(response http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
+	if !ok {
+		panic("unreacheable")
+	}
+
+	// Parse comment ID
+	commentPublicID, err := uuid.Parse(req.PathValue("commentPublicId"))
+	if err != nil {
+		log.Printf("The provided comment id is incorrect: %s", err)
+		web.PrepareFailedNotification(response, "Not Found")
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	// Get existing comment
+	comment, err := repositories.GetComment(ctx, &commentPublicID)
+	if err != nil {
+		log.Printf("Comment not found: %s", err)
+		web.PrepareFailedNotification(response, "Comment not found")
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	// Parse and validate date
+	commentDate, err := time.Parse("2006-01-02", req.FormValue("date"))
+	if err != nil {
+		log.Printf("Date is not correctly formatted: %s", err)
+		web.PrepareFailedNotification(response, "Date not correctly formatted")
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Update comment fields
+	comment.Date = commentDate
+	comment.Type = req.FormValue("type")
+	comment.Body = req.FormValue("body")
+
+	// Save update
+	err = comment_services.UpdateComment(ctx, comment)
+	if err != nil {
+		log.Printf("Could not update comment: %s", err)
+		web.PrepareFailedNotification(response, err.Error())
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Get comment body fragment
+	commentBody, err := overview_pages.GetCommentBodyFragment(comment.Body)
+	if err != nil {
+		log.Printf("Could not get comment body fragment: %s", err)
+		http.Redirect(response, req, "/overview", http.StatusBadRequest)
+		return
+	}
+
+	web.PrepareSuccessNotification(response, "Comment updated successfully")
+	response.WriteHeader(http.StatusOK)
+	api_helpers.WriteToResponse(response, commentBody.Bytes())
 }

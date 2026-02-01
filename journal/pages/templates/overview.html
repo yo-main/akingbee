@@ -17,13 +17,15 @@
                 </span>
               </button>
             </div>
-            {{ if .Apiary.CommentBody }}
             <div class="card-content">
               <div id="apiary-{{ .Apiary.ApiaryPublicID }}-comment-body" class="content">
-                {{ .Apiary.CommentBody }}
+                {{ if .Apiary.CommentBody }}
+                  {{ .Apiary.CommentBody }}
+                {{ else }}
+                  <p class="has-text-grey-light">Aucun commentaire</p>
+                {{ end }}
               </div>
             </div>
-            {{ end }}
             <footer class="card-footer">
               <div class="card-footer-item">
                 <div class="block is-pulled-right">
@@ -31,7 +33,9 @@
                 </div>
               </div>
               {{ if .Apiary.CommentBody }}
-              <a href="#" class="card-footer-item">Editer</a>
+              <div class="card-footer-item">
+                {{ template "update_strategy.html" .EditCommentForm}}
+              </div>
               {{ end }}
             </footer>
           </div>

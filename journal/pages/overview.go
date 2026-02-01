@@ -21,10 +21,22 @@ import (
 var TemplatesFS embed.FS
 
 var overviewTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/overview.html"))
+var overviewCommentBodyTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/overview_comment_body.html"))
+
+func GetCommentBodyFragment(commentBody string) (*bytes.Buffer, error) {
+	var buffer bytes.Buffer
+	err := pages.HtmlPage.ExecuteTemplate(&buffer, "overview_comment_body.html", template.HTML(commentBody))
+	if err != nil {
+		log.Printf("Failed to build comment body fragment: %s", err)
+		return nil, fmt.Errorf("failed to build comment body fragment: %w", err)
+	}
+	return &buffer, nil
+}
 
 type ApiaryParam struct {
 	Apiary            models.ApiaryWithComment
 	CreateCommentForm components.UpdateStrategy
+	EditCommentForm   *components.UpdateStrategy
 }
 type OverviewPageParameter struct {
 	Apiaries []ApiaryParam
@@ -43,6 +55,61 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 	apiaryParams := make([]ApiaryParam, len(apiaries))
 
 	for i, apiary := range apiaries {
+		var editForm *components.UpdateStrategy
+
+		// Only create edit form if comment exists
+		if apiary.CommentPublicId != nil {
+			editForm = &components.UpdateStrategy{
+				Target: fmt.Sprintf("#apiary-%s-comment-body", apiary.ApiaryPublicID.String()),
+				Swap:   "innerHTML",
+				Modal: &components.ModalForm{
+					Title: "Editer le commentaire",
+					ShowModalButton: components.Button{
+						Label: "Editer",
+					},
+					SubmitFormButton: components.Button{
+						Label:  "Sauvegarder",
+						FormID: fmt.Sprintf("apiary-%s-comment-edit", apiary.ApiaryPublicID.String()),
+						Type:   "is-link",
+					},
+					Form: components.Form{
+						ID:     fmt.Sprintf("apiary-%s-comment-edit", apiary.ApiaryPublicID.String()),
+						Method: "put",
+						URL:    fmt.Sprintf("/apiary/%s/comment/%s", apiary.ApiaryPublicID.String(), apiary.CommentPublicId.String()),
+						Inputs: []components.Input{
+							{
+								GroupedInput: []components.Input{
+									{
+										Name:     "type",
+										Required: true,
+										Narrow:   true,
+										ChoicesStrict: []components.Choice{
+											{Key: "note", Label: "note"},
+											{Key: "nourriture", Label: "nourriture"},
+											{Key: "action", Label: "action"},
+										},
+										Default: apiary.CommentType,
+									},
+									{
+										Name:     "date",
+										Required: true,
+										Type:     "date",
+										Default:  apiary.CommentDate.Format("2006-01-02"),
+									},
+								},
+							},
+							{
+								Name:       "body",
+								Required:   true,
+								RichEditor: true,
+								Default:    string(apiary.CommentBody),
+							},
+						},
+					},
+				},
+			}
+		}
+
 		apiaryParams[i] = ApiaryParam{
 			Apiary: apiary,
 			CreateCommentForm: components.UpdateStrategy{
@@ -96,7 +163,9 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 						},
 					},
 				},
-			}}
+			},
+			EditCommentForm: editForm,
+		}
 	}
 
 	params := OverviewPageParameter{

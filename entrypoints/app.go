@@ -52,6 +52,8 @@ func ApiServe() {
 	mux.HandleFunc("GET /overview", web.Authenticated(web.HtmxMiddleware(api_journal.HandleGetOverview)))
 
 	mux.HandleFunc("DELETE /comment/{commentPublicId}", web.Authenticated(api_journal.HandleDeleteComment))
+	mux.HandleFunc("POST /comment", web.Authenticated(api_journal.HandlePostCommentApiary))
+	mux.HandleFunc("PUT /apiary/{apiaryPublicId}/comment/{commentPublicId}", web.Authenticated(api_journal.HandlePutCommentApiary))
 
 	mux.HandleFunc("/", web.OptionallyAuthenticated(web.HtmxMiddleware(web.HandleNotFound)))
 
