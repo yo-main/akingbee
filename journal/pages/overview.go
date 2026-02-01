@@ -21,17 +21,7 @@ import (
 var TemplatesFS embed.FS
 
 var overviewTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/overview.html"))
-var overviewCommentBodyTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/overview_comment_body.html"))
-
-func GetCommentBodyFragment(commentBody string) (*bytes.Buffer, error) {
-	var buffer bytes.Buffer
-	err := pages.HtmlPage.ExecuteTemplate(&buffer, "overview_comment_body.html", template.HTML(commentBody))
-	if err != nil {
-		log.Printf("Failed to build comment body fragment: %s", err)
-		return nil, fmt.Errorf("failed to build comment body fragment: %w", err)
-	}
-	return &buffer, nil
-}
+var overviewCardTemplate = template.Must(pages.HtmlPage.ParseFS(TemplatesFS, "templates/overview_card.html"))
 
 type ApiaryParam struct {
 	Apiary            models.ApiaryWithComment
@@ -40,6 +30,150 @@ type ApiaryParam struct {
 }
 type OverviewPageParameter struct {
 	Apiaries []ApiaryParam
+}
+
+func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
+	var buffer bytes.Buffer
+
+	// Fetch apiary with its most recent comment
+	apiaries, err := repositories.ListApiariesWithComment(ctx, userID)
+	if err != nil {
+		log.Printf("Failed to list apiaries: %s", err)
+		return nil, fmt.Errorf("failed to get apiary: %w", err)
+	}
+
+	// Find the specific apiary
+	var targetApiary *models.ApiaryWithComment
+	for _, apiary := range apiaries {
+		if apiary.ApiaryPublicID == apiaryPublicID {
+			targetApiary = &apiary
+			break
+		}
+	}
+
+	if targetApiary == nil {
+		return nil, fmt.Errorf("apiary not found")
+	}
+
+	// Build edit form if comment exists
+	var editForm *components.UpdateStrategy
+	if targetApiary.CommentPublicId != nil {
+		editForm = &components.UpdateStrategy{
+			Target: fmt.Sprintf("#apiary-%s-card", targetApiary.ApiaryPublicID.String()),
+			Swap:   "outerHTML",
+			Modal: &components.ModalForm{
+				Title: "Editer le commentaire",
+				ShowModalButton: components.Button{
+					Label: "Editer",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Sauvegarder",
+					FormID: fmt.Sprintf("apiary-%s-comment-edit", targetApiary.ApiaryPublicID.String()),
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					ID:     fmt.Sprintf("apiary-%s-comment-edit", targetApiary.ApiaryPublicID.String()),
+					Method: "put",
+					URL:    fmt.Sprintf("/apiary/%s/comment/%s", targetApiary.ApiaryPublicID.String(), targetApiary.CommentPublicId.String()),
+					Inputs: []components.Input{
+						{
+							GroupedInput: []components.Input{
+								{
+									Name:     "type",
+									Required: true,
+									Narrow:   true,
+									ChoicesStrict: []components.Choice{
+										{Key: "note", Label: "note"},
+										{Key: "nourriture", Label: "nourriture"},
+										{Key: "action", Label: "action"},
+									},
+									Default: targetApiary.CommentType,
+								},
+								{
+									Name:     "date",
+									Required: true,
+									Type:     "date",
+									Default:  targetApiary.CommentDate.Format("2006-01-02"),
+								},
+							},
+						},
+						{
+							Name:       "body",
+							Required:   true,
+							RichEditor: true,
+							Default:    string(targetApiary.CommentBody),
+						},
+					},
+				},
+			},
+		}
+	}
+
+	// Build card parameter
+	cardParam := ApiaryParam{
+		Apiary: *targetApiary,
+		CreateCommentForm: components.UpdateStrategy{
+			Target: fmt.Sprintf("#apiary-%s-card", targetApiary.ApiaryPublicID.String()),
+			Swap:   "outerHTML",
+			Modal: &components.ModalForm{
+				Title: "Nouveau commentaire",
+				ShowModalButton: components.Button{
+					Label: "Nouveau commentaire",
+				},
+				SubmitFormButton: components.Button{
+					Label:  "Nouveau",
+					FormID: fmt.Sprintf("apiary-%s-comment-create", targetApiary.ApiaryPublicID.String()),
+					Type:   "is-link",
+				},
+				Form: components.Form{
+					ID:     fmt.Sprintf("apiary-%s-comment-create", targetApiary.ApiaryPublicID.String()),
+					Method: "post",
+					URL:    "/comment",
+					Inputs: []components.Input{
+						{
+							GroupedInput: []components.Input{
+								{
+									Name:     "type",
+									Required: true,
+									Narrow:   true,
+									ChoicesStrict: []components.Choice{
+										{Key: "note", Label: "note"},
+										{Key: "nourriture", Label: "nourriture"},
+										{Key: "action", Label: "action"},
+									},
+								},
+								{
+									Name:     "date",
+									Required: true,
+									Type:     "date",
+									Default:  time.Now().Format("2006-01-02"),
+								},
+							},
+						},
+						{
+							Name:       "body",
+							Required:   true,
+							RichEditor: true,
+						},
+						{
+							Name:    "apiary_id",
+							Type:    "hidden",
+							Default: targetApiary.ApiaryPublicID.String(),
+						},
+					},
+				},
+			},
+		},
+		EditCommentForm: editForm,
+	}
+
+	err = pages.HtmlPage.ExecuteTemplate(&buffer, "overview_card.html", cardParam)
+	if err != nil {
+		log.Printf("Failed to build card: %s", err)
+		return nil, fmt.Errorf("failed to build card: %w", err)
+	}
+
+	return &buffer, nil
 }
 
 func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error) {
@@ -60,8 +194,8 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 		// Only create edit form if comment exists
 		if apiary.CommentPublicId != nil {
 			editForm = &components.UpdateStrategy{
-				Target: fmt.Sprintf("#apiary-%s-comment-body", apiary.ApiaryPublicID.String()),
-				Swap:   "innerHTML",
+				Target: fmt.Sprintf("#apiary-%s-card", apiary.ApiaryPublicID.String()),
+				Swap:   "outerHTML",
 				Modal: &components.ModalForm{
 					Title: "Editer le commentaire",
 					ShowModalButton: components.Button{
@@ -113,8 +247,8 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 		apiaryParams[i] = ApiaryParam{
 			Apiary: apiary,
 			CreateCommentForm: components.UpdateStrategy{
-				Target: fmt.Sprintf("#apiary-%s-comment-body", apiary.ApiaryPublicID.String()),
-				Swap:   "innerHTML",
+				Target: fmt.Sprintf("#apiary-%s-card", apiary.ApiaryPublicID.String()),
+				Swap:   "outerHTML",
 				Modal: &components.ModalForm{
 					Title: "Nouveau commentaire",
 					ShowModalButton: components.Button{

@@ -9,11 +9,11 @@ import (
 
 	"akingbee/bees/pages"
 	api_helpers "akingbee/internal/web"
+	overview_pages "akingbee/journal/pages"
 	"akingbee/journal/repositories"
 	comment_services "akingbee/journal/services/comment"
 	user_models "akingbee/user/models"
 	"akingbee/web"
-	overview_pages "akingbee/journal/pages"
 )
 
 func HandlePostCommentHive(response http.ResponseWriter, req *http.Request) {
@@ -174,7 +174,7 @@ func HandleDeleteComment(response http.ResponseWriter, req *http.Request) {
 
 func HandlePostCommentApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if !ok {
 		panic("unreacheable")
 	}
@@ -207,7 +207,7 @@ func HandlePostCommentApiary(response http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create comment
-	comment, err := comment_services.CreateComment(ctx, &command)
+	_, err = comment_services.CreateComment(ctx, &command)
 	if err != nil {
 		log.Printf("Could not create comment: %s", err)
 		web.PrepareFailedNotification(response, err.Error())
@@ -215,22 +215,23 @@ func HandlePostCommentApiary(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Get comment body fragment
-	commentBody, err := overview_pages.GetCommentBodyFragment(comment.Body)
+	// Get the entire card with updated comment
+	card, err := overview_pages.GetApiaryCard(ctx, apiaryPublicID, &user.PublicID)
 	if err != nil {
-		log.Printf("Could not get comment body fragment: %s", err)
-		http.Redirect(response, req, "/overview", http.StatusBadRequest)
+		log.Printf("Could not get apiary card: %s", err)
+		web.PrepareFailedNotification(response, "Could not refresh card")
+		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	web.PrepareSuccessNotification(response, "Comment created successfully")
 	response.WriteHeader(http.StatusOK)
-	api_helpers.WriteToResponse(response, commentBody.Bytes())
+	api_helpers.WriteToResponse(response, card.Bytes())
 }
 
 func HandlePutCommentApiary(response http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	_, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
+	user, ok := ctx.Value("authenticatedUser").(*user_models.AuthenticatedUser)
 	if !ok {
 		panic("unreacheable")
 	}
@@ -276,15 +277,24 @@ func HandlePutCommentApiary(response http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Get comment body fragment
-	commentBody, err := overview_pages.GetCommentBodyFragment(comment.Body)
+	// Need to get apiary ID from the comment
+	if comment.ApiaryPublicID == nil {
+		log.Printf("Comment is not associated with an apiary")
+		web.PrepareFailedNotification(response, "Invalid comment")
+		response.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Get the entire card with updated comment
+	card, err := overview_pages.GetApiaryCard(ctx, *comment.ApiaryPublicID, &user.PublicID)
 	if err != nil {
-		log.Printf("Could not get comment body fragment: %s", err)
-		http.Redirect(response, req, "/overview", http.StatusBadRequest)
+		log.Printf("Could not get apiary card: %s", err)
+		web.PrepareFailedNotification(response, "Could not refresh card")
+		response.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	web.PrepareSuccessNotification(response, "Comment updated successfully")
 	response.WriteHeader(http.StatusOK)
-	api_helpers.WriteToResponse(response, commentBody.Bytes())
+	api_helpers.WriteToResponse(response, card.Bytes())
 }

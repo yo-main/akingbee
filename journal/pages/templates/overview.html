@@ -8,7 +8,7 @@
       <div class="columns">
         {{ range .Apiaries }}
         <div class="column">
-          <div class="card">
+          <div id="apiary-{{ .Apiary.ApiaryPublicID }}-card" class="card">
             <div class="card-header">
               <p class="card-header-title">Apiary {{ .Apiary.ApiaryName }}</p>
               <button class="card-header-icon" aria-label="more options">
@@ -26,7 +26,7 @@
                 {{ end }}
               </div>
             </div>
-            <footer class="card-footer">
+            <footer id="apiary-{{ .Apiary.ApiaryPublicID }}-footer" class="card-footer">
               <div class="card-footer-item">
                 <div class="block is-pulled-right">
                   {{ template "update_strategy.html" .CreateCommentForm}}
