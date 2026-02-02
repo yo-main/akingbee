@@ -32,16 +32,7 @@ type OverviewPageParameter struct {
 	Apiaries []ApiaryParam
 }
 
-func GetApiaryCard(ctx context.Context, apiaryPublicID *uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
-	var buffer bytes.Buffer
-
-	// Fetch apiary with its most recent comment
-	apiary, err := repositories.GetApiaryWithComment(ctx, apiaryPublicID, userID)
-	if err != nil {
-		log.Printf("Failed to list apiaries: %s", err)
-		return nil, fmt.Errorf("failed to get apiary: %w", err)
-	}
-
+func getApiaryCardForm(apiary *models.ApiaryWithComment) *ApiaryParam {
 	// Build edit form if comment exists
 	var editForm *components.UpdateStrategy
 	if apiary.CommentPublicId != nil {
@@ -64,25 +55,18 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID *uuid.UUID, userID *uuid.
 					URL:    fmt.Sprintf("/apiary/%s/comment/%s", apiary.ApiaryPublicID.String(), apiary.CommentPublicId.String()),
 					Inputs: []components.Input{
 						{
-							GroupedInput: []components.Input{
-								{
-									Name:     "type",
-									Required: true,
-									Narrow:   true,
-									ChoicesStrict: []components.Choice{
-										{Key: "note", Label: "note"},
-										{Key: "nourriture", Label: "nourriture"},
-										{Key: "action", Label: "action"},
-									},
-									Default: apiary.CommentType,
-								},
-								{
-									Name:     "date",
-									Required: true,
-									Type:     "date",
-									Default:  apiary.CommentDate.Format("2006-01-02"),
-								},
-							},
+							Name:     "type",
+							Required: true,
+							Narrow:   true,
+							Hidden:   true,
+							Default:  apiary.CommentType,
+						},
+						{
+							Name:     "date",
+							Required: true,
+							Type:     "date",
+							Default:  apiary.CommentDate.Format("2006-01-02"),
+							Hidden:   true,
 						},
 						{
 							Name:       "body",
@@ -118,24 +102,18 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID *uuid.UUID, userID *uuid.
 					URL:    "/comment",
 					Inputs: []components.Input{
 						{
-							GroupedInput: []components.Input{
-								{
-									Name:     "type",
-									Required: true,
-									Narrow:   true,
-									ChoicesStrict: []components.Choice{
-										{Key: "note", Label: "note"},
-										{Key: "nourriture", Label: "nourriture"},
-										{Key: "action", Label: "action"},
-									},
-								},
-								{
-									Name:     "date",
-									Required: true,
-									Type:     "date",
-									Default:  time.Now().Format("2006-01-02"),
-								},
-							},
+							Name:     "type",
+							Required: true,
+							Narrow:   true,
+							Default:  "note",
+							Hidden:   true,
+						},
+						{
+							Name:     "date",
+							Required: true,
+							Type:     "date",
+							Default:  time.Now().Format("2006-01-02"),
+							Hidden:   true,
 						},
 						{
 							Name:       "body",
@@ -153,6 +131,21 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID *uuid.UUID, userID *uuid.
 		},
 		EditCommentForm: editForm,
 	}
+
+	return &cardParam
+}
+
+func GetApiaryCard(ctx context.Context, apiaryPublicID *uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
+	var buffer bytes.Buffer
+
+	apiary, err := repositories.GetApiaryWithComment(ctx, apiaryPublicID, userID)
+	if err != nil {
+		log.Printf("Failed to get apiary: %s", err)
+		return nil, fmt.Errorf("failed to get apiary: %w", err)
+	}
+
+	// Fetch apiary with its most recent comment
+	cardParam := getApiaryCardForm(apiary)
 
 	err = pages.HtmlPage.ExecuteTemplate(&buffer, "overview_card.html", cardParam)
 	if err != nil {
@@ -176,117 +169,8 @@ func GetOverviewBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, err
 	apiaryParams := make([]ApiaryParam, len(apiaries))
 
 	for i, apiary := range apiaries {
-		var editForm *components.UpdateStrategy
-
-		// Only create edit form if comment exists
-		if apiary.CommentPublicId != nil {
-			editForm = &components.UpdateStrategy{
-				Target: fmt.Sprintf("#apiary-%s-card", apiary.ApiaryPublicID.String()),
-				Swap:   "outerHTML",
-				Modal: &components.ModalForm{
-					Title: "Editer le commentaire",
-					ShowModalButton: components.Button{
-						Label: "Editer",
-					},
-					SubmitFormButton: components.Button{
-						Label:  "Sauvegarder",
-						FormID: fmt.Sprintf("apiary-%s-comment-edit", apiary.ApiaryPublicID.String()),
-						Type:   "is-link",
-					},
-					Form: components.Form{
-						ID:     fmt.Sprintf("apiary-%s-comment-edit", apiary.ApiaryPublicID.String()),
-						Method: "put",
-						URL:    fmt.Sprintf("/apiary/%s/comment/%s", apiary.ApiaryPublicID.String(), apiary.CommentPublicId.String()),
-						Inputs: []components.Input{
-							{
-								GroupedInput: []components.Input{
-									{
-										Name:     "type",
-										Required: true,
-										Narrow:   true,
-										ChoicesStrict: []components.Choice{
-											{Key: "note", Label: "note"},
-											{Key: "nourriture", Label: "nourriture"},
-											{Key: "action", Label: "action"},
-										},
-										Default: apiary.CommentType,
-									},
-									{
-										Name:     "date",
-										Required: true,
-										Type:     "date",
-										Default:  apiary.CommentDate.Format("2006-01-02"),
-									},
-								},
-							},
-							{
-								Name:       "body",
-								Required:   true,
-								RichEditor: true,
-								Default:    string(apiary.CommentBody),
-							},
-						},
-					},
-				},
-			}
-		}
-
-		apiaryParams[i] = ApiaryParam{
-			Apiary: apiary,
-			CreateCommentForm: components.UpdateStrategy{
-				Target: fmt.Sprintf("#apiary-%s-card", apiary.ApiaryPublicID.String()),
-				Swap:   "outerHTML",
-				Modal: &components.ModalForm{
-					Title: "Nouveau commentaire",
-					ShowModalButton: components.Button{
-						Label: "Nouveau commentaire",
-					},
-					SubmitFormButton: components.Button{
-						Label:  "Nouveau",
-						FormID: fmt.Sprintf("apiary-%s-comment-create", apiary.ApiaryPublicID.String()),
-						Type:   "is-link",
-					},
-					Form: components.Form{
-						ID:     fmt.Sprintf("apiary-%s-comment-create", apiary.ApiaryPublicID.String()),
-						Method: "post",
-						URL:    "/comment",
-						Inputs: []components.Input{
-							{
-								GroupedInput: []components.Input{
-									{
-										Name:     "type",
-										Required: true,
-										Narrow:   true,
-										ChoicesStrict: []components.Choice{
-											{Key: "note", Label: "note"},
-											{Key: "nourriture", Label: "nourriture"},
-											{Key: "action", Label: "action"},
-										},
-									},
-									{
-										Name:     "date",
-										Required: true,
-										Type:     "date",
-										Default:  time.Now().Format("2006-01-02"),
-									},
-								},
-							},
-							{
-								Name:       "body",
-								Required:   true,
-								RichEditor: true,
-							},
-							{
-								Name:    "apiary_id",
-								Type:    "hidden",
-								Default: apiary.ApiaryPublicID.String(),
-							},
-						},
-					},
-				},
-			},
-			EditCommentForm: editForm,
-		}
+		cardForm := getApiaryCardForm(&apiary)
+		apiaryParams[i] = *cardForm
 	}
 
 	params := OverviewPageParameter{
