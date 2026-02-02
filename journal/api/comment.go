@@ -216,7 +216,7 @@ func HandlePostCommentApiary(response http.ResponseWriter, req *http.Request) {
 	}
 
 	// Get the entire card with updated comment
-	card, err := overview_pages.GetApiaryCard(ctx, apiaryPublicID, &user.PublicID)
+	card, err := overview_pages.GetApiaryCard(ctx, &apiaryPublicID, &user.PublicID)
 	if err != nil {
 		log.Printf("Could not get apiary card: %s", err)
 		web.PrepareFailedNotification(response, "Could not refresh card")
@@ -286,7 +286,7 @@ func HandlePutCommentApiary(response http.ResponseWriter, req *http.Request) {
 	}
 
 	// Get the entire card with updated comment
-	card, err := overview_pages.GetApiaryCard(ctx, *comment.ApiaryPublicID, &user.PublicID)
+	card, err := overview_pages.GetApiaryCard(ctx, comment.ApiaryPublicID, &user.PublicID)
 	if err != nil {
 		log.Printf("Could not get apiary card: %s", err)
 		web.PrepareFailedNotification(response, "Could not refresh card")

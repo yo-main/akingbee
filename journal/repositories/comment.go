@@ -211,3 +211,39 @@ func ListApiariesWithComment(ctx context.Context, userPublicId *uuid.UUID) ([]mo
 
 	return comments, nil
 }
+
+func GetApiaryWithComment(ctx context.Context, apiaryPublicId *uuid.UUID, userPublicId *uuid.UUID) (*models.ApiaryWithComment, error) {
+	db := database.GetDB()
+	query := queryListApiariesWithComment + " AND APIARY.PUBLIC_ID = $2"
+	row, err := db.QueryContext(ctx, query, userPublicId, apiaryPublicId)
+
+	if err != nil {
+		return nil, fmt.Errorf("error executing query: %w", err)
+	}
+
+	defer database.CloseRows(row)
+
+	var comment models.ApiaryWithComment
+
+	row.Next()
+
+	if row.Err() != nil {
+		return nil, fmt.Errorf("rows closed unexpectedly: %w", row.Err())
+	}
+
+	err = row.Scan(
+		&comment.ApiaryPublicID,
+		&comment.ApiaryName,
+		&comment.ApiaryUser,
+		&comment.CommentPublicId,
+		&comment.CommentBody,
+		&comment.CommentDate,
+		&comment.CommentType,
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not build ApiaryWithComment from result: %w", err)
+	}
+
+	return &comment, nil
+}

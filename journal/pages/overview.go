@@ -32,34 +32,21 @@ type OverviewPageParameter struct {
 	Apiaries []ApiaryParam
 }
 
-func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
+func GetApiaryCard(ctx context.Context, apiaryPublicID *uuid.UUID, userID *uuid.UUID) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
 
 	// Fetch apiary with its most recent comment
-	apiaries, err := repositories.ListApiariesWithComment(ctx, userID)
+	apiary, err := repositories.GetApiaryWithComment(ctx, apiaryPublicID, userID)
 	if err != nil {
 		log.Printf("Failed to list apiaries: %s", err)
 		return nil, fmt.Errorf("failed to get apiary: %w", err)
 	}
 
-	// Find the specific apiary
-	var targetApiary *models.ApiaryWithComment
-	for _, apiary := range apiaries {
-		if apiary.ApiaryPublicID == apiaryPublicID {
-			targetApiary = &apiary
-			break
-		}
-	}
-
-	if targetApiary == nil {
-		return nil, fmt.Errorf("apiary not found")
-	}
-
 	// Build edit form if comment exists
 	var editForm *components.UpdateStrategy
-	if targetApiary.CommentPublicId != nil {
+	if apiary.CommentPublicId != nil {
 		editForm = &components.UpdateStrategy{
-			Target: fmt.Sprintf("#apiary-%s-card", targetApiary.ApiaryPublicID.String()),
+			Target: fmt.Sprintf("#apiary-%s-card", apiary.ApiaryPublicID.String()),
 			Swap:   "outerHTML",
 			Modal: &components.ModalForm{
 				Title: "Editer le commentaire",
@@ -68,13 +55,13 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.U
 				},
 				SubmitFormButton: components.Button{
 					Label:  "Sauvegarder",
-					FormID: fmt.Sprintf("apiary-%s-comment-edit", targetApiary.ApiaryPublicID.String()),
+					FormID: fmt.Sprintf("apiary-%s-comment-edit", apiary.ApiaryPublicID.String()),
 					Type:   "is-link",
 				},
 				Form: components.Form{
-					ID:     fmt.Sprintf("apiary-%s-comment-edit", targetApiary.ApiaryPublicID.String()),
+					ID:     fmt.Sprintf("apiary-%s-comment-edit", apiary.ApiaryPublicID.String()),
 					Method: "put",
-					URL:    fmt.Sprintf("/apiary/%s/comment/%s", targetApiary.ApiaryPublicID.String(), targetApiary.CommentPublicId.String()),
+					URL:    fmt.Sprintf("/apiary/%s/comment/%s", apiary.ApiaryPublicID.String(), apiary.CommentPublicId.String()),
 					Inputs: []components.Input{
 						{
 							GroupedInput: []components.Input{
@@ -87,13 +74,13 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.U
 										{Key: "nourriture", Label: "nourriture"},
 										{Key: "action", Label: "action"},
 									},
-									Default: targetApiary.CommentType,
+									Default: apiary.CommentType,
 								},
 								{
 									Name:     "date",
 									Required: true,
 									Type:     "date",
-									Default:  targetApiary.CommentDate.Format("2006-01-02"),
+									Default:  apiary.CommentDate.Format("2006-01-02"),
 								},
 							},
 						},
@@ -101,7 +88,7 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.U
 							Name:       "body",
 							Required:   true,
 							RichEditor: true,
-							Default:    string(targetApiary.CommentBody),
+							Default:    string(apiary.CommentBody),
 						},
 					},
 				},
@@ -111,9 +98,9 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.U
 
 	// Build card parameter
 	cardParam := ApiaryParam{
-		Apiary: *targetApiary,
+		Apiary: *apiary,
 		CreateCommentForm: components.UpdateStrategy{
-			Target: fmt.Sprintf("#apiary-%s-card", targetApiary.ApiaryPublicID.String()),
+			Target: fmt.Sprintf("#apiary-%s-card", apiary.ApiaryPublicID.String()),
 			Swap:   "outerHTML",
 			Modal: &components.ModalForm{
 				Title: "Nouveau commentaire",
@@ -122,11 +109,11 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.U
 				},
 				SubmitFormButton: components.Button{
 					Label:  "Nouveau",
-					FormID: fmt.Sprintf("apiary-%s-comment-create", targetApiary.ApiaryPublicID.String()),
+					FormID: fmt.Sprintf("apiary-%s-comment-create", apiary.ApiaryPublicID.String()),
 					Type:   "is-link",
 				},
 				Form: components.Form{
-					ID:     fmt.Sprintf("apiary-%s-comment-create", targetApiary.ApiaryPublicID.String()),
+					ID:     fmt.Sprintf("apiary-%s-comment-create", apiary.ApiaryPublicID.String()),
 					Method: "post",
 					URL:    "/comment",
 					Inputs: []components.Input{
@@ -158,7 +145,7 @@ func GetApiaryCard(ctx context.Context, apiaryPublicID uuid.UUID, userID *uuid.U
 						{
 							Name:    "apiary_id",
 							Type:    "hidden",
-							Default: targetApiary.ApiaryPublicID.String(),
+							Default: apiary.ApiaryPublicID.String(),
 						},
 					},
 				},
