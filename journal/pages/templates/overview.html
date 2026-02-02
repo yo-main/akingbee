@@ -8,37 +8,7 @@
       <div class="columns">
         {{ range .Apiaries }}
         <div class="column">
-          <div id="apiary-{{ .Apiary.ApiaryPublicID }}-card" class="card">
-            <div class="card-header">
-              <p class="card-header-title">Apiary {{ .Apiary.ApiaryName }}</p>
-              <button class="card-header-icon" aria-label="more options">
-                <span class="icon">
-                  <img src="/public/icon-angle-down.svg">
-                </span>
-              </button>
-            </div>
-            <div class="card-content">
-              <div id="apiary-{{ .Apiary.ApiaryPublicID }}-comment-body" class="content">
-                {{ if .Apiary.CommentBody }}
-                  {{ .Apiary.CommentBody }}
-                {{ else }}
-                  <p class="has-text-grey-light">Aucun commentaire</p>
-                {{ end }}
-              </div>
-            </div>
-            <footer id="apiary-{{ .Apiary.ApiaryPublicID }}-footer" class="card-footer">
-              <div class="card-footer-item">
-                <div class="block is-pulled-right">
-                  {{ template "update_strategy.html" .CreateCommentForm}}
-                </div>
-              </div>
-              {{ if .Apiary.CommentBody }}
-              <div class="card-footer-item">
-                {{ template "update_strategy.html" .EditCommentForm}}
-              </div>
-              {{ end }}
-            </footer>
-          </div>
+          {{ template "overview_card.html" .}}
         </div>
         {{ end }}
       </div>
