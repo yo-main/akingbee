@@ -6,24 +6,24 @@
   <div class="navbar-menu has-text-inherit">
 
     <div class="navbar-start has-text-inherit">
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "overview" }}is-selected{{ end }}'
+        hx-get="/overview" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/overview"
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
+
+        Aperçu</a>
       <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "hive" }}is-selected{{end}}' hx-get="/hive"
         hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/hive"
-        hx-on:htmx:after-request="this.nextSibling.nextSibling.classList.remove('is-selected'); this.nextSibling.nextSibling.nextSibling.nextSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
         Ruches</a>
       <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "apiary" }}is-selected{{ end }}'
         hx-get="/apiary" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/apiary"
-        hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-selected'); this.nextSibling.nextSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
 
         Ruchers</a>
-      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "overview" }}is-selected{{ end }}'
-        hx-get="/overview" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/overview"
-        hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
-
-        Overview</a>
       {{ if .CanImpersonate }}
       <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "admin" }}is-selected{{ end }}'
         hx-get="/admin" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/admin"
-        hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-selected'); this.classList.add('is-selected')">
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
 
         Administration</a>
       {{ end }}
