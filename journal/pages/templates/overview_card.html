@@ -4,7 +4,8 @@
     <div class="card-header-icon">
       <div class="dropdown is-hoverable is-right">
         <div class="dropdown-trigger">
-          <button class="button is-ghost" aria-haspopup="true" aria-controls="dropdown-menu-{{ .Apiary.ApiaryPublicID }}">
+          <button class="button is-ghost" aria-haspopup="true"
+            aria-controls="dropdown-menu-{{ .Apiary.ApiaryPublicID }}">
             <span class="icon">
               <img src="/public/icon-angle-down.svg">
             </span>
@@ -33,5 +34,8 @@
       <p class="has-text-grey-light">Aucun commentaire</p>
       {{ end }}
     </div>
+  </div>
+  <div class="card-footer">
+    <p>Dernière visite: {{.LastVisitDate}}</p>
   </div>
 </div>
