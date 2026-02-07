@@ -25,7 +25,7 @@ func CreateApiary(ctx context.Context, apiary *models.Apiary) error {
 		ctx, queryCreateApiary, apiary.PublicID, apiary.Name, apiary.Location, apiary.HoneyKind, apiary.User,
 	)
 
-	return fmt.Errorf("could not create apiary: %w", err)
+	return err
 }
 
 const queryUpdateApiary = `
