@@ -1,4 +1,4 @@
-<div>
+<div class="overview">
   <section class="section">
     <div class="block">
       <div class="content">
@@ -7,7 +7,7 @@
       </div>
       <div class="columns is-multiline">
         {{ range .Apiaries }}
-        <div class="column is-4">
+        <div class="column is-4 is-flex">
           {{ template "overview_card.html" .}}
         </div>
         {{ end }}

@@ -7,7 +7,7 @@
       </span>
     </button>
   </div>
-  <div class="card-content overview">
+  <div class="card-content">
     <div id="apiary-{{ .Apiary.ApiaryPublicID }}-comment-body" class="content">
       {{ if .Apiary.CommentBody }}
       {{ .Apiary.CommentBody }}
@@ -16,7 +16,7 @@
       {{ end }}
     </div>
   </div>
-  <footer id="apiary-{{ .Apiary.ApiaryPublicID }}-footer" class="card-footer overview">
+  <footer id="apiary-{{ .Apiary.ApiaryPublicID }}-footer" class="card-footer">
     <div class="card-footer-item">
       <div class="block is-pulled-right">
         {{ template "update_strategy.html" .CreateCommentForm}}

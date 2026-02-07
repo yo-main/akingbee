@@ -24,6 +24,18 @@
 
 /* stuff related to the overview page */
 
+/* Make all cards in the overview grid have equal height */
+.overview .columns .column.is-flex .card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.overview .columns .column.is-flex .card .card-content {
+  flex-grow: 1;
+}
+
 /* Increase height of rich text editor in modals */
 .overview .modal-card-body .ql-editor {
   min-height: 200px;
