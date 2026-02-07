@@ -36,6 +36,8 @@
     </div>
   </div>
   <div class="card-footer">
-    <p>Dernière visite: {{.LastVisitDate}}</p>
+    {{ if .Apiary.LastVisitDate}}
+    <p>Dernière visite: {{.Apiary.LastVisitDate}}</p>
+    {{ end }}
   </div>
 </div>

@@ -24,5 +24,5 @@ type ApiaryWithComment struct {
 	ApiaryName      string
 	ApiaryPublicID  uuid.UUID
 	ApiaryUser      uuid.UUID
-	LastVisitDate   *time.Time
+	LastVisitDate   string
 }
