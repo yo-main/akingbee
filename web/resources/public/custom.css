@@ -19,3 +19,21 @@
 .no-flex {
   display: block
 }
+
+
+
+/* stuff related to the overview page */
+
+/* Increase height of rich text editor in modals */
+.overview .modal-card-body .ql-editor {
+  min-height: 200px;
+}
+
+.overview .modal-card-body {
+  padding-top: 0;
+}
+
+.overview .modal-card-foot {
+  padding-top: 0.80rem;
+  padding-bottom: 0.80rem;
+}
