@@ -32,8 +32,28 @@
   height: 100%;
 }
 
-.overview .columns .column.is-flex .card .card-content {
+.overiew .columns .column.is-flex .card .card-content {
   flex-grow: 1;
+}
+
+/* Dropdown button styling for overview cards */
+/* Only style the trigger button, not modal buttons */
+.overview .dropdown-item>div>div:not(.modal) button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  box-shadow: none;
+  justify-content: flex-start;
+  padding: 0.375rem 1rem;
+}
+
+.overview .dropdown-item>div>div:not(.modal) button:hover {
+  background-color: transparent;
+}
+
+.overview .dropdown-item:hover {
+  background-color: hsl(0, 0%, 96%);
 }
 
 /* Increase height of rich text editor in modals */
@@ -43,9 +63,4 @@
 
 .overview .modal-card-body {
   padding-top: 0;
-}
-
-.overview .modal-card-foot {
-  padding-top: 0.80rem;
-  padding-bottom: 0.80rem;
 }
