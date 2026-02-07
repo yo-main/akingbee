@@ -32,7 +32,7 @@
   height: 100%;
 }
 
-.overiew .columns .column.is-flex .card .card-content {
+.overview .columns .column.is-flex .card .card-content {
   flex-grow: 1;
 }
 
@@ -63,4 +63,9 @@
 
 .overview .modal-card-body {
   padding-top: 0;
+
+}
+
+.overview .tag-footer {
+  padding: 0.5rem;
 }

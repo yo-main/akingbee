@@ -37,7 +37,11 @@
   </div>
   <div class="card-footer">
     {{ if .Apiary.LastVisitDate}}
-    <p>Dernière visite: {{.Apiary.LastVisitDate}}</p>
+    <div class="block tag-footer">
+      <span class="tag is-info is-light">
+        <p>Dernière visite: {{.Apiary.LastVisitDate}}</p>
+      </span>
+    </div>
     {{ end }}
   </div>
 </div>
