@@ -10,7 +10,7 @@
         hx-get="/overview" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/overview"
         hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
 
-        Aperçu</a>
+        Aper&ccedil;u</a>
       <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "hive" }}is-selected{{end}}' hx-get="/hive"
         hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/hive"
         hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
