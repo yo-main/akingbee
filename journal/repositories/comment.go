@@ -249,6 +249,7 @@ func GetApiaryWithComment(ctx context.Context, apiaryPublicId *uuid.UUID, userPu
 		&comment.CommentBody,
 		&comment.CommentDate,
 		&comment.CommentType,
+		&comment.LastVisitDate,
 	)
 
 	if err != nil {
