@@ -5,9 +5,9 @@
         <h1 class="title">Rapports</h1>
         <hr>
       </div>
-      <div class="columns">
+      <div class="columns is-multiline">
         {{ range .Apiaries }}
-        <div class="column">
+        <div class="column is-4">
           {{ template "overview_card.html" .}}
         </div>
         {{ end }}
