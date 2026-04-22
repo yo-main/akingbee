@@ -1,13 +1,10 @@
-<div class="columns is-centered">
-  <div class="column is-three-fifths">
-
-    <div class="block is-pulled-right">
-      {{ template "update_strategy.html" .CreateApiaryModal }}
+<div class="ak-list-wrap">
+  <div class="ak-page-header-row">
+    <div>
+      <h1 class="ak-page-title">Ruchers</h1>
     </div>
-
-    <div class="content">
-      {{ template "table.html" .Table }}
-    </div>
-
+    {{ template "update_strategy.html" .CreateApiaryModal }}
   </div>
+
+  {{ template "table.html" .Table }}
 </div>

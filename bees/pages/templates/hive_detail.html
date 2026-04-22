@@ -1,32 +1,48 @@
-<div class="block">
-  <div class="columns is-centered is-8">
+<div>
+  <!-- Back link -->
+  <a class="ak-back"
+    hx-get="/hive" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/hive">
+    Retour aux ruches
+  </a>
 
-    <div class="column is-three-quarters">
+  <div class="ak-hive-grid">
+
+    <!-- Main column: tabs + content -->
+    <div>
+      <!-- Tab bar -->
       <div class="tabs">
         <ul>
           <li class="is-active"
-            hx-on:htmx:after-request="this.nextSibling.nextSibling.classList.remove('is-active'); this.classList.add('is-active')">
-            <a hx-get="/hive/{{ .HivePublicID }}/comments" hx-swap="innerHTML" hx-target="#hive-detail-table"
-              hx-trigger="click">Suivi</a>
+            hx-on:htmx:after-request="this.nextElementSibling.classList.remove('is-active'); this.classList.add('is-active')">
+            <a hx-get="/hive/{{ .HivePublicID }}/comments"
+               hx-swap="innerHTML"
+               hx-target="#hive-detail-table"
+               hx-trigger="click">
+              Suivi
+            </a>
           </li>
           <li
-            hx-on:htmx:after-request="this.previousSibling.previousSibling.classList.remove('is-active'); this.classList.add('is-active')">
-            <a hx-get="/hive/{{ .HivePublicID }}/harvests" hx-swap="innerHTML" hx-target="#hive-detail-table"
-              hx-trigger="click">Recolte</a>
+            hx-on:htmx:after-request="this.previousElementSibling.classList.remove('is-active'); this.classList.add('is-active')">
+            <a hx-get="/hive/{{ .HivePublicID }}/harvests"
+               hx-swap="innerHTML"
+               hx-target="#hive-detail-table"
+               hx-trigger="click">
+              Récolte
+            </a>
           </li>
         </ul>
       </div>
 
+      <!-- Tab content (swapped by HTMX) -->
       <div id="hive-detail-table">
         {{ template "hive_detail_comment.html" .CommentDetail }}
       </div>
-
     </div>
 
-
-    <div class="column is-one-quarter">
+    <!-- Sidebar: hive info card -->
+    <div>
       {{ template "card.html" .Card }}
     </div>
-  </div>
 
+  </div>
 </div>
