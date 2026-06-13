@@ -1,27 +1,32 @@
-<div class="ak-table-wrap">
-  <table class="table {{ if .IsFullWidth }}is-fullwidth{{ end }}">
+<table class="
+  table
+  is-striped
+  is-sortable
+  {{ if .IsBordered}}is-bordered{{ end }}
+  {{ if .IsStripped}}is-stripped{{ end }}
+  {{ if .IsFullWidth}}is-fullwidth{{ end }}
+">
 
-    {{ if .ColumnSizes }}
-    <colgroup>
-      {{ range .ColumnSizes }}
-      <col span="{{ .Span }}" style="{{ .Style }}">
-      {{ end }}
-    </colgroup>
+  {{ if .ColumnSizes }}
+  <colgroup>
+    {{ range .ColumnSizes }}
+    <col span="{{ .Span }}" style="{{ .Style }}">
     {{ end }}
+  </colgroup>
+  {{ end }}
 
-    <thead>
-      <tr>
-        {{ range .Headers }}
-        <th>{{ .Label }}</th>
-        {{ end }}
-      </tr>
-    </thead>
-
-    <tbody {{ if .ID }}id="{{ .ID }}"{{ end }}>
-      {{ range .Rows }}
-      {{ template "table_row.html" . }}
+  <thead>
+    <tr>
+      {{ range .Headers }}
+      <th>{{ .Label }}</th>
       {{ end }}
-    </tbody>
+    </tr>
+  </thead>
 
-  </table>
-</div>
+  <tbody {{ if .ID }}id="{{ .ID }}" {{ end }}>
+    {{ range .Rows }}
+    {{ template "table_row.html" .}}
+    {{ end }}
+  </tbody>
+
+</table>

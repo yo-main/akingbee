@@ -4,10 +4,11 @@
     {{ .Label }}
   </button>
   {{ else if .Icon }}
-  <button class="button is-ghost" title="{{ .Icon }}">
-    <span class="icon is-small">
+  <button>
+    <span class="icon">
       <img src="/public/icon-{{ .Icon }}.svg">
     </span>
   </button>
+  {{ .Label }}
   {{ end }}
 </div>

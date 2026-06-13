@@ -1,8 +1,0 @@
-<div class="notification is-{{ .Type }}"
-  hx-trigger="load delay:5s"
-  hx-target="this"
-  hx-swap="delete"
-  hx-get="data:text/html,">
-  <button class="delete" hx-get="data:text/html," hx-target="closest .notification" hx-swap="delete"></button>
-  <div>{{ .Content }}</div>
-</div>

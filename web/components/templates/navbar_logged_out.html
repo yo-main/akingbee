@@ -1,14 +1,22 @@
-<nav class="ak-navbar">
-  <a class="ak-navbar-brand" href="/">
-    <img src="/public/logo.svg" width="34" height="34" alt="">
-    <span class="ak-navbar-name">akingbee</span>
-  </a>
-  <div class="ak-navbar-links"></div>
-  <div class="ak-navbar-end">
-    <a class="ak-navbar-link" href="/login">Se connecter</a>
-    <a class="ak-navbar-link" href="/register"
-      style="background: var(--amber); color: white; padding: 6px 14px; border-radius: 6px;">
-      S'inscrire
-    </a>
+<nav class="navbar is-warning is-fixed-top has-background-warning-95 has-shadow">
+  <div class="navbar-brand">
+    <img src="/public/logo.svg">
+    <img src="/public/akingbee.svg">
+  </div>
+  <div class="navbar-menu has-text-inherit">
+
+    <div class="navbar-end pr-5">
+
+      <a class="navbar-item has-text-warning-95-invert" hx-get="/login" hx-target="#page-body" hx-swap="innerHTML"
+        hx-push-url="/login">
+        Connexion
+      </a>
+
+      <a class="navbar-item has-text-warning-95-invert" hx-get="/register" hx-target="#page-body" hx-swap="innerHTML"
+        hx-push-url="/register">
+        Inscription
+      </a>
+
+    </div>
   </div>
 </nav>

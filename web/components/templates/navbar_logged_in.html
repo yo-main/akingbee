@@ -1,46 +1,38 @@
-<nav class="ak-navbar">
-
-  <!-- Brand -->
-  <a class="ak-navbar-brand"
-    hx-get="/overview" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/overview">
-    <img src="/public/logo.svg" width="34" height="34" alt="">
-    <span class="ak-navbar-name">akingbee</span>
-  </a>
-
-  <!-- Links -->
-  <div class="ak-navbar-links">
-    <a class="ak-navbar-link {{ if .Entity | eq "overview" }}is-selected{{ end }}"
-      hx-get="/overview" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/overview"
-      hx-on:htmx:after-request="document.querySelectorAll('.ak-navbar-link').forEach(el => el.classList.remove('is-selected')); this.classList.add('is-selected')">
-      Aperçu
-    </a>
-    <a class="ak-navbar-link {{ if .Entity | eq "hive" }}is-selected{{ end }}"
-      hx-get="/hive" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/hive"
-      hx-on:htmx:after-request="document.querySelectorAll('.ak-navbar-link').forEach(el => el.classList.remove('is-selected')); this.classList.add('is-selected')">
-      Ruches
-    </a>
-    <a class="ak-navbar-link {{ if .Entity | eq "apiary" }}is-selected{{ end }}"
-      hx-get="/apiary" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/apiary"
-      hx-on:htmx:after-request="document.querySelectorAll('.ak-navbar-link').forEach(el => el.classList.remove('is-selected')); this.classList.add('is-selected')">
-      Ruchers
-    </a>
-    {{ if .CanImpersonate }}
-    <a class="ak-navbar-link {{ if .Entity | eq "admin" }}is-selected{{ end }}"
-      hx-get="/admin" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/admin"
-      hx-on:htmx:after-request="document.querySelectorAll('.ak-navbar-link').forEach(el => el.classList.remove('is-selected')); this.classList.add('is-selected')">
-      Administration
-    </a>
-    {{ end }}
+<nav class="navbar is-fixed-top is-warning has-background-warning-95 has-shadow">
+  <div class="navbar-brand">
+    <img src="/public/logo.svg">
+    <img src="/public/akingbee.svg">
   </div>
+  <div class="navbar-menu has-text-inherit">
 
-  <!-- User info -->
-  <div class="ak-navbar-end">
-    <span class="ak-navbar-username">{{ .Username }}</span>
-    <div class="ak-navbar-avatar">{{ slice .Username 0 1 }}</div>
-    <a class="ak-navbar-link" style="margin-left:4px"
-      hx-post="/logout" hx-push-url="/" hx-target="#page-body">
-      Déconnexion
-    </a>
+    <div class="navbar-start has-text-inherit">
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "overview" }}is-selected{{ end }}'
+        hx-get="/overview" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/overview"
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
+
+        Aper&ccedil;u</a>
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "hive" }}is-selected{{end}}' hx-get="/hive"
+        hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/hive"
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
+        Ruches</a>
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "apiary" }}is-selected{{ end }}'
+        hx-get="/apiary" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/apiary"
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
+
+        Ruchers</a>
+      {{ if .CanImpersonate }}
+      <a class='navbar-item has-text-warning-95-invert {{ if .Entity | eq "admin" }}is-selected{{ end }}'
+        hx-get="/admin" hx-target="#page-body" hx-swap="innerHTML" hx-push-url="/admin"
+        hx-on:htmx:after-request="document.querySelectorAll('.navbar-item').forEach(el => { el.classList.remove('is-selected')}); this.classList.add('is-selected')">
+
+        Administration</a>
+      {{ end }}
+    </div>
+
+    <div class="navbar-end pr-5">
+      <p class="navbar-item"><strong class="has-text-warning-95-invert">Bienvenue {{ .Username }}</strong></p>
+      <a class="navbar-item has-text-warning-95-invert" hx-post="/logout" hx-push-url="/"
+        hx-target="#page-body">Déconnexion</a>
+    </div>
   </div>
-
 </nav>

@@ -1,16 +1,16 @@
 <div class="overview">
-  <div class="ak-page-header-row" style="margin-bottom: 24px;">
-    <div>
-      <h1 class="ak-page-title">Aperçu</h1>
-      <p class="ak-page-subtitle">Dernières observations par rucher</p>
-    </div>
-  </div>
-
-  <div class="columns is-multiline">
-    {{ range .Apiaries }}
-    <div class="column is-4 is-flex">
-      {{ template "overview_card.html" . }}
-    </div>
-    {{ end }}
-  </div>
+  <section class="section">
+    <div class="block">
+      <div class="content">
+        <h1 class="title">Rapports</h1>
+        <hr>
+      </div>
+      <div class="columns is-multiline">
+        {{ range .Apiaries }}
+        <div class="column is-4 is-flex">
+          {{ template "overview_card.html" .}}
+        </div>
+        {{ end }}
+      </div>
+  </section>
 </div>

@@ -1,26 +1,21 @@
-<div class="card" {{ if .ID }}id="{{ .ID }}"{{ end }}>
-
+<div class="card" {{ if .ID }}id="{{ .ID }}" {{ end }}>
   {{ with .Header }}
   <header class="card-header">
     <p class="card-header-title">{{ .Title }}</p>
-    {{ if .Button }}
-    <div class="card-header-icon">
-      {{ template "button.html" .Button }}
-    </div>
-    {{ end }}
+    {{ if .Button }}<div class="card-header-item"> {{ template "button.html" .Button }} </div>{{ end}}
   </header>
   {{ end }}
 
   {{ with .Content }}
-  <div class="card-content" {{ if .ID }}id="{{ .ID }}"{{ end }}>
+  <div class="card-content" {{ if .ID }}id="{{ .ID }}" {{ end }}>
     {{ with .HorizontalTable }}
-    <div style="display: flex; flex-direction: column; gap: 2px;">
-      {{ range .Values }}
-      <div class="ak-kv">
-        <span class="ak-kv-key">{{ .Key }}</span>
-        <span class="ak-kv-val">{{ .Value }}</span>
+    <div class="fixed-grid">
+      <div class="grid">
+        {{ range .Values }}
+        <div class="cell has-text-right heading mr-5">{{ .Key }}</div>
+        <div class="cell"><i>{{ .Value }}</i></div>
+        {{ end }}
       </div>
-      {{ end }}
     </div>
     {{ end }}
   </div>

@@ -1,10 +1,13 @@
-<div class="ak-list-wrap">
-  <div class="ak-page-header-row">
-    <div>
-      <h1 class="ak-page-title">Ruches</h1>
-    </div>
-    {{ template "update_strategy.html" .CreateHiveModal }}
-  </div>
+<div class="columns is-centered">
+  <div class="column is-three-fifths">
 
-  {{ template "table.html" .Table }}
+    <div class="block is-pulled-right">
+      {{ template "update_strategy.html" .CreateHiveModal }}
+    </div>
+
+    <div class="content">
+      {{ template "table.html" .Table }}
+    </div>
+
+  </div>
 </div>

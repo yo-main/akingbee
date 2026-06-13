@@ -1,52 +1,47 @@
 <div id="apiary-{{ .Apiary.ApiaryPublicID }}-card" class="card">
-
-  <header class="card-header">
-    <p class="card-header-title">{{ .Apiary.ApiaryName }}</p>
-
+  <div class="card-header">
+    <p class="card-header-title">Apiary {{ .Apiary.ApiaryName }}</p>
     <div class="card-header-icon">
       <div class="dropdown is-hoverable is-right">
         <div class="dropdown-trigger">
           <button class="button is-ghost" aria-haspopup="true"
             aria-controls="dropdown-menu-{{ .Apiary.ApiaryPublicID }}">
-            <span class="icon is-small">
-              <img src="/public/icon-angle-down.svg" style="width:16px;height:16px;opacity:0.5;">
+            <span class="icon">
+              <img src="/public/icon-angle-down.svg">
             </span>
           </button>
         </div>
         <div class="dropdown-menu" id="dropdown-menu-{{ .Apiary.ApiaryPublicID }}" role="menu">
           <div class="dropdown-content">
             <div class="dropdown-item">
-              {{ template "update_strategy.html" .CreateCommentForm }}
+              {{ template "update_strategy.html" .CreateCommentForm}}
             </div>
             {{ if .Apiary.CommentBody }}
             <div class="dropdown-item">
-              {{ template "update_strategy.html" .EditCommentForm }}
+              {{ template "update_strategy.html" .EditCommentForm}}
             </div>
             {{ end }}
           </div>
         </div>
       </div>
     </div>
-  </header>
-
+  </div>
   <div class="card-content">
     <div id="apiary-{{ .Apiary.ApiaryPublicID }}-comment-body" class="content">
       {{ if .Apiary.CommentBody }}
       {{ .Apiary.CommentBody }}
       {{ else }}
-      <p style="color: var(--text-light); font-size: 13px; font-style: normal;">Aucune observation enregistrée.</p>
+      <p class="has-text-grey-light">Aucun commentaire</p>
       {{ end }}
     </div>
   </div>
-
-  <footer class="card-footer" style="display: block;">
-    {{ if .Apiary.LastVisitDate }}
-    <div class="tag-footer">
-      <span class="tag">
-        Dernière visite&nbsp;: <strong style="margin-left: 4px;">{{ .Apiary.LastVisitDate }}</strong>
+  <div class="card-footer">
+    {{ if .Apiary.LastVisitDate}}
+    <div class="block tag-footer">
+      <span class="tag is-info is-light">
+        <p>Dernière visite: {{.Apiary.LastVisitDate}}</p>
       </span>
     </div>
     {{ end }}
-  </footer>
-
+  </div>
 </div>
