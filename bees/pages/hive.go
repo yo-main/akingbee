@@ -61,14 +61,6 @@ func EditHiveModal(
 						Default:  hive.Name,
 					},
 					{
-						Name:          "apiary",
-						Label:         "Rucher",
-						Type:          "text",
-						Required:      true,
-						ChoicesStrict: apiaryChoices,
-						Default:       hive.GetApiaryPublicID(),
-					},
-					{
 						Name:        "beekeeper",
 						Label:       "Apiculteur",
 						Type:        "text",
@@ -90,6 +82,14 @@ func EditHiveModal(
 						Type:     "integer",
 						Required: true,
 						Default:  hive.GetSwarmYear(),
+					},
+					{
+						Name:          "apiary",
+						Label:         "Rucher",
+						Type:          "text",
+						Required:      true,
+						ChoicesStrict: apiaryChoices,
+						Default:       hive.GetApiaryPublicID(),
 					},
 					{
 						Name:     "elementType",
@@ -117,12 +117,12 @@ func GetHiveTableRow(
 	return components.Row{
 		Cells: []components.Cell{
 			{Label: hive.Name},
-			{Label: apiaryName},
 			{Label: hive.Beekeeper},
 			{Label: swarmHealth, Image: components.ImageCell{
 				File:  template.HTML(svgQueen),
 				Color: hive.GetQueenColor(),
 			}},
+			{Label: apiaryName},
 			{
 				GroupedCells: []components.Cell{
 					{
@@ -276,13 +276,6 @@ func GetHivesBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error)
 							Required: true,
 						},
 						{
-							Name:          "apiary",
-							Label:         "Rucher",
-							Type:          "text",
-							Required:      true,
-							ChoicesStrict: GetApiariesChoices(apiaries, nil),
-						},
-						{
 							Name:        "beekeeper",
 							Label:       "Apiculteur",
 							Type:        "text",
@@ -296,6 +289,13 @@ func GetHivesBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error)
 							Required:    true,
 							ChoicesFree: GetSwarmHealthChoices(swarmHealths, nil),
 						},
+						{
+							Name:          "apiary",
+							Label:         "Rucher",
+							Type:          "text",
+							Required:      true,
+							ChoicesStrict: GetApiariesChoices(apiaries, nil),
+						},
 					},
 				},
 			},
@@ -306,9 +306,9 @@ func GetHivesBody(ctx context.Context, userID *uuid.UUID) (*bytes.Buffer, error)
 			IsFullWidth: true,
 			Headers: []components.Header{
 				{Label: "Nom"},
-				{Label: "Rucher"},
 				{Label: "Apiculteur"},
 				{Label: "Santé de l'essaim"},
+				{Label: "Rucher"},
 				{Label: "Actions"},
 			},
 			Rows: rows,
