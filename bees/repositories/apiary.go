@@ -50,7 +50,7 @@ func DeleteApiary(ctx context.Context, apiary *models.Apiary) error {
 	db := database.GetDB()
 	_, err := db.ExecContext(ctx, queryDeleteApiary, apiary.PublicID)
 
-	return err
+	return fmt.Errorf("could not delete apiary: %w", err)
 }
 
 const queryGetApiaries = `
@@ -124,10 +124,7 @@ func GetApiary(ctx context.Context, apiaryPublicID *uuid.UUID) (*models.Apiary, 
 
 	var apiary models.Apiary
 
-	if !rows.Next() {
-		return nil, fmt.Errorf("apiary not found")
-	}
-
+	rows.Next()
 	err = rows.Scan(&apiary.PublicID, &apiary.Name, &apiary.Location, &apiary.HoneyKind, &apiary.User, &apiary.HiveCount)
 
 	if err != nil {
